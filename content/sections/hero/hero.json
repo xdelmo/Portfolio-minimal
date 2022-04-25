@@ -1,0 +1,18 @@
+{
+    "intro": "Ciao!",
+    "image": {
+        "src": "../../images/waving-hand.png",
+        "alt": "Waving Hand Emoji"
+    },
+    "title": "Sono Emanuele Del Monte",
+    "subtitle": {
+        "prefix": "e risolvo problemi in modo ",
+        "highlight": "creativo",
+        "suffix": "."
+    },
+    "description": "Laureando in Ingegneria Informatica e Junior Web Developer. Latina, Italia.",
+    "socialProfiles": {
+        "from": ["LinkedIn", "Medium", "Github", "Mail"],
+        "showIcons": false
+    }
+}

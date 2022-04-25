@@ -1,0 +1,13 @@
+{
+    "name": "Emanuele Del Monte",
+    "email": "info@emanueledelmonte.it",
+    "description": "Per qualsiasi domanda puoi contattarmi su i miei vari social!",
+    "image": {
+        "src": "../../images/icon.png",
+        "alt": "icon"
+    },
+    "socialProfiles": {
+        "from": ["LinkedIn", "Medium", "Github", "Mail"],
+        "showIcons": true
+    }
+}

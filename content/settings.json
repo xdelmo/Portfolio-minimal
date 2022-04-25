@@ -1,0 +1,43 @@
+{
+  "siteMetadata": {
+    "language": "it",
+    "siteUrl": "https://gatsby-starter-portfolio-minimal-theme.netlify.app/",
+    "title": "Emanuele Del Monte's Portfolio",
+    "titleTemplate": "%s · Portfolio Minimal",
+    "description": "Laureando in Ingegneria Informatica e Junior Web Developer. Latina, Italia.",
+    "author": "Emanuele Del Monte",
+    "avatar": "../content/images/icon.png",
+    "bio": "",
+    "social": {
+      "behance": "",
+      "github": "https://github.com/xdelmo",
+      "medium": "",
+      "linkedin": "https://www.linkedin.com/in/emanueledelmonte/",
+      "mail": "mailto:info@emanueledelmonte.it"
+    }
+  },
+  "siteConfiguration": {
+    "logo": { "text": "edm." },
+    "navigation": {
+      "header": [
+        { "label": "About", "url": "/#about" },
+        { "label": "Projects", "url": "/#projects" },
+        { "label": "Contact Me", "url": "/#contact" }
+      ],
+      "ctaButton": {
+        "openNewTab": true,
+        "label": "Curriculum",
+        "url": "/resume.pdf"
+      },
+      "footer": [
+        { "label": "Privacy", "url": "/privacy" },
+        { "label": "Imprint", "url": "/imprint" }
+      ]
+    },
+    "featureToggles": {
+      "useDarkModeAsDefault": false,
+      "useDarkModeBasedOnUsersPreference": true,
+      "useCookieBar": true
+    }
+  }
+}

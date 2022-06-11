@@ -12,13 +12,19 @@ import {
 export default function IndexPage() {
   return (
     <>
-      <Seo title="Emanuele Del Monte's Portfolio" />
+      <Seo title="Emanuele Del Monte Portfolio" />
       <Page useSplashScreenAnimation>
         <HeroSection sectionId="hero" />
-        <AboutSection sectionId="about" heading="About Me" />
-        <InterestsSection sectionId="details" heading="Skills and Tools" />
-        <ProjectsSection sectionId="projects" heading="Projects" />
-        <ContactSection sectionId="contact" heading="Any Issues?" />
+        <ProjectsSection sectionId="projects" heading="Spulcia i Progetti" />
+        <InterestsSection
+          sectionId="details"
+          heading="Competenze e Strumenti"
+        />
+        <AboutSection sectionId="about" heading="Chi Sono" />
+        <ContactSection
+          sectionId="contact"
+          heading="Domande? Contattami qui!"
+        />
       </Page>
     </>
   );

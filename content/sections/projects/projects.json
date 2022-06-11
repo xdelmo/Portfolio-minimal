@@ -1,43 +1,47 @@
 {
-    "projects": [{
-            "visible": true,
-            "category": "🕹️ PROGETTO PARALLELO",
-            "title": "TechBudget.it",
-            "description": "Erano anni che volevo avere un sito web dove poter parlare liberamente della mia passione per la tecnologia e nell'estate del 2021 ho trovato il coraggio e ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub/Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",
-            "tags": ["Web Development", "Content Creation", "HUGO"],
-            "image": {
-                "src": "../../images/techbudget.jpg",
-                "alt": "TechBudget homepage"
-            },
-            "links": [{
-                    "type": "github",
-                    "url": "https://github.com/xdelmo/techbudget"
-                },
-                {
-                    "type": "external",
-                    "url": "https://www.techbudget.it/"
-                }
-            ]
+  "projects": [
+    {
+      "visible": true,
+      "category": "🕹️ PROGETTO PARALLELO",
+      "title": "TechBudget.it",
+      "description": "Erano anni che volevo avere un sito web dove poter parlare liberamente della mia passione per la tecnologia e nell'estate del 2021 ho trovato il coraggio e ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub/Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",
+      "tags": ["Web Development", "Content Creation", "HUGO"],
+      "image": {
+        "src": "../../images/techbudget.jpg",
+        "alt": "TechBudget homepage"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/techbudget"
         },
         {
-            "visible": true,
-            "category": "🧰 PROGETTO UNIVERSITARIO",
-            "title": "Applicazione Telefonia",
-            "description": "Per l'esame di Basi di Dati, insieme ad un mio collega, ho realizzato questa applicazione che consiste in un database funzionante su MySQL e un'interfaccia grafica per navigarlo e modificarlo utilizzando Microsoft Access.",
-            "tags": ["Database", "MySQL", "Microsoft Access"],
-            "image": {
-                "src": "../../images/vodafoneDatabase.jpg",
-                "alt": "Vodafone Database homepage"
-            },
-            "links": [{
-                "type": "github",
-                "url": "https://github.com/xdelmo/MySQL-MsAccess-App-Telefonia"
-            }]
+          "type": "external",
+          "url": "https://www.techbudget.it/"
         }
-    ],
-    "button": {
-        "visible": true,
-        "label": "SEE MORE ON GITHUB",
-        "url": "https://github.com/xdelmo"
+      ]
+    },
+    {
+      "visible": true,
+      "category": "🧰 PROGETTO UNIVERSITARIO",
+      "title": "Applicazione Telefonia",
+      "description": "Per l'esame di Basi di Dati, insieme ad un mio collega, ho realizzato questa applicazione che consiste in un database funzionante su MySQL e un'interfaccia grafica per navigarlo e modificarlo utilizzando Microsoft Access.",
+      "tags": ["Database", "MySQL", "Microsoft Access"],
+      "image": {
+        "src": "../../images/vodafoneDatabase.jpg",
+        "alt": "Vodafone Database homepage"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/MySQL-MsAccess-App-Telefonia"
+        }
+      ]
     }
+  ],
+  "button": {
+    "visible": true,
+    "label": "Guardane altri su GitHub 🔎",
+    "url": "https://github.com/xdelmo"
+  }
 }

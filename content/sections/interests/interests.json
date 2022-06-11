@@ -1,50 +1,51 @@
 {
-    "interests": [{
-            "label": "Web Development",
-            "image": {
-                "src": "../../images/wrench.png",
-                "alt": "chiave-inglese"
-            }
-        },
-        {
-            "label": "GitHub",
-            "image": {
-                "src": "../../images/github.png",
-                "alt": "github-logo"
-            }
-        },
-        {
-            "label": "Web Design",
-            "image": {
-                "src": "../../images/nail-polish.png",
-                "alt": "smalto"
-            }
-        },
-        {
-            "label": "VS Code",
-            "image": {
-                "src": "../../images/vscode.png",
-                "alt": "visualcodestudio"
-            }
-        },
-        {
-            "label": "JavaScript (ES6+)",
-            "image": {
-                "src": "../../images/js.png",
-                "alt": "javascript"
-            }
-        },
-        {
-            "label": "React.js (In progress)",
-            "image": {
-                "src": "../../images/react.png",
-                "alt": "react.js"
-            }
-        }
-    ],
-    "button": {
-        "visible": true,
-        "label": "+ Load More",
-        "initiallyShownInterests": 5
+  "interests": [
+    {
+      "label": "Web Development",
+      "image": {
+        "src": "../../images/wrench.png",
+        "alt": "chiave-inglese"
+      }
+    },
+    {
+      "label": "GitHub",
+      "image": {
+        "src": "../../images/github.png",
+        "alt": "github-logo"
+      }
+    },
+    {
+      "label": "Web Design",
+      "image": {
+        "src": "../../images/nail-polish.png",
+        "alt": "smalto"
+      }
+    },
+    {
+      "label": "VS Code",
+      "image": {
+        "src": "../../images/vscode.png",
+        "alt": "visualcodestudio"
+      }
+    },
+    {
+      "label": "JavaScript (ES6+)",
+      "image": {
+        "src": "../../images/js.png",
+        "alt": "javascript"
+      }
+    },
+    {
+      "label": "React.js (Lavori in corso)",
+      "image": {
+        "src": "../../images/react.png",
+        "alt": "react.js"
+      }
     }
+  ],
+  "button": {
+    "visible": true,
+    "label": "+ Mostra altro",
+    "initiallyShownInterests": 5
+  }
 }

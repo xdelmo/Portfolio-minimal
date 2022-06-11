@@ -1,6 +1,6 @@
 ---
 imageSrc: "../../images/charles-deluvio-DgoyKNgPiFQ-unsplash.jpg"
-imageAlt: "Sample coding photo"
+imageAlt: "Ragazzo al computer"
 ---
 
 Ciao! Sono <u>Emanuele</u> (per gli amici Delmo), mi interesso e studio informatica nel tempo libero e non.

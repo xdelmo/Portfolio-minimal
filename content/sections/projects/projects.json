@@ -4,10 +4,10 @@
       "visible": true,
       "category": "🕹️ PROGETTO PARALLELO",
       "title": "TechBudget.it",
-      "description": "Erano anni che volevo avere un sito web dove poter parlare liberamente della mia passione per la tecnologia e nell'estate del 2021 ho trovato il coraggio e ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub/Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",
-      "tags": ["Web Development", "Content Creation", "HUGO"],
+      "description": "Nell'estate del 2021 ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub-Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",
+      "tags": ["Web Development", "Content Creation", "HUGO", "Netlify"],
       "image": {
-        "src": "../../images/techbudget.jpg",
+        "src": "../../images/techbudget.png",
         "alt": "TechBudget homepage"
       },
       "links": [
@@ -23,6 +23,27 @@
     },
     {
       "visible": true,
+      "category": "🧾 PROGETTO BOOTCAMP",
+      "title": "Generatore di Fatture",
+      "description": "Questo è il progetto finale del corso Learn Javascript di Scrimba. Consiste nell'aggiungere e rimuovere, tramite bottoni, i servizi sulla fattura calcolando in automatico il prezzo finale.",
+      "tags": ["Web Development", "Javascript", "Scrimba"],
+      "image": {
+        "src": "../../images/invoice-generator.png",
+        "alt": "Generatore di fatture"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/invoice-creator"
+        },
+        {
+          "type": "external",
+          "url": "https://htmlpreview.github.io/?https://github.com/xdelmo/invoice-creator/blob/master/index.html"
+        }
+      ]
+    },
+    {
+      "visible": false,
       "category": "🧰 PROGETTO UNIVERSITARIO",
       "title": "Applicazione Telefonia",
       "description": "Per l'esame di Basi di Dati, insieme ad un mio collega, ho realizzato questa applicazione che consiste in un database funzionante su MySQL e un'interfaccia grafica per navigarlo e modificarlo utilizzando Microsoft Access.",

@@ -2,6 +2,27 @@
   "projects": [
     {
       "visible": true,
+      "category": "🚗 PROGETTO FORMAZIONE",
+      "title": "Tesla Roadster Launchpage",
+      "description": "Ho creato questa pagina per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
+      "tags": ["Responsive Web Design", "Bulma", "Scrimba"],
+      "image": {
+        "src": "../../images/tesla-launchpage.png",
+        "alt": "Tesla Roadster Launchpage"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/bulma-tesla-launchpage"
+        },
+        {
+          "type": "external",
+          "url": "https://bulma-tesla-launchpage.netlify.app/"
+        }
+      ]
+    },
+    {
+      "visible": false,
       "category": "🕹️ PROGETTO PARALLELO",
       "title": "TechBudget.it",
       "description": "Nell'estate del 2021 ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub-Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",

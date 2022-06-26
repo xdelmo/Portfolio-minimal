@@ -29,14 +29,14 @@
       }
     },
     {
-      "label": "JavaScript (ES6+)",
+      "label": "JavaScript",
       "image": {
         "src": "../../images/js.png",
         "alt": "javascript"
       }
     },
     {
-      "label": "React.js (Prossimamente)",
+      "label": "React.js (In corso)",
       "image": {
         "src": "../../images/react.png",
         "alt": "react.js"

@@ -1,11 +1,12 @@
 body[data-theme="lightTheme"] {
-  --primary-color: #000000;
-  --secondary-color: #203099;
+  --primary-color: #1d1d1c;
+  /* --secondary-color: #0065c8; */
+  --secondary-color: #0066d4;
   --tertiary-color: #f2f2f2;
-  --text-color: #000000;
+  --text-color: #1d1d1c;
   --subtext-color: #555555;
-  --background-color: #ffffff;
-  --card-background-color: #ffffff;
+  --background-color: #e5e5e5;
+  --card-background-color: #e5e5e5;
   --scroll-bar-color: rgba(0, 0, 0, 0.5);
   --box-shadow-color: rgba(0, 0, 0, 0.16);
   --box-shadow-hover-color: rgba(0, 0, 0, 0.32);
@@ -13,8 +14,9 @@ body[data-theme="lightTheme"] {
 }
 
 body[data-theme="darkTheme"] {
-  --primary-color: #fafafa;
-  --secondary-color: #203099;
+  --primary-color: #e5e5e5;
+  /* --secondary-color: #0065c8; */
+  --secondary-color: #0066d4;
   --tertiary-color: #252525;
   --text-color: rgba(255, 255, 255, 0.87);
   --subtext-color: #aaaaaa;

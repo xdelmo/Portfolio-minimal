@@ -2,31 +2,10 @@
   "projects": [
     {
       "visible": true,
-      "category": "🛩 PROGETTO BOOTCAMP",
-      "title": "Travel Journal",
-      "description": "Questo è il mio primo utilizzo di React. Nella pagina vengono dinamicamente visualizzati dei dati importati da un file esterno grazie al metodo map() e ai parametri 'props' passati alla componente singola.",
-      "tags": ["React", "Responsive Web Design"],
-      "image": {
-        "src": "../../images/travel-journal.png",
-        "alt": "Travel Journal"
-      },
-      "links": [
-        {
-          "type": "github",
-          "url": "https://github.com/xdelmo/travel-journal"
-        },
-        {
-          "type": "external",
-          "url": "https://travel-journal-xdelmo.netlify.app/"
-        }
-      ]
-    },
-    {
-      "visible": true,
-      "category": "🚗 PROGETTO FORMAZIONE",
+      "category": "🚗 PROGETTO CSS FORMAZIONE",
       "title": "Tesla Roadster Launchpage",
-      "description": "Ho creato questa pagina per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
-      "tags": ["Responsive Web Design", "Bulma"],
+      "description": "Ho creato questa launchpage per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
+      "tags": ["CSS", "Responsive Web Design", "Bulma"],
       "image": {
         "src": "../../images/tesla-launchpage.png",
         "alt": "Tesla Roadster Launchpage"
@@ -42,10 +21,31 @@
         }
       ]
     },
+    {
+      "visible": true,
+      "category": "😂 PROGETTO REACT BOOTCAMP",
+      "title": "Meme Generator",
+      "description": "Questo è il mio primo utilizzo di React. L'app consente di inserire del testo dinamico su delle immagini ottenute randomicamente con una richiesta alle APIs di Imgflip.",
+      "tags": ["React", "APIs"],
+      "image": {
+        "src": "../../images/meme-generator.png",
+        "alt": "Meme Generator"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/meme-generator"
+        },
+        {
+          "type": "external",
+          "url": "https://meme-generator-xdelmo.netlify.app/"
+        }
+      ]
+    },
 
     {
       "visible": true,
-      "category": "🧾 PROGETTO BOOTCAMP",
+      "category": "🧾 PROGETTO JAVASCRIPT BOOTCAMP",
       "title": "Generatore di Fatture",
       "description": "Questo è il progetto finale del corso Learn Javascript di Scrimba. Consiste nell'aggiungere e rimuovere, tramite bottoni, i servizi sulla fattura calcolando in automatico il prezzo finale.",
       "tags": ["Javascript", "Scrimba"],
@@ -99,6 +99,27 @@
         {
           "type": "github",
           "url": "https://github.com/xdelmo/MySQL-MsAccess-App-Telefonia"
+        }
+      ]
+    },
+    {
+      "visible": false,
+      "category": "🛩 PROGETTO BOOTCAMP",
+      "title": "Travel Journal",
+      "description": "Questo è il mio primo utilizzo di React. Nella pagina vengono dinamicamente visualizzati dei dati importati da un file esterno grazie al metodo map() e ai parametri 'props' passati alla componente singola.",
+      "tags": ["React", "Responsive Web Design"],
+      "image": {
+        "src": "../../images/travel-journal.png",
+        "alt": "Travel Journal"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/travel-journal"
+        },
+        {
+          "type": "external",
+          "url": "https://travel-journal-xdelmo.netlify.app/"
         }
       ]
     }

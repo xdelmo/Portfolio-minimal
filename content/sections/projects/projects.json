@@ -2,7 +2,7 @@
   "projects": [
     {
       "visible": true,
-      "category": "🚗 PROGETTO CSS FORMAZIONE",
+      "category": "🚗 PROGETTO CORSO CSS",
       "title": "Tesla Roadster Launchpage",
       "description": "Ho creato questa launchpage per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
       "tags": ["CSS", "Responsive Web Design", "Bulma"],
@@ -23,7 +23,28 @@
     },
     {
       "visible": true,
-      "category": "😂 PROGETTO REACT BOOTCAMP",
+      "category": "🎲 PROGETTO CORSO REACT",
+      "title": "Tenzies Game",
+      "description": "Il famoso gioco con i dadi interamente realizzato con il framework React e aggiunta del salvataggio dei migliori risultati sul localStorage.",
+      "tags": ["React", "localStorage", "Web Game App"],
+      "image": {
+        "src": "../../images/tenzies-game.png",
+        "alt": "Tenzies Game"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/tenzies-game"
+        },
+        {
+          "type": "external",
+          "url": "https://tenzies-game-xdelmo.netlify.app/"
+        }
+      ]
+    },
+    {
+      "visible": true,
+      "category": "😂 PROGETTO CORSO REACT",
       "title": "Meme Generator",
       "description": "Questo è il mio primo utilizzo di React. L'app consente di inserire del testo dinamico su delle immagini ottenute randomicamente con una richiesta alle APIs di Imgflip.",
       "tags": ["React", "APIs"],
@@ -44,7 +65,7 @@
     },
 
     {
-      "visible": true,
+      "visible": false,
       "category": "🧾 PROGETTO JAVASCRIPT BOOTCAMP",
       "title": "Generatore di Fatture",
       "description": "Questo è il progetto finale del corso Learn Javascript di Scrimba. Consiste nell'aggiungere e rimuovere, tramite bottoni, i servizi sulla fattura calcolando in automatico il prezzo finale.",

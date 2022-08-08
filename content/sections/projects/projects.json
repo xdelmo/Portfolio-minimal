@@ -4,8 +4,8 @@
       "visible": true,
       "category": "📸 PROGETTO PERSONALE",
       "title": "Photo Search",
-      "description": "Photogallery sviluppata con React, Tailwind e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
-      "tags": ["React", "APIs", "Tailwind"],
+      "description": "Photogallery sviluppata con React, TailwindCSS e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
+      "tags": ["React", "APIs", "TailwindCSS"],
       "image": {
         "src": "../../images/react-tailwind-pixabay-gallery.png",
         "alt": "React Tailwind Pixabay gallery"

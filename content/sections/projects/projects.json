@@ -2,22 +2,43 @@
   "projects": [
     {
       "visible": true,
-      "category": "🚗 PROGETTO CORSO CSS",
-      "title": "Tesla Roadster Launchpage",
-      "description": "Ho creato questa launchpage per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
-      "tags": ["CSS", "Responsive Web Design", "Bulma"],
+      "category": "📸 PROGETTO PERSONALE",
+      "title": "Photo Search",
+      "description": "Photogallery sviluppata con React, Tailwind e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
+      "tags": ["React", "APIs", "Tailwind"],
       "image": {
-        "src": "../../images/tesla-launchpage.png",
-        "alt": "Tesla Roadster Launchpage"
+        "src": "../../images/react-tailwind-pixabay-gallery.png",
+        "alt": "React Tailwind Pixabay gallery"
       },
       "links": [
         {
           "type": "github",
-          "url": "https://github.com/xdelmo/bulma-tesla-launchpage"
+          "url": "https://github.com/xdelmo/react-tailwind-pixabay-gallery"
         },
         {
           "type": "external",
-          "url": "https://bulma-tesla-launchpage.netlify.app/"
+          "url": "https://react-tailwind-pixabay-gallery-xdelmo.netlify.app/"
+        }
+      ]
+    },
+    {
+      "visible": true,
+      "category": "🎲 PROGETTO CORSO REACT",
+      "title": "Quizzical Trivia",
+      "description": "Un gioco di cultura generale che mette alla prova anche le competenze in React, utilizzando le API da OTDB e innumerevoli props e state per mantenere le domande selezionate e controllare le risposte esatte.",
+      "tags": ["React", "APIs", "Web Game App"],
+      "image": {
+        "src": "../../images/quizzical-trivia.png",
+        "alt": "Tenzies Game"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/quizzical-trivia"
+        },
+        {
+          "type": "external",
+          "url": "https://quizzical-trivia-xdelmo.netlify.app/"
         }
       ]
     },
@@ -43,7 +64,28 @@
       ]
     },
     {
-      "visible": true,
+      "visible": false,
+      "category": "🚗 PROGETTO CORSO CSS",
+      "title": "Tesla Roadster Launchpage",
+      "description": "Ho creato questa launchpage per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
+      "tags": ["CSS", "Responsive Web Design", "Bulma"],
+      "image": {
+        "src": "../../images/tesla-launchpage.png",
+        "alt": "Tesla Roadster Launchpage"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/bulma-tesla-launchpage"
+        },
+        {
+          "type": "external",
+          "url": "https://bulma-tesla-launchpage.netlify.app/"
+        }
+      ]
+    },
+    {
+      "visible": false,
       "category": "😂 PROGETTO CORSO REACT",
       "title": "Meme Generator",
       "description": "Questo è il mio primo utilizzo di React. L'app consente di inserire del testo dinamico su delle immagini ottenute randomicamente con una richiesta alle APIs di Imgflip.",

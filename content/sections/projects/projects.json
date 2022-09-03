@@ -2,6 +2,27 @@
   "projects": [
     {
       "visible": true,
+      "category": "🏦 PROGETTO PERSONALE",
+      "title": "Bank Modern App",
+      "description": "Landing Page moderna per una banca fittizia basata su un mockup di Figma. Ho utilizzato React, TailwindCSS e fatto uso della libreria Framer Motion per inserire animazioni fluide.",
+      "tags": ["React", "Landing Page", "TailwindCSS"],
+      "image": {
+        "src": "../../images/bank-modern-app.png",
+        "alt": "Modern Bank App"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/bank-modern-app"
+        },
+        {
+          "type": "external",
+          "url": "https://bank-modern-app-xdelmo.netlify.app/"
+        }
+      ]
+    },
+    {
+      "visible": true,
       "category": "📸 PROGETTO PERSONALE",
       "title": "Photo Search",
       "description": "Photogallery sviluppata con React, TailwindCSS e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
@@ -43,7 +64,7 @@
       ]
     },
     {
-      "visible": true,
+      "visible": false,
       "category": "🎲 PROGETTO CORSO REACT",
       "title": "Tenzies Game",
       "description": "Il famoso gioco con i dadi interamente realizzato con il framework React e aggiunta del salvataggio dei migliori risultati sul localStorage.",

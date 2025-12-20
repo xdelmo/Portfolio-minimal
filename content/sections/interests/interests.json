@@ -7,18 +7,18 @@
         "alt": "chiave-inglese"
       }
     },
-    {
-      "label": "React",
+  {
+      "label": "Angular",
       "image": {
-        "src": "../../images/react.png",
-        "alt": "react.js"
+        "src": "../../images/angular.png",
+        "alt": "angular-logo"
       }
     },
     {
-      "label": "JavaScript",
+      "label": "TypeScript",
       "image": {
-        "src": "../../images/js.png",
-        "alt": "javascript"
+        "src": "../../images/typescript.png",
+        "alt": "typescript"
       }
     },
     {
@@ -27,19 +27,19 @@
         "src": "../../images/tailwindcss.png",
         "alt": "tailwind-logo"
       }
-    },
-    {
-      "label": "VS Code",
-      "image": {
-        "src": "../../images/vscode.png",
-        "alt": "visualcodestudio"
-      }
-    },
+    },   
     {
       "label": "GitHub",
       "image": {
         "src": "../../images/github.png",
         "alt": "github-logo"
+      }
+    },
+    {
+      "label": "React",
+      "image": {
+        "src": "../../images/react.png",
+        "alt": "react.js"
       }
     }
   ],

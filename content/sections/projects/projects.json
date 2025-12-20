@@ -5,7 +5,7 @@
       "visible": true,
       "category": "🎓 PROGETTO DI TESI",
       "title": "Enterprise Management Dashboard",
-      "description": "Sviluppo di una dashboard amministrativa complessa per la gestione di dati enterprise. Il progetto esplora le ultime innovazioni di Angular 19, implementando la reattività granulare tramite Signals e la gestione asincrona avanzata con RxJS",
+      "description": "Sviluppo di una dashboard amministrativa complessa per la gestione di dati enterprise. Il progetto esplora le ultime innovazioni di Angular 19, implementando la reattività granulare tramite Signals e la gestione asincrona avanzata con RxJS.",
       "tags": ["Angular", "Signals", "RxJS", "PrimeNG", "TailwindCSS"],
       "image": {
         "src": "../../images/dashboard-tesi.png",

@@ -1,10 +1,49 @@
 {
   "projects": [
+
+      {
+      "visible": true,
+      "category": "🎓 PROGETTO DI TESI",
+      "title": "Enterprise Management Dashboard",
+      "description": "Sviluppo di una dashboard amministrativa complessa per la gestione di dati enterprise. Il progetto esplora le ultime innovazioni di Angular 19, implementando la reattività granulare tramite Signals e la gestione asincrona avanzata con RxJS",
+      "tags": ["Angular", "Signals", "RxJS", "PrimeNG", "TailwindCSS"],
+      "image": {
+        "src": "../../images/dashboard-tesi.png",
+        "alt": "Modern Bank App"
+      },
+      "links": [
+        {
+          "type": "github",
+          "url": "https://github.com/xdelmo/dashboard-tesi"
+        },
+        {
+          "type": "external",
+          "url": "https://dashboard-tesi.vercel.app/dashboard"
+        }
+      ]
+    },
+      {
+      "visible": true,
+      "category": "💼 PROGETTO PROFESSIONALE",
+      "title": "Flexie - Product Configurator",
+      "description": "Sviluppo di un configuratore interattivo B2B per packaging flessibile. Implementazione di logiche condizionali complesse per la gestione di oltre 100 combinazioni tra materiali, formati e accessori, con calcolo dei costi e preventivazione in tempo reale.",
+      "tags": ["jQuery", "PHP", "Business Logic"],
+      "image": {
+        "src": "../../images/flexie-configuratore.png",
+        "alt": "Configuratore 3D Flexie"
+      },
+      "links": [
+        {
+          "type": "external",
+          "url": "https://www.flexie.it/configuratore/"
+        }
+      ]
+    },
     {
       "visible": true,
       "category": "🏦 PROGETTO PERSONALE",
       "title": "Bank Modern App",
-      "description": "Landing Page moderna per una banca fittizia basata su un mockup di Figma. Ho utilizzato React, TailwindCSS e fatto uso della libreria Framer Motion per inserire animazioni fluide.",
+      "description": "Landing Page ad alto impatto visivo focalizzata su performance e animazioni fluide. Sperimentazione di pattern di design moderno e ottimizzazione del rendering. Tecnologie: React, TailwindCSS, Framer Motion.",
       "tags": ["React", "Landing Page", "TailwindCSS"],
       "image": {
         "src": "../../images/bank-modern-app.png",
@@ -22,7 +61,7 @@
       ]
     },
     {
-      "visible": true,
+      "visible": false,
       "category": "📸 PROGETTO PERSONALE",
       "title": "Photo Search",
       "description": "Photogallery sviluppata con React, TailwindCSS e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
@@ -43,7 +82,7 @@
       ]
     },
     {
-      "visible": true,
+      "visible": false,
       "category": "🎲 PROGETTO CORSO REACT",
       "title": "Quizzical Trivia",
       "description": "Un gioco di cultura generale che mette alla prova anche le competenze in React, utilizzando le API da OTDB e innumerevoli props e state per mantenere le domande selezionate e controllare le risposte esatte.",

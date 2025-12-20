@@ -27,7 +27,7 @@ Assicurati di avere installato **Node.js** (versione >= 18.0.0).
 2.  Installa le dipendenze:
     ```bash
     npm install
-    # Se incontri conflitti di dipendenze (utili con versioni legacy npm):
+    # Se incontri conflitti di dipendenze:
     npm install --legacy-peer-deps
     ```
 
@@ -36,6 +36,13 @@ Assicurati di avere installato **Node.js** (versione >= 18.0.0).
     npm run develop
     ```
     Il sito sarà accessibile su `http://localhost:8000`.
+
+## 📦 Deployment su Netlify
+
+Per il deploy corretto su Netlify, assicurati di configurare la variabile d'ambiente Node.js:
+1. Vai su **Site Settings** > **Build & Deploy** > **Dependency Management**.
+2. Imposta **Node.js** alla versione **20.x** (o superiore).
+3. Esegui il deploy.
 
 ## 📂 Struttura dei Contenuti
 
@@ -46,6 +53,7 @@ Le sezioni principali modificabili sono:
 *   `about/about.md`: Descrizione "About me".
 *   `projects/projects.json`: Lista dei progetti mostrati.
 *   `contact/contact.json`: Informazioni di contatto e link social.
+*   `settings.json`: Configurazioni globali (SEO, menu, loghi).
 
 ## 🎨 Note sulle Immagini
 
@@ -54,3 +62,6 @@ Le immagini dei progetti sono screenshot acquisiti a risoluzione **1080x810** e 
 * **Window Style**: Regular 
 * **Padding Vertical**: 100px
 * **Padding Horizontal**: 100px
+
+## 📄 License
+Questo progetto è basato su [gatsby-starter-portfolio-minimal-theme](https://github.com/konstantinmuenster/gatsby-starter-portfolio-minimal-theme) rilasciato sotto licenza MIT.

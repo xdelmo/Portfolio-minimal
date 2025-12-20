@@ -15,13 +15,13 @@ export default function IndexPage() {
       <Seo title="Emanuele Del Monte Portfolio" />
       <Page useSplashScreenAnimation>
         <HeroSection sectionId="hero" />
-        <ProjectsSection sectionId="projects" heading="Spulcia i Progetti 👨‍💻" />
+        <ProjectsSection sectionId="projects" heading="Spulcia i progetti 👨‍💻" />
         <InterestsSection
           sectionId="details"
-          heading="Competenze e Strumenti 📋"
+          heading="Competenze e strumenti 📋"
         />
-        <AboutSection sectionId="about" heading="Chi Sono 🗿" />
-        <ContactSection sectionId="contact" heading="Domande ❓" />
+        <AboutSection sectionId="about" heading="Chi sono 🗿" />
+        <ContactSection sectionId="contact" heading="Mettiamoci in contatto 🤝" />
       </Page>
     </>
   );

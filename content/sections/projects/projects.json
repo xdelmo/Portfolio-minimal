@@ -1,12 +1,17 @@
 {
   "projects": [
-
-      {
+    {
       "visible": true,
       "category": "🎓 PROGETTO DI TESI",
       "title": "Enterprise Management Dashboard",
       "description": "Sviluppo di una dashboard amministrativa complessa per la gestione di dati enterprise. Il progetto esplora le ultime innovazioni di Angular 19, implementando la reattività granulare tramite Signals e la gestione asincrona avanzata con RxJS.",
-      "tags": ["Angular", "Signals", "RxJS", "PrimeNG", "TailwindCSS"],
+      "tags": [
+        "Angular",
+        "Signals",
+        "RxJS",
+        "PrimeNG",
+        "TailwindCSS"
+      ],
       "image": {
         "src": "../../images/dashboard-tesi.png",
         "alt": "Modern Bank App"
@@ -22,12 +27,16 @@
         }
       ]
     },
-      {
+    {
       "visible": true,
       "category": "💼 PROGETTO PROFESSIONALE",
       "title": "Flexie - Product Configurator",
       "description": "Sviluppo di un configuratore interattivo B2B per packaging flessibile. Implementazione di logiche condizionali complesse per la gestione di oltre 100 combinazioni tra materiali, formati e accessori, con calcolo dei costi e preventivazione in tempo reale.",
-      "tags": ["jQuery", "PHP", "Business Logic"],
+      "tags": [
+        "jQuery",
+        "PHP",
+        "Business Logic"
+      ],
       "image": {
         "src": "../../images/flexie-configuratore.png",
         "alt": "Configuratore 3D Flexie"
@@ -43,8 +52,13 @@
       "visible": true,
       "category": "🏦 PROGETTO PERSONALE",
       "title": "Bank Modern App",
-      "description": "Landing Page ad alto impatto visivo focalizzata su performance e animazioni fluide. Sperimentazione di pattern di design moderno e ottimizzazione del rendering. Tecnologie: React, TailwindCSS, Framer Motion.",
-      "tags": ["React", "Landing Page", "TailwindCSS"],
+      "description": "Landing Page ad alto impatto visivo focalizzata su performance e animazioni fluide. Sperimentazione di pattern di design moderno e ottimizzazione del rendering.",
+      "tags": [
+        "React",
+        "Landing Page",
+        "TailwindCSS",
+        "Framer Motion"
+      ],
       "image": {
         "src": "../../images/bank-modern-app.png",
         "alt": "Modern Bank App"
@@ -65,7 +79,11 @@
       "category": "📸 PROGETTO PERSONALE",
       "title": "Photo Search",
       "description": "Photogallery sviluppata con React, TailwindCSS e le APIs di Pixabay. Presenti la ricerca tramite input, tag e un form per la newsletter con validazione su email in tempo reale.",
-      "tags": ["React", "APIs", "TailwindCSS"],
+      "tags": [
+        "React",
+        "APIs",
+        "TailwindCSS"
+      ],
       "image": {
         "src": "../../images/react-tailwind-pixabay-gallery.png",
         "alt": "React Tailwind Pixabay gallery"
@@ -86,7 +104,11 @@
       "category": "🎲 PROGETTO CORSO REACT",
       "title": "Quizzical Trivia",
       "description": "Un gioco di cultura generale che mette alla prova anche le competenze in React, utilizzando le API da OTDB e innumerevoli props e state per mantenere le domande selezionate e controllare le risposte esatte.",
-      "tags": ["React", "APIs", "Web Game App"],
+      "tags": [
+        "React",
+        "APIs",
+        "Web Game App"
+      ],
       "image": {
         "src": "../../images/quizzical-trivia.png",
         "alt": "Tenzies Game"
@@ -107,7 +129,11 @@
       "category": "🎲 PROGETTO CORSO REACT",
       "title": "Tenzies Game",
       "description": "Il famoso gioco con i dadi interamente realizzato con il framework React e aggiunta del salvataggio dei migliori risultati sul localStorage.",
-      "tags": ["React", "localStorage", "Web Game App"],
+      "tags": [
+        "React",
+        "localStorage",
+        "Web Game App"
+      ],
       "image": {
         "src": "../../images/tenzies-game.png",
         "alt": "Tenzies Game"
@@ -128,7 +154,11 @@
       "category": "🚗 PROGETTO CORSO CSS",
       "title": "Tesla Roadster Launchpage",
       "description": "Ho creato questa launchpage per la Tesla Roadster con l'aiuto del framework CSS Bulma e CSS layout Grid. È completamente responsivo e facile da navigare.",
-      "tags": ["CSS", "Responsive Web Design", "Bulma"],
+      "tags": [
+        "CSS",
+        "Responsive Web Design",
+        "Bulma"
+      ],
       "image": {
         "src": "../../images/tesla-launchpage.png",
         "alt": "Tesla Roadster Launchpage"
@@ -149,7 +179,10 @@
       "category": "😂 PROGETTO CORSO REACT",
       "title": "Meme Generator",
       "description": "Questo è il mio primo utilizzo di React. L'app consente di inserire del testo dinamico su delle immagini ottenute randomicamente con una richiesta alle APIs di Imgflip.",
-      "tags": ["React", "APIs"],
+      "tags": [
+        "React",
+        "APIs"
+      ],
       "image": {
         "src": "../../images/meme-generator.png",
         "alt": "Meme Generator"
@@ -165,13 +198,15 @@
         }
       ]
     },
-
     {
       "visible": false,
       "category": "🧾 PROGETTO JAVASCRIPT BOOTCAMP",
       "title": "Generatore di Fatture",
       "description": "Questo è il progetto finale del corso Learn Javascript di Scrimba. Consiste nell'aggiungere e rimuovere, tramite bottoni, i servizi sulla fattura calcolando in automatico il prezzo finale.",
-      "tags": ["Javascript", "Scrimba"],
+      "tags": [
+        "Javascript",
+        "Scrimba"
+      ],
       "image": {
         "src": "../../images/invoice-generator.png",
         "alt": "Generatore di fatture"
@@ -192,7 +227,12 @@
       "category": "🕹️ PROGETTO PARALLELO",
       "title": "TechBudget.it",
       "description": "Nell'estate del 2021 ho creato Techbudget utilizzando HUGO come framework ed hostandolo gratuitamente con la coppia GitHub-Netlify. È stato sicuramente il passo più importante che mi ha avvicinato al web developing.",
-      "tags": ["Web Development", "Content Creation", "HUGO", "Netlify"],
+      "tags": [
+        "Web Development",
+        "Content Creation",
+        "HUGO",
+        "Netlify"
+      ],
       "image": {
         "src": "../../images/techbudget.png",
         "alt": "TechBudget homepage"
@@ -213,7 +253,11 @@
       "category": "🧰 PROGETTO UNIVERSITARIO",
       "title": "Applicazione Telefonia",
       "description": "Per l'esame di Basi di Dati, insieme ad un mio collega, ho realizzato questa applicazione che consiste in un database funzionante su MySQL e un'interfaccia grafica per navigarlo e modificarlo utilizzando Microsoft Access.",
-      "tags": ["Database", "MySQL", "Microsoft Access"],
+      "tags": [
+        "Database",
+        "MySQL",
+        "Microsoft Access"
+      ],
       "image": {
         "src": "../../images/vodafoneDatabase.jpg",
         "alt": "Vodafone Database homepage"
@@ -230,7 +274,10 @@
       "category": "🛩 PROGETTO BOOTCAMP",
       "title": "Travel Journal",
       "description": "Questo è il mio primo utilizzo di React. Nella pagina vengono dinamicamente visualizzati dei dati importati da un file esterno grazie al metodo map() e ai parametri 'props' passati alla componente singola.",
-      "tags": ["React", "Responsive Web Design"],
+      "tags": [
+        "React",
+        "Responsive Web Design"
+      ],
       "image": {
         "src": "../../images/travel-journal.png",
         "alt": "Travel Journal"

@@ -21,20 +21,19 @@
     "navigation": {
       "header": [
         { "label": "Chi Sono", "url": "/#about" },
-        { "label": "Progetti", "url": "/#projects" },
-        { "label": "Contattami", "url": "/#contact" }
+        { "label": "Progetti", "url": "/#projects" }
       ],
       "ctaButton": {
         "openNewTab": true,
-        "label": "Curriculum",
-        "url": "/Emanuele-DelMonte-CV.pdf"
+        "label": "Contattami",
+        "url": "https://www.linkedin.com/in/emanueledelmonte/"
       },
       "footer": [{ "label": "Privacy", "url": "/privacy" }]
     },
     "featureToggles": {
       "useDarkModeAsDefault": false,
       "useDarkModeBasedOnUsersPreference": true,
-      "useCookieBar": false
+      "useCookieBar": true
     }
   }
 }

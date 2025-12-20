@@ -3,8 +3,8 @@ imageSrc: "../../images/charles-deluvio-DgoyKNgPiFQ-unsplash.jpg"
 imageAlt: "Ragazzo al computer"
 ---
 
-Ciao! Sono <u>Emanuele</u> (per gli amici Delmo), mi interesso e studio informatica nel tempo libero e non.
+<u>Passione per l'Ingegneria, Vocazione per il Frontend.</u>
 
-Quasi Dottore in <u>Ingegneria Informatica</u> a “La Sapienza” di Roma, qualche anno fa ho deciso di mettermi alla prova creando contenuti digitali e da quel momento ho capito che potevo unire l'utile al dilettevole ed iniziare un percorso da <u>Web Developer</u>.
+Prossimo alla laurea in <u>Ingegneria Informatica</u> presso l’Università "Mercatorum" di Roma, ho consolidato le mie basi accademiche con un'esperienza professionale di quasi due anni come <u>Frontend Developer</u>. Durante il mio percorso in agenzia, ho lavorato allo sviluppo di <u>CRM</u> e soluzioni e-commerce, imparando l'importanza della manutenibilità del codice in contesti produttivi.
 
-Oltre alla passione per l’innovazione, ho sempre avuto anche quella per la <u>musica</u>. Ho suonato la batteria per oltre 10 anni ma ora mi limito a passare interi pomeriggi ad ascoltare EP che hanno segnato la mia adolescenza.
+Oggi mi dedico all'approfondimento delle architetture frontend più avanzate, con l'obiettivo di contribuire a progetti tecnologici su larga scala. Quando non sono davanti a un terminale, porto con me il senso del ritmo e della precisione sviluppato in oltre dieci anni di studio della batteria.

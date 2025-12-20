@@ -6,11 +6,11 @@
   },
   "title": "Sono Emanuele Del Monte",
   "subtitle": {
-    "prefix": "e risolvo problemi del web in modo ",
-    "highlight": "creativo",
+    "prefix": "e sviluppo soluzioni scalabili come ",
+    "highlight": "Frontend Engineer",
     "suffix": "."
   },
-  "description": "Laureando in Ingegneria Informatica e Junior Front End Developer con la passione per la pizza 🍕",
+  "description": "Progetto e programmo architetture web moderne con un focus particolare sulla robustezza del codice e l'esperienza utente. Laureando in Ingegneria Informatica presso 'Unimercatorum' e specializzato nell'ecosistema Angular & React.",
   "socialProfiles": {
     "from": ["LinkedIn", "Medium", "Github", "Mail"],
     "showIcons": false

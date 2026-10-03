@@ -1,9 +1,9 @@
 {
   "siteMetadata": {
     "language": "it",
-    "siteUrl": "https://gatsby-starter-portfolio-minimal-theme.netlify.app/",
+    "siteUrl": "https://www.emanueledelmonte.it/",
     "title": "Emanuele Del Monte Portfolio",
-    "titleTemplate": "%s · Portfolio Minimal",
+    "titleTemplate": "%s · Emanuele Del Monte",
     "description": "Laureando in Ingegneria Informatica e Junior Front-End Developer",
     "author": "Emanuele Del Monte",
     "avatar": "../content/images/icon1.png",

@@ -21,8 +21,8 @@ import { SeoService } from '../../core/seo/seo.service';
           @if (p.demoUrl) {
             <a class="button button--primary" [href]="p.demoUrl" i18n="@@case.demo">Open the live demo</a>
           }
-          @for (repo of p.repoUrls; track repo) {
-            <a class="button" [href]="repo" i18n="@@case.repo">View the code on GitHub</a>
+          @for (repo of p.repos; track repo.url) {
+            <a class="button" [href]="repo.url">{{ repo.label }}</a>
           }
         </p>
       } @else {

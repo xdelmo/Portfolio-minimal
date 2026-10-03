@@ -17,41 +17,201 @@ export const CONTENT_EN: SiteContent = {
     lede: 'Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate, 2026.',
   },
   about:
-    'I work on enterprise front ends: large tables, server-side filtering, state that has to stay predictable. My thesis, ApexFlow, is a full-stack CRM dashboard built with Angular Signals and Spring Boot.',
+    'Emanuele Del Monte is a Frontend Engineer based in Latina, Italy, who builds enterprise front ends with Angular, Signals and RxJS. I care about the parts users never see but always feel: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.',
+  glance: [
+    { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
+    { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
+    { label: 'Experience', value: 'About 3 years building web front ends' },
+    { label: 'Main stack', value: 'Angular, Signals, RxJS, TypeScript, PrimeNG' },
+    { label: 'Education', value: 'BSc in Computer Engineering, Università Mercatorum, 2026' },
+    { label: 'Availability', value: 'Remote and on-site roles from March 2027' },
+  ],
   projects: [
     {
       slug: 'apexflow',
       title: 'ApexFlow',
-      summary: 'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the front end, Spring Boot 3 and PostgreSQL on the back end.',
+      summary:
+        'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the front end, Spring Boot 3 and PostgreSQL on the back end.',
       stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
-      repoUrls: ['https://github.com/xdelmo/dashboard-tesi', 'https://github.com/xdelmo/backend-tesi'],
+      repos: [
+        { label: 'Front-end code', url: 'https://github.com/xdelmo/dashboard-tesi' },
+        { label: 'Back-end code', url: 'https://github.com/xdelmo/backend-tesi' },
+      ],
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
+      image: {
+        src: 'images/work/apexflow.jpg',
+        alt: 'ApexFlow dashboard with revenue, expense, profit and new-customer totals, a revenue chart and the navigation sidebar',
+        width: 1600,
+        height: 1011,
+      },
+      caseStudy: {
+        context:
+          'For my Computer Engineering thesis I wanted a project that faced real problems, not a toy. ApexFlow simulates a SaaS platform that a tech company would use to manage customers, subscriptions, products and orders, with the constraints of a production system.',
+        architecture: [
+          'Angular 19 single-page app with standalone components and Signals for state.',
+          'PrimeNG for data-heavy components: tables, forms, dialogs and toasts.',
+          'Role-based access with route guards (admin-only settings, profile pages limited to the owner or an admin).',
+          'HTTP interceptors that attach the bearer token and turn API errors into toast notifications in one place.',
+          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; front end on Vercel, back end on Render.',
+        ],
+        decisions: [
+          {
+            title: 'Signals for state, RxJS where time matters',
+            body: 'Authentication state lives in signals, so the components never subscribe or unsubscribe by hand. RxJS stays where it is the right tool: debouncing filters and cancelling stale requests.',
+          },
+          {
+            title: 'Server-side tables with one reusable state class',
+            body: 'A TablePaginationState class keeps page, sort and filters in the URL and bridges signals and observables with toSignal and toObservable. Changing a filter or a page triggers exactly one API call, and every table in the app reuses the same logic.',
+          },
+          {
+            title: 'Spring Boot instead of a JavaScript back end',
+            body: 'NestJS would have kept everything in TypeScript, but Spring Boot is what most enterprise teams run. Making the two worlds talk taught me more than staying in one.',
+          },
+        ],
+        outcome:
+          'I graduated in April 2026 with ApexFlow as my thesis. The live demo has one-click demo accounts for an admin and a regular user.',
+      },
     },
     {
       slug: 'ice-friends-breaker',
       title: 'Ice Friends Breaker',
       summary: 'A social card game to break the ice, installable on phones as a PWA and native app.',
       stack: ['Next.js', 'Supabase', 'Tailwind CSS', 'Capacitor'],
-      repoUrls: ['https://github.com/xdelmo/ice-friends-breaker'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
       demoUrl: 'https://ice-friends-breaker.vercel.app',
+      image: {
+        src: 'images/work/ice-friends-breaker.jpg',
+        alt: 'Ice Friends Breaker on a phone: the daily question card, the streak counter and the bottom navigation',
+        width: 600,
+        height: 1299,
+      },
+      caseStudy: {
+        context:
+          'A card game that gives friends something better to talk about than the weather. It had to feel like a native app on a phone and be quick to build and run on my own.',
+        architecture: [
+          'Next.js 16 with the App Router, Tailwind CSS v4 and shadcn/ui components.',
+          'Supabase for the database and authentication, with an admin panel limited by role.',
+          'Installable as a PWA and packaged for iOS and Android with Capacitor.',
+        ],
+        decisions: [
+          {
+            title: 'One daily question for everyone',
+            body: 'The daily drop is the same for every user and changes every 24 hours, so friends can talk about the same question even when they play apart.',
+          },
+          {
+            title: 'Mobile first, for real',
+            body: 'A bottom navigation bar, dark mode that follows the system and touch-sized controls: the app is designed for the phone and then widened for the desktop.',
+          },
+        ],
+        outcome: 'Live on Vercel, with streaks, multiple game modes and a role-based admin panel to manage questions and categories.',
+      },
     },
     {
       slug: 'mcp-server',
       title: 'MCP Server',
-      summary: 'A Model Context Protocol server and client that lets an LLM read and edit documents through custom tools.',
+      summary:
+        'A Model Context Protocol server and client that lets an LLM read and edit documents through custom tools.',
       stack: ['Python', 'MCP'],
-      repoUrls: ['https://github.com/xdelmo/mcp-server'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/mcp-server' }],
+      caseStudy: {
+        context:
+          'I built this to learn how language models connect to real tools and data with the Model Context Protocol, following the two MCP courses of the Anthropic Academy.',
+        architecture: [
+          'A Python MCP server that exposes tools (read, edit, summarize, research, list roots, read directory), resources and a prompt template.',
+          'A Python client that talks to the server over standard input and output and handles sampling, progress, logging and roots.',
+        ],
+        decisions: [
+          {
+            title: 'Access limited to approved folders',
+            body: 'The directory tool only reads inside the roots the client exposes, so the model cannot wander around the file system.',
+          },
+          {
+            title: 'Keeping deprecated features, on purpose',
+            body: 'Sampling, roots and logging were deprecated in the MCP specification in July 2026. The advanced example keeps them for learning, while the basic example shows the current approach.',
+          },
+        ],
+        outcome: 'A working reference for building MCP integrations, public on GitHub.',
+      },
     },
     {
       slug: 'telegram-bots',
       title: 'Telegram bots',
       summary: 'Three bots I use every day: car deadlines, my Pokémon TCG binder and attendance timesheets.',
-      stack: ['TypeScript', 'Python', 'Telegram Bot API'],
-      repoUrls: [
-        'https://github.com/xdelmo/auto-scadenze-bot',
-        'https://github.com/xdelmo/hoenn-binder',
-        'https://github.com/xdelmo/presenz-lazy-bot',
+      stack: ['TypeScript', 'Python', 'grammY', 'SQLite', 'Docker'],
+      repos: [
+        { label: 'Car deadlines bot', url: 'https://github.com/xdelmo/auto-scadenze-bot' },
+        { label: 'Pokémon binder bot', url: 'https://github.com/xdelmo/hoenn-binder' },
+        { label: 'Timesheet bot', url: 'https://github.com/xdelmo/presenz-lazy-bot' },
       ],
+      caseStudy: {
+        context:
+          'Small personal tools that remove a chore from my week. Each one answers only to me, runs in Docker and keeps its data in SQLite or Excel.',
+        architecture: [
+          'Car deadlines: TypeScript run natively on Node 24 with grammY and node:sqlite; reminders by date and by mileage, expense history and monthly backups.',
+          'Pokémon binder: TypeScript, grammY, SQLite with Drizzle ORM and Vitest; tracks 135 cards and computes page, row and column in the physical binder.',
+          'Timesheet: Python with a weekday schedule that fills an Excel sheet and, once a month, emails it after asking for confirmation.',
+        ],
+        decisions: [
+          {
+            title: 'No chat clutter',
+            body: 'The binder bot edits the same message through inline keyboards instead of sending new ones, so the chat stays readable.',
+          },
+          {
+            title: 'Estimate, then remind',
+            body: 'The car bot learns how many kilometres I drive per month and estimates when I will reach the next service, so reminders arrive before the deadline, not after.',
+          },
+        ],
+        outcome: 'All three run every day on my home server.',
+      },
     },
+  ],
+  experience: [
+    {
+      period: '2026 – present',
+      title: 'Software Engineer, Frontend Specialist',
+      org: 'IPS S.p.A.',
+      summary: 'Enterprise front ends in Angular: data-heavy tables with server-side pagination and filtering, reactive state with Signals and RxJS.',
+    },
+    {
+      period: '2026',
+      title: 'Software engineering intern',
+      org: 'IPS S.p.A.',
+      summary: 'Joined the frontend team while finishing my degree, working on the same problems I then tackled in my thesis.',
+    },
+    {
+      period: '2026',
+      title: 'BSc in Computer Engineering',
+      org: 'Università Mercatorum',
+      summary: 'Graduated in April 2026 with ApexFlow, a full-stack CRM dashboard built with Angular and Spring Boot.',
+    },
+    {
+      period: 'About 2 years',
+      title: 'Frontend Developer',
+      org: 'Web agency',
+      summary: 'CRMs, e-commerce sites and Flexie, a B2B configurator for flexible packaging that handles more than 100 combinations of materials, formats and accessories with real-time pricing.',
+    },
+  ],
+  sideQuests: [
+    {
+      title: 'PokèVerba',
+      summary: 'A daily Pokémon crossword and a personal Pokédex: a WordPress plugin with a React app inside, styled like a Game Boy.',
+      tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
+    },
+    {
+      title: 'MagSafe card holder',
+      summary: 'A 3D-printed holder for one Pokémon card on the back of an iPhone, modelled entirely in Python code with automatic fit checks.',
+      tags: ['Python', 'build123d', '3D printing'],
+    },
+    {
+      title: 'Volkswagen Up storage tray',
+      summary: 'A parametric insert for the door armrest of my car, with a pipeline that goes from code to a ready-to-print file in one command.',
+      tags: ['Python', 'build123d', 'Bambu Studio'],
+    },
+  ],
+  stack: [
+    { name: 'Front end', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Tailwind CSS', 'SCSS'] },
+    { name: 'Back end and data', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Supabase', 'Node.js'] },
+    { name: 'Quality and tooling', items: ['Vitest', 'Playwright', 'ESLint', 'Git', 'Docker'] },
+    { name: 'Also comfortable with', items: ['React', 'Next.js', 'Flutter', 'Python'] },
   ],
 };

@@ -30,7 +30,7 @@ import { SeoService } from '../../core/seo/seo.service';
         </header>
 
         @if (p.image; as image) {
-          <img class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
+          <img class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" sizes="(min-width: 1024px) 960px, 100vw" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
         }
 
         <section id="context" aria-labelledby="context-title">

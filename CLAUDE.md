@@ -32,3 +32,4 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - The whole site must meet WCAG 2.2 AA (spec §11): axe runs with WCAG tags in both themes in the e2e suite.
 - Visual system (8px pixel grid, Instrument Sans, no eyebrow labels or mono metadata) is described in plan 1, section "Sistema visivo".
 - The old Gatsby site lives on `master`; its images can be recovered with `git show master:content/images/<file>`.
+- Project images live in `public/images/work/` as JPEG: the original at full width plus a half-width copy named `<name>-<width/2>.jpg` (`workImageLoader` builds the `srcset` from them). Set `width`/`height` in both content files to the original size.

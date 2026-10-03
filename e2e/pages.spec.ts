@@ -3,7 +3,8 @@ import { expect, test } from '@playwright/test';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
-const PAGES = ['/en/', '/it/', '/en/work/apexflow', '/it/work/apexflow', '/en/404', '/it/404'];
+const SLUGS = ['apexflow', 'ice-friends-breaker', 'mcp-server', 'telegram-bots'];
+const PAGES = ['/en/', '/it/', ...SLUGS.flatMap((s) => [`/en/work/${s}`, `/it/work/${s}`]), '/en/404', '/it/404'];
 
 for (const path of PAGES) {
   test.describe(path, () => {
@@ -57,4 +58,22 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('h1')).toContainText('Angular');
     await expect(page.getByRole('link', { name: 'ApexFlow' })).toBeVisible();
   });
+});
+
+for (const locale of ['en', 'it']) {
+  test(`project images load in the ${locale} build`, async ({ page }) => {
+    await page.goto(`/${locale}/`);
+    const images = page.locator('#work img');
+    await expect(images).toHaveCount(2);
+    for (const img of await images.all()) {
+      await img.scrollIntoViewIfNeeded();
+      await expect.poll(() => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+  });
+}
+
+test('the home page has every section in order', async ({ page }) => {
+  await page.goto('/en/');
+  const ids = await page.locator('main section[id]').evaluateAll((els) => els.map((e) => e.id));
+  expect(ids).toEqual(['work', 'side-quests', 'about', 'experience', 'stack', 'contact']);
 });

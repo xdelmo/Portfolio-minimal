@@ -24,6 +24,8 @@ import { Project } from '../../content/content.model';
             <img
               class="shot"
               [ngSrc]="image.src"
+              [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
+              [loaderParams]="{ full: image.width }"
               [width]="image.width"
               [height]="image.height"
               [alt]="image.alt"

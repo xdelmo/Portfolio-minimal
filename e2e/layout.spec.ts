@@ -6,7 +6,7 @@ for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/en/', '/it/work/apexflow']) {
+    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/telegram-bots', '/it/work/mcp-server']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} at ${String(width)}px`).toBeLessThanOrEqual(0);

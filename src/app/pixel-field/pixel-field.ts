@@ -39,11 +39,13 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
       display: block;
       height: clamp(12rem, 32vw, 22rem);
     }
+    // out of flow: its pixel size must never feed back into the height of the hero rows
     canvas {
+      position: absolute;
+      inset: 0;
       display: block;
       width: 100%;
       height: 100%;
-      touch-action: pan-y;
     }
     .pause {
       position: absolute;
@@ -74,7 +76,7 @@ export class PixelField {
   private ctx: CanvasRenderingContext2D | null = null;
   private grid: FieldLayout | null = null;
   private palette: Palette = { glyph: '', dot: '', lit: [] };
-  private readonly frame: FrameState & { ripples: FrameState['ripples'] } = { t: 0, animate: false, pointer: null, ripples: [] };
+  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [] };
   private visible = true;
   private raf = 0;
   private last = 0;

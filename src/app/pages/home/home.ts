@@ -91,18 +91,20 @@ import { WorkList } from '../../sections/work-list/work-list';
     }
     @include bp.up(lg) {
       .hero {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
         column-gap: var(--space-8);
         align-content: start;
+        padding-top: var(--space-8);
       }
       .hero > :not(.field) {
         grid-column: 1;
       }
+      // beside the whole text block, taking its height instead of stretching it
       .field {
         grid-column: 2;
         grid-row: 1 / span 4;
         height: auto;
-        min-height: 20rem;
+        min-height: 0;
         margin-top: 0;
       }
     }

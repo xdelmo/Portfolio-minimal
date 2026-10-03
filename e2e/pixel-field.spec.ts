@@ -64,11 +64,24 @@ test('stays sharp after the window is resized', async ({ page }) => {
     .toBe(0);
 });
 
-test('never blocks vertical scrolling on touch screens', async ({ page, browserName, hasTouch }) => {
-  test.skip(browserName === 'chromium' && !hasTouch, 'desktop Chromium hides touch-action without touch support');
+test('never blocks scrolling or pinch-zoom on touch screens', async ({ page }) => {
   await page.goto('/en/');
-  expect(await canvas(page).evaluate((c) => getComputedStyle(c).touchAction)).toBe('pan-y');
+  // Chromium reports the default as an empty string, the others as "auto"
+  expect(['', 'auto']).toContain(await canvas(page).evaluate((c) => getComputedStyle(c).touchAction));
 });
+
+for (const [width, height] of [
+  [1024, 768],
+  [1280, 800],
+  [1440, 900],
+] as const) {
+  test(`keeps the hero buttons in the first screen at ${String(width)}×${String(height)}`, async ({ page, isMobile }) => {
+    test.skip(isMobile, 'laptop sizes');
+    await page.setViewportSize({ width, height });
+    await page.goto('/en/');
+    await expect(page.getByRole('link', { name: 'See my work' })).toBeInViewport({ ratio: 1 });
+  });
+}
 
 test('does not shift the layout while it starts', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'layout-shift entries exist only in Chromium');

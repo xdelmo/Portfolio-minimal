@@ -53,7 +53,7 @@ export interface FieldLayout {
 export function layout(width: number, height: number, g: Glyph): FieldLayout {
   const cols = Math.max(1, Math.floor(width / CELL));
   const rows = Math.max(1, Math.floor(height / CELL));
-  const scale = Math.max(1, Math.floor(Math.min((cols * 0.85) / g.width, (rows * 0.7) / g.height)));
+  const scale = Math.max(1, Math.floor(Math.min((cols * 0.95) / g.width, (rows * 0.7) / g.height)));
   const left = Math.floor((cols - g.width * scale) / 2);
   const top = Math.floor((rows - g.height * scale) / 2);
   const mask = new Uint8Array(cols * rows);

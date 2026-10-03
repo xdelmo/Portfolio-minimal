@@ -29,7 +29,7 @@ L'immagine statica `public/images/moai.png` è generata una volta da `scripts/mo
 - Colori dalle variabili CSS (spec §4.3): corpo `--stone`, `--stone-dark`, `--stone-light` (nuovi token, grigi del tema), occhi `--accent`, pukao `--px-6`, muschio `--px-5`. La scena li rilegge al cambio di `data-theme`.
 - Decorativo (spec §9): canvas e immagine con `aria-hidden="true"` e `alt=""`. I controlli (ruota a sinistra e a destra, pausa) sono veri `<button>` con nome localizzato, target 48×48.
 - WCAG 2.2: 2.1.1 e 2.5.7, ogni rotazione da trascinamento ha l'alternativa nei bottoni; 2.2.2, la rotazione automatica su mobile ha la pausa; 2.3.1, nessun lampeggio; con `prefers-reduced-motion` niente scena, solo l'immagine.
-- Robustezza (spec §11): ogni passo della scena è in `try/catch`. Eccezioni, `webglcontextlost` e pacchetto non scaricato portano all'immagine statica. Su touch `touch-action: pan-y`, niente trascinamento né `preventDefault`. DPR massimo 2 su desktop e 1.5 su mobile. Alla distruzione si rilasciano geometria, materiale e contesto WebGL.
+- Robustezza (spec §11): ogni passo della scena è in `try/catch`. Eccezioni, `webglcontextlost` e pacchetto non scaricato portano all'immagine statica. Su touch nessun `touch-action` sul canvas (scroll e pinch-zoom devono passare), niente trascinamento né `preventDefault`. DPR massimo 2 su desktop e 1.5 su mobile. Alla distruzione si rilasciano geometria, materiale e contesto WebGL.
 - CLS = 0: immagine, segnaposto e scena hanno lo stesso `aspect-ratio`, fissato da CSS.
 - Messaggi di commit conventional commits, chiusi da:
   `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` e `Claude-Session: https://claude.ai/code/session_014t4Wg7xppYvDZKWdUJ4WtA`.
@@ -642,7 +642,6 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
       display: block;
       width: 100%;
       height: 100%;
-      touch-action: pan-y;
     }
     .controls {
       position: absolute;
@@ -1248,13 +1247,12 @@ test('releases WebGL when leaving and coming back many times', async ({ page }) 
   expect(errors).toEqual([]);
 });
 
-test('never blocks vertical scrolling on touch screens', async ({ page, browserName, hasTouch }) => {
-  test.skip(browserName === 'chromium' && !hasTouch, 'desktop Chromium hides touch-action without touch support');
+test('never blocks scrolling or pinch-zoom on touch screens', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('#about').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  expect(await scene(page).evaluate((c) => getComputedStyle(c).touchAction)).toBe('pan-y');
+  expect(['', 'auto']).toContain(await scene(page).evaluate((c) => getComputedStyle(c).touchAction));
 });
 
 test.describe('with reduced motion', () => {

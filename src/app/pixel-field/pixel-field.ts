@@ -186,7 +186,8 @@ export class PixelField {
   }
 
   private stop(): void {
-    cancelAnimationFrame(this.raf);
+    // the server destroys components too, and has no animation frames
+    if (this.raf) cancelAnimationFrame(this.raf);
     this.raf = 0;
     this.cleanups.splice(0).forEach((cleanup) => {
       cleanup();

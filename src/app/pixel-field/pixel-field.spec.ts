@@ -34,4 +34,15 @@ describe('PixelField', () => {
     expect(el.querySelector('button')).toBeNull();
     vi.unstubAllGlobals();
   });
+
+  it('can be destroyed where requestAnimationFrame does not exist, as on the server', async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    const fixture = TestBed.createComponent(PixelField);
+    await fixture.whenStable();
+    vi.stubGlobal('cancelAnimationFrame', undefined);
+    expect(() => {
+      fixture.destroy();
+    }).not.toThrow();
+    vi.unstubAllGlobals();
+  });
 });

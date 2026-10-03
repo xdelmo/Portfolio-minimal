@@ -65,9 +65,15 @@ for (const locale of ['en', 'it']) {
     await page.goto(`/${locale}/`);
     const images = page.locator('#work img');
     await expect(images).toHaveCount(2);
-    for (const img of await images.all()) {
-      await img.scrollIntoViewIfNeeded();
-      await expect.poll(() => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    for (let i = 0; i < 2; i++) {
+      // re-resolve on every attempt: WebKit can swap the element while hydrating
+      await expect
+        .poll(async () => {
+          const img = images.nth(i);
+          await img.scrollIntoViewIfNeeded();
+          return img.evaluate((el) => (el as HTMLImageElement).naturalWidth);
+        })
+        .toBeGreaterThan(0);
     }
   });
 }

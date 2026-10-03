@@ -54,9 +54,9 @@ function noise(x: number, y: number, z: number): number {
 
 export function moaiVoxels(): Voxel[] {
   const voxels: Voxel[] = [];
-  for (let y = MOAI_BOUNDS.minY; y <= MOAI_BOUNDS.maxY; y++) {
-    for (let z = MOAI_BOUNDS.minZ; z <= MOAI_BOUNDS.maxZ; z++) {
-      for (let x = MOAI_BOUNDS.minX; x <= MOAI_BOUNDS.maxX; x++) {
+  for (let y: number = MOAI_BOUNDS.minY; y <= MOAI_BOUNDS.maxY; y++) {
+    for (let z: number = MOAI_BOUNDS.minZ; z <= MOAI_BOUNDS.maxZ; z++) {
+      for (let x: number = MOAI_BOUNDS.minX; x <= MOAI_BOUNDS.maxX; x++) {
         const base = moaiCell(x, y, z);
         if (!base) continue;
         let color: VoxelColor = base;

@@ -4,11 +4,12 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { personJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
+import { WorkList } from '../../sections/work-list/work-list';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, WorkList],
   template: `
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
@@ -22,14 +23,7 @@ import { SeoService } from '../../core/seo/seo.service';
 
     <section id="work" class="section container" aria-labelledby="work-title">
       <h2 id="work-title" i18n="@@home.work.title">Selected work</h2>
-      <ul class="projects">
-        @for (project of content.projects; track project.slug) {
-          <li>
-            <h3><a [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
-            <p>{{ project.summary }}</p>
-          </li>
-        }
-      </ul>
+      <app-work-list [projects]="content.projects" />
     </section>
 
     <section id="about" class="section container" aria-labelledby="about-title">
@@ -72,20 +66,6 @@ import { SeoService } from '../../core/seo/seo.service';
       gap: var(--space-4);
       padding-block: var(--space-12);
       scroll-margin-top: var(--space-2);
-    }
-    .projects {
-      display: grid;
-      gap: var(--space-6);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .projects li {
-      display: grid;
-      gap: var(--space-1);
-    }
-    .projects a {
-      color: var(--fg);
     }
   `,
 })

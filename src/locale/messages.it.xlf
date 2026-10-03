@@ -82,14 +82,6 @@
           <context context-type="linenumber">21,23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="case.repo" datatype="html">
-        <source>View the code on GitHub</source>
-        <target>Vedi il codice su GitHub</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
-          <context context-type="linenumber">24,26</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="case.notFound" datatype="html">
         <source>Project not found</source>
         <target>Progetto non trovato</target>
@@ -172,6 +164,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
           <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="work.stack" datatype="html">
+        <source>Technologies</source>
+        <target>Tecnologie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/sections/work-list/work-list.ts</context>
+          <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
     </body>

@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm start` — dev server (English build) at http://localhost:4200
 - `npm run start:it` — dev server, Italian build
 - `npm run build` — static prerender of both locales into `dist/portfolio/browser/{en,it}` + sitemap/robots
+- `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint, template a11y), zero warnings allowed
 - `npx ng test --no-watch` — unit tests (Vitest); one file: `npx ng test --no-watch --include src/app/core/theme/theme.spec.ts`
 - `npm run e2e` — Playwright against the built site (run `npm run build` first); one test: `npx playwright test e2e/theme.spec.ts --project=chromium`
 - `npm run lhci` — Lighthouse CI against the built site

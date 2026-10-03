@@ -11,6 +11,8 @@ describe('content', () => {
   });
 
   it('translates every summary', () => {
-    CONTENT_EN.projects.forEach((p, i) => expect(CONTENT_IT.projects[i].summary).not.toBe(p.summary));
+    CONTENT_EN.projects.forEach((p, i) => {
+      expect(CONTENT_IT.projects[i].summary).not.toBe(p.summary);
+    });
   });
 });

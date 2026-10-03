@@ -16,6 +16,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - run: npm run lint
       - run: npx ng test --no-watch
       - run: npm run test:scripts
       - run: npm run build

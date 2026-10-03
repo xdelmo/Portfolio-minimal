@@ -15,7 +15,8 @@ export class ThemeService {
     if (!this.win) return;
     const stored = readStoredTheme(this.storage());
     this.explicitChoice = stored === 'light' || stored === 'dark';
-    const query = this.win.matchMedia?.('(prefers-color-scheme: dark)');
+    // matchMedia is missing in some non-browser environments (e.g. jsdom)
+    const query = typeof this.win.matchMedia === 'function' ? this.win.matchMedia('(prefers-color-scheme: dark)') : null;
     this.apply(resolveTheme(stored, query?.matches ?? false));
     query?.addEventListener('change', (event) => {
       if (!this.explicitChoice) this.apply(event.matches ? 'dark' : 'light');

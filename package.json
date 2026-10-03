@@ -11,7 +11,8 @@
     "i18n:extract": "ng extract-i18n --output-path src/locale",
     "test:scripts": "node --test scripts/*.test.mjs",
     "e2e": "playwright test",
-    "lhci": "lhci autorun"
+    "lhci": "lhci autorun",
+    "lint": "ng lint --max-warnings=0"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -34,13 +35,17 @@
     "@angular/compiler-cli": "^22.2.0",
     "@angular/localize": "^22.2.1",
     "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^22.12.0",
+    "angular-eslint": "22.5.0",
+    "eslint": "^10.9.1",
     "http-server": "^14.1.1",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
+    "typescript-eslint": "8.69.0",
     "vitest": "^5.0.0"
   }
 }

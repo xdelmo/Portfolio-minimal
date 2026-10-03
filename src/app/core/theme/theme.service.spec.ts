@@ -31,7 +31,9 @@ describe('ThemeService', () => {
     });
     const service = TestBed.inject(ThemeService);
     const before = service.theme();
-    expect(() => service.toggle()).not.toThrow();
+    expect(() => {
+      service.toggle();
+    }).not.toThrow();
     expect(service.theme()).not.toBe(before);
   });
 });

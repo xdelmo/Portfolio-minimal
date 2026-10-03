@@ -30,7 +30,9 @@ export class SeoService {
     this.meta.updateTag({ property: 'og:locale:alternate', content: this.locale === 'it' ? 'en_US' : 'it_IT' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
 
-    this.doc.head.querySelectorAll('link[data-seo]').forEach((el) => el.remove());
+    this.doc.head.querySelectorAll('link[data-seo]').forEach((el) => {
+      el.remove();
+    });
     if (page.noindex) return;
     for (const link of headLinks(page.path, this.locale)) {
       const el = this.doc.createElement('link');

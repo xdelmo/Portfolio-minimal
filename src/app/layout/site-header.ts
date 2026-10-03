@@ -8,7 +8,7 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, LanguageSwitch, ThemeToggle],
   template: `
-    <a class="skip-link" href="#main" i18n="@@a11y.skip">Skip to content</a>
+    <a class="skip-link" href="#main" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home">edm.</a>
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
@@ -60,4 +60,10 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
     }
   `,
 })
-export class SiteHeader {}
+export class SiteHeader {
+  // <base href="/en/"> would resolve "#main" to the home page, so move focus in place instead.
+  skipToMain(event: Event): void {
+    event.preventDefault();
+    document.getElementById('main')?.focus();
+  }
+}

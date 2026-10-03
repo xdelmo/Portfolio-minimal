@@ -14,12 +14,17 @@ for (const width of WIDTHS) {
   });
 }
 
-test('keyboard users can skip to the content', async ({ page, browserName }) => {
-  test.skip(browserName === 'webkit', 'Safari does not Tab to links by default');
-  await page.goto('/en/');
-  await page.keyboard.press('Tab');
-  const skip = page.getByRole('link', { name: 'Skip to content' });
-  await expect(skip).toBeFocused();
-  await skip.press('Enter');
-  await expect(page).toHaveURL(/#main$/);
-});
+for (const path of ['/en/', '/en/work/apexflow']) {
+  test(`keyboard users can skip to the content on ${path}`, async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'Safari does not Tab to links by default');
+    await page.goto(path);
+    const heading = await page.locator('h1').textContent();
+    await page.keyboard.press('Tab');
+    const skip = page.getByRole('link', { name: 'Skip to content' });
+    await expect(skip).toBeFocused();
+    await skip.press('Enter');
+    await expect(page.locator('main')).toBeFocused();
+    await expect(page).toHaveURL(new RegExp(`${path}$`));
+    await expect(page.locator('h1')).toHaveText(heading ?? '');
+  });
+}

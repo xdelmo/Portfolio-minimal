@@ -185,6 +185,18 @@ export const CONTENT_EN: SiteContent = {
       summary: 'Graduated in April 2026 with ApexFlow, a full-stack CRM dashboard built with Angular and Spring Boot.',
     },
     {
+      period: '2026',
+      title: 'Flutter Bootcamp',
+      org: 'Udemy',
+      summary: 'Certificate in building cross-platform mobile apps with Flutter and Dart.',
+    },
+    {
+      period: '2026',
+      title: 'Agile Masterclass',
+      org: 'BIP × Joinrs',
+      summary: 'Certificate in Agile ways of working. I won the final quiz.',
+    },
+    {
       period: 'About 2 years',
       title: 'Frontend Developer',
       org: 'Web agency',

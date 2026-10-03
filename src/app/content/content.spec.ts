@@ -25,6 +25,17 @@ describe('content', () => {
       expect(it.caseStudy.decisions.length).toBe(en.caseStudy.decisions.length);
       expect(it.caseStudy.context).not.toBe(en.caseStudy.context);
       expect(it.repos.map((r) => r.url)).toEqual(en.repos.map((r) => r.url));
+      it.repos.forEach((repo, j) => {
+        expect(repo.label).not.toBe(en.repos[j].label);
+      });
+      expect(it.caseStudy.outcome).not.toBe(en.caseStudy.outcome);
+      const texts = [
+        it.caseStudy.context,
+        it.caseStudy.outcome,
+        ...it.caseStudy.architecture,
+        ...it.caseStudy.decisions.flatMap((d) => [d.title, d.body]),
+      ];
+      for (const text of texts) expect(text.trim()).not.toBe('');
     });
   });
 

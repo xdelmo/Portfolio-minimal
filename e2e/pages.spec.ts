@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
 const PAGES = ['/en/', '/it/', '/en/work/apexflow', '/it/work/apexflow', '/en/404', '/it/404'];
 
 for (const path of PAGES) {
@@ -16,11 +18,14 @@ for (const path of PAGES) {
       expect(errors).toEqual([]);
     });
 
-    test('has no accessibility violations', async ({ page }) => {
-      await page.goto(path);
-      const results = await new AxeBuilder({ page }).analyze();
-      expect(results.violations).toEqual([]);
-    });
+    for (const colorScheme of ['light', 'dark'] as const) {
+      test(`meets WCAG 2.2 AA in the ${colorScheme} theme (axe)`, async ({ page }) => {
+        await page.emulateMedia({ colorScheme });
+        await page.goto(path);
+        const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+        expect(results.violations).toEqual([]);
+      });
+    }
   });
 }
 

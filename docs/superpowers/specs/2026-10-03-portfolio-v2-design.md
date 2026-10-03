@@ -196,14 +196,23 @@ Regole:
 - **`prefers-reduced-motion`:** niente Lenis, pin o esplosione. Pixel field come immagine statica, moai come immagine statica pre-renderizzata. Stesso contenuto.
 - **Layout fluido** 320–2560 px, nessuno scroll orizzontale.
 - **Browser supportati:** ultime 2 versioni di Chrome, Edge, Firefox e Safari; iOS Safari 16+.
-- **Accessibilità:** focus visibile, navigazione completa da tastiera, contrasti di §4.1, elementi decorativi `aria-hidden`.
+- **Accessibilità — conformità WCAG 2.2 livello AA su tutto il sito** (ogni pagina, entrambe le lingue, entrambi i temi, desktop e mobile). Requisito vincolante: nessuna funzionalità può essere rilasciata se viola un criterio A o AA. In particolare:
+  - **1.4.3 / 1.4.11** contrasto testo ≥ 4.5:1 (≥ 3:1 per testo grande) e componenti/indicatori di focus ≥ 3:1, verificati in light e dark (§4.1);
+  - **1.4.10 Reflow** a 320 px senza scroll orizzontale; **1.4.12 Text spacing** senza perdita di contenuto; **1.4.4** zoom al 200%;
+  - **2.1.1 / 2.1.2** tutto usabile da tastiera, nessuna trappola (anche il moai: rotazione da tastiera o alternativa statica); **2.4.1** link "Vai al contenuto"; **2.4.3** ordine del focus logico;
+  - **2.4.7 / 2.4.11 / 2.4.13** focus sempre visibile e mai coperto da header fissi o animazioni;
+  - **2.2.2 Pausa, stop, nascondi**: le animazioni automatiche che durano più di 5 secondi (pixel field, moai) hanno un controllo per fermarle, oltre al rispetto di `prefers-reduced-motion`; **2.3.1** niente lampeggi;
+  - **2.5.7 Dragging**: ogni azione di trascinamento ha un'alternativa senza trascinamento; **2.5.8 Target size** ≥ 24×24 px (obiettivo interno 48×48 per i controlli principali);
+  - **1.1.1** testo alternativo per immagini significative, elementi decorativi `aria-hidden`; **1.3.1** landmark e titoli strutturati; **3.1.1 / 3.1.2** `lang` della pagina e delle parti in altra lingua; **4.1.2** nome, ruolo e valore di ogni controllo;
+  - **3.2.3 / 3.2.4** navigazione e nomi coerenti tra le pagine e tra le lingue.
 
 ## 12. Obiettivi misurabili (criteri di accettazione)
 
 - **Lighthouse mobile, ogni pagina, entrambe le lingue:** SEO 100 · Accessibilità 100 · Best Practices 100 · Performance ≥ 95.
 - **JavaScript iniziale** < 150 KB gzip (Three.js e GSAP in pacchetti differiti).
 - **Core Web Vitals:** CLS = 0, LCP sul titolo dell'hero.
-- **axe:** 0 violazioni.
+- **axe:** 0 violazioni con i tag `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`, in light e in dark.
+- **Verifica manuale WCAG 2.2 AA** prima del lancio: navigazione completa da tastiera, VoiceOver (macOS e iOS), zoom 200%, text spacing, `prefers-reduced-motion`; checklist nel piano di lancio.
 - **Nessun errore in console** su tutti i browser della matrice di test.
 - **`npm run lint`** (ESLint strict) senza errori né warning.
 

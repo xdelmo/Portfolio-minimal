@@ -2505,3 +2505,141 @@ git push
 ```
 
 Se non ci sono state correzioni, salta il commit.
+
+---
+
+### Task 9: ESLint in strict mode
+
+Aggiunto su richiesta di Emanuele durante l'esecuzione (spec §2 "Qualità del codice").
+
+**Files:**
+- Create: `eslint.config.js` (generato da `ng add angular-eslint`, poi reso strict)
+- Modify: `angular.json` (target `lint`), `package.json` (script `lint`), `.github/workflows/ci.yml`, `CLAUDE.md`, file sorgente che violano le regole
+
+**Interfaces:**
+- Consumes: tutto il codice dei Task 1–7.
+- Produces: `npm run lint` = `ng lint --max-warnings=0`; step `npm run lint` in CI prima dei test.
+
+- [ ] **Step 1: Aggiungi angular-eslint**
+
+Run: `npx ng add angular-eslint --skip-confirmation`
+Expected: `eslint.config.js` creato, target `lint` in `angular.json`.
+
+- [ ] **Step 2: Rendi la configurazione strict e type-aware**
+
+In `eslint.config.js`, nel blocco dei file `**/*.ts`:
+- sostituisci `tseslint.configs.recommended` con `tseslint.configs.strictTypeChecked` e `tseslint.configs.stylistic` con `tseslint.configs.stylisticTypeChecked`;
+- aggiungi `languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } }`;
+- mantieni `angular.configs.tsRecommended` e le regole `@angular-eslint/directive-selector` / `component-selector` con prefisso `app`;
+- aggiungi `'@angular-eslint/prefer-on-push-component-change-detection': 'error'`.
+
+Nel blocco dei file `**/*.html`: `angular.configs.templateRecommended` e `angular.configs.templateAccessibility`.
+
+Aggiungi in testa un blocco `{ ignores: ['dist/', '.angular/', 'coverage/', '.lighthouseci/', 'playwright-report/', 'test-results/'] }`. I file `e2e/**/*.ts`, `playwright.config.ts` e `scripts/**/*.mjs` sono lintati con le stesse regole TypeScript dove applicabili (gli `.mjs` con `tseslint.configs.disableTypeChecked`).
+
+- [ ] **Step 3: Verifica che la configurazione sia davvero strict (RED)**
+
+Crea `src/app/lint-probe.ts`:
+
+```ts
+export function probe(value: any) {
+  return value!;
+}
+```
+
+Run: `npx ng lint`
+Expected: errori `@typescript-eslint/no-explicit-any` e `@typescript-eslint/no-unsafe-return` (o `no-non-null-assertion`) su `lint-probe.ts`. Poi elimina il file.
+
+- [ ] **Step 4: Correggi il codice esistente (GREEN)**
+
+Run: `npx ng lint --max-warnings=0`
+Correggi ogni violazione nel codice, non disattivando le regole. Una regola si può spegnere solo per un file preciso e con un commento che spiega perché (es. `no-non-null-assertion` nei test).
+
+Expected finale: `All files pass linting.`
+
+- [ ] **Step 5: Script, CI e documentazione**
+
+`package.json`: `"lint": "ng lint --max-warnings=0"`. In `.github/workflows/ci.yml` aggiungi `- run: npm run lint` subito dopo `npm ci`. In `CLAUDE.md`, tra i comandi: ``- `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint), zero warnings allowed``.
+
+- [ ] **Step 6: Suite completa e commit**
+
+Run: `npm run lint && npx ng test --no-watch && npm run test:scripts && npm run build && npm run e2e`
+Expected: tutto verde.
+
+```bash
+git add -A
+git commit -m "chore: add strict ESLint (typescript-eslint strictTypeChecked + angular-eslint)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+```
+
+---
+
+### Task 10: Da CSS a SCSS
+
+Aggiunto su richiesta di Emanuele durante l'esecuzione (spec §2 "Stili").
+
+**Files:**
+- Rename: `src/styles.css` → `src/styles.scss`, `src/styles/tokens.css` → `src/styles/_tokens.scss`, `src/styles/base.css` → `src/styles/_base.scss`, `src/app/app.css` → `src/app/app.scss`
+- Create: `src/styles/_breakpoints.scss`
+- Modify: `angular.json`, `src/app/app.ts`, componenti con media query
+
+**Interfaces:**
+- Consumes: token e classi del Task 2.
+- Produces: mixin `@include bp.up(md)` (768 px) da `src/styles/_breakpoints.scss`; nuovi componenti generati con stili SCSS.
+
+- [ ] **Step 1: Configura Angular per SCSS**
+
+In `angular.json`: `projects.portfolio.schematics` = `{ "@schematics/angular:component": { "style": "scss" } }`; in `architect.build.options` `"inlineStyleLanguage": "scss"` e `"styles": ["src/styles.scss"]`; idem nel target `test` se ha una lista `styles`.
+
+- [ ] **Step 2: Rinomina i file globali e usa `@use`**
+
+```bash
+git mv src/styles.css src/styles.scss
+git mv src/styles/tokens.css src/styles/_tokens.scss
+git mv src/styles/base.css src/styles/_base.scss
+git mv src/app/app.css src/app/app.scss
+```
+
+`src/styles.scss`:
+
+```scss
+@use '@fontsource-variable/instrument-sans/wdth.css';
+@use 'styles/tokens';
+@use 'styles/base';
+```
+
+In `src/app/app.ts`: `styleUrl: './app.scss'`.
+
+- [ ] **Step 3: Mixin dei breakpoint `src/styles/_breakpoints.scss`**
+
+```scss
+$breakpoints: (
+  md: 768px,
+  lg: 1024px,
+);
+
+@mixin up($name) {
+  @media (min-width: map-get($breakpoints, $name)) {
+    @content;
+  }
+}
+```
+
+Sostituisci le media query `(min-width: 768px)` in `_tokens.scss` e in `site-header.ts` con `@include bp.up(md) { … }` (`@use '../styles/breakpoints' as bp;` nei componenti; nei file globali `@use 'breakpoints' as bp;`). Se `@use` con percorso relativo dentro gli stili inline dei componenti non risolve, aggiungi `"stylePreprocessorOptions": { "includePaths": ["src"] }` e usa `@use 'styles/breakpoints' as bp;`.
+
+- [ ] **Step 4: Verifica che l'output non cambi**
+
+Run: `npm run build && grep -o "font-stretch:[^;}]*" dist/portfolio/browser/en/styles-*.css | head -1 && npm run e2e && npm run lhci`
+Expected: build verde, `font-stretch:75% 100%`, e2e e Lighthouse verdi come prima (nessuna regressione visiva: confronta uno screenshot della home a 375 e 1440 px con quelli del Task 5).
+
+- [ ] **Step 5: Aggiorna CLAUDE.md e commit**
+
+In `CLAUDE.md` sostituisci `src/styles/tokens.css` con `src/styles/_tokens.scss` e aggiungi alle convenzioni: "Styles are SCSS (`inlineStyleLanguage: scss`); colors stay CSS custom properties because the theme switches them at runtime; use `@include bp.up(md)` from `src/styles/_breakpoints.scss` for breakpoints."
+
+```bash
+git add -A
+git commit -m "refactor: switch styles from CSS to SCSS
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+```

@@ -20,6 +20,8 @@ Sostituire il sito attuale (Gatsby + `gatsby-theme-portfolio-minimal`) con un po
 | Tema | Decisione |
 |---|---|
 | Framework | Ultima versione stabile di Angular (da verificare allo scaffolding), standalone, zoneless, Signals, `@angular/ssr` in modalità di output statica (prerender) |
+| Stili | **SCSS** (non CSS) per stili globali e di componente; i token restano variabili CSS custom (servono a runtime per il tema), SCSS si usa per partial, mixin e breakpoint |
+| Qualità del codice | **ESLint in strict mode** su tutto il progetto: `angular-eslint` + `typescript-eslint` con le configurazioni `strictTypeChecked` e `stylisticTypeChecked`, regole template e accessibilità di Angular; `npm run lint` senza errori né warning è un criterio di accettazione e gira in CI |
 | Hosting | Netlify, dominio `www.emanueledelmonte.it` |
 | Repo | Stesso repo, branch `v2`; il sito Gatsby resta online fino al merge su `master` |
 | Lingue | IT + EN, rilevamento dalla lingua del browser + selettore manuale |
@@ -203,6 +205,7 @@ Regole:
 - **Core Web Vitals:** CLS = 0, LCP sul titolo dell'hero.
 - **axe:** 0 violazioni.
 - **Nessun errore in console** su tutti i browser della matrice di test.
+- **`npm run lint`** (ESLint strict) senza errori né warning.
 
 ## 13. Test
 

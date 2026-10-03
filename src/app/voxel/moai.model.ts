@@ -34,7 +34,7 @@ export function moaiCell(x: number, y: number, z: number): VoxelColor | null {
     if (ax === 5) return y >= 11 && y <= 18 && (z === -1 || z === 0) ? 'stoneDark' : null; // long ears
     if (z <= 3) return z === 3 && y >= 15 && y <= 16 && ax >= 2 && ax <= 3 ? 'eye' : 'stone';
     if (z === 4) {
-      if (y >= 18 && y <= 19) return 'stoneLight'; // heavy brow
+      if (y >= 18 && y <= 19 && ax <= 3) return 'stoneLight'; // heavy brow
       if (ax === 0 && y >= 11) return 'stoneLight'; // long nose
       if (ax === 1 && y === 11) return 'stoneLight'; // nostrils
       if (y === 10 && ax <= 2) return 'stoneDark'; // pursed lips
@@ -43,7 +43,7 @@ export function moaiCell(x: number, y: number, z: number): VoxelColor | null {
     return ax === 0 && y >= 11 && y <= 13 ? 'stoneLight' : null; // tip of the nose (z = 5)
   }
   if (y <= 21) return ax <= 3 && az <= 2 ? 'stone' : null; // crown
-  return x * x + z * z <= 9 ? 'pukao' : null; // pukao (y 22–24)
+  return x * x + z * z <= 10 ? 'pukao' : null; // pukao (y 22–24)
 }
 
 /** Deterministic noise in [0, 1) for moss and weathering. */
@@ -63,7 +63,7 @@ export function moaiVoxels(): Voxel[] {
         if (base === 'stone') {
           const n = noise(x, y, z);
           if (moaiCell(x, y + 1, z) === null && n < 0.3) color = 'moss';
-          else if (n > 0.86) color = 'stoneLight';
+          else if (n > 0.93) color = 'stoneLight';
         }
         voxels.push({ x, y, z, color });
       }

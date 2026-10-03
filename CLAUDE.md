@@ -33,3 +33,4 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - Visual system (8px pixel grid, Instrument Sans, no eyebrow labels or mono metadata) is described in plan 1, section "Sistema visivo".
 - The old Gatsby site lives on `master`; its images can be recovered with `git show master:content/images/<file>`.
 - Project images live in `public/images/work/` as JPEG: the original at full width plus a half-width copy named `<name>-<width/2>.jpg` (`workImageLoader` builds the `srcset` from them). Set `width`/`height` in both content files to the original size.
+- Fonts: `src/styles/_fonts.scss` declares Instrument Sans from `@fontsource-variable` with `font-display: optional`, and `scripts/postbuild.mjs` injects a `<link rel="preload">` for the latin file into every page. Together they keep CLS at 0; do not switch back to the package CSS (it uses `swap`).

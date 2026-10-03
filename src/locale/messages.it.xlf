@@ -254,6 +254,22 @@
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="field.pause" datatype="html">
+        <source>Pause the pixel animation</source>
+        <target>Metti in pausa l'animazione dei pixel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pixel-field/pixel-field.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="field.play" datatype="html">
+        <source>Play the pixel animation</source>
+        <target>Riprendi l'animazione dei pixel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pixel-field/pixel-field.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

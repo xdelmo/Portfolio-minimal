@@ -4,6 +4,7 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { personJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
+import { PixelField } from '../../pixel-field/pixel-field';
 import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
 import { ExperienceTimeline } from '../../sections/experience-timeline/experience-timeline';
 import { SideQuests } from '../../sections/side-quests/side-quests';
@@ -13,7 +14,7 @@ import { WorkList } from '../../sections/work-list/work-list';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList],
+  imports: [RouterLink, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList],
   template: `
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
@@ -23,6 +24,7 @@ import { WorkList } from '../../sections/work-list/work-list';
         <a class="button button--primary" routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
         <a class="button" routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
+      <app-pixel-field class="field" />
     </section>
 
     <section id="work" class="section container" aria-labelledby="work-title">
@@ -61,6 +63,8 @@ import { WorkList } from '../../sections/work-list/work-list';
     </section>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
+
     .hero {
       display: grid;
       gap: var(--space-3);
@@ -81,6 +85,26 @@ import { WorkList } from '../../sections/work-list/work-list';
       flex-wrap: wrap;
       gap: var(--space-2);
       margin-top: var(--space-2);
+    }
+    .field {
+      margin-top: var(--space-6);
+    }
+    @include bp.up(lg) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: var(--space-8);
+        align-content: start;
+      }
+      .hero > :not(.field) {
+        grid-column: 1;
+      }
+      .field {
+        grid-column: 2;
+        grid-row: 1 / span 4;
+        height: auto;
+        min-height: 20rem;
+        margin-top: 0;
+      }
     }
     .section {
       display: grid;

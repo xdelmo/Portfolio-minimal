@@ -65,7 +65,7 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
         ctx.fillStyle = p.glyph;
         ctx.fillRect(x - DOT / 2, y - DOT / 2, DOT, DOT);
       } else {
-        const e = Math.max(energy, wave(col, row, t) ** 4 * waveIn);
+        const e = Math.max(energy, 0.6 * wave(col, row, t) ** 10 * waveIn);
         const size = DOT * (0.25 + 0.75 * e);
         ctx.globalAlpha = REST_ALPHA + (1 - REST_ALPHA) * e;
         ctx.fillStyle = e > 0.05 ? p.lit[Math.floor(hash(i + 3) * p.lit.length)] : p.dot;

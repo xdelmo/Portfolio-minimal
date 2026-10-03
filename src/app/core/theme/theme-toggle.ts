@@ -10,7 +10,7 @@ import { ThemeService } from './theme.service';
         @if (themes.theme() === 'dark') {
           <path fill="currentColor" d="M3 0h2v1H3zM3 7h2v1H3zM0 3h1v2H0zM7 3h1v2H7zM1 1h1v1H1zM6 1h1v1H6zM1 6h1v1H1zM6 6h1v1H6zM2 2h4v4H2z" />
         } @else {
-          <path fill="currentColor" d="M3 0h3v1H3zM2 1h2v1H2zM1 2h2v4H1zM2 6h2v1H2zM3 7h3v1H3zM6 6h1v1H6zM3 5h4v1H3z" />
+          <path fill="currentColor" d="M2 0h4v1H2zM1 1h2v1H1zM0 2h2v4H0zM1 6h2v1H1zM6 6h2v1H6zM2 7h5v1H2z" />
         }
       </svg>
     </button>

@@ -2,6 +2,178 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" target-language="it" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="theme.toLight" datatype="html">
+        <source>Switch to light theme</source>
+        <target>Passa al tema chiaro</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/theme/theme-toggle.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="theme.toDark" datatype="html">
+        <source>Switch to dark theme</source>
+        <target>Passa al tema scuro</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/theme/theme-toggle.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a11y.skip" datatype="html">
+        <source>Skip to content</source>
+        <target>Vai al contenuto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.home" datatype="html">
+        <source>Emanuele Del Monte, home</source>
+        <target>Emanuele Del Monte, home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.label" datatype="html">
+        <source>Main</source>
+        <target>Principale</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.work" datatype="html">
+        <source>Work</source>
+        <target>Progetti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.about" datatype="html">
+        <source>About</source>
+        <target>Chi sono</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.contact" datatype="html">
+        <source>Contact</source>
+        <target>Contatti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.stack" datatype="html">
+        <source>Technologies</source>
+        <target>Tecnologie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.demo" datatype="html">
+        <source>Open the live demo</source>
+        <target>Apri la demo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.repo" datatype="html">
+        <source>View the code on GitHub</source>
+        <target>Vedi il codice su GitHub</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.notFound" datatype="html">
+        <source>Project not found</source>
+        <target>Progetto non trovato</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.home" datatype="html">
+        <source>Go to the home page</source>
+        <target>Vai alla home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">29,31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">12,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.cta.work" datatype="html">
+        <source>See my work</source>
+        <target>Guarda i progetti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.cta.contact" datatype="html">
+        <source>Contact me</source>
+        <target>Scrivimi</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">16,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.work.title" datatype="html">
+        <source>Selected work</source>
+        <target>Progetti selezionati</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.about.title" datatype="html">
+        <source>About</source>
+        <target>Chi sono</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">33,34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.contact.title" datatype="html">
+        <source>Get in touch</source>
+        <target>Contatti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">38,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.contact.cv" datatype="html">
+        <source>CV available on request.</source>
+        <target>CV disponibile su richiesta.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">42,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.title" datatype="html">
+        <source>This page doesn&apos;t exist</source>
+        <target>Questa pagina non esiste</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.text" datatype="html">
+        <source>The link may be old or mistyped.</source>
+        <target>Il link potrebbe essere vecchio o scritto male.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

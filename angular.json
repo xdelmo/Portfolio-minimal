@@ -24,14 +24,20 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"],
+            "styles": [
+              "src/styles.css"
+            ],
             "server": "src/main.server.ts",
             "outputMode": "static",
             "security": {
               "allowedHosts": []
             },
             "outputPath": "dist/portfolio",
-            "polyfills": ["@angular/localize/init"]
+            "polyfills": [
+              "@angular/localize/init"
+            ],
+            "localize": true,
+            "i18nMissingTranslation": "error"
           },
           "configurations": {
             "production": {
@@ -52,7 +58,18 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "localize": [
+                "en"
+              ]
+            },
+            "development-it": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "localize": [
+                "it"
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -65,12 +82,27 @@
             },
             "development": {
               "buildTarget": "portfolio:build:development"
+            },
+            "development-it": {
+              "buildTarget": "portfolio:build:development-it"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        }
+      },
+      "i18n": {
+        "sourceLocale": {
+          "code": "en",
+          "subPath": "en"
+        },
+        "locales": {
+          "it": {
+            "translation": "src/locale/messages.it.xlf",
+            "subPath": "it"
+          }
         }
       }
     }

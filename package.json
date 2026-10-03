@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:it": "ng serve --configuration development-it",
+    "i18n:extract": "ng extract-i18n --output-path src/locale"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

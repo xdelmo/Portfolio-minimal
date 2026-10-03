@@ -4,3 +4,16 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# Language redirect, only for the bare root. Netlify lets the nf_lang cookie
+# (set by the language switch) override the browser's Accept-Language.
+[[redirects]]
+  from = "/"
+  to = "/it/"
+  status = 302
+  conditions = { Language = ["it"] }
+
+[[redirects]]
+  from = "/"
+  to = "/en/"
+  status = 302

@@ -8,6 +8,6 @@ import { SiteHeader } from './layout/site-header';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, SiteHeader, SiteFooter],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrl: './app.scss',
 })
 export class App {}

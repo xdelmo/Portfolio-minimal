@@ -23,6 +23,8 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
     </header>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
+
     .site-header {
       display: flex;
       align-items: center;
@@ -51,7 +53,7 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
       display: flex;
       align-items: center;
     }
-    @media (min-width: 768px) {
+    @include bp.up(md) {
       nav {
         display: flex;
       }

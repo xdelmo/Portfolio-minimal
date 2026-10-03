@@ -5,6 +5,40 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Canonical domain
+[[redirects]]
+  from = "https://emanueledelmonte.it/*"
+  to = "https://www.emanueledelmonte.it/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://emanueledelmonte.netlify.app/*"
+  to = "https://www.emanueledelmonte.it/:splat"
+  status = 301
+  force = true
+
+# Old Gatsby URLs (the old site was in Italian)
+[[redirects]]
+  from = "/privacy"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/imprint"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/my-first-article"
+  to = "/it/"
+  status = 301
+
 # Language redirect, only for the bare root. Netlify lets the nf_lang cookie
 # (set by the language switch) override the browser's Accept-Language.
 [[redirects]]
@@ -17,3 +51,19 @@
   from = "/"
   to = "/en/"
   status = 302
+
+# Per-locale 404 pages (only used when no file matches)
+[[redirects]]
+  from = "/it/*"
+  to = "/it/404/index.html"
+  status = 404
+
+[[redirects]]
+  from = "/en/*"
+  to = "/en/404/index.html"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/en/404/index.html"
+  status = 404

@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
+import { toLocale } from '../../core/i18n/locale';
+import { personJsonLd } from '../../core/seo/seo';
+import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -88,4 +91,16 @@ import { CONTENT } from '../../content/content';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
+  private readonly seo = inject(SeoService);
+  private readonly locale = toLocale(inject(LOCALE_ID));
+
+  constructor() {
+    const { person } = this.content;
+    this.seo.update({
+      path: '/',
+      title: `${person.name} — ${person.role}`,
+      description: `${this.content.hero.lede} ${person.availability}`,
+    });
+    this.seo.setJsonLd('ld-person', personJsonLd(person, this.locale));
+  }
 }

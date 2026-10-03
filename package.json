@@ -4,11 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && node scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "start:it": "ng serve --configuration development-it",
-    "i18n:extract": "ng extract-i18n --output-path src/locale"
+    "i18n:extract": "ng extract-i18n --output-path src/locale",
+    "test:scripts": "node --test scripts/*.test.mjs"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -30,7 +31,11 @@
     "@angular/cli": "^22.2.1",
     "@angular/compiler-cli": "^22.2.0",
     "@angular/localize": "^22.2.1",
+    "@axe-core/playwright": "^4.13.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.12.0",
+    "http-server": "^14.1.1",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",

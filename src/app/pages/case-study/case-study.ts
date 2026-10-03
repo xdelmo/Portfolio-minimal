@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
+import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   selector: 'app-case-study',
@@ -59,4 +60,17 @@ export class CaseStudy {
   private readonly content = inject(CONTENT);
   readonly slug = input.required<string>();
   protected readonly project = computed(() => this.content.projects.find((p) => p.slug === this.slug()));
+  private readonly seo = inject(SeoService);
+
+  constructor() {
+    effect(() => {
+      const p = this.project();
+      this.seo.setJsonLd('ld-person', null);
+      this.seo.update(
+        p
+          ? { path: `/work/${p.slug}`, title: `${p.title} — Emanuele Del Monte`, description: p.summary }
+          : { path: `/work/${this.slug()}`, title: 'Emanuele Del Monte', description: '', noindex: true },
+      );
+    });
+  }
 }

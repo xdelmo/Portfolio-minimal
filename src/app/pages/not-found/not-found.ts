@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   selector: 'app-not-found',
@@ -20,4 +21,8 @@ import { RouterLink } from '@angular/router';
     }
   `,
 })
-export class NotFound {}
+export class NotFound {
+  constructor() {
+    inject(SeoService).update({ path: '/404', title: 'Emanuele Del Monte', description: '', noindex: true });
+  }
+}

@@ -19,6 +19,9 @@
   --px-4: #c9b8f5;
   --px-5: #a8e0c8;
   --px-6: #ffc9a8;
+  --stone: #a3a39d;
+  --stone-dark: #85857f;
+  --stone-light: #bdbdb6;
 }
 
 :root[data-theme='dark'] {
@@ -38,6 +41,9 @@
   --px-4: #9d8cf0;
   --px-5: #7ccfa8;
   --px-6: #f0a982;
+  --stone: #7d7d78;
+  --stone-dark: #62625e;
+  --stone-light: #9a9a94;
 }
 
 :root {

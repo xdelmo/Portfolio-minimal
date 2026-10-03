@@ -53,16 +53,19 @@ export function shadeHex(hex: string, k: number): string {
   return `#${[n >> 16, (n >> 8) & 255, n & 255].map((c) => Math.round(c * k).toString(16).padStart(2, '0')).join('')}`;
 }
 
-export function isoSvg(voxels: readonly Voxel[], palette: Readonly<Record<VoxelColor, string>>, unit: number): string {
+/** `frame` > 1 adds transparent room around the drawing, keeping it centred. */
+export function isoSvg(voxels: readonly Voxel[], palette: Readonly<Record<VoxelColor, string>>, unit: number, frame = 1): string {
   const faces = isoFaces(voxels);
   const b = isoBounds(faces);
   const num = (n: number): string => String(Math.round(n * 10) / 10);
-  const point = (p: readonly [number, number]): string => `${num((p[0] - b.minX) * unit)},${num((p[1] - b.minY) * unit)}`;
+  const padX = ((frame - 1) / 2) * b.width;
+  const padY = ((frame - 1) / 2) * b.height;
+  const point = (p: readonly [number, number]): string => `${num((p[0] - b.minX + padX) * unit)},${num((p[1] - b.minY + padY) * unit)}`;
   const polygons = faces.map((f) => {
     const fill = shadeHex(palette[f.color], f.shade);
     return `<polygon points="${f.points.map(point).join(' ')}" fill="${fill}" stroke="${fill}" stroke-width="0.6" stroke-linejoin="round"/>`;
   });
-  const w = String(Math.round(b.width * unit));
-  const h = String(Math.round(b.height * unit));
+  const w = String(Math.round(b.width * frame * unit));
+  const h = String(Math.round(b.height * frame * unit));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${polygons.join('')}</svg>`;
 }

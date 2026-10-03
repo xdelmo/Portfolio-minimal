@@ -2,7 +2,7 @@
 // Run after changing the model: node scripts/moai-image.mjs, then update src/app/voxel/moai-image.ts.
 import { chromium } from 'playwright';
 import { isoSvg } from '../src/app/voxel/iso.ts';
-import { moaiVoxels } from '../src/app/voxel/moai.model.ts';
+import { MOAI_FRAME, moaiVoxels } from '../src/app/voxel/moai.model.ts';
 
 const UNIT = 16; // CSS px per voxel edge
 const palette = {
@@ -14,7 +14,7 @@ const palette = {
   moss: '#a8e0c8',
 };
 
-const svg = isoSvg(moaiVoxels(), palette, UNIT);
+const svg = isoSvg(moaiVoxels(), palette, UNIT, MOAI_FRAME);
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 2 });
 await page.setContent(`<body style="margin:0;background:transparent">${svg}</body>`);

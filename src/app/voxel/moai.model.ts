@@ -12,6 +12,9 @@ export interface Voxel {
   color: VoxelColor;
 }
 
+/** Room around the moai, as a multiple of its size, so it stays in frame at any angle. */
+export const MOAI_FRAME = 1.3;
+
 export const MOAI_BOUNDS = { minX: -5, maxX: 5, minY: 0, maxY: 24, minZ: -3, maxZ: 5 } as const;
 
 /** Shape only: the colour a cell has before moss and weathering, or null when it is empty. */

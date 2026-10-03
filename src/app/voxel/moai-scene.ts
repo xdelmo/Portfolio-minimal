@@ -26,8 +26,8 @@ import {
 } from 'three';
 import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { VoxelColor, moaiVoxels } from './moai.model';
-import { ENTRY_MS, SCROLL_TURNS, TURN_STEP, approach, explodeAmount, sectionProgress } from './motion';
+import { MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
+import { TURN_STEP, approach, explodeAmount, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -121,7 +121,6 @@ export class MoaiScene {
   private turnNow = 0;
   private drag = 0;
   private spin = 0;
-  private entry = 0;
 
   constructor() {
     afterNextRender(() => {
@@ -184,8 +183,8 @@ export class MoaiScene {
     const sx = (bounds.minX + bounds.width / 2) / COS30;
     const sy = 2 * (bounds.minY + bounds.height / 2);
     const target = new Vector3((sx + sy) / 2, 0, (sy - sx) / 2);
-    const halfW = (bounds.width * ISO_TO_WORLD) / 2;
-    const halfH = (bounds.height * ISO_TO_WORLD) / 2;
+    const halfW = (bounds.width * ISO_TO_WORLD * MOAI_FRAME) / 2;
+    const halfH = (bounds.height * ISO_TO_WORLD * MOAI_FRAME) / 2;
     const camera = new OrthographicCamera(-halfW, halfW, halfH, -halfH, 0.1, 200);
     camera.position.copy(target).add(new Vector3(50, 50, 50));
     camera.lookAt(target);
@@ -214,7 +213,7 @@ export class MoaiScene {
       mesh.instanceMatrix.needsUpdate = true;
     };
     paint();
-    place(1);
+    place(0);
 
     const resize = (): void => {
       const dpr = Math.min(devicePixelRatio || 1, this.desktop() ? 2 : 1.5);
@@ -238,7 +237,6 @@ export class MoaiScene {
       try {
         const dt = Math.min(100, Math.max(0, now - last));
         last = now;
-        this.entry = Math.min(1, this.entry + dt / ENTRY_MS);
         this.turnNow = approach(this.turnNow, this.turnTarget, 8, dt);
         let scroll = 0;
         if (this.desktop() && section) {
@@ -247,8 +245,9 @@ export class MoaiScene {
         } else if (this.spinning()) {
           this.spin += dt * SPIN_PER_MS * Math.PI * 2;
         }
-        pivot.rotation.y = scroll * SCROLL_TURNS * Math.PI * 2 + this.spin + this.turnNow + this.drag;
-        place(Math.round(explodeAmount(scroll, this.entry) * 1000) / 1000);
+        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.turnNow + this.drag;
+        // no fly-in: the scene replaces a still image that is already on screen
+        place(Math.round(explodeAmount(scroll) * 1000) / 1000);
         renderer.render(scene, camera);
         this.raf = requestAnimationFrame(frame);
       } catch {

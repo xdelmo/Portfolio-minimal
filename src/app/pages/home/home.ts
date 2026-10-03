@@ -10,11 +10,12 @@ import { ExperienceTimeline } from '../../sections/experience-timeline/experienc
 import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
+import { MoaiFigure } from '../../voxel/moai-figure';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList],
+  imports: [RouterLink, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
   template: `
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
@@ -38,10 +39,13 @@ import { WorkList } from '../../sections/work-list/work-list';
       <app-side-quests [items]="content.sideQuests" />
     </section>
 
-    <section id="about" class="section container" aria-labelledby="about-title">
-      <h2 id="about-title" i18n="@@home.about.title">About</h2>
-      <p>{{ content.about }}</p>
-      <app-at-a-glance [items]="content.glance" />
+    <section id="about" class="section container about" aria-labelledby="about-title">
+      <div class="about-text">
+        <h2 id="about-title" i18n="@@home.about.title">About</h2>
+        <p>{{ content.about }}</p>
+        <app-at-a-glance [items]="content.glance" />
+      </div>
+      <app-moai-figure class="about-moai" />
     </section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title">
@@ -89,7 +93,21 @@ import { WorkList } from '../../sections/work-list/work-list';
     .field {
       margin-top: var(--space-6);
     }
+    .about-text {
+      display: grid;
+      gap: var(--space-4);
+    }
     @include bp.up(lg) {
+      .about {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+        column-gap: var(--space-8);
+        align-items: start;
+      }
+      .about-moai {
+        position: sticky;
+        top: var(--space-8);
+        justify-self: center;
+      }
       .hero {
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
         column-gap: var(--space-8);

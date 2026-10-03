@@ -4,12 +4,16 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { personJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
+import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
+import { ExperienceTimeline } from '../../sections/experience-timeline/experience-timeline';
+import { SideQuests } from '../../sections/side-quests/side-quests';
+import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, WorkList],
+  imports: [RouterLink, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList],
   template: `
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
@@ -26,9 +30,26 @@ import { WorkList } from '../../sections/work-list/work-list';
       <app-work-list [projects]="content.projects" />
     </section>
 
+    <section id="side-quests" class="section container" aria-labelledby="side-quests-title">
+      <h2 id="side-quests-title" i18n="@@home.sideQuests.title">Side quests</h2>
+      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from crosswords to 3D-printed parts.</p>
+      <app-side-quests [items]="content.sideQuests" />
+    </section>
+
     <section id="about" class="section container" aria-labelledby="about-title">
       <h2 id="about-title" i18n="@@home.about.title">About</h2>
       <p>{{ content.about }}</p>
+      <app-at-a-glance [items]="content.glance" />
+    </section>
+
+    <section id="experience" class="section container" aria-labelledby="experience-title">
+      <h2 id="experience-title" i18n="@@home.experience.title">Experience</h2>
+      <app-experience-timeline [items]="content.experience" />
+    </section>
+
+    <section id="stack" class="section container" aria-labelledby="stack-title">
+      <h2 id="stack-title" i18n="@@home.stack.title">Tools I use</h2>
+      <app-stack-list [groups]="content.stack" />
     </section>
 
     <section id="contact" class="section container" aria-labelledby="contact-title">

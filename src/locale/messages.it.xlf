@@ -214,6 +214,46 @@
           <context context-type="linenumber">63,64</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="home.sideQuests.title" datatype="html">
+        <source>Side quests</source>
+        <target>Side quest</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.sideQuests.lede" datatype="html">
+        <source>Things I build for fun, from crosswords to 3D-printed parts.</source>
+        <target>Cose che costruisco per divertimento, dai cruciverba ai pezzi stampati in 3D.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.experience.title" datatype="html">
+        <source>Experience</source>
+        <target>Esperienza</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.stack.title" datatype="html">
+        <source>Tools I use</source>
+        <target>Strumenti che uso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.experience" datatype="html">
+        <source>Experience</source>
+        <target>Esperienza</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

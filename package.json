@@ -9,7 +9,9 @@
     "test": "ng test",
     "start:it": "ng serve --configuration development-it",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
-    "test:scripts": "node --test scripts/*.test.mjs"
+    "test:scripts": "node --test scripts/*.test.mjs",
+    "e2e": "playwright test",
+    "lhci": "lhci autorun"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

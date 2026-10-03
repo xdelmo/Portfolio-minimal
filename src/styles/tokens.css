@@ -1,0 +1,72 @@
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #e5e5e5;
+  --surface: #f2f2f2;
+  --fg: #1d1d1c;
+  --fg-muted: #555555;
+  --accent: #0066d4;
+  --on-accent: #ffffff;
+  --link: #005fc5;
+  --focus: #0066d4;
+  --rule: rgb(29 29 28 / 0.14);
+  /* pixel palette: decorative only, never for text */
+  --px-1: #0066d4;
+  --px-2: #7fb2ec;
+  --px-3: #b9d5f5;
+  --px-4: #c9b8f5;
+  --px-5: #a8e0c8;
+  --px-6: #ffc9a8;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --fg: rgb(255 255 255 / 0.87);
+  --fg-muted: #aaaaaa;
+  --accent: #0066d4;
+  --on-accent: #ffffff;
+  --link: #4d9bf0;
+  --focus: #4d9bf0;
+  --rule: rgb(255 255 255 / 0.12);
+  --px-1: #0066d4;
+  --px-2: #2f86ea;
+  --px-3: #6aa9f2;
+  --px-4: #9d8cf0;
+  --px-5: #7ccfa8;
+  --px-6: #f0a982;
+}
+
+:root {
+  /* 8px pixel grid */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-12: 96px;
+  --space-16: 128px;
+
+  /* modular scale 1.25 on 18px */
+  --step--1: 0.8rem;     /* 14.4px */
+  --step-0: 1.125rem;    /* 18px   */
+  --step-1: 1.406rem;    /* 22.5px */
+  --step-2: 1.758rem;    /* 28.1px */
+  --step-3: 2.197rem;    /* 35.2px */
+  --step-4: 2.747rem;    /* 44px   */
+  --step-5: 3.433rem;    /* 55px   */
+  --step-hero: clamp(2.747rem, 1.6rem + 5.2vw, 6rem); /* 44px → 96px */
+
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --measure: 68ch;
+  --container: 1200px;
+  --gutter: 16px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+  }
+}

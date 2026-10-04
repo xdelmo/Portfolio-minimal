@@ -105,6 +105,8 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
 })
 export class MoaiScene {
   readonly failed = output();
+  /** Fires after the first frame, so the still image can stay underneath until then. */
+  readonly drawn = output();
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
@@ -239,6 +241,7 @@ export class MoaiScene {
     const section = this.host.nativeElement.closest('section');
     let last = performance.now();
     let pointerX: number | null = null;
+    let firstDrawn = false;
     const frame = (now: number): void => {
       try {
         const dt = Math.min(100, Math.max(0, now - last));
@@ -255,6 +258,10 @@ export class MoaiScene {
         // no fly-in: the scene replaces a still image that is already on screen
         place(Math.round(explodeAmount(scroll) * 1000) / 1000);
         renderer.render(scene, camera);
+        if (!firstDrawn) {
+          firstDrawn = true;
+          this.drawn.emit();
+        }
         this.raf = requestAnimationFrame(frame);
       } catch {
         this.fail();

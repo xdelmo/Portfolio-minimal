@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
 const scene = (page: Page) => page.locator('app-moai-scene canvas');
-const still = (page: Page) => page.locator('app-moai-figure img.still');
+const still = (page: Page) => page.locator('app-moai-figure img.still').filter({ visible: true });
 const snapshot = (page: Page) => scene(page).evaluate((c) => (c as HTMLCanvasElement).toDataURL());
 
 function collectErrors(page: Page): string[] {
@@ -147,5 +147,32 @@ test.describe('without JavaScript', () => {
     await page.goto('/en/');
     await page.locator('#about').scrollIntoViewIfNeeded();
     await expect(still(page)).toBeVisible();
+  });
+});
+
+test.fixme('stays pinned on desktop while the about text scrolls', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the pin is desktop only');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/');
+  const top = async (offset: number): Promise<number | undefined> => {
+    await page.locator('#about').evaluate((el, by) => {
+      window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + by);
+    }, offset);
+    await page.waitForTimeout(100);
+    return (await page.locator('app-moai-figure').boundingBox())?.y;
+  };
+  const first = await top(150);
+  const second = await top(250);
+  expect(first).toBeDefined();
+  expect(second).toBeCloseTo(first ?? Number.NaN, 0);
+});
+
+test.describe('in dark theme with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce', colorScheme: 'dark' });
+
+  test('shows the still moai in dark colours', async ({ page }) => {
+    await page.goto('/en/');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(still(page)).toHaveAttribute('src', /moai-dark\.png$/);
   });
 });

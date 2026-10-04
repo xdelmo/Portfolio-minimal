@@ -10,13 +10,15 @@ import { ExperienceTimeline } from '../../sections/experience-timeline/experienc
 import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
+import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
+  imports: [RouterLink, MotionHost, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
   template: `
+    <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
@@ -65,9 +67,14 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       </p>
       <p class="muted" i18n="@@home.contact.cv">CV available on request.</p>
     </section>
+    </div>
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
+
+    .motion {
+      display: contents;
+    }
 
     .hero {
       display: grid;
@@ -136,6 +143,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
+  protected readonly effects: readonly Effect[] = [];
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));
 

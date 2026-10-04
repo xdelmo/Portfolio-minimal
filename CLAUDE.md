@@ -33,7 +33,7 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - No green anywhere in the palette (the user's brand colours are greys, the `--accent` blue family, lavender and peach).
 - Styles are SCSS (`inlineStyleLanguage: scss`, `includePaths: [src]`); colors stay CSS custom properties because the theme switches them at runtime; use `@use 'styles/breakpoints' as bp;` and `@include bp.up(md)` for breakpoints.
 - The whole site must meet WCAG 2.2 AA (spec §11): axe runs with WCAG tags in both themes in the e2e suite.
-- Visual system (8px pixel grid, Instrument Sans, no eyebrow labels or mono metadata) is described in plan 1, section "Sistema visivo".
+- Visual style directives live in the project skill `.claude/skills/edm-style/SKILL.md` (palette, type, 8px grid, stepped shapes, the living objects, motion rules): read it before any visual change. The original visual system is in plan 1, section "Sistema visivo".
 - The old Gatsby site lives on `master`; its images can be recovered with `git show master:content/images/<file>`.
 - Project images live in `public/images/work/` as JPEG: the original at full width plus a half-width copy named `<name>-<width/2>.jpg` (`workImageLoader` builds the `srcset` from them). Set `width`/`height` in both content files to the original size.
 - Open Graph images are committed in `public/og/`: run `npm run og:images` after changing a title, a summary or the project list (the build fails if a page points at a missing one). The build also writes `llms.txt` and a Markdown copy of every page from the content files.

@@ -1,7 +1,10 @@
-import { readdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { CONTENT_EN } from '../src/app/content/content.en.ts';
+import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { withFontPreload } from './font-preload.mjs';
+import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
 import { extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
 
@@ -30,6 +33,13 @@ for (const locale of ['en', 'it']) {
 pages.sort((a, b) => a.canonical.localeCompare(b.canonical));
 
 if (pages.length === 0) throw new Error('postbuild: no indexable pages found, is the build output where expected?');
+
+const geo = geoFiles({ en: CONTENT_EN, it: CONTENT_IT });
+for (const file of geo) {
+  await mkdir(dirname(join(ROOT, file.path)), { recursive: true });
+  await writeFile(join(ROOT, file.path), file.body);
+}
+console.log(`postbuild: ${String(geo.length)} Markdown and llms files`);
 
 await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));

@@ -1,6 +1,6 @@
 import { CONTENT_EN } from '../../content/content.en';
 import { CONTENT_IT } from '../../content/content.it';
-import { PERSON_ID, caseStudyJsonLd, headLinks, homeJsonLd, pageUrl } from './seo';
+import { PERSON_ID, caseStudyJsonLd, headLinks, homeJsonLd, markdownPath, pageUrl } from './seo';
 
 describe('pageUrl', () => {
   it('keeps the trailing slash on the home page only', () => {
@@ -22,6 +22,14 @@ describe('headLinks', () => {
       { rel: 'alternate', hreflang: 'it', href: 'https://www.emanueledelmonte.it/it/work/apexflow' },
       { rel: 'alternate', hreflang: 'x-default', href: 'https://www.emanueledelmonte.it/en/work/apexflow' },
     ]);
+  });
+});
+
+describe('markdownPath', () => {
+  it('maps pages to their Markdown twin', () => {
+    expect(markdownPath('/', 'en')).toBe('/en/index.md');
+    expect(markdownPath('/work/apexflow', 'it')).toBe('/it/work/apexflow.md');
+    expect(markdownPath('/work/apexflow/?x=1', 'it')).toBe('/it/work/apexflow.md');
   });
 });
 

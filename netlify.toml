@@ -67,3 +67,9 @@
   from = "/*"
   to = "/en/404/index.html"
   status = 404
+
+# Markdown versions of the pages (scripts/geo-files.mjs)
+[[headers]]
+  for = "/*.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"

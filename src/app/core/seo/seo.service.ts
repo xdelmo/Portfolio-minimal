@@ -1,7 +1,7 @@
 import { DOCUMENT, Injectable, LOCALE_ID, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { toLocale } from '../i18n/locale';
-import { headLinks, pageUrl } from './seo';
+import { SITE_URL, headLinks, markdownPath, pageUrl } from './seo';
 
 export interface PageSeo {
   path: string;
@@ -35,13 +35,16 @@ export class SeoService {
     });
     if (page.noindex) return;
     for (const link of headLinks(page.path, this.locale)) {
-      const el = this.doc.createElement('link');
-      el.setAttribute('rel', link.rel);
-      el.setAttribute('href', link.href);
-      if (link.hreflang) el.setAttribute('hreflang', link.hreflang);
-      el.setAttribute('data-seo', '');
-      this.doc.head.appendChild(el);
+      this.addLink({ rel: link.rel, href: link.href, ...(link.hreflang ? { hreflang: link.hreflang } : {}) });
     }
+    this.addLink({ rel: 'alternate', type: 'text/markdown', href: `${SITE_URL}${markdownPath(page.path, this.locale)}` });
+  }
+
+  private addLink(attrs: Record<string, string>): void {
+    const el = this.doc.createElement('link');
+    for (const [name, value] of Object.entries(attrs)) el.setAttribute(name, value);
+    el.setAttribute('data-seo', '');
+    this.doc.head.appendChild(el);
   }
 
   setJsonLd(id: string, data: Record<string, unknown> | null): void {

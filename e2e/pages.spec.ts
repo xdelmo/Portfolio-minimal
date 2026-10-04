@@ -111,3 +111,15 @@ test('each page carries one JSON-LD graph that is replaced when navigating', asy
   await expect(page).toHaveURL(/\/en\/work\//);
   await expect.poll(types).toEqual(['BreadcrumbList,SoftwareSourceCode,Person']);
 });
+
+test('every page links a Markdown twin that exists, and llms.txt is published', async ({ page, request }) => {
+  for (const path of ['/en/', '/it/work/apexflow']) {
+    await page.goto(path);
+    const href = await page.locator('link[rel="alternate"][type="text/markdown"]').getAttribute('href');
+    const res = await request.get(new URL(href ?? '').pathname);
+    expect(res.ok()).toBe(true);
+    expect(await res.text()).toMatch(/^# /);
+  }
+  const llms = await request.get('/llms.txt');
+  expect(await llms.text()).toContain('/it/work/apexflow.md');
+});

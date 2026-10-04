@@ -1,4 +1,4 @@
-import { SiteContent } from './content.model';
+import type { SiteContent } from './content.model';
 
 export const CONTENT_EN: SiteContent = {
   person: {

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && node scripts/postbuild.mjs",
+    "build": "ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "start:it": "ng serve --configuration development-it",

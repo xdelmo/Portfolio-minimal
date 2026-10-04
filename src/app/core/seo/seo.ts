@@ -9,9 +9,17 @@ export interface HeadLink {
   hreflang?: 'en' | 'it' | 'x-default';
 }
 
+const cleanPath = (path: string): string => path.split(/[?#]/)[0].replace(/\/+$/, '');
+
 export function pageUrl(path: string, locale: Locale): string {
-  const clean = path.split(/[?#]/)[0].replace(/\/+$/, '');
+  const clean = cleanPath(path);
   return `${SITE_URL}/${locale}${clean === '' ? '/' : clean}`;
+}
+
+/** The page's Markdown version, written by scripts/geo-files.mjs. */
+export function markdownPath(path: string, locale: Locale): string {
+  const clean = cleanPath(path);
+  return `/${locale}${clean === '' ? '/index' : clean}.md`;
 }
 
 export function headLinks(path: string, locale: Locale): HeadLink[] {

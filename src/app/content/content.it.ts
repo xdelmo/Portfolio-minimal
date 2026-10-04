@@ -1,5 +1,5 @@
 import { CONTENT_EN } from './content.en';
-import { Project, SiteContent } from './content.model';
+import type { Project, SiteContent } from './content.model';
 
 const en = (slug: string): Project => {
   const project = CONTENT_EN.projects.find((p) => p.slug === slug);

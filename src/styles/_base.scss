@@ -5,6 +5,8 @@
 }
 
 html {
+  /* on the root, so it clips at the viewport: decorations flying in from the edges never add a horizontal scroll */
+  overflow-x: clip;
   /* anchors and focused elements stop below the sticky header (WCAG 2.4.11) */
   scroll-padding-top: var(--header-h);
   -webkit-text-size-adjust: 100%;

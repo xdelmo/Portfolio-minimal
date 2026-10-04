@@ -245,3 +245,13 @@ test.describe('bands and finale', () => {
       .toBeGreaterThan(0.95);
   });
 });
+
+test('the stack orbs fly in from beyond the content column, without widening the page', async ({ page }) => {
+  await page.goto('/en/');
+  await page.locator('#stack').evaluate((el) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.9);
+  });
+  // only the page clips them: the stack list itself lets them show outside its box
+  expect(await page.locator('app-stack-list').evaluate((el) => getComputedStyle(el).overflowX)).toBe('visible');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

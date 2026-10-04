@@ -31,8 +31,7 @@ import { StackGroup } from '../../content/content.model';
       display: grid;
       gap: var(--space-8);
       align-items: center;
-      // the scattered orbs enter from the sides of the section, never widening the page
-      overflow-x: clip;
+      // no clip here: the scattered orbs enter from the screen edges, and the body's overflow-x keeps the page width
     }
     // a diagram of the three groups: pastel orbs on a ring (decorative; GSAP gathers them on scroll)
     .orbs {

@@ -5,6 +5,12 @@ import { StackGroup } from '../../content/content.model';
   selector: 'app-stack-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <div class="orbs" aria-hidden="true">
+      <span class="ring"></span>
+      @for (group of groups(); track group.name; let i = $index, count = $count) {
+        <span [class]="'orb orb--' + (i % 4)" [style.--a.deg]="(i * 360) / count - 90">{{ group.name }}</span>
+      }
+    </div>
     <div class="groups">
       @for (group of groups(); track group.name) {
         <div class="group">
@@ -21,6 +27,68 @@ import { StackGroup } from '../../content/content.model';
   styles: `
     @use 'styles/breakpoints' as bp;
 
+    :host {
+      display: grid;
+      gap: var(--space-8);
+      align-items: center;
+      // the scattered orbs enter from the sides of the section, never widening the page
+      overflow-x: clip;
+    }
+    // a diagram of the three groups: pastel orbs on a ring (decorative; GSAP gathers them on scroll)
+    .orbs {
+      --orb: clamp(6.5rem, 4rem + 8vw, 9.5rem);
+      position: relative;
+      width: min(100%, 30rem);
+      aspect-ratio: 1;
+      justify-self: center;
+    }
+    .ring {
+      position: absolute;
+      inset: 16%;
+      border: 1px solid var(--rule);
+      border-radius: 50%;
+    }
+    .orb {
+      position: absolute;
+      left: calc(50% + cos(var(--a)) * 34% - var(--orb) / 2);
+      top: calc(50% + sin(var(--a)) * 34% - var(--orb) / 2);
+      display: grid;
+      place-items: center;
+      width: var(--orb);
+      aspect-ratio: 1;
+      padding: var(--space-2);
+      color: var(--orb-ink);
+      font-size: var(--step-0);
+      font-weight: 600;
+      line-height: 1.15;
+      text-align: center;
+      isolation: isolate;
+    }
+    .orb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--from), var(--to));
+      filter: blur(6px);
+    }
+    .orb--0 {
+      --from: var(--px-3);
+      --to: var(--px-4);
+    }
+    .orb--1 {
+      --from: var(--px-5);
+      --to: var(--px-3);
+    }
+    .orb--2 {
+      --from: var(--px-6);
+      --to: var(--px-4);
+    }
+    .orb--3 {
+      --from: var(--px-4);
+      --to: var(--px-5);
+    }
     .groups {
       display: grid;
       gap: var(--space-6);
@@ -40,9 +108,9 @@ import { StackGroup } from '../../content/content.model';
       padding: 0;
       list-style: none;
     }
-    @include bp.up(md) {
-      .groups {
-        grid-template-columns: repeat(2, 1fr);
+    @include bp.up(lg) {
+      :host {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
     }
   `,

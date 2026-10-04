@@ -143,3 +143,39 @@ test.describe('experience', () => {
     await expect(page.locator('#experience ol')).not.toHaveClass(/is-stacked/);
   });
 });
+
+test.describe('stack orbs', () => {
+  // translation of an orb away from its place on the ring (0 when it sits there)
+  const drift = (orb: Locator) => orb.evaluate((el) => {
+    const m = new DOMMatrix(getComputedStyle(el).transform);
+    return Math.round(Math.hypot(m.m41, m.m42));
+  });
+
+  test('gather onto the ring as the section reaches the middle of the screen', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const orbs = page.locator('#stack .orb');
+    // one orb per stack group
+    await expect(orbs).toHaveCount(await page.locator('#stack .group').count());
+    await expect(page.locator('#stack .orbs')).toHaveAttribute('aria-hidden', 'true');
+    expect(await drift(orbs.first())).toBeGreaterThan(20);
+    await expect
+      .poll(async () => {
+        await page.evaluate(() => {
+          const section = document.getElementById('stack');
+          if (section) window.scrollTo(0, section.getBoundingClientRect().top + scrollY + section.offsetHeight / 2 - innerHeight / 2);
+        });
+        return drift(orbs.first());
+      }, { timeout: 8000 })
+      .toBe(0);
+  });
+
+  test.describe('with reduced motion', () => {
+    test.use({ reducedMotion: 'reduce' });
+    test('already sit on the ring', async ({ page }) => {
+      await page.goto('/en/');
+      await expect(page.locator('#stack .orb')).toHaveCount(await page.locator('#stack .group').count());
+      expect(await drift(page.locator('#stack .orb').first())).toBe(0);
+    });
+  });
+});

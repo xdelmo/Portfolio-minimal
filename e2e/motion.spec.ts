@@ -69,15 +69,11 @@ test.describe('with reduced motion', () => {
   });
 });
 
-test('hovering a project flashes its pixelated copy once', async ({ page, browserName, isMobile }) => {
-  test.skip(isMobile, 'no hover on touch screens');
+test('hovering a project shows the screenshot as it is, with no pixelated flash', async ({ page }) => {
   await page.goto('/en/');
   const project = page.locator('#work .project').first();
-  const pixels = project.locator('.pixels');
-  await project.hover();
-  expect(await pixels.evaluate((el) => getComputedStyle(el).animationName)).toMatch(/depixelate$/);
-  await expect.poll(() => pixels.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBe(40);
-  expect(await pixels.getAttribute('aria-hidden'), browserName).toBe('true');
+  await expect(project.locator('img')).toHaveCount(1);
+  await expect(page.locator('#work .pixels')).toHaveCount(0);
 });
 
 test.describe('project cards', () => {

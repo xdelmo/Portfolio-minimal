@@ -1,4 +1,4 @@
-import { pixelSrc, workImageLoader } from './image-loader';
+import { workImageLoader } from './image-loader';
 
 describe('workImageLoader', () => {
   const src = 'images/work/apexflow.jpg';
@@ -10,11 +10,5 @@ describe('workImageLoader', () => {
   it('uses the original file for the full width and when no width is asked', () => {
     expect(workImageLoader({ src, width: 1600, loaderParams: { full: 1600 } })).toBe(src);
     expect(workImageLoader({ src, loaderParams: { full: 1600 } })).toBe(src);
-  });
-});
-
-describe('pixelSrc', () => {
-  it('derives the 40px pixel variant', () => {
-    expect(pixelSrc('images/work/apexflow.jpg')).toBe('images/work/apexflow-40.jpg');
   });
 });

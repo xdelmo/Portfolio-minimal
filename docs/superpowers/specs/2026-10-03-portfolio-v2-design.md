@@ -186,7 +186,7 @@ Stato attuale (piani 3, 4 e 7; riferimenti: matteovincenti.com e marimba.design)
 | Intro | una volta per sessione: pannello opaco, lettere del nome e una fila di pixel pastello, poi il pannello sale; riserva CSS a 3 s; mai con riduzione del movimento | assente (ritardava il primo paint: Lighthouse prestazioni 0.92) |
 | Hero | pixel field "edm." con vignettatura ai bordi e pixel che scintillano a caso; dopo l'intro il titolo sale riga per riga; allo scroll il titolo si allarga e sale, il pixel field scende | pixel field e spostamento allo scroll |
 | Titoli di sezione | salgono riga per riga con maschera (SplitText), poi tornano testo semplice | idem |
-| Work | immagine che si "pixela" e si inclina verso il cursore (max 7°), titolo che scorre di 12 px; View Transition | View Transition |
+| Work | immagine che si inclina verso il cursore (max 7°), titolo che scorre di 12 px; View Transition | View Transition |
 | Experience | sezione bloccata (pin): le voci si impilano come un mazzo di carte, la linea cresce con l'avanzamento | elenco semplice con comparsa dal basso |
 | Stack | quattro sfere pastello (una per gruppo) che dal disordine si dispongono su un anello | idem |
 | About | fascia azzurra a tutta larghezza; moai voxel che ruota, trascinabile | fascia; moai che ruota da solo |
@@ -296,4 +296,5 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Tolte le frecce di rotazione sotto il moai (resta pausa/riproduci su mobile per WCAG 2.2.2) | richiesta esplicita |
 | 2026-10-04 | Cambio tema con un cerchio che si allarga dal pulsante su tutta la viewport (View Transitions; niente con riduzione del movimento) e icona animata all'hover | richiesta esplicita |
 | 2026-10-04 | Selettore lingua come menu a tendina (`<details>`, funziona senza JS; Esc e clic fuori lo chiudono) | il link "Italiano"/"English" da solo non diceva cosa faceva |
+| 2026-10-04 | Tolto il lampo pixelato sulle immagini dei progetti all'hover (e le copie `-40.jpg`) | richiesta esplicita |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

@@ -2,7 +2,6 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
-import { pixelSrc } from '../../content/image-loader';
 
 @Component({
   selector: 'app-work-list',
@@ -34,7 +33,6 @@ import { pixelSrc } from '../../content/image-loader';
                 [priority]="first"
                 sizes="(min-width: 768px) 50vw, 100vw"
               />
-              <img class="pixels" [src]="pixelSrc(image.src)" alt="" aria-hidden="true" loading="lazy" decoding="async" [width]="image.width" [height]="image.height" />
             </div>
           }
         </li>
@@ -86,32 +84,6 @@ import { pixelSrc } from '../../content/image-loader';
     .project--tall .media {
       max-width: 280px;
     }
-    /* a blocky copy of the screenshot flashes and dissolves when the card is hovered or focused (spec §10.2) */
-    .pixels {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      /* the 40px copy rounds its height, so its ratio is slightly off */
-      object-fit: cover;
-      image-rendering: pixelated;
-      opacity: 0;
-      pointer-events: none;
-    }
-    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .project:hover .pixels,
-      .project:focus-within .pixels {
-        animation: depixelate 480ms steps(4, end);
-      }
-    }
-    @keyframes depixelate {
-      from {
-        opacity: 1;
-      }
-      to {
-        opacity: 0;
-      }
-    }
     @include bp.up(md) {
       .project {
         grid-template-columns: 1fr 1fr;
@@ -125,5 +97,4 @@ import { pixelSrc } from '../../content/image-loader';
 })
 export class WorkList {
   readonly projects = input.required<readonly Project[]>();
-  protected readonly pixelSrc = pixelSrc;
 }

@@ -1,4 +1,4 @@
-import { Person } from '../../content/content.model';
+import { Person, Project } from '../../content/content.model';
 import { Locale } from '../i18n/locale';
 
 export const SITE_URL = 'https://www.emanueledelmonte.it';
@@ -23,10 +23,12 @@ export function headLinks(path: string, locale: Locale): HeadLink[] {
   ];
 }
 
-export function personJsonLd(person: Person, locale: Locale): Record<string, unknown> {
+export const PERSON_ID = `${SITE_URL}/#person`;
+
+function personNode(person: Person, locale: Locale): Record<string, unknown> {
   return {
-    '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': PERSON_ID,
     name: person.name,
     url: pageUrl('/', locale),
     jobTitle: person.role,
@@ -36,5 +38,45 @@ export function personJsonLd(person: Person, locale: Locale): Record<string, unk
     email: `mailto:${person.email}`,
     sameAs: [person.linkedin, person.github],
     knowsAbout: person.knowsAbout,
+  };
+}
+
+export function homeJsonLd(person: Person, locale: Locale): Record<string, unknown> {
+  const url = pageUrl('/', locale);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: person.name, publisher: { '@id': PERSON_ID }, inLanguage: ['en', 'it'] },
+      { '@type': 'ProfilePage', '@id': `${url}#page`, url, name: `${person.name} — ${person.role}`, inLanguage: locale, mainEntity: { '@id': PERSON_ID } },
+      personNode(person, locale),
+    ],
+  };
+}
+
+export function caseStudyJsonLd(project: Project, person: Person, locale: Locale): Record<string, unknown> {
+  const url = pageUrl(`/work/${project.slug}`, locale);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: person.name, item: pageUrl('/', locale) },
+          { '@type': 'ListItem', position: 2, name: project.title, item: url },
+        ],
+      },
+      {
+        '@type': 'SoftwareSourceCode',
+        '@id': `${url}#code`,
+        url,
+        name: project.title,
+        description: project.summary,
+        codeRepository: project.repos[0].url,
+        programmingLanguage: project.stack,
+        inLanguage: locale,
+        author: { '@id': PERSON_ID },
+      },
+      personNode(person, locale),
+    ],
   };
 }

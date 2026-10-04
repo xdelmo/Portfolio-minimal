@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, LOCALE_ID, computed, effect, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
+import { toLocale } from '../../core/i18n/locale';
+import { caseStudyJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
@@ -125,11 +127,12 @@ export class CaseStudy {
   readonly slug = input.required<string>();
   protected readonly project = computed(() => this.content.projects.find((p) => p.slug === this.slug()));
   private readonly seo = inject(SeoService);
+  private readonly locale = toLocale(inject(LOCALE_ID));
 
   constructor() {
     effect(() => {
       const p = this.project();
-      this.seo.setJsonLd('ld-person', null);
+      this.seo.setJsonLd('ld-page', p ? caseStudyJsonLd(p, this.content.person, this.locale) : null);
       this.seo.update(
         p
           ? { path: `/work/${p.slug}`, title: `${p.title} — Emanuele Del Monte`, description: p.summary }

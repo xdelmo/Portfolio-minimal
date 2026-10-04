@@ -99,3 +99,15 @@ for (const path of ['/en/', '/it/work/apexflow']) {
     expect(await page.evaluate(() => (window as unknown as { prerendered: Element | null }).prerendered === document.querySelector('main h1'))).toBe(true);
   });
 }
+
+test('each page carries one JSON-LD graph that is replaced when navigating', async ({ page }) => {
+  const types = () =>
+    page
+      .locator('script[type="application/ld+json"]')
+      .evaluateAll((els) => els.map((el) => (JSON.parse(el.textContent) as { '@graph': { '@type': string }[] })['@graph'].map((n) => n['@type']).join(',')));
+  await page.goto('/en/');
+  expect(await types()).toEqual(['WebSite,ProfilePage,Person']);
+  await page.locator('#work h3 a').first().click();
+  await expect(page).toHaveURL(/\/en\/work\//);
+  await expect.poll(types).toEqual(['BreadcrumbList,SoftwareSourceCode,Person']);
+});

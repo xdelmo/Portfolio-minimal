@@ -23,6 +23,8 @@ import { SeoService } from '../../core/seo/seo.service';
 })
 export class NotFound {
   constructor() {
-    inject(SeoService).update({ path: '/404', title: 'Emanuele Del Monte', description: '', noindex: true });
+    const seo = inject(SeoService);
+    seo.update({ path: '/404', title: 'Emanuele Del Monte', description: '', noindex: true });
+    seo.setJsonLd('ld-page', null);
   }
 }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
-import { personJsonLd } from '../../core/seo/seo';
+import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
 import { PixelField } from '../../pixel-field/pixel-field';
 import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
@@ -146,6 +146,6 @@ export class Home {
       title: `${person.name} — ${person.role}`,
       description: `${this.content.hero.lede} ${person.availability}`,
     });
-    this.seo.setJsonLd('ld-person', personJsonLd(person, this.locale));
+    this.seo.setJsonLd('ld-page', homeJsonLd(person, this.locale));
   }
 }

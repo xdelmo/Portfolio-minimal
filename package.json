@@ -14,7 +14,8 @@
     "test:scripts": "node --test scripts/*.test.mjs",
     "e2e": "playwright test",
     "lhci": "lhci autorun",
-    "lint": "ng lint --max-warnings=0"
+    "lint": "ng lint --max-warnings=0",
+    "portrait": "node scripts/portrait.mjs"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

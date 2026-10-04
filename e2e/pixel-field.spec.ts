@@ -113,3 +113,39 @@ test.describe('without JavaScript', () => {
     expect(box?.height).toBeGreaterThan(150);
   });
 });
+
+test.describe('edm. becomes the face', () => {
+  const host = (page: Page) => page.locator('app-pixel-field');
+
+  test('turns into the face by itself, then back into edm.', async ({ page }) => {
+    await page.goto('/en/');
+    await canvas(page).scrollIntoViewIfNeeded();
+    await expect(host(page)).toHaveAttribute('data-scene', 'edm');
+    await expect(host(page)).toHaveAttribute('data-scene', 'face', { timeout: 12_000 });
+    await expect(host(page)).toHaveAttribute('data-scene', 'edm', { timeout: 8000 });
+  });
+
+  test('a click or a tap swaps the scene', async ({ page }) => {
+    await page.goto('/en/');
+    await canvas(page).scrollIntoViewIfNeeded();
+    // the canvas listens once it has painted its first frame
+    await expect.poll(() => isPainted(page)).toBe(true);
+    // a mouse reaching the field already brings the face: settle wherever the pointer leaves it first
+    await canvas(page).hover({ position: { x: 10, y: 10 } });
+    await page.waitForTimeout(1500);
+    const before = await host(page).getAttribute('data-scene');
+    await canvas(page).click({ position: { x: 10, y: 10 } });
+    await expect(host(page)).toHaveAttribute('data-scene', before === 'face' ? 'edm' : 'face');
+  });
+
+  test('the mouse over the field holds the face', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'no hover on touch screens');
+    await page.goto('/en/');
+    await canvas(page).hover({ position: { x: 20, y: 20 } });
+    await expect(host(page)).toHaveAttribute('data-scene', 'face');
+    await page.waitForTimeout(5000);
+    await expect(host(page)).toHaveAttribute('data-scene', 'face');
+    await page.mouse.move(0, 0);
+    await expect(host(page)).toHaveAttribute('data-scene', 'edm');
+  });
+});

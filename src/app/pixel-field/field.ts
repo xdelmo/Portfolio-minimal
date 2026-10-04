@@ -48,9 +48,11 @@ export interface FieldLayout {
   scale: number;
   /** 1 where a cell belongs to the glyph, indexed row * cols + col. */
   glyph: Uint8Array;
+  /** Portrait palette slot of each cell (0 = none), same indexing. */
+  face: Uint8Array;
 }
 
-export function layout(width: number, height: number, g: Glyph): FieldLayout {
+export function layout(width: number, height: number, g: Glyph, portrait?: { size: number; cells: string }): FieldLayout {
   const cols = Math.max(1, Math.floor(width / CELL));
   const rows = Math.max(1, Math.floor(height / CELL));
   const scale = Math.max(1, Math.floor(Math.min((cols * 0.95) / g.width, (rows * 0.7) / g.height)));
@@ -66,7 +68,8 @@ export function layout(width: number, height: number, g: Glyph): FieldLayout {
       }
     }
   }
-  return { cols, rows, x0: (width - cols * CELL) / 2, y0: (height - rows * CELL) / 2, scale, glyph: mask };
+  const face = portrait ? portraitCells(cols, rows, portrait) : new Uint8Array(cols * rows);
+  return { cols, rows, x0: (width - cols * CELL) / 2, y0: (height - rows * CELL) / 2, scale, glyph: mask, face };
 }
 
 /** Deterministic pseudo-random number in [0, 1). */
@@ -106,4 +109,43 @@ export function ripple(distance: number, age: number): number {
   if (age < 0 || age >= RIPPLE_MS) return 0;
   const ring = Math.max(0, 1 - Math.abs(distance - age * RIPPLE_SPEED) / RIPPLE_WIDTH);
   return ring * (1 - age / RIPPLE_MS);
+}
+
+/** How long one morph between "edm." and the face takes, and how long each scene rests. */
+export const MORPH_MS = 1200;
+export const SCENE_MS = { edm: 6000, face: 4000 } as const;
+
+/**
+ * Palette slots of the portrait laid on the field: a centred square that fits the shorter side, sampled from
+ * the generated grid (src/app/pixel-field/portrait.ts). 0 where the cell shows no portrait.
+ */
+export function portraitCells(cols: number, rows: number, portrait: { size: number; cells: string }): Uint8Array {
+  const out = new Uint8Array(cols * rows);
+  const n = Math.max(1, Math.floor(Math.min(cols, rows) * 0.95));
+  const left = Math.floor((cols - n) / 2);
+  const top = Math.floor((rows - n) / 2);
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const src = Math.floor((r * portrait.size) / n) * portrait.size + Math.floor((c * portrait.size) / n);
+      out[(top + r) * cols + left + c] = Number(portrait.cells[src]);
+    }
+  }
+  return out;
+}
+
+/**
+ * 0 → 1 progress of cell `index` through a morph `t` ms in: cells near the middle go first and each adds its own
+ * random delay, so the pixels regroup like a broken wave rather than a cross-fade.
+ */
+export function morphProgress(index: number, col: number, row: number, cols: number, rows: number, t: number): number {
+  const fromCentre = Math.min(1, Math.hypot((col + 0.5) / cols - 0.5, (row + 0.5) / rows - 0.5) * 2);
+  const delay = fromCentre * 350 + hash(index + 41) * 250;
+  return easeOutCubic((t - delay) / (MORPH_MS - 600));
+}
+
+/** The scene the field shows by itself at time `t`: 0 is "edm.", 1 the face. */
+export function autoScene(t: number): 0 | 1 {
+  const phase = t - COMPOSE_MS;
+  if (phase < SCENE_MS.edm) return 0;
+  return (phase - SCENE_MS.edm) % (SCENE_MS.edm + SCENE_MS.face) < SCENE_MS.face ? 1 : 0;
 }

@@ -13,6 +13,8 @@ const isPainted = (page: Page) =>
 
 test('draws the field and keeps it moving', async ({ page }) => {
   await page.goto('/en/');
+  // on short phones the field starts below the fold, where it rightly stops drawing
+  await canvas(page).scrollIntoViewIfNeeded();
   await expect(canvas(page)).toBeVisible();
   await expect.poll(() => isPainted(page)).toBe(true);
   const before = await snapshot(page);

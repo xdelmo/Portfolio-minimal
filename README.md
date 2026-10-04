@@ -1,67 +1,31 @@
-# Emanuele Del Monte - Portfolio
+# Emanuele Del Monte — Portfolio
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/fdf854ce-9fd0-442d-8e79-9cedb4bd8100/deploy-status)](https://app.netlify.com/sites/emanueledelmonte/deploys)
 
-Portfolio personale minimalista sviluppato con **Gatsby** e **React**. Il progetto utilizza il tema `gatsby-theme-portfolio-minimal` personalizzato.
+The source of [www.emanueledelmonte.it](https://www.emanueledelmonte.it): a bilingual (English and Italian) portfolio built with Angular 22, fully prerendered to static HTML and hosted on Netlify.
 
-## 🛠 Tech Stack
+## Run it
 
-*   **Framework**: Gatsby v5
-*   **UI Library**: React v18
-*   **Styling**: Custom CSS / Theme styling
-*   **Deployment**: Netlify
+Needs Node 24 (see `.nvmrc`).
 
-## 🚀 Getting Started
+```bash
+nvm use
+npm ci
+npm start            # English dev server on http://localhost:4200
+npm run start:it     # Italian dev server
+npm run build        # both locales, prerendered, into dist/portfolio/browser
+npm run e2e          # Playwright against the build
+```
 
-### Prerequisiti
-Assicurati di avere installato **Node.js** (versione >= 18.0.0).
+Other checks: `npm run lint`, `npx ng test --no-watch`, `npm run test:scripts`, `npm run lhci`.
 
-### Installazione
+## How it is built
 
-1.  Clona la repository:
-    ```bash
-    git clone <repository-url>
-    cd Portfolio-minimal
-    ```
+- **Two locale builds** with `@angular/localize`. Long content lives in `src/app/content/content.{en,it}.ts`; UI strings in `src/locale/messages.it.xlf`.
+- **Static prerender** of every page, standalone components, signals and zoneless change detection; Three.js loads later through `@defer`, so the initial JavaScript stays under 150 KB gzip (the build fails above it).
+- **Pixel field**: the hero's "edm." is drawn on a 2D canvas from pure, unit-tested functions, paused offscreen and replaced by a still picture with reduced motion.
+- **Voxel moai**: a Three.js `InstancedMesh` loaded only when it scrolls into view, with a prerendered still image for reduced motion, missing WebGL or a failed download.
+- **Search and AI agents**: JSON-LD graph per page, sitemap with hreflang, `llms.txt` and a Markdown copy of every page generated from the same content files, Open Graph image per page and language.
+- **Quality gates**: strict ESLint, Vitest, Playwright with axe (WCAG 2.2 AA, both themes) on Chromium, Firefox, WebKit and mobile emulation, Lighthouse CI.
 
-2.  Installa le dipendenze:
-    ```bash
-    npm install
-    # Se incontri conflitti di dipendenze:
-    npm install --legacy-peer-deps
-    ```
-
-3.  Avvia il server di sviluppo:
-    ```bash
-    npm run develop
-    ```
-    Il sito sarà accessibile su `http://localhost:8000`.
-
-## 📦 Deployment su Netlify
-
-Per il deploy corretto su Netlify, assicurati di configurare la variabile d'ambiente Node.js:
-1. Vai su **Site Settings** > **Build & Deploy** > **Dependency Management**.
-2. Imposta **Node.js** alla versione **20.x** (o superiore).
-3. Esegui il deploy.
-
-## 📂 Struttura dei Contenuti
-
-I contenuti del sito sono gestiti tramite file JSON e Markdown situati nella cartella `content/sections`.
-Le sezioni principali modificabili sono:
-
-*   `hero/hero.json`: Titolo e introduzione.
-*   `about/about.md`: Descrizione "About me".
-*   `projects/projects.json`: Lista dei progetti mostrati.
-*   `contact/contact.json`: Informazioni di contatto e link social.
-*   `settings.json`: Configurazioni globali (SEO, menu, loghi).
-
-## 🎨 Note sulle Immagini
-
-Le immagini dei progetti sono screenshot acquisiti a risoluzione **1080x810** e processati tramite [Screely](https://www.screely.com/) con i seguenti settaggi:
-* **Window Type**: Plain Window
-* **Window Style**: Regular 
-* **Padding Vertical**: 100px
-* **Padding Horizontal**: 100px
-
-## 📄 License
-Questo progetto è basato su [gatsby-starter-portfolio-minimal-theme](https://github.com/konstantinmuenster/gatsby-starter-portfolio-minimal-theme) rilasciato sotto licenza MIT.
+The CV is available on request, not in this repository.

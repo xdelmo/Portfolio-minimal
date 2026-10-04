@@ -120,10 +120,12 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     .contact-text > * {
       margin: 0;
     }
+    // a circle drawn on the pixel grid, 16 cells across: round like the stack orbs, stepped like the pixel field
     .contact-photo {
       grid-row: 1;
       width: 160px;
       height: auto;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h6v1h-6zM3 1h10v1h-10zM2 2h12v1h-12zM1 3h14v1h-14zM1 4h14v1h-14zM0 5h16v1h-16zM0 6h16v1h-16zM0 7h16v1h-16zM0 8h16v1h-16zM0 9h16v1h-16zM0 10h16v1h-16zM1 11h14v1h-14zM1 12h14v1h-14zM2 13h12v1h-12zM3 14h10v1h-10zM5 15h6v1h-6z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
     }
     @include bp.up(md) {
       .contact {

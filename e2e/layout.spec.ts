@@ -58,6 +58,14 @@ test.describe('contact and footer', () => {
     });
   }
 
+  test("the contact photo is cut into a stepped pixel circle", async ({ page }) => {
+    await page.goto('/en/');
+    const photo = page.locator('#contact img');
+    await photo.scrollIntoViewIfNeeded();
+    const mask = await photo.evaluate((img) => getComputedStyle(img).maskImage || getComputedStyle(img).getPropertyValue('-webkit-mask-image'));
+    expect(mask).toContain('svg');
+  });
+
   test('the footer continues the dark contact band, with no gap between them', async ({ page }) => {
     await page.goto('/en/');
     await page.evaluate(() => { window.scrollTo(0, document.body.scrollHeight); });

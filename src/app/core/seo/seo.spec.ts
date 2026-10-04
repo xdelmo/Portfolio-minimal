@@ -56,6 +56,7 @@ describe('homeJsonLd', () => {
     const person = nodeOf(ld, 'Person');
     expect(person['name']).toBe('Emanuele Del Monte');
     expect(person['sameAs']).toEqual([CONTENT_EN.person.linkedin, CONTENT_EN.person.github]);
+    expect(person['image']).toBe('https://www.emanueledelmonte.it/en/images/emanuele.jpg');
     expect(person['address']).toEqual({ '@type': 'PostalAddress', addressLocality: 'Latina', addressCountry: 'IT' });
     expect(person['alumniOf']).toEqual({ '@type': 'CollegeOrUniversity', name: 'Università Mercatorum' });
     expect(nodeOf(ld, 'ProfilePage')['url']).toBe('https://www.emanueledelmonte.it/en/');

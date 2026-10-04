@@ -170,3 +170,13 @@ for (const colorScheme of ['light', 'dark'] as const) {
     expect(results.violations).toEqual([]);
   });
 }
+
+test('the Person in the JSON-LD has a photo that is really served', async ({ page, request }) => {
+  await page.goto('/it/');
+  const graph = await page.locator('script[type="application/ld+json"]').first().textContent();
+  const person = (JSON.parse(graph ?? '{}') as { '@graph': { '@type': string; image?: string }[] })['@graph'].find((n) => n['@type'] === 'Person');
+  expect(person?.image).toMatch(/\/images\/emanuele\.jpg$/);
+  const response = await request.get(new URL(person?.image ?? '').pathname);
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('image/jpeg');
+});

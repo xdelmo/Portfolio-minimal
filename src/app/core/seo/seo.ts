@@ -50,6 +50,8 @@ function personNode(person: Person, locale: Locale): Record<string, unknown> {
     address: { '@type': 'PostalAddress', addressLocality: 'Latina', addressCountry: 'IT' },
     email: `mailto:${person.email}`,
     sameAs: [person.linkedin, person.github],
+    // the photo the hero portrait is drawn from (scripts/portrait.mjs); only search engines and agents see it
+    image: `${SITE_URL}/en/images/emanuele.jpg`,
     knowsAbout: person.knowsAbout,
   };
 }

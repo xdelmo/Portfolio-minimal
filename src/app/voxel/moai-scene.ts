@@ -4,7 +4,6 @@ import {
   DestroyRef,
   ElementRef,
   afterNextRender,
-  computed,
   inject,
   output,
   signal,
@@ -27,6 +26,7 @@ import {
 import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
+import { MotionPause } from '../motion/pause';
 import { explodeAmount, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
@@ -45,21 +45,6 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
-    @if (ready()) {
-      <div class="controls">
-        @if (!desktop()) {
-          <button type="button" (click)="spinning.set(!spinning())" [attr.aria-label]="spinLabel()">
-            <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-              @if (spinning()) {
-                <path fill="currentColor" d="M1 1h2v6H1zM5 1h2v6H5z" />
-              } @else {
-                <path fill="currentColor" d="M2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4zM5 3.5h1v1H5z" />
-              }
-            </svg>
-          </button>
-        }
-      </div>
-    }
   `,
   styles: `
     :host {
@@ -71,23 +56,6 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
       width: 100%;
       height: 100%;
     }
-    .controls {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      display: flex;
-    }
-    button {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      padding: 0;
-      border: 1px solid var(--rule);
-      background: var(--bg);
-      color: var(--fg);
-      cursor: pointer;
-    }
   `,
 })
 export class MoaiScene {
@@ -98,10 +66,8 @@ export class MoaiScene {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
   protected readonly desktop = signal(false);
-  protected readonly spinning = signal(true);
-  protected readonly spinLabel = computed(() =>
-    this.spinning() ? $localize`:@@moai.stop:Stop the moai` : $localize`:@@moai.spin:Spin the moai`,
-  );
+  // phones: it spins by itself unless all motion is paused (one header button, WCAG 2.2.2)
+  private readonly pause = inject(MotionPause);
 
   private readonly cleanups: (() => void)[] = [];
   private raf = 0;
@@ -231,7 +197,7 @@ export class MoaiScene {
         if (this.desktop() && section) {
           const box = section.getBoundingClientRect();
           scroll = sectionProgress(box.top, box.height, innerHeight);
-        } else if (this.spinning()) {
+        } else if (!this.pause.paused()) {
           this.spin += dt * SPIN_PER_MS * Math.PI * 2;
         }
         pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag;

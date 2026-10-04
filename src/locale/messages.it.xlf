@@ -34,6 +34,10 @@
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="motion.pause" datatype="html">
+        <source>Pause animations</source>
+        <target>Metti in pausa le animazioni</target>
+      </trans-unit>
       <trans-unit id="nav.home" datatype="html">
         <source>Emanuele Del Monte, home</source>
         <target>Emanuele Del Monte, home</target>
@@ -260,38 +264,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/site-header.ts</context>
           <context context-type="linenumber">17,18</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="field.pause" datatype="html">
-        <source>Pause the pixel animation</source>
-        <target>Metti in pausa l'animazione dei pixel</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pixel-field/pixel-field.ts</context>
-          <context context-type="linenumber">70</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="field.play" datatype="html">
-        <source>Play the pixel animation</source>
-        <target>Riprendi l'animazione dei pixel</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pixel-field/pixel-field.ts</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="moai.stop" datatype="html">
-        <source>Stop the moai</source>
-        <target>Ferma il moai</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/voxel/moai-scene.ts</context>
-          <context context-type="linenumber">114</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="moai.spin" datatype="html">
-        <source>Spin the moai</source>
-        <target>Fai girare il moai</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/voxel/moai-scene.ts</context>
-          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
     </body>

@@ -5,12 +5,13 @@ import {
   ElementRef,
   ErrorHandler,
   afterNextRender,
-  computed,
+  effect,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
 import { FieldLayout, RIPPLE_MS, glyph, layout } from './field';
+import { MotionPause } from '../motion/pause';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
 const MAX_RIPPLES = 4;
@@ -21,17 +22,6 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
-    @if (animated()) {
-      <button type="button" class="pause" (click)="toggle()" [attr.aria-label]="label()">
-        <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-          @if (playing()) {
-            <path fill="currentColor" d="M1 1h2v6H1zM5 1h2v6H5z" />
-          } @else {
-            <path fill="currentColor" d="M2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4zM5 3.5h1v1H5z" />
-          }
-        </svg>
-      </button>
-    }
   `,
   styles: `
     :host {
@@ -47,31 +37,12 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
       width: 100%;
       height: 100%;
     }
-    .pause {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      padding: 0;
-      border: 1px solid var(--rule);
-      background: var(--bg);
-      color: var(--fg);
-      cursor: pointer;
-    }
   `,
 })
 export class PixelField {
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
-  protected readonly animated = signal(false);
-  protected readonly playing = signal(true);
-  protected readonly label = computed(() =>
-    this.playing()
-      ? $localize`:@@field.pause:Pause the pixel animation`
-      : $localize`:@@field.play:Play the pixel animation`,
-  );
+  private readonly animated = signal(false);
+  private readonly pause = inject(MotionPause);
 
   private ctx: CanvasRenderingContext2D | null = null;
   private grid: FieldLayout | null = null;
@@ -95,13 +66,11 @@ export class PixelField {
     inject(DestroyRef).onDestroy(() => {
       this.stop();
     });
-  }
-
-  protected toggle(): void {
-    this.playing.update((playing) => !playing);
-    this.frame.animate = this.playing();
-    this.render();
-    this.sync();
+    effect(() => {
+      this.frame.animate = this.animated() && !this.pause.paused();
+      this.render();
+      this.sync();
+    });
   }
 
   private start(): void {
@@ -150,9 +119,6 @@ export class PixelField {
     };
     const onMotion = (): void => {
       this.animated.set(!motion.matches);
-      this.frame.animate = this.animated() && this.playing();
-      this.render();
-      this.sync();
     };
     const local = (e: PointerEvent): Point => {
       const box = canvas.getBoundingClientRect();

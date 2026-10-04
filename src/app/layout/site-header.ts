@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
+import { PauseToggle } from './pause-toggle';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LanguageSwitch, ThemeToggle],
+  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle],
   template: `
     <a class="skip-link" href="#main" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
@@ -19,6 +20,7 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
       </nav>
       <div class="controls">
         <app-language-switch />
+        <app-pause-toggle />
         <app-theme-toggle />
       </div>
     </header>

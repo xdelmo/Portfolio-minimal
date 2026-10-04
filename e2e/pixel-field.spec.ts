@@ -21,23 +21,9 @@ test('draws the field and keeps it moving', async ({ page }) => {
   await expect.poll(() => snapshot(page)).not.toBe(before);
 });
 
-test('the pause button stops the animation and works from the keyboard', async ({ page }) => {
-  await page.goto('/en/');
-  const pause = page.getByRole('button', { name: 'Pause the pixel animation' });
-  await pause.focus();
-  await page.keyboard.press('Enter');
-  const play = page.getByRole('button', { name: 'Play the pixel animation' });
-  await expect(play).toBeFocused();
-  const still = await snapshot(page);
-  await page.waitForTimeout(300);
-  expect(await snapshot(page)).toBe(still);
-  await play.press('Enter');
-  await expect(pause).toBeVisible();
-});
-
 test('repaints with the new colours when the theme changes while paused', async ({ page }) => {
   await page.goto('/en/');
-  await page.getByRole('button', { name: 'Pause the pixel animation' }).click();
+  await page.getByRole('button', { name: 'Pause animations' }).click();
   const before = await snapshot(page);
   await page.getByRole('button', { name: /Switch to (light|dark) theme/ }).click();
   await expect.poll(() => snapshot(page)).not.toBe(before);
@@ -110,7 +96,7 @@ test.describe('with reduced motion', () => {
   test('shows a still picture and no pause button', async ({ page }) => {
     await page.goto('/it/');
     await expect.poll(() => isPainted(page)).toBe(true);
-    await expect(page.getByRole('button', { name: "Metti in pausa l'animazione dei pixel" })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Metti in pausa le animazioni' })).toHaveCount(0);
     const still = await snapshot(page);
     await page.waitForTimeout(300);
     expect(await snapshot(page)).toBe(still);

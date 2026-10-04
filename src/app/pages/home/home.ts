@@ -10,6 +10,8 @@ import { ExperienceTimeline } from '../../sections/experience-timeline/experienc
 import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
+import { heroEffect } from '../../motion/effects/hero';
+import { titlesEffect } from '../../motion/effects/titles';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
 
@@ -143,7 +145,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect];
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));
 

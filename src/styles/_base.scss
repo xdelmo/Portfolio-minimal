@@ -132,29 +132,6 @@ canvas {
   }
 }
 
-/* Section titles rise out of a mask as they scroll in (spec §10.2); static where scroll-driven animations are missing. */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    main section h2 {
-      animation: reveal-title linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 100%;
-    }
-  }
-}
-
-@keyframes reveal-title {
-  /* the clip box overhangs the line box so descenders and accents are never cut */
-  from {
-    clip-path: inset(-0.25em -0.25em 100% -0.25em);
-    translate: 0 0.4em;
-  }
-  to {
-    clip-path: inset(-0.25em);
-    translate: 0 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
   ::view-transition-old(*),

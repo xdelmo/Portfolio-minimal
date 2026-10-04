@@ -144,12 +144,13 @@ canvas {
 }
 
 @keyframes reveal-title {
+  /* the clip box overhangs the line box so descenders and accents are never cut */
   from {
-    clip-path: inset(0 0 100% 0);
+    clip-path: inset(-0.25em -0.25em 100% -0.25em);
     translate: 0 0.4em;
   }
   to {
-    clip-path: inset(0);
+    clip-path: inset(-0.25em);
     translate: 0 0;
   }
 }

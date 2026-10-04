@@ -1,8 +1,8 @@
 import { type Locator, expect, test } from '@playwright/test';
 
 const clip = (el: Locator) => el.evaluate((node) => getComputedStyle(node).clipPath);
-// every inset at zero, however the browser serialises it
-const UNCLIPPED = /^(none|inset\((0(px|%)?\s?)+\))$/;
+// a revealed title's clip box reaches past its border box, so descenders and accents are not cut
+const UNCLIPPED = /^inset\(((-[\d.]+px|calc\(0% - [\d.]+px\))\s?)+\)$/;
 
 test.describe('scroll-driven motion', () => {
   test.skip(({ browserName }) => browserName === 'firefox', 'no scroll-driven animations in Firefox: titles and the line stay static');

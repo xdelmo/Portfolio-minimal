@@ -144,6 +144,9 @@ test('an unknown URL shows the not-found page and keeps the URL', async ({ page 
   });
   await expect(page.locator('h1')).toHaveText(/not found|doesn.t exist|404/i);
   await expect(page).toHaveURL(/\/en\/nope$/);
+  // the previous page's share image and structured data must not survive client-side navigation
+  await expect(page.locator('meta[property="og:image"]')).toHaveCount(0);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 });
 
 test('a tall project image asks for the size it is shown at', async ({ page }) => {

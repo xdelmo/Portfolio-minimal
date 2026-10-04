@@ -13,10 +13,10 @@ import { PauseToggle } from './pause-toggle';
     <header class="site-header container">
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home">edm.</a>
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
-        <a routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
-        <a routerLink="/" fragment="about" i18n="@@nav.about">About</a>
-        <a routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
-        <a routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
+        <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
+        <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
+        <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
+        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
       </nav>
       <div class="controls">
         <app-language-switch />

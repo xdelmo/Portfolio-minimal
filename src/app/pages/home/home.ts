@@ -30,8 +30,8 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <p class="lede">{{ content.hero.lede }}</p>
       <p class="availability">{{ content.person.availability }}</p>
       <div class="actions">
-        <a class="button button--primary" routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
-        <a class="button" routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
+        <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
+        <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
       <app-pixel-field class="field" />
     </section>
@@ -69,7 +69,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     <section id="contact" class="section container band band--ink" aria-labelledby="contact-title">
       <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
       <p>
-        <a [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
+        <a data-magnetic [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
       </p>
       <p class="muted" i18n="@@home.contact.cv">CV available on request.</p>
     </section>

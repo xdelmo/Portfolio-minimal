@@ -193,3 +193,11 @@ html.theme-switching::view-transition-new(root) {
   --focus: var(--band-ink-link);
   --rule: color-mix(in srgb, var(--band-ink-fg) 20%, transparent);
 }
+
+/* elements that lean towards the pointer (motion/effects/cursor.ts): transforms need a box; :where keeps
+   .button's inline-flex */
+:where([data-magnetic]) {
+  display: inline-block;
+  /* `translate` adds up with the `transform` of hover styles (the primary button's lift) */
+  translate: var(--mx, 0px) var(--my, 0px);
+}

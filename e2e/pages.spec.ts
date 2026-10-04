@@ -86,3 +86,16 @@ test('the home page has every section in order', async ({ page }) => {
   const ids = await page.locator('main section[id]').evaluateAll((els) => els.map((e) => e.id));
   expect(ids).toEqual(['work', 'side-quests', 'about', 'experience', 'stack', 'contact']);
 });
+
+for (const path of ['/en/', '/it/work/apexflow']) {
+  test(`${path} is hydrated, not drawn again in the browser`, async ({ page }) => {
+    await page.addInitScript(() => {
+      document.addEventListener('DOMContentLoaded', () => {
+        (window as unknown as { prerendered: Element | null }).prerendered = document.querySelector('main h1');
+      });
+    });
+    await page.goto(path);
+    await page.waitForLoadState('networkidle');
+    expect(await page.evaluate(() => (window as unknown as { prerendered: Element | null }).prerendered === document.querySelector('main h1'))).toBe(true);
+  });
+}

@@ -1,6 +1,8 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { withFontPreload } from './font-preload.mjs';
+import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
 import { extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const ROOT = 'dist/portfolio/browser';
@@ -32,3 +34,9 @@ if (pages.length === 0) throw new Error('postbuild: no indexable pages found, is
 await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));
 console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt`);
+
+const homeHtml = await readFile(join(ROOT, 'en', 'index.html'), 'utf8');
+let initialBytes = 0;
+for (const file of initialScripts(homeHtml)) initialBytes += gzipSync(await readFile(join(ROOT, 'en', file))).length;
+console.log(`postbuild: initial JavaScript ${(initialBytes / 1024).toFixed(1)} KB gzip (budget ${String(INITIAL_JS_BUDGET / 1024)} KB)`);
+if (initialBytes > INITIAL_JS_BUDGET) throw new Error('postbuild: initial JavaScript is over budget');

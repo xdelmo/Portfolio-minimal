@@ -150,7 +150,13 @@ export class MoaiScene {
     const desktopQuery = matchMedia('(min-width: 1024px) and (pointer: fine)');
     this.desktop.set(desktopQuery.matches);
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
+    // create the context ourselves: when WebGL is missing Three.js would log an error before throwing
+    const context = canvas.getContext('webgl2', { antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
+    if (!context) {
+      this.fail();
+      return;
+    }
+    const renderer = new WebGLRenderer({ canvas, context });
     renderer.setClearColor(0x000000, 0);
     this.cleanups.push(() => {
       renderer.dispose();

@@ -1,6 +1,6 @@
 # Portfolio v2 — Piano 7: Motion con GSAP — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Give the home page the "wow" of the two references Emanuele picked (matteovincenti.com, marimba.design) with GSAP, ScrollTrigger and SplitText, without losing what the site already guarantees (WCAG 2.2 AA, CLS 0, initial JS < 150 KB, content without JavaScript).
 
@@ -9,6 +9,21 @@
 **Tech Stack:** GSAP 3.15 (`gsap`, `gsap/ScrollTrigger`, `gsap/SplitText`, all free), Angular 22 `afterNextRender`, Playwright.
 
 **Spec:** `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md` §10 (GSAP + ScrollTrigger + SplitText, `afterNextRender`, `gsap.context().revert()`), §11 (robustness, reduced motion, pin only on desktop, no scroll lock), §12 (targets). This plan reverses the Plan 5 ruling that replaced GSAP with CSS: Emanuele asked for GSAP explicitly ("ci vuole gsap per forza").
+
+## Stato (2026-10-04): completato
+
+Tutti i task fatti, review finale (opus) eseguita, due correzioni importanti applicate. Decisioni prese durante l'esecuzione (dettaglio nel registro `.superpowers/sdd/…/progress.md`):
+
+- GSAP sostituisce le rivelazioni CSS dei titoli e la linea `draw-line` dell'Experience.
+- I test e2e saltano l'intro (`e2e/fixtures.ts`), tranne `e2e/intro.spec.ts`.
+- Hero: il titolo cresce con `scale` invece dell'asse `wdth` del font (eviterebbe CLS); l'entrata riga per riga avviene solo dietro l'intro.
+- Experience: mazzo di carte bloccato invece di un elenco; Stack: una sfera per gruppo (quattro).
+- Contatti: fascia scura che si allarga a tutta larghezza invece del cerchio che cresce (il cerchio lasciava testo chiaro sulla pagina chiara); l'inset iniziale si ferma prima del testo.
+- Intro solo su desktop (≥ 1024 px con hover): su mobile Lighthouse scendeva a 0.92 di prestazioni e misurava il contrasto a metà dissolvenza.
+- Il verde è stato tolto dalla palette su richiesta: fasce azzurro/blu notte, `--px-5` lavanda.
+- Correzioni della review: il testo dei contatti non esce mai dalla fascia; un revert di `matchMedia` durante l'intro la chiude invece di lasciare il pannello fermo.
+
+Minori rimandati: listener `afterIntro` dell'hero non cancellato se l'effetto riparte durante l'intro; titolo dei progetti che può restare spostato di 12 px dopo un revert; possibile spostamento del layout caricando la home a metà pagina su desktop; titolo dei contatti mai riportato a testo semplice (taglierebbe eventuali discendenti); nessun test della riserva CSS dell'intro quando il pacchetto GSAP non si scarica.
 
 ## Reference analysis (what the two sites do, observed in Chrome)
 
@@ -59,10 +74,10 @@ Not taken: Lenis smooth scroll (earlier ruling: breaks keyboard and sticky scrol
 - `type Effect = (root: HTMLElement, m: Motion) => void` where `Motion = { gsap; ScrollTrigger; SplitText; desktop: boolean }`.
 - `MotionHost` directive `[appMotion]` with input `appMotion: readonly Effect[]`; it adds `data-motion="ready"` on its host after the effects ran (used by e2e), `data-motion="off"` when reduced motion.
 
-- [ ] Unit test (`motion-host.spec.ts`): with `matchMedia('(prefers-reduced-motion: reduce)')` true, effects are never called and the host gets `data-motion="off"`; with an effect that throws, the other effects still run and the host still gets `ready`; destroying the host calls `revert` on the matchMedia instance. Use a fake loader injected through an `InjectionToken<() => Promise<MotionLib>>` (`MOTION_LOADER`) whose default is `loadGsap`.
-- [ ] `npm i gsap@3.15.0`; implement; home template root wraps the sections in `<div [appMotion]="effects">` (no layout change: `display: contents`).
-- [ ] Build: initial JS stays within ~1 KB of 113.4 KB (GSAP must be in a lazy chunk; check `postbuild` line).
-- [ ] Commit `feat: load GSAP lazily and run motion effects through one host`.
+- [x] Unit test (`motion-host.spec.ts`): with `matchMedia('(prefers-reduced-motion: reduce)')` true, effects are never called and the host gets `data-motion="off"`; with an effect that throws, the other effects still run and the host still gets `ready`; destroying the host calls `revert` on the matchMedia instance. Use a fake loader injected through an `InjectionToken<() => Promise<MotionLib>>` (`MOTION_LOADER`) whose default is `loadGsap`.
+- [x] `npm i gsap@3.15.0`; implement; home template root wraps the sections in `<div [appMotion]="effects">` (no layout change: `display: contents`).
+- [x] Build: initial JS stays within ~1 KB of 113.4 KB (GSAP must be in a lazy chunk; check `postbuild` line).
+- [x] Commit `feat: load GSAP lazily and run motion effects through one host`.
 
 ### Task 2: Intro
 
@@ -120,8 +135,8 @@ Not taken: Lenis smooth scroll (earlier ruling: breaks keyboard and sticky scrol
 
 ### Task 8: Close
 
-- [ ] Remove stale tests that asserted the CSS reveal (`reveal-title`, `draw-line`), keep their intent through the GSAP tests.
-- [ ] Review screenshots in Chrome at 1440 and 390 px, both themes; fix what looks off.
-- [ ] `npm run lint && npx ng test --no-watch && npm run test:scripts && npm run build && npm run e2e && npm run lhci`. If LHCI performance drops below 0.95 because of the intro (LCP behind the overlay), restrict the intro to the first visit on desktop and re-measure.
-- [ ] CLAUDE.md: a "Motion" line (GSAP lazy chunk, effects in `src/app/motion/effects/`, `MotionHost`, reduced motion = off).
-- [ ] Push, CI green, final review (opus), one fix pass.
+- [x] Remove stale tests that asserted the CSS reveal (`reveal-title`, `draw-line`), keep their intent through the GSAP tests.
+- [x] Review screenshots in Chrome at 1440 and 390 px, both themes; fix what looks off.
+- [x] `npm run lint && npx ng test --no-watch && npm run test:scripts && npm run build && npm run e2e && npm run lhci`. If LHCI performance drops below 0.95 because of the intro (LCP behind the overlay), restrict the intro to the first visit on desktop and re-measure.
+- [x] CLAUDE.md: a "Motion" line (GSAP lazy chunk, effects in `src/app/motion/effects/`, `MotionHost`, reduced motion = off).
+- [x] Push, CI green, final review (opus), one fix pass.

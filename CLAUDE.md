@@ -22,13 +22,14 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - Two locale builds via `@angular/localize`: English is the template source language, Italian lives in `src/locale/messages.it.xlf` (missing translations fail the build). UI strings use explicit `@@ids`; long content comes from `src/app/content/content.{en,it}.ts`, picked by `LOCALE_ID` through the `CONTENT` token.
 - Logic that can break lives in pure, unit-tested functions next to thin services: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts`.
 - Theme: an inline script in `src/index.html` sets `data-theme` before first paint; `ThemeService` takes over after hydration. All colors are CSS variables in `src/styles/_tokens.scss`.
-- Netlify (`netlify.toml`) does the language redirect on `/` (honouring the `nf_lang` cookie set by the language switch), the canonical-domain 301s, legacy Gatsby URLs and per-locale 404s.
+- Netlify (`netlify.toml`) does the language redirect on `/` (honouring the `nf_lang` cookie set by the language switch), the canonical-domain 301s, legacy Gatsby URLs and per-locale 404s. `scripts/postbuild.mjs` also writes `_redirects` (200 rewrites so case studies answer at their slash-less canonical URL). The Netlify UI must not have `@netlify/plugin-gatsby` installed: it fails every Angular deploy.
 - Motion: GSAP (ScrollTrigger, SplitText) loads as a lazy chunk through `MOTION_LOADER`; the `[appMotion]` directive (`src/app/motion/motion-host.ts`) runs the effects in `src/app/motion/effects/` inside `gsap.matchMedia`, and does nothing with reduced motion. Pins and pointer effects are desktop only (≥ 1024px with hover). Use `gsap.set` + `.to()` for scrubbed tweens (a scrubbed `.from()` is not redrawn in Firefox after a refresh). E2E skip the intro through `e2e/fixtures.ts`.
 - `scripts/postbuild.mjs` builds `sitemap.xml` and `robots.txt` at the publish root from the prerendered pages' canonical/hreflang tags.
 
 ## Conventions
 
 - Site content is bilingual (English source, Italian translation).
+- No green anywhere in the palette (the user's brand colours are greys, the `--accent` blue family, lavender and peach).
 - Styles are SCSS (`inlineStyleLanguage: scss`, `includePaths: [src]`); colors stay CSS custom properties because the theme switches them at runtime; use `@use 'styles/breakpoints' as bp;` and `@include bp.up(md)` for breakpoints.
 - The whole site must meet WCAG 2.2 AA (spec §11): axe runs with WCAG tags in both themes in the e2e suite.
 - Visual system (8px pixel grid, Instrument Sans, no eyebrow labels or mono metadata) is described in plan 1, section "Sistema visivo".

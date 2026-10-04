@@ -87,6 +87,18 @@ Base: la palette del sito attuale (`theme.css`) + pochi accenti pastello usati *
 
 Contrasti verificati (WCAG AA ≥ 4.5:1): `--link` light 4.8:1, dark 6.5:1; testo bianco su `--accent` 5.4:1; `--fg-muted` light 5.9:1, dark 8.1:1.
 
+**Niente verde:** il verde non fa parte della palette (pixel, fasce, moai, immagini OG). I colori nuovi si scelgono tra grigi, la famiglia del blu `--accent`, lavanda e pesca.
+
+**Fasce di sezione** (piano 7): About e Contatti hanno uno sfondo a tutta larghezza che ridefinisce i token di testo al loro interno.
+
+| Token | Light | Dark |
+|---|---|---|
+| `--band-pastel-bg` / `-fg` / `-muted` / `-link` (About) | `#b9d5f5` / `#1d1d1c` / `#2f4560` / `#0b4f96` | `#14243b` / `#e8f0fa` / `#a9bdd6` / `#9ccaff` |
+| `--band-ink-bg` / `-fg` / `-muted` / `-link` (Contatti) | `#1d1d1c` / `#f2f2f2` / `#b8b8b2` / `#9ccaff` | `#0b1f3d` / `#eef4fc` / `#a9bdd6` / `#9ccaff` |
+| `--intro-bg` / `--intro-fg` (pannello d'apertura, opaco) | `#1d1d1c` / `#e5e5e5` | `#e0e0e0` / `#121212` |
+
+Contrasto minimo nelle fasce 5.4:1 (link su azzurro).
+
 ### 4.2 Tipografia e stile
 
 - Sans pulito per i testi, monospace per etichette e metadati (stile "FIG. 01", "MV / 01"), titoli in maiuscolo stretto ("FRONTEND, ENGINEERED.").
@@ -95,7 +107,7 @@ Contrasti verificati (WCAG AA ≥ 4.5:1): `--link` light 4.8:1, dark 6.5:1; test
 
 ### 4.3 Moai voxel
 
-- Colorazione "pietra neutra + accenti pastello": corpo nei grigi del tema, pukao (cappello) pesca, occhi `--accent`, qualche pixel di muschio menta.
+- Colorazione "pietra neutra + accenti pastello": corpo nei grigi del tema, pukao (cappello) pesca, occhi `--accent`, qualche pixel di muschio in grigio pietra chiaro (niente verde).
 - Modello rifinito (più dettaglio del prototipo del brainstorming), definito come griglia di voxel in un file TypeScript (`voxel/moai.model.ts`): niente strumenti né formati esterni da caricare.
 
 ## 5. Architettura
@@ -106,7 +118,7 @@ src/app/
   core/i18n/      lingua corrente, percorso equivalente nell'altra lingua
   core/seo/       title/meta/canonical/hreflang/JSON-LD per pagina
   content/        dati tipizzati per lingua: projects.it.ts / projects.en.ts, experience, about…
-  motion/         direttive GSAP/ScrollTrigger/Lenis (es. [revealOnScroll]) + gsap.matchMedia
+  motion/         direttiva [appMotion] (MotionHost) che carica GSAP in differita ed esegue gli effetti di motion/effects/ in gsap.matchMedia
   pixel-field/    componente Canvas 2D
   voxel/          componente Three.js caricato con @defer (on viewport)
   sections/       hero, about, work, side-quests, experience, stack, contact
@@ -160,20 +172,28 @@ Regole:
 
 ### 10.1 Strumenti
 
-- GSAP + ScrollTrigger + SplitText; Lenis per lo scroll fluido (solo su dispositivi con puntatore fine, non su touch).
+- GSAP 3.15 + ScrollTrigger + SplitText, in un pacchetto caricato in differita (~47 KB gzip) tramite il token `MOTION_LOADER`. Lenis non è stato adottato: lo scroll resta quello nativo.
 - View Transitions API tramite `withViewTransitions()` del router Angular (card → case study).
-- Tutto inizializzato in `afterNextRender()` (mai sul server) e ripulito alla distruzione del componente (`gsap.context().revert()`).
+- La direttiva `[appMotion]` (`src/app/motion/motion-host.ts`) parte in `afterNextRender()` (mai sul server), esegue ogni effetto di `src/app/motion/effects/` in `gsap.matchMedia` dentro un `try/catch`, raccoglie le funzioni di pulizia che gli effetti restituiscono e fa `mm.revert()` alla distruzione. Condizioni: `motion` = `prefers-reduced-motion: no-preference`; `desktop` = `min-width: 1024px` e `hover: hover`.
+- Per le animazioni legate allo scroll si usa `gsap.set(stato iniziale)` + `.to()`: in Firefox un `.from()` con `scrub` non viene ridisegnato dopo il refresh di ScrollTrigger.
 
 ### 10.2 Per sezione
 
-| Sezione | Desktop | Mobile |
+Stato attuale (piani 3, 4 e 7; riferimenti: matteovincenti.com e marimba.design):
+
+| Sezione | Desktop (≥ 1024 px con hover) | Mobile |
 |---|---|---|
-| Hero | pixel che si compongono in "edm.", poi onda; il mouse li respinge e li accende; etichette con effetto "scramble" | onda automatica, un tocco genera un'onda circolare |
-| About | moai bloccato (pin) mentre scorre il testo, ruota con lo scroll, trascinabile, esplode in cubetti a fine sezione | niente pin né trascinamento: il moai ruota da solo, animazione semplice all'ingresso |
-| Work | card in sequenza, immagine che si "pixela" al passaggio del mouse, View Transition | card in sequenza, View Transition |
-| Experience | linea che si disegna allo scroll | idem |
-| Stack | icone in pixel art che rimbalzano al passaggio del mouse | statiche |
-| Titoli | rivelati riga per riga con maschera | idem |
+| Intro | una volta per sessione: pannello opaco, lettere del nome e una fila di pixel pastello, poi il pannello sale; riserva CSS a 3 s; mai con riduzione del movimento | assente (ritardava il primo paint: Lighthouse prestazioni 0.92) |
+| Hero | pixel field "edm." con vignettatura ai bordi e pixel che scintillano a caso; dopo l'intro il titolo sale riga per riga; allo scroll il titolo si allarga e sale, il pixel field scende | pixel field e spostamento allo scroll |
+| Titoli di sezione | salgono riga per riga con maschera (SplitText), poi tornano testo semplice | idem |
+| Work | immagine che si "pixela" e si inclina verso il cursore (max 7°), titolo che scorre di 12 px; View Transition | View Transition |
+| Experience | sezione bloccata (pin): le voci si impilano come un mazzo di carte, la linea cresce con l'avanzamento | elenco semplice con comparsa dal basso |
+| Stack | quattro sfere pastello (una per gruppo) che dal disordine si dispongono su un anello | idem |
+| About | fascia azzurra a tutta larghezza; moai voxel che ruota, trascinabile | fascia; moai che ruota da solo |
+| Contatti | fascia scura che da scheda arrotondata si allarga a tutta larghezza (mai oltre il bordo del testo); titolo gigante che sale riga per riga | idem |
+| Pagina | barra di avanzamento della lettura in alto (3 px, `--accent`) | idem |
+
+Non realizzati rispetto alla prima versione: pin e esplosione del moai, effetto "scramble", icone pixel art dello stack, Lenis.
 
 ### 10.3 Voxel tecnico
 
@@ -193,7 +213,7 @@ Regole:
 - **Isolamento degli errori:** ogni effetto parte in `try/catch`. Eccezioni, `webglcontextlost` o un pacchetto Three.js non scaricato portano all'immagine statica di riserva. Un `ErrorHandler` globale registra senza bloccare.
 - **Lo scroll non viene mai bloccato.** Pin solo su desktop (`gsap.matchMedia()`); sul moai, su mobile, `touch-action: pan-y`.
 - **iOS:** `svh`/`dvh` al posto di `100vh`, `ScrollTrigger.config({ ignoreMobileResize: true })`, `ScrollTrigger.refresh()` al cambio di orientamento.
-- **`prefers-reduced-motion`:** niente Lenis, pin o esplosione. Pixel field come immagine statica, moai come immagine statica pre-renderizzata. Stesso contenuto.
+- **`prefers-reduced-motion`:** GSAP non viene nemmeno caricato (`data-motion="off"`), niente intro, pin o spostamenti. Pixel field come immagine statica, moai come immagine statica pre-renderizzata. Stesso contenuto.
 - **Layout fluido** 320–2560 px, nessuno scroll orizzontale.
 - **Browser supportati:** ultime 2 versioni di Chrome, Edge, Firefox e Safari; iOS Safari 16+.
 - **Accessibilità — conformità WCAG 2.2 livello AA su tutto il sito** (ogni pagina, entrambe le lingue, entrambi i temi, desktop e mobile). Requisito vincolante: nessuna funzionalità può essere rilasciata se viola un criterio A o AA. In particolare:
@@ -232,7 +252,10 @@ Regole:
 
 ## 14. Deploy
 
-- Anteprime Netlify per il branch `v2`. Redirect di lingua e di dominio in `netlify.toml`.
+- Anteprime Netlify per il branch `v2`: `https://v2--emanueledelmonte.netlify.app`. Redirect di lingua e di dominio in `netlify.toml`.
+- Il sito Netlify aveva il plugin `@netlify/plugin-gatsby` installato dalla UI (per il vecchio sito su `master`): con Angular fa fallire ogni deploy e va rimosso.
+- I case study rispondono al loro URL canonico senza slash finale grazie al file `_redirects` che `scripts/postbuild.mjs` genera (rewrite 200 per ogni pagina prerenderizzata); uno slug sbagliato finisce comunque nel 404 della lingua.
+- Su `/` gli header `Netlify-Vary: language,cookie=nf_lang` e `Cache-Control: no-store` impediscono alla cache edge di servire a chi ha il cookie `nf_lang` il redirect salvato per chi non ce l'ha.
 - Lancio: merge di `v2` su `master`.
 
 ## 15. Fasi
@@ -254,3 +277,18 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 - **Blog** dai post LinkedIn — [#1](https://github.com/xdelmo/Portfolio-minimal/issues/1)
 - **Easter egg in stile videogioco** (codice Konami, livello, XP, achievement) — [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2)
 - **Pagine Privacy e Imprint**, se si introducono analytics o cookie — [#3](https://github.com/xdelmo/Portfolio-minimal/issues/3)
+
+## 17. Modifiche rispetto alla spec originale
+
+| Data | Modifica | Perché |
+|---|---|---|
+| 2026-10-04 | Motion con GSAP lazy (piano 7) al posto delle rivelazioni solo CSS | richiesta esplicita: effetto "wow" come matteovincenti.com e marimba.design |
+| 2026-10-04 | Intro di apertura, solo desktop e una volta per sessione | su mobile peggiorava FCP/LCP e il contrasto misurato da Lighthouse |
+| 2026-10-04 | Experience come mazzo di carte bloccato invece della linea che si disegna | più vicino ai riferimenti; pin solo ≥ 1024 px |
+| 2026-10-04 | Stack come sfere pastello su un anello invece delle icone pixel art | stesso motivo; una sfera per gruppo |
+| 2026-10-04 | Fasce colorate per About e Contatti | ritmo tra le sezioni come nei riferimenti |
+| 2026-10-04 | Verde tolto dalla palette (`--px-5` ora lavanda, muschio del moai grigio) | il verde non fa parte della palette |
+| 2026-10-04 | Pixel field con vignettatura e scintillio casuale (PR #4) al posto dell'onda diagonale | si fonde con la pagina invece di stare in un rettangolo |
+| 2026-10-04 | `_redirects` generato in build per i case study | Netlify rispondeva 301 verso l'URL con slash finale |
+| 2026-10-04 | `Netlify-Vary` sulla radice | la cache edge mescolava i redirect di lingua con e senza cookie |
+| 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

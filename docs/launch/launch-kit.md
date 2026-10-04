@@ -4,11 +4,11 @@ Quello che resta da fare per mettere online il nuovo sito. Tutto ciò che è qui
 
 ## 1. Anteprima del branch `v2`
 
-- [ ] Su Netlify: *Site configuration → Build & deploy → Branches and deploy contexts → Branch deploys → Let me add individual branches → `v2`*. Il primo push successivo crea `https://v2--<nome-sito>.netlify.app`; la produzione su `master` non cambia.
-- [ ] Lancia `npm run verify:deploy -- https://v2--<nome-sito>.netlify.app`: ogni riga deve essere `ok`.
-  - Se `/ with it-IT` porta a `/en/`, la condizione in `netlify.toml` va cambiata in `Language = ["it", "it-IT", "it-CH"]`.
-  - Se il case study risponde con un redirect allo slash finale, il canonical (senza slash) punta a un redirect: va disattivato "Pretty URLs" in *Build & deploy → Post processing* oppure va cambiato il formato degli URL. Me lo dici e lo sistemo.
-- [ ] Mandami l'URL dell'anteprima: ci faccio girare anche Lighthouse.
+- [x] Branch deploy di `v2` attivo: `https://v2--emanueledelmonte.netlify.app`.
+- [x] Rimosso dalla UI di Netlify il plugin `@netlify/plugin-gatsby`, che faceva fallire ogni deploy Angular.
+- [x] I case study rispondevano con un 301 verso l'URL con lo slash finale: ora `scripts/postbuild.mjs` genera `_redirects` con un rewrite 200 per ogni pagina, senza toccare le impostazioni Netlify.
+- [x] La cache edge di Netlify a volte rispondeva a una richiesta con il cookie `nf_lang` usando il redirect salvato senza cookie: `netlify.toml` imposta `Netlify-Vary` e `Cache-Control: no-store` su `/`.
+- [x] `npm run verify:deploy -- https://v2--emanueledelmonte.netlify.app`: tutte le righe `ok` (tre run di fila, 2026-10-04).
 
 ## 2. Verifica manuale WCAG 2.2 AA (spec §12)
 
@@ -31,7 +31,7 @@ Un iPhone e un Android:
 
 ## 4. Lancio
 
-- [ ] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione.
+- [ ] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione. Il sito Gatsby su `master` non ha più il plugin Gatsby: se serve ribuildarlo prima del merge, è un sito statico e builda comunque.
 - [ ] Subito dopo: `npm run verify:deploy -- https://www.emanueledelmonte.it`.
 - [ ] `curl -sI https://emanueledelmonte.it/` deve dare `301` verso `https://www.emanueledelmonte.it/`.
 

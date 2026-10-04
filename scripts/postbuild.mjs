@@ -7,7 +7,7 @@ import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
-import { extractOgImage, extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
+import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const ROOT = 'dist/portfolio/browser';
 const SITE_URL = 'https://www.emanueledelmonte.it';
@@ -50,7 +50,8 @@ console.log(`postbuild: ${String(geo.length)} Markdown and llms files`);
 
 await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));
-console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt`);
+await writeFile(join(ROOT, '_redirects'), redirectsFile(pages));
+console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects`);
 
 const homeHtml = await readFile(join(ROOT, 'en', 'index.html'), 'utf8');
 let initialBytes = 0;

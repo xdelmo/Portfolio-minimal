@@ -1,3 +1,4 @@
+import { URL } from 'node:url';
 const AI_CRAWLERS = [
   'GPTBot',
   'OAI-SearchBot',
@@ -56,4 +57,17 @@ export function robotsTxt(siteUrl) {
     AI_CRAWLERS.map((bot) => `User-agent: ${bot}`).join('\n') +
     `\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`
   );
+}
+
+/**
+ * Netlify `_redirects` rules that serve each slash-less canonical (a case study) from its prerendered
+ * `index.html` folder; otherwise Netlify answers with a 301 to the trailing-slash URL. Generated from the
+ * pages that exist, so a wrong slug still falls through to the per-locale 404.
+ */
+export function redirectsFile(pages) {
+  return pages
+    .map((p) => new URL(p.canonical).pathname)
+    .filter((path) => !path.endsWith('/'))
+    .map((path) => `${path}  ${path}/index.html  200!\n`)
+    .join('');
 }

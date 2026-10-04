@@ -1,4 +1,4 @@
-import { CELL, COMPOSE_MS, POINTER_RADIUS, RIPPLE_MS, composeProgress, easeOutCubic, falloff, glyph, hash, layout, ripple, wave } from './field';
+import { CELL, COMPOSE_MS, POINTER_RADIUS, RIPPLE_MS, composeProgress, easeOutCubic, falloff, glyph, hash, layout, ripple, twinkle, vignette } from './field';
 
 describe('pixel field maths', () => {
   it('builds the "edm." glyph from a 7-row bitmap font', () => {
@@ -43,10 +43,13 @@ describe('pixel field maths', () => {
     for (let i = 0; i < 200; i++) {
       expect(hash(i)).toBeGreaterThanOrEqual(0);
       expect(hash(i)).toBeLessThan(1);
-      const w = wave(i % 40, i % 13, i * 37);
+      const w = twinkle(i, i * 37);
       expect(w).toBeGreaterThanOrEqual(0);
       expect(w).toBeLessThanOrEqual(1);
     }
+    expect(vignette(20, 10, 41, 21)).toBe(1);
+    expect(vignette(0, 0, 41, 21)).toBe(0);
+    expect(vignette(0, 10, 41, 21)).toBeLessThan(0.2);
     expect(easeOutCubic(-1)).toBe(0);
     expect(easeOutCubic(2)).toBe(1);
     expect(composeProgress(5, 0)).toBe(0);

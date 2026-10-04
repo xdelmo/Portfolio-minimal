@@ -85,9 +85,15 @@ export function composeProgress(index: number, t: number): number {
   return easeOutCubic((t - delay) / (COMPOSE_MS - 500));
 }
 
-/** Diagonal wave that keeps rolling across the field. */
-export function wave(col: number, row: number, t: number): number {
-  return (Math.sin(col * 0.35 + row * 0.2 - t * 0.0022) + 1) / 2;
+/** Each cell pulses at its own speed and phase, so the field twinkles at random. */
+export function twinkle(index: number, t: number): number {
+  return (Math.sin(t * (0.0006 + hash(index + 21) * 0.0018) + hash(index + 29) * Math.PI * 2) + 1) / 2;
+}
+
+/** 1 in the middle of the grid, easing to 0 towards its edges and corners. */
+export function vignette(col: number, row: number, cols: number, rows: number): number {
+  const d = Math.hypot(((col + 0.5) / cols) * 2 - 1, ((row + 0.5) / rows) * 2 - 1);
+  return 1 - easeOutCubic((d - 0.45) / 0.6);
 }
 
 /** 1 at the pointer, 0 at `radius` and beyond. */

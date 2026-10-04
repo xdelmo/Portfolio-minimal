@@ -10,6 +10,7 @@
     "start:it": "ng serve --configuration development-it",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
     "og:images": "node --import ./scripts/ts-resolve.mjs scripts/og-images.mjs",
+    "verify:deploy": "node scripts/verify-deploy.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",
     "e2e": "playwright test",
     "lhci": "lhci autorun",

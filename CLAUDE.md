@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run e2e` — Playwright against the built site (run `npm run build` first); one test: `npx playwright test e2e/theme.spec.ts --project=chromium`
 - `npm run lhci` — Lighthouse CI against the built site
 - `npm run i18n:extract` — regenerate `src/locale/messages.xlf` after changing template strings, then update `messages.it.xlf`
+- `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
 - `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)
 
 ## Architecture

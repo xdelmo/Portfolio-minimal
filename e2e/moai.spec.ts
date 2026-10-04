@@ -150,7 +150,7 @@ test.describe('without JavaScript', () => {
   });
 });
 
-test.fixme('stays pinned on desktop while the about text scrolls', async ({ page, isMobile }) => {
+test('stays pinned on desktop while the about text scrolls', async ({ page, isMobile }) => {
   test.skip(isMobile, 'the pin is desktop only');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/en/');

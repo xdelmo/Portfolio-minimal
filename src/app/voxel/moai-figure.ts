@@ -51,7 +51,7 @@ import { MoaiScene } from './moai-scene';
     @include bp.up(lg) {
       :host {
         width: auto;
-        height: min(28rem, 70svh);
+        height: min(22rem, 60svh);
       }
     }
   `,

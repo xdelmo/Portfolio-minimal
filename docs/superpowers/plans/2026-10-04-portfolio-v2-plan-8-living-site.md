@@ -35,7 +35,7 @@ Decisioni prese durante l'esecuzione (registro in `.superpowers/sdd/…/progress
 1. Pause pressed, then navigation to a case study and back: still paused, nothing restarts.
 2. Theme switch while the portrait is shown: the portrait repaints with the new palette.
 3. Orbs never lower text contrast (axe with orbs visible, both themes).
-4. Scramble never changes the accessible name or the DOM text of the menu links.
+4. Scramble never changes the accessible name of the menu links (it rewrites the visible text for ~0.4 s; an `aria-label` keeps the name, see the ruling above).
 5. Phones: no cursor element, no magnetic offsets, three orbs only.
 
 ---

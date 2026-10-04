@@ -42,11 +42,12 @@ import { MotionHost } from '../motion/motion-host';
     .orb--3 { --c: var(--px-4); left: 60%; top: 85%; }
     .orb--4 { --c: var(--px-5); left: 30%; top: 22%; }
     .orb--5 { --c: var(--px-6); left: 92%; top: 62%; }
-    // the section in view leans the mix towards its own tone
-    [data-tone='about'] { .orb--1, .orb--2 { --w: 1.6; } .orb--3, .orb--4, .orb--5 { --w: 0.5; } }
-    [data-tone='experience'] { .orb--2, .orb--3 { --w: 1.5; } .orb--5 { --w: 0.5; } }
-    [data-tone='stack'] { .orb--3, .orb--4 { --w: 1.6; } .orb--1, .orb--5 { --w: 0.5; } }
-    [data-tone='contact'] { .orb--5 { --w: 1.8; } .orb--1, .orb--2 { --w: 0.5; } }
+    // the section in view leans the mix towards its own tone by dimming the other orbs; no orb ever goes above
+    // --ambient-alpha, which keeps every text colour at 4.5:1 over it (scripts/ambient-contrast.test.mjs)
+    [data-tone='about'] { .orb--3, .orb--4, .orb--5 { --w: 0.4; } }
+    [data-tone='experience'] { .orb--1, .orb--4, .orb--5 { --w: 0.4; } }
+    [data-tone='stack'] { .orb--1, .orb--2, .orb--5 { --w: 0.4; } }
+    [data-tone='contact'] { .orb--1, .orb--2, .orb--3, .orb--4 { --w: 0.4; } }
     // phones: three orbs
     .orb--4,
     .orb--5 {

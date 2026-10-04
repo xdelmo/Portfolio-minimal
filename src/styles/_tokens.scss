@@ -28,7 +28,7 @@
   /* text on the pastel stack orbs, which stay light in both themes */
   --orb-ink: #1d1d1c;
   /* strength of the ambient orbs behind the page (layout/ambient.ts) */
-  --ambient-alpha: 0.35;
+  --ambient-alpha: 0.12;
   /* section bands (.band in _base.scss): pastel for About, ink for the contact finale; AA-checked */
   --band-pastel-bg: #b9d5f5;
   --band-pastel-fg: #1d1d1c;
@@ -63,7 +63,7 @@
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
   --orb-ink: #121212;
-  --ambient-alpha: 0.22;
+  --ambient-alpha: 0.18;
   --band-pastel-bg: #14243b;
   --band-pastel-fg: #e8f0fa;
   --band-pastel-muted: #a9bdd6;

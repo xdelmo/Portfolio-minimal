@@ -3,11 +3,14 @@ import { expect, test, type Page } from './fixtures';
 const pause = (page: Page) => page.getByRole('button', { name: 'Pause animations' });
 const field = (page: Page) => page.locator('app-pixel-field canvas');
 const snapshot = (page: Page) => field(page).evaluate((c) => (c as HTMLCanvasElement).toDataURL());
+// the canvas has its real size and first frame once the field has started (slower in WebKit)
+const painted = (page: Page) => expect.poll(() => field(page).evaluate((c) => (c as HTMLCanvasElement).width !== 300)).toBe(true);
 
 test('one header button pauses all automatic motion, from the keyboard too', async ({ page }) => {
   await page.goto('/en/');
   await expect(page.getByRole('button', { name: 'Pause the pixel animation' })).toHaveCount(0);
   await expect(pause(page)).toHaveAttribute('aria-pressed', 'false');
+  await painted(page);
   await pause(page).focus();
   await page.keyboard.press('Enter');
   await expect(pause(page)).toHaveAttribute('aria-pressed', 'true');
@@ -26,6 +29,8 @@ test('the pause lasts across pages for the whole visit', async ({ page }) => {
   await expect(pause(page)).toHaveAttribute('aria-pressed', 'true');
   await page.goto('/en/');
   await expect(pause(page)).toHaveAttribute('aria-pressed', 'true');
+  await painted(page);
+  await page.waitForTimeout(200);
   const still = await snapshot(page);
   await page.waitForTimeout(400);
   expect(await snapshot(page)).toBe(still);

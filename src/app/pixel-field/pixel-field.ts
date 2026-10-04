@@ -137,8 +137,10 @@ export class PixelField {
       this.frame.pointer = local(e);
       this.hovering = true;
     };
-    const onLeave = (): void => {
+    const onLeave = (e: PointerEvent): void => {
       this.frame.pointer = null;
+      // a finger leaves right after every tap: only the mouse ends a hover or a choice
+      if (e.pointerType !== 'mouse') return;
       this.hovering = false;
       this.chosen = null;
     };

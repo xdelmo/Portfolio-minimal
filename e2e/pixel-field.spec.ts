@@ -138,6 +138,25 @@ test.describe('edm. becomes the face', () => {
     await expect(host(page)).toHaveAttribute('data-scene', before === 'face' ? 'edm' : 'face');
   });
 
+  test('a tap on a phone keeps the face after the morph lands', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'touch only');
+    await page.goto('/en/');
+    await canvas(page).scrollIntoViewIfNeeded();
+    await expect.poll(() => isPainted(page)).toBe(true);
+    // tap right after the cycle lands on edm., so the automatic scene stays edm. for 6 s
+    await expect(host(page)).toHaveAttribute('data-scene', 'face', { timeout: 15_000 });
+    await expect(host(page)).toHaveAttribute('data-scene', 'edm', { timeout: 10_000 });
+    await canvas(page).tap({ position: { x: 10, y: 10 } });
+    // real phones fire a touch pointerleave right after the finger lifts; the emulator does not
+    await canvas(page).dispatchEvent('pointerleave', { pointerType: 'touch' });
+    await expect(host(page)).toHaveAttribute('data-scene', 'face');
+    // sample through the morph: the automatic cycle would land on the face again later
+    for (let i = 0; i < 10; i++) {
+      await page.waitForTimeout(250);
+      expect(await host(page).getAttribute('data-scene')).toBe('face');
+    }
+  });
+
   test('the mouse over the field holds the face', async ({ page, isMobile }) => {
     test.skip(isMobile, 'no hover on touch screens');
     await page.goto('/en/');

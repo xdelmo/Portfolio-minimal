@@ -79,3 +79,12 @@
   for = "/*.md"
   [headers.values]
     Content-Type = "text/markdown; charset=utf-8"
+
+# The root redirect depends on the nf_lang cookie as well as Accept-Language:
+# without this the edge cache can answer a cookie request with the redirect
+# it stored for a request without it.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Netlify-Vary = "language,cookie=nf_lang"
+    Cache-Control = "no-store"

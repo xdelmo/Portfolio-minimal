@@ -92,6 +92,8 @@ import { pixelSrc } from '../../content/image-loader';
       inset: 0;
       width: 100%;
       height: 100%;
+      /* the 40px copy rounds its height, so its ratio is slightly off */
+      object-fit: cover;
       image-rendering: pixelated;
       opacity: 0;
       pointer-events: none;

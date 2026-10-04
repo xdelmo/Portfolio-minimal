@@ -25,12 +25,13 @@ import {
 } from 'three';
 import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
+import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { breath, explodeAmount, follow, scrollYaw, sectionProgress } from './motion';
+import { Gaze, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
+const SCLERA = '--surface';
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',
@@ -43,6 +44,7 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
 @Component({
   selector: 'app-moai-scene',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[attr.data-gaze]': 'gaze()' },
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
   `,
@@ -66,6 +68,8 @@ export class MoaiScene {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
   protected readonly desktop = signal(false);
+  /** Where the pixel pupils look, on desktop once the mouse moves; null keeps the eyes fully lit. */
+  protected readonly gaze = signal<Gaze | null>(null);
   // phones: it spins by itself unless all motion is paused (one header button, WCAG 2.2.2)
   private readonly pause = inject(MotionPause);
 
@@ -144,11 +148,21 @@ export class MoaiScene {
     camera.position.copy(target).add(new Vector3(50, 50, 50));
     camera.lookAt(target);
 
+    // each eye is a 2×2 block: with a gaze, one voxel is the pupil and the other three the white
+    const eyes = voxels.filter((v) => v.color === 'eye');
+    const isPupil = (v: Voxel, g: Gaze): boolean => {
+      const mine = eyes.filter((e) => Math.sign(e.x) === Math.sign(v.x));
+      const xs = mine.map((e) => e.x);
+      const ys = mine.map((e) => e.y);
+      return v.x === (g.startsWith('right') ? Math.max(...xs) : Math.min(...xs)) && v.y === (g.endsWith('up') ? Math.max(...ys) : Math.min(...ys));
+    };
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
+      const g = this.gaze();
       voxels.forEach((v, i) => {
-        mesh.setColorAt(i, color.set(style.getPropertyValue(CSS_COLORS[v.color]).trim()));
+        const token = v.color === 'eye' && g && !isPupil(v, g) ? SCLERA : CSS_COLORS[v.color];
+        mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     };
@@ -243,7 +257,15 @@ export class MoaiScene {
       pointerX = null;
     };
     const onLook = (e: PointerEvent): void => {
-      if (e.pointerType === 'mouse') lookTarget = (e.clientX / innerWidth - 0.5) * 0.5;
+      if (e.pointerType !== 'mouse') return;
+      lookTarget = (e.clientX / innerWidth - 0.5) * 0.5;
+      if (!this.desktop()) return;
+      // the eyes sit about 40% down the canvas
+      const box = canvas.getBoundingClientRect();
+      const next = gaze(e.clientX - (box.left + box.width / 2), e.clientY - (box.top + box.height * 0.4));
+      if (next === this.gaze()) return;
+      this.gaze.set(next);
+      paint();
     };
     const onDesktop = (): void => {
       this.desktop.set(desktopQuery.matches);

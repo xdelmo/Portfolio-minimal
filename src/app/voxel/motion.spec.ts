@@ -1,4 +1,4 @@
-import { BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, scrollYaw, sectionProgress, smoothstep } from './motion';
+import { BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, gaze, scrollYaw, sectionProgress, smoothstep } from './motion';
 
 describe('moai motion', () => {
   it('measures how far the section has scrolled past the middle of the screen', () => {
@@ -44,5 +44,14 @@ describe('moai motion', () => {
 
   it('lands exactly on the target once close, so a still scene stops changing', () => {
     expect(follow(0.99995, 1, 16)).toBe(1);
+  });
+});
+
+describe('gaze', () => {
+  it('looks towards the quadrant the pointer is in, seen from the moai', () => {
+    expect(gaze(-100, -50)).toBe('left-up');
+    expect(gaze(80, -10)).toBe('right-up');
+    expect(gaze(-5, 200)).toBe('left-down');
+    expect(gaze(300, 1)).toBe('right-down');
   });
 });

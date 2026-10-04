@@ -185,3 +185,17 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   await page.waitForTimeout(800);
   expect(await snapshot(page)).toBe(still);
 });
+
+test('its eyes follow the mouse', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  const host = page.locator('app-moai-scene');
+  await page.mouse.move(5, 120);
+  await expect(host).toHaveAttribute('data-gaze', 'left-up');
+  await page.mouse.move(1275, 795);
+  await expect(host).toHaveAttribute('data-gaze', 'right-down');
+});

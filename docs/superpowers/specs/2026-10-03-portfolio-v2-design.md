@@ -307,3 +307,4 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Foto di Emanuele nei Contatti; tolta la riga "CV disponibile su richiesta"; il footer prosegue la fascia scura dei Contatti (niente striscia di sfondo in mezzo) | richiesta esplicita |
 | 2026-10-04 | Dropdown della lingua: testo delle voci allineato all'etichetta del pulsante, quadratino della lingua attiva nella colonna dell'icona | spazi non coerenti |
 | 2026-10-04 | Il campo di pixel dell'hero mostra solo il volto: niente più "edm.", niente ciclo né morph; i pixel del ritratto si compongono in volo, poi scintillio, spinta del cursore e onde al tocco | richiesta esplicita |
+| 2026-10-04 | Occhi del moai che seguono il cursore (desktop): ogni occhio 2×2 diventa bianco con una pupilla accento nel quadrante del puntatore, oltre alla rotazione della testa | richiesta esplicita |

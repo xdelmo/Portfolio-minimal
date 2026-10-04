@@ -33,3 +33,10 @@ export function follow(current: number, target: number, dt: number): number {
   const next = target + (current - target) * Math.exp(-dt / 250);
   return Math.abs(next - target) < 1e-4 ? target : next;
 }
+
+export type Gaze = 'left-up' | 'left-down' | 'right-up' | 'right-down';
+
+/** Where the moai's pixel pupils look: the quadrant of the pointer around its eyes (`dx`, `dy` in screen px). */
+export function gaze(dx: number, dy: number): Gaze {
+  return `${dx < 0 ? 'left' : 'right'}-${dy < 0 ? 'up' : 'down'}` as const;
+}

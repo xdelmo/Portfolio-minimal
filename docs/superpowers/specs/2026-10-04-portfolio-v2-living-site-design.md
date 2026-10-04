@@ -26,6 +26,8 @@ Successo: chi apre il sito vede subito un hero che cambia da solo ("edm." che di
 
 ## 3. "edm." diventa il volto (hero)
 
+> **Aggiornamento 2026-10-04:** su richiesta "edm." è stato tolto dal campo: il campo mostra solo il volto, che si compone in volo all'arrivo. Ciclo, morph, hover e clic che alternavano le scene non ci sono più; restano spinta del cursore e onde al tocco. Il resto di questa sezione descrive la prima versione.
+
 L'elemento memorabile del sito, ispirato a "io." → "noi." di matteovincenti.com.
 
 **Dati.** Uno script (`scripts/portrait.mjs`) legge `icon1.png` e produce `src/app/pixel-field/portrait.ts`: una griglia di 40 × 40 indici di colore, ritagliata su testa e spalle, con lo sfondo grigio trasformato in "vuoto". Il ritratto è quantizzato su una palette di 6 colori presa dai token (grigi scuri e chiari per occhiali, barba e maglia; pesca `--px-6` e una sua variante per l'incarnato; azzurro `--px-3` per i riflessi). Niente immagine scaricata dal browser; il file pesa pochi KB e sta nel pacchetto del pixel field che è già differito.

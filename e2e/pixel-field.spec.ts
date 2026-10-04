@@ -114,57 +114,34 @@ test.describe('without JavaScript', () => {
   });
 });
 
-test.describe('edm. becomes the face', () => {
-  const host = (page: Page) => page.locator('app-pixel-field');
+test.describe('the face', () => {
+  // counts the canvas pixels in the peach of the skin (--px-6), the colour only the portrait uses at full size
+  const peach = (page: Page) =>
+    canvas(page).evaluate((c) => {
+      const el = c as HTMLCanvasElement;
+      const css = getComputedStyle(document.documentElement).getPropertyValue('--px-6').trim();
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(css.slice(i, i + 2), 16));
+      const data = el.getContext('2d')?.getImageData(0, 0, el.width, el.height).data ?? new Uint8ClampedArray();
+      let n = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] > 200 && Math.abs(data[i] - r) < 8 && Math.abs(data[i + 1] - g) < 8 && Math.abs(data[i + 2] - b) < 8) n++;
+      }
+      return n;
+    });
 
-  test('turns into the face by itself, then back into edm.', async ({ page }) => {
+  test('the field draws the face from the start, with no "edm." scene', async ({ page }) => {
     await page.goto('/en/');
     await canvas(page).scrollIntoViewIfNeeded();
-    await expect(host(page)).toHaveAttribute('data-scene', 'edm');
-    await expect(host(page)).toHaveAttribute('data-scene', 'face', { timeout: 12_000 });
-    await expect(host(page)).toHaveAttribute('data-scene', 'edm', { timeout: 8000 });
+    await expect.poll(() => peach(page), { timeout: 4000 }).toBeGreaterThan(500);
+    await expect(page.locator('app-pixel-field')).not.toHaveAttribute('data-scene');
   });
 
-  test('a click or a tap swaps the scene', async ({ page }) => {
-    await page.goto('/en/');
-    await canvas(page).scrollIntoViewIfNeeded();
-    // the canvas listens once it has painted its first frame
-    await expect.poll(() => isPainted(page)).toBe(true);
-    // a mouse reaching the field already brings the face: settle wherever the pointer leaves it first
-    await canvas(page).hover({ position: { x: 10, y: 10 } });
-    await page.waitForTimeout(1500);
-    const before = await host(page).getAttribute('data-scene');
-    await canvas(page).click({ position: { x: 10, y: 10 } });
-    await expect(host(page)).toHaveAttribute('data-scene', before === 'face' ? 'edm' : 'face');
-  });
-
-  test('a tap on a phone keeps the face after the morph lands', async ({ page, isMobile }) => {
-    test.skip(!isMobile, 'touch only');
-    await page.goto('/en/');
-    await canvas(page).scrollIntoViewIfNeeded();
-    await expect.poll(() => isPainted(page)).toBe(true);
-    // tap right after the cycle lands on edm., so the automatic scene stays edm. for 6 s
-    await expect(host(page)).toHaveAttribute('data-scene', 'face', { timeout: 15_000 });
-    await expect(host(page)).toHaveAttribute('data-scene', 'edm', { timeout: 10_000 });
-    await canvas(page).tap({ position: { x: 10, y: 10 } });
-    // real phones fire a touch pointerleave right after the finger lifts; the emulator does not
-    await canvas(page).dispatchEvent('pointerleave', { pointerType: 'touch' });
-    await expect(host(page)).toHaveAttribute('data-scene', 'face');
-    // sample through the morph: the automatic cycle would land on the face again later
-    for (let i = 0; i < 10; i++) {
-      await page.waitForTimeout(250);
-      expect(await host(page).getAttribute('data-scene')).toBe('face');
-    }
-  });
-
-  test('the mouse over the field holds the face', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'no hover on touch screens');
-    await page.goto('/en/');
-    await canvas(page).hover({ position: { x: 20, y: 20 } });
-    await expect(host(page)).toHaveAttribute('data-scene', 'face');
-    await page.waitForTimeout(5000);
-    await expect(host(page)).toHaveAttribute('data-scene', 'face');
-    await page.mouse.move(0, 0);
-    await expect(host(page)).toHaveAttribute('data-scene', 'edm');
+  test.describe('with reduced motion', () => {
+    test.use({ reducedMotion: 'reduce' });
+    test('the still picture is the face', async ({ page }) => {
+      await page.goto('/en/');
+      await canvas(page).scrollIntoViewIfNeeded();
+      await expect.poll(() => peach(page)).toBeGreaterThan(500);
+    });
   });
 });

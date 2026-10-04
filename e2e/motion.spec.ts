@@ -212,6 +212,25 @@ test.describe('bands and finale', () => {
       .toBe(0);
   });
 
+  test('the contact text never sticks out of the band while it widens', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/en/');
+    await ready(page);
+    await page.evaluate(() => {
+      const contact = document.getElementById('contact');
+      if (contact) window.scrollTo(0, contact.getBoundingClientRect().top + scrollY - innerHeight * 0.8);
+    });
+    await page.waitForTimeout(300);
+    const { bandEdge, textEdge } = await page.locator('#contact').evaluate((el) => {
+      const inset = getComputedStyle(el).getPropertyValue('--band-inset').trim();
+      const px = inset.endsWith('%') ? (parseFloat(inset) * document.documentElement.clientWidth) / 100 : parseFloat(inset);
+      const left = Math.min(...[...el.querySelectorAll('h2, a, p')].map((n) => n.getBoundingClientRect().left));
+      return { bandEdge: px, textEdge: left };
+    });
+    expect(bandEdge).toBeGreaterThan(0);
+    expect(bandEdge).toBeLessThan(textEdge);
+  });
+
   test('a progress bar follows the scroll', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);

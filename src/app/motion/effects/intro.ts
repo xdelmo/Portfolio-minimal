@@ -8,11 +8,11 @@ const FALLBACK_MS = 2600;
 
 /** Letters light up one after the other, the pixel row fills, then the panel lifts and uncovers the page. */
 export const introEffect: Effect = (root, { gsap }) => {
-  if (!document.documentElement.classList.contains('intro-on')) return;
+  if (!document.documentElement.classList.contains('intro-on')) return undefined;
   const panel = root.querySelector<HTMLElement>('.site-intro');
   if (!panel || performance.now() > FALLBACK_MS) {
     endIntro();
-    return;
+    return undefined;
   }
   panel.style.animation = 'none';
   gsap
@@ -25,4 +25,9 @@ export const introEffect: Effect = (root, { gsap }) => {
       0.1,
     )
     .to(panel, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '+=0.25');
+  // a revert (reduced motion switched on, a resize across the desktop query) kills the timeline: end the intro
+  // anyway, or the opaque panel would stay put with its CSS fallback turned off
+  return () => {
+    endIntro();
+  };
 };

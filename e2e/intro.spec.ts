@@ -36,6 +36,14 @@ test.describe('intro', () => {
     await expect(page.locator('.site-intro')).toBeHidden();
   });
 
+  test('lifts away even if reduced motion is switched on while it plays', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.goto('/en/');
+    await expect(page.locator('.site-intro')).toBeVisible();
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 5000 });
+  });
+
   // phones skip it: it would delay the first paint, and the page is the point there
   test.describe('on a phone-sized screen', () => {
     test.use({ viewport: { width: 390, height: 844 } });

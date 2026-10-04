@@ -1,8 +1,11 @@
 import type { Effect } from '../motion-host';
 
-/** Section titles rise out of a mask line by line as they scroll in; titles already on screen are left alone. */
+/**
+ * Section titles rise out of a mask line by line as they scroll in; titles already on screen are left alone.
+ * The contact title has its own scrubbed version in finale.ts.
+ */
 export const titlesEffect: Effect = (root, { gsap, SplitText }) => {
-  for (const title of root.querySelectorAll<HTMLElement>('section:not(.hero) h2')) {
+  for (const title of root.querySelectorAll<HTMLElement>('section:not(.hero, #contact) h2')) {
     if (title.getBoundingClientRect().top < innerHeight) continue;
     const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
     gsap.from(split.lines, {

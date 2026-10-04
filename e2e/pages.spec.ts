@@ -153,3 +153,20 @@ test('a tall project image asks for the size it is shown at', async ({ page }) =
   await page.goto('/en/work/ice-friends-breaker');
   await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');
 });
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`the whole home page meets WCAG 2.2 AA after scrolling through it, ${colorScheme} theme (axe)`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/');
+    // walk down the page so every scroll animation reaches its final state, then check everything at once
+    for (let y = 0; y < (await page.evaluate(() => document.documentElement.scrollHeight)); y += 600) {
+      await page.evaluate((top) => {
+        window.scrollTo(0, top);
+      }, y);
+      await page.waitForTimeout(60);
+    }
+    await page.waitForTimeout(1500);
+    const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+    expect(results.violations).toEqual([]);
+  });
+}

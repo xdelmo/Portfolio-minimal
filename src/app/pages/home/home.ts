@@ -11,6 +11,7 @@ import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 import { experienceEffect } from '../../motion/effects/experience';
+import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { stackOrbsEffect } from '../../motion/effects/stack-orbs';
 import { titlesEffect } from '../../motion/effects/titles';
@@ -46,7 +47,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-side-quests [items]="content.sideQuests" />
     </section>
 
-    <section id="about" class="section container about" aria-labelledby="about-title">
+    <section id="about" class="section container about band band--pastel" aria-labelledby="about-title">
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
         <p>{{ content.about }}</p>
@@ -65,7 +66,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-stack-list [groups]="content.stack" />
     </section>
 
-    <section id="contact" class="section container" aria-labelledby="contact-title">
+    <section id="contact" class="section container band band--ink" aria-labelledby="contact-title">
       <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
       <p>
         <a [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
@@ -104,6 +105,10 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     }
     .field {
       margin-top: var(--space-6);
+    }
+    #contact h2 {
+      font-size: clamp(3rem, 1rem + 8vw, 9rem);
+      line-height: 0.95;
     }
     .about-text {
       display: grid;
@@ -148,7 +153,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, finaleEffect];
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));
 

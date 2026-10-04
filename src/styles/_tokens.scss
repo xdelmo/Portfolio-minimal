@@ -27,6 +27,15 @@
   --intro-fg: #e5e5e5;
   /* text on the pastel stack orbs, which stay light in both themes */
   --orb-ink: #1d1d1c;
+  /* section bands (.band in _base.scss): pastel for About, ink for the contact finale; AA-checked */
+  --band-pastel-bg: #a8e0c8;
+  --band-pastel-fg: #1d1d1c;
+  --band-pastel-muted: #30473d;
+  --band-pastel-link: #0b4f96;
+  --band-ink-bg: #1d1d1c;
+  --band-ink-fg: #f2f2f2;
+  --band-ink-muted: #b8b8b2;
+  --band-ink-link: #9ccaff;
 }
 
 :root[data-theme='dark'] {
@@ -52,6 +61,14 @@
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
   --orb-ink: #121212;
+  --band-pastel-bg: #15302a;
+  --band-pastel-fg: #e8f4ee;
+  --band-pastel-muted: #a7c8ba;
+  --band-pastel-link: #9ccaff;
+  --band-ink-bg: #0c2a1f;
+  --band-ink-fg: #eef7f2;
+  --band-ink-muted: #a7c8ba;
+  --band-ink-link: #9ccaff;
 }
 
 :root {

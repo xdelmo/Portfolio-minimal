@@ -179,3 +179,53 @@ test.describe('stack orbs', () => {
     });
   });
 });
+
+test.describe('bands and finale', () => {
+  test('about sits on a pastel band and contact on a dark one', async ({ page }) => {
+    await page.goto('/en/');
+    const bandColour = (id: string) => page.locator(`#${id}`).evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
+    expect(await bandColour('about')).toBe('rgb(168, 224, 200)');
+    expect(await bandColour('contact')).toBe('rgb(29, 29, 28)');
+  });
+
+  test('the contact band widens to full bleed as it scrolls in', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const inset = () => page.locator('#contact').evaluate((el) => getComputedStyle(el).getPropertyValue('--band-inset').trim());
+    expect(await inset()).not.toMatch(/^0(%|px)?$/);
+    await expect
+      .poll(async () => {
+        await page.evaluate(() => {
+          window.scrollTo(0, document.documentElement.scrollHeight);
+        });
+        return inset();
+      }, { timeout: 8000 })
+      .toMatch(/^0(%|px)?$/);
+    await expect(page.locator('#contact h2')).toHaveAccessibleName('Get in touch');
+    // the last line of the giant title has fully risen, even though the page ends before the trigger's end
+    await expect
+      .poll(() => page.locator('#contact h2').evaluate((el) => {
+        const lines = el.querySelectorAll<HTMLElement>(':scope > * > *');
+        const last = lines[lines.length - 1] as HTMLElement | undefined;
+        return last ? Math.round(new DOMMatrix(getComputedStyle(last).transform).m42) : 0;
+      }))
+      .toBe(0);
+  });
+
+  test('a progress bar follows the scroll', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const bar = page.locator('.scroll-progress');
+    await expect(bar).toHaveAttribute('aria-hidden', 'true');
+    const scale = () => bar.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
+    expect(await scale()).toBeLessThan(0.05);
+    await expect
+      .poll(async () => {
+        await page.evaluate(() => {
+          window.scrollTo(0, document.documentElement.scrollHeight);
+        });
+        return scale();
+      }, { timeout: 8000 })
+      .toBeGreaterThan(0.95);
+  });
+});

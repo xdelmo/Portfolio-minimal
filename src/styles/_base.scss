@@ -139,3 +139,35 @@ canvas {
     animation: none !important;
   }
 }
+
+/* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
+   (text, links, focus ring, rules) follows. --band-inset/--band-round let GSAP grow the band from a card. */
+.band {
+  position: relative;
+  isolation: isolate;
+  color: var(--fg);
+}
+.band::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -1;
+  background: var(--band-bg);
+  clip-path: inset(0 var(--band-inset, 0%) round var(--band-round, 0px));
+}
+.band--pastel {
+  --band-bg: var(--band-pastel-bg);
+  --fg: var(--band-pastel-fg);
+  --fg-muted: var(--band-pastel-muted);
+  --link: var(--band-pastel-link);
+  --focus: var(--band-pastel-link);
+  --rule: color-mix(in srgb, var(--band-pastel-fg) 20%, transparent);
+}
+.band--ink {
+  --band-bg: var(--band-ink-bg);
+  --fg: var(--band-ink-fg);
+  --fg-muted: var(--band-ink-muted);
+  --link: var(--band-ink-link);
+  --focus: var(--band-ink-link);
+  --rule: color-mix(in srgb, var(--band-ink-fg) 20%, transparent);
+}

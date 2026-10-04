@@ -23,6 +23,7 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - Logic that can break lives in pure, unit-tested functions next to thin services: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts`.
 - Theme: an inline script in `src/index.html` sets `data-theme` before first paint; `ThemeService` takes over after hydration. All colors are CSS variables in `src/styles/_tokens.scss`.
 - Netlify (`netlify.toml`) does the language redirect on `/` (honouring the `nf_lang` cookie set by the language switch), the canonical-domain 301s, legacy Gatsby URLs and per-locale 404s.
+- Motion: GSAP (ScrollTrigger, SplitText) loads as a lazy chunk through `MOTION_LOADER`; the `[appMotion]` directive (`src/app/motion/motion-host.ts`) runs the effects in `src/app/motion/effects/` inside `gsap.matchMedia`, and does nothing with reduced motion. Pins and pointer effects are desktop only (≥ 1024px with hover). Use `gsap.set` + `.to()` for scrubbed tweens (a scrubbed `.from()` is not redrawn in Firefox after a refresh). E2E skip the intro through `e2e/fixtures.ts`.
 - `scripts/postbuild.mjs` builds `sitemap.xml` and `robots.txt` at the publish root from the prerendered pages' canonical/hreflang tags.
 
 ## Conventions

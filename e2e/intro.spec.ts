@@ -3,7 +3,8 @@ import { expect, test } from './fixtures';
 test.describe('intro', () => {
   test.use({ intro: true });
 
-  test('covers the first view, then lifts away by itself', async ({ page }) => {
+  test('covers the first view, then lifts away by itself', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
     await page.goto('/en/');
     const intro = page.locator('.site-intro');
     await expect(intro).toBeVisible();
@@ -12,7 +13,8 @@ test.describe('intro', () => {
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {
-    test(`hides the page completely in the ${colorScheme} theme`, async ({ page }) => {
+    test(`hides the page completely in the ${colorScheme} theme`, async ({ page, isMobile }) => {
+      test.skip(isMobile, 'desktop only');
       await page.emulateMedia({ colorScheme });
       await page.goto('/en/');
       const background = await page.locator('.site-intro').evaluate((el) => getComputedStyle(el).backgroundColor);
@@ -32,6 +34,16 @@ test.describe('intro', () => {
     await expect(page.locator('.site-intro')).toBeHidden({ timeout: 4000 });
     await page.goto('/en/work/apexflow');
     await expect(page.locator('.site-intro')).toBeHidden();
+  });
+
+  // phones skip it: it would delay the first paint, and the page is the point there
+  test.describe('on a phone-sized screen', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+    test('does not appear', async ({ page }) => {
+      await page.goto('/en/');
+      // checked at once: waiting would only see the intro after it lifted away
+      expect(await page.locator('.site-intro').isVisible()).toBe(false);
+    });
   });
 
   test.describe('with reduced motion', () => {

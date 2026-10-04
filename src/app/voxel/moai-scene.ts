@@ -37,7 +37,7 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stoneLight: '--stone-light',
   eye: '--accent',
   pukao: '--px-6',
-  moss: '--px-5',
+  moss: '--stone-light',
 };
 
 @Component({

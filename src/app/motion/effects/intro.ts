@@ -2,7 +2,7 @@ import { endIntro } from '../intro-state';
 import type { Effect } from '../motion-host';
 
 // the pixel palette of src/styles/_tokens.scss
-const PIXELS = ['#7fb2ec', '#b9d5f5', '#c9b8f5', '#a8e0c8', '#ffc9a8'];
+const PIXELS = ['#7fb2ec', '#b9d5f5', '#c9b8f5', '#dccff8', '#ffc9a8'];
 // the CSS fallback in site-intro.ts lifts the panel at 3s; past that, GSAP must not replay it
 const FALLBACK_MS = 2600;
 

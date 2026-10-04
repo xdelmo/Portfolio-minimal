@@ -10,7 +10,7 @@ import { glyph, hash } from '../src/app/pixel-field/field.ts';
 const BG = '#e5e5e5';
 const FG = '#1d1d1c';
 const MUTED = '#555555';
-const PIXELS = ['#0066d4', '#7fb2ec', '#b9d5f5', '#c9b8f5', '#a8e0c8', '#ffc9a8'];
+const PIXELS = ['#0066d4', '#7fb2ec', '#b9d5f5', '#c9b8f5', '#dccff8', '#ffc9a8'];
 const FONT = readFileSync('node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2').toString('base64');
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 

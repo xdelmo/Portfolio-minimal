@@ -6,8 +6,8 @@ import { MOAI_FRAME, moaiVoxels } from '../src/app/voxel/moai.model.ts';
 
 const UNIT = 16; // CSS px per voxel edge
 const palettes = {
-  moai: { stone: '#a3a39d', stoneDark: '#85857f', stoneLight: '#bdbdb6', eye: '#0066d4', pukao: '#ffc9a8', moss: '#a8e0c8' },
-  'moai-dark': { stone: '#7d7d78', stoneDark: '#62625e', stoneLight: '#9a9a94', eye: '#0066d4', pukao: '#f0a982', moss: '#7ccfa8' },
+  moai: { stone: '#a3a39d', stoneDark: '#85857f', stoneLight: '#bdbdb6', eye: '#0066d4', pukao: '#ffc9a8', moss: '#bdbdb6' },
+  'moai-dark': { stone: '#7d7d78', stoneDark: '#62625e', stoneLight: '#9a9a94', eye: '#0066d4', pukao: '#f0a982', moss: '#9a9a94' },
 };
 
 const browser = await chromium.launch();

@@ -83,7 +83,7 @@ Base: la palette del sito attuale (`theme.css`) + pochi accenti pastello usati *
 | `--fg-muted` | `#555555` | `#aaaaaa` |
 | `--accent` (bottoni, pixel) | `#0066d4` | `#0066d4` |
 | `--link` (testo d'accento) | `#005fc5` | `#4d9bf0` |
-| Pixel | `#0066d4`, `#7fb2ec`, `#b9d5f5`, `#c9b8f5`, `#a8e0c8`, `#ffc9a8` | `#0066d4`, `#2f86ea`, `#6aa9f2`, `#9d8cf0`, `#7ccfa8`, `#f0a982` |
+| Pixel | `#0066d4`, `#7fb2ec`, `#b9d5f5`, `#c9b8f5`, `#dccff8`, `#ffc9a8` | `#0066d4`, `#2f86ea`, `#6aa9f2`, `#9d8cf0`, `#c2b4f5`, `#f0a982` |
 
 Contrasti verificati (WCAG AA ≥ 4.5:1): `--link` light 4.8:1, dark 6.5:1; testo bianco su `--accent` 5.4:1; `--fg-muted` light 5.9:1, dark 8.1:1.
 

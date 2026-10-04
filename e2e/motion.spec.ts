@@ -184,7 +184,7 @@ test.describe('bands and finale', () => {
   test('about sits on a pastel band and contact on a dark one', async ({ page }) => {
     await page.goto('/en/');
     const bandColour = (id: string) => page.locator(`#${id}`).evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
-    expect(await bandColour('about')).toBe('rgb(168, 224, 200)');
+    expect(await bandColour('about')).toBe('rgb(185, 213, 245)');
     expect(await bandColour('contact')).toBe('rgb(29, 29, 28)');
   });
 

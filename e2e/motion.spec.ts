@@ -1,6 +1,6 @@
 import { type Locator, type Page, expect, test } from './fixtures';
 
-const ready = (page: Page) => expect(page.locator('[data-motion]').first()).toHaveAttribute('data-motion', 'ready');
+const ready = (page: Page) => expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
 // SplitText wraps each line in a masking element; the title is back to plain text once its reveal is over
 const isPlainText = (el: Locator) => el.evaluate((node) => node.children.length === 0);
 
@@ -90,4 +90,29 @@ test('hovering a project flashes its pixelated copy once', async ({ page, browse
   expect(await pixels.evaluate((el) => getComputedStyle(el).animationName)).toMatch(/depixelate$/);
   await expect.poll(() => pixels.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBe(40);
   expect(await pixels.getAttribute('aria-hidden'), browserName).toBe('true');
+});
+
+test.describe('project cards', () => {
+  test.skip(({ isMobile }) => isMobile, 'mouse only');
+
+  test('tilt the image toward the cursor and settle when it leaves', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const media = page.locator('#work .project .media').first();
+    // hover() waits for the element to stop moving, so the box below is where the image really is
+    await media.hover();
+    const box = await media.boundingBox();
+    if (!box) throw new Error('no media box');
+    // sine of the rotation around the vertical axis, from the matrix3d (0 when the image faces the viewer)
+    const lean = () =>
+      media.evaluate((el) => {
+        const m = /matrix3d\(([^)]+)\)/.exec(getComputedStyle(el).transform);
+        return m ? Math.abs(Number(m[1].split(',')[2])) : 0;
+      });
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.2);
+    await page.mouse.move(box.x + box.width * 0.95, box.y + box.height * 0.1, { steps: 4 });
+    await expect.poll(lean).toBeGreaterThan(0.05);
+    await page.mouse.move(5, 5);
+    await expect.poll(lean, { timeout: 2000 }).toBeLessThan(0.005);
+  });
 });

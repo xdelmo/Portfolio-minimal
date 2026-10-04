@@ -13,8 +13,11 @@ export interface Motion extends MotionLib {
   desktop: boolean;
 }
 
-/** One motion effect. It creates its tweens synchronously, so the surrounding GSAP context can revert them. */
-export type Effect = (root: HTMLElement, motion: Motion) => void;
+/**
+ * One motion effect. It creates its tweens synchronously, so the surrounding GSAP context can revert them;
+ * anything GSAP cannot undo (event listeners) goes in the cleanup it returns.
+ */
+export type Effect = (root: HTMLElement, motion: Motion) => (() => void) | undefined;
 
 export const MOTION_LOADER = new InjectionToken<() => Promise<MotionLib>>('MOTION_LOADER', {
   providedIn: 'root',
@@ -61,13 +64,18 @@ export class MotionHost {
           mm.add(CONDITIONS, (ctx) => {
             const conditions = ctx.conditions ?? {};
             if (!conditions['motion']) return;
+            const cleanups: (() => void)[] = [];
             for (const effect of this.appMotion()) {
               try {
-                effect(el, { ...lib, desktop: conditions['desktop'] });
+                const cleanup = effect(el, { ...lib, desktop: conditions['desktop'] });
+                if (cleanup) cleanups.push(cleanup);
               } catch (error) {
                 console.warn('motion effect failed', error);
               }
             }
+            return () => {
+              for (const cleanup of cleanups) cleanup();
+            };
           });
           this.state.set('ready');
         })

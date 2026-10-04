@@ -43,7 +43,19 @@ test('keyboard focus is always visible and on screen', async ({ page, isMobile }
     if (!info) continue;
     stops++;
     expect(info.ring, `${info.name} shows a focus ring`).toBe(true);
-    expect(info.onScreen, `${info.name} is on screen`).toBe(true);
+    // WebKit scrolls the focused element into view a frame later, so give it a moment
+    if (!info.onScreen) {
+      await expect
+        .poll(
+          () =>
+            page.evaluate(() => {
+              const rect = (document.activeElement as HTMLElement).getBoundingClientRect();
+              return rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+            }),
+          { message: `${info.name} is on screen`, timeout: 1000 },
+        )
+        .toBe(true);
+    }
   }
   expect(stops).toBeGreaterThan(20);
 });

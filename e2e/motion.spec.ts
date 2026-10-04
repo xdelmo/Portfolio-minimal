@@ -198,9 +198,10 @@ test.describe('bands and finale', () => {
         await page.evaluate(() => {
           window.scrollTo(0, document.documentElement.scrollHeight);
         });
-        return inset();
+        return parseFloat(await inset());
       }, { timeout: 8000 })
-      .toMatch(/^0(%|px)?$/);
+      // the scrub can stop a hair short of the end on slow devices: under a pixel is full bleed
+      .toBeLessThan(0.5);
     await expect(page.locator('#contact h2')).toHaveAccessibleName('Get in touch');
     // the last line of the giant title has fully risen, even though the page ends before the trigger's end
     await expect

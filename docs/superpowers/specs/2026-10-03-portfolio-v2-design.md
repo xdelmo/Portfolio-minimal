@@ -298,4 +298,7 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Selettore lingua come menu a tendina (`<details>`, funziona senza JS; Esc e clic fuori lo chiudono) | il link "Italiano"/"English" da solo non diceva cosa faceva |
 | 2026-10-04 | Tolto il lampo pixelato sulle immagini dei progetti all'hover (e le copie `-40.jpg`) | richiesta esplicita |
 | 2026-10-04 | Titolo dell'hero in italiano accorciato ("Interfacce Angular veloci anche con molti dati."); disponibilità ridotta a "ruoli da remoto" (tolti "in sede" e "da marzo 2027") | richiesta esplicita |
+| 2026-10-04 | Piano 8 "sito con vita propria" (spec `2026-10-04-portfolio-v2-living-site-design.md`): "edm." diventa il volto di Emanuele, sfere pastello dietro tutto il sito, cursore-pixel ed elementi magnetici, stack che galleggia, moai che respira e guarda il cursore, scramble del menu | richiesta esplicita: più animazioni, un sito con vita propria, la foto di Emanuele |
+| 2026-10-04 | Un solo pulsante "Metti in pausa le animazioni" nell'header al posto di quelli del pixel field e del moai | WCAG 2.2.2 con un controllo unico |
+| 2026-10-04 | Foto (`public/images/emanuele.jpg`) nel JSON-LD `Person.image` | identità per motori e agenti AI |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

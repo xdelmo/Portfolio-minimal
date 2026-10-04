@@ -1,6 +1,6 @@
 # Portfolio v2 — Un sito con vita propria — Design spec
 
-**Data:** 2026-10-04 · **Stato:** approvato in chat, da rivedere per iscritto · **Branch:** `v2`
+**Data:** 2026-10-04 · **Stato:** implementato (piano 8) · **Branch:** `v2`
 **Spec di riferimento:** `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md` (vincoli globali, §10–§12). Questa spec la estende; in caso di conflitto vale questa per le parti che tratta.
 
 ## 1. Obiettivo

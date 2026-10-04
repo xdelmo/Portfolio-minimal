@@ -1,6 +1,6 @@
 import { IMAGE_LOADER } from '@angular/common';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withI18nSupport } from '@angular/platform-browser';
 import {
   provideRouter,
   withComponentInputBinding,
@@ -19,7 +19,7 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions(),
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
     ),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withEventReplay(), withI18nSupport()),
     { provide: IMAGE_LOADER, useValue: workImageLoader },
   ],
 };

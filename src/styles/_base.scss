@@ -5,6 +5,8 @@
 }
 
 html {
+  /* anchors and focused elements stop below the sticky header (WCAG 2.4.11) */
+  scroll-padding-top: var(--header-h);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -92,7 +94,7 @@ canvas {
   position: absolute;
   left: var(--space-2);
   top: -100px;
-  z-index: 10;
+  z-index: 60;
   padding: var(--space-1) var(--space-2);
   background: var(--fg);
   color: var(--bg);

@@ -96,10 +96,13 @@
   --measure: 68ch;
   --container: 1200px;
   --gutter: 16px;
+  /* the sticky header (site-header.ts); anchors and the experience pin start below it */
+  --header-h: 64px;
 }
 
 @include bp.up(md) {
   :root {
     --gutter: 32px;
+    --header-h: 96px;
   }
 }

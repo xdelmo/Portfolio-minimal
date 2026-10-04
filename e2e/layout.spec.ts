@@ -28,3 +28,20 @@ for (const path of ['/en/', '/en/work/apexflow']) {
     await expect(page.locator('h1')).toHaveText(heading ?? '');
   });
 }
+
+test('the header stays at the top while the page scrolls', async ({ page }) => {
+  await page.goto('/en/');
+  await page.evaluate(() => {
+    window.scrollTo(0, document.documentElement.scrollHeight / 2);
+  });
+  const header = page.locator('app-site-header header');
+  await expect(header).toBeInViewport();
+  expect((await header.boundingBox())?.y).toBe(0);
+  // an anchor lands below the header, not under it
+  await page.goto('/en/#experience');
+  const [headerBottom, titleTop] = await page.evaluate(() => [
+    document.querySelector('app-site-header header')?.getBoundingClientRect().bottom ?? 0,
+    document.querySelector('#experience h2')?.getBoundingClientRect().top ?? 0,
+  ]);
+  expect(titleTop).toBeGreaterThanOrEqual(headerBottom);
+});

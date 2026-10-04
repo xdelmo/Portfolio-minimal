@@ -291,4 +291,5 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Pixel field con vignettatura e scintillio casuale (PR #4) al posto dell'onda diagonale | si fonde con la pagina invece di stare in un rettangolo |
 | 2026-10-04 | `_redirects` generato in build per i case study | Netlify rispondeva 301 verso l'URL con slash finale |
 | 2026-10-04 | `Netlify-Vary` sulla radice | la cache edge mescolava i redirect di lingua con e senza cookie |
+| 2026-10-04 | Navbar sempre visibile (sticky, 64 px su mobile, 96 px da md) con `scroll-padding-top` per ancore e focus; il pin dell'Experience parte sotto la navbar | richiesta esplicita |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

@@ -26,11 +26,20 @@ import { ThemeToggle } from '../core/theme/theme-toggle';
   styles: `
     @use 'styles/breakpoints' as bp;
 
+    /* always on screen: sticky over the page, under the progress bar (z 50) and the intro (z 100) */
+    :host {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: block;
+      background: var(--bg);
+      box-shadow: 0 1px 0 var(--rule);
+    }
     .site-header {
       display: flex;
       align-items: center;
       gap: var(--space-3);
-      min-height: var(--space-12);
+      min-height: var(--header-h);
     }
     .logo {
       margin-right: auto;

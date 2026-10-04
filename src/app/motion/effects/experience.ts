@@ -20,13 +20,15 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
 
   list.classList.add('is-stacked');
   // the pinned section fills the screen with the deck in the middle
-  gsap.set(section, { minHeight: '100svh', alignContent: 'center' });
+  // the pin starts below the sticky header, so the deck fills the screen under it
+  const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+  gsap.set(section, { minHeight: `calc(100svh - ${String(header)}px)`, alignContent: 'center' });
   const steps = items.length - 1;
   const deck = gsap.timeline({
     defaults: { ease: 'power2.out' },
     scrollTrigger: {
       trigger: section,
-      start: 'top top',
+      start: `top ${String(header)}px`,
       end: () => `+=${String(steps * innerHeight * 0.6)}`,
       pin: true,
       scrub: 0.6,

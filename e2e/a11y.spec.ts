@@ -35,7 +35,7 @@ test('keyboard focus is always visible and on screen', async ({ page, isMobile }
       const style = getComputedStyle(el);
       const rect = el.getBoundingClientRect();
       return {
-        name: `${el.tagName} ${(el.textContent ?? '').trim().slice(0, 30)}`,
+        name: `${el.tagName} ${el.textContent.trim().slice(0, 30)}`,
         ring: style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) >= 2,
         onScreen: rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth,
       };

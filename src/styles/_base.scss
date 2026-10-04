@@ -142,6 +142,26 @@ canvas {
   }
 }
 
+/* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport.
+   Named elements (the card → case study transition) join the root snapshot so the circle covers them too. */
+html.theme-switching * {
+  view-transition-name: none !important;
+}
+html.theme-switching::view-transition-old(root) {
+  animation: none;
+}
+html.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--reveal-x) var(--reveal-y));
+  }
+  to {
+    clip-path: circle(var(--reveal-r) at var(--reveal-x) var(--reveal-y));
+  }
+}
+
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
    (text, links, focus ring, rules) follows. --band-inset/--band-round let GSAP grow the band from a card. */
 .band {

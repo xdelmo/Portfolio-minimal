@@ -1,15 +1,30 @@
 import { expect, test } from './fixtures';
 
-test('the language switch points to the same page in the other language', async ({ page }) => {
+const other = (page: import('@playwright/test').Page, lang: 'en' | 'it') => page.locator(`.language-menu a[hreflang="${lang}"]`);
+
+test('the language menu points to the same page in the other language', async ({ page }) => {
   await page.goto('/en/work/apexflow');
-  await expect(page.locator('a.language-switch')).toHaveAttribute('href', '/it/work/apexflow');
+  await expect(other(page, 'it')).toHaveAttribute('href', '/it/work/apexflow');
   await page.goto('/it/');
-  await expect(page.locator('a.language-switch')).toHaveAttribute('href', '/en/');
+  await expect(other(page, 'en')).toHaveAttribute('href', '/en/');
 });
 
-test('using the switch remembers the choice for Netlify', async ({ page, context }) => {
+test('the language menu is a dropdown that says what it does', async ({ page }) => {
   await page.goto('/en/');
-  await page.locator('a.language-switch').click();
+  const toggle = page.getByText('Language: English');
+  await expect(toggle).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Italiano' })).toBeHidden();
+  await toggle.click();
+  await expect(page.getByRole('link', { name: 'Italiano' })).toBeVisible();
+  await expect(page.locator('.language-menu [aria-current="true"]')).toHaveText(/English/);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('link', { name: 'Italiano' })).toBeHidden();
+});
+
+test('choosing a language remembers it for Netlify', async ({ page, context }) => {
+  await page.goto('/en/');
+  await page.getByText('Language: English').click();
+  await page.getByRole('link', { name: 'Italiano' }).click();
   await expect(page).toHaveURL(/\/it\/$/);
   const cookies = await context.cookies();
   expect(cookies.find((c) => c.name === 'nf_lang')?.value).toBe('it');
@@ -18,8 +33,8 @@ test('using the switch remembers the choice for Netlify', async ({ page, context
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });
 
-  test('the language switch already points at the same page', async ({ page }) => {
+  test('the language menu already points at the same page', async ({ page }) => {
     await page.goto('/en/work/apexflow');
-    await expect(page.locator('.language-switch')).toHaveAttribute('href', '/it/work/apexflow');
+    await expect(other(page, 'it')).toHaveAttribute('href', '/it/work/apexflow');
   });
 });

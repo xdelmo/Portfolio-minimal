@@ -292,4 +292,8 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | `_redirects` generato in build per i case study | Netlify rispondeva 301 verso l'URL con slash finale |
 | 2026-10-04 | `Netlify-Vary` sulla radice | la cache edge mescolava i redirect di lingua con e senza cookie |
 | 2026-10-04 | Navbar sempre visibile (sticky, 64 px su mobile, 96 px da md) con `scroll-padding-top` per ancore e focus; il pin dell'Experience parte sotto la navbar | richiesta esplicita |
+| 2026-10-04 | Tolta la voce Flutter Bootcamp dall'Experience | richiesta esplicita |
+| 2026-10-04 | Tolte le frecce di rotazione sotto il moai (resta pausa/riproduci su mobile per WCAG 2.2.2) | richiesta esplicita |
+| 2026-10-04 | Cambio tema con un cerchio che si allarga dal pulsante su tutta la viewport (View Transitions; niente con riduzione del movimento) e icona animata all'hover | richiesta esplicita |
+| 2026-10-04 | Selettore lingua come menu a tendina (`<details>`, funziona senza JS; Esc e clic fuori lo chiudono) | il link "Italiano"/"English" da solo non diceva cosa faceva |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

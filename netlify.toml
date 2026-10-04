@@ -65,6 +65,12 @@
 
 [[redirects]]
   from = "/*"
+  to = "/it/404/index.html"
+  status = 404
+  conditions = { Language = ["it"] }
+
+[[redirects]]
+  from = "/*"
   to = "/en/404/index.html"
   status = 404
 

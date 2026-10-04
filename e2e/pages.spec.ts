@@ -135,3 +135,18 @@ test('og:image follows the page and is dropped on the 404', async ({ page, reque
   await page.goto('/it/404');
   await expect(og).toHaveCount(0);
 });
+
+test('an unknown URL shows the not-found page and keeps the URL', async ({ page }) => {
+  await page.goto('/en/');
+  await page.evaluate(() => {
+    history.pushState({}, '', '/en/nope');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect(page.locator('h1')).toHaveText(/not found|doesn.t exist|404/i);
+  await expect(page).toHaveURL(/\/en\/nope$/);
+});
+
+test('a tall project image asks for the size it is shown at', async ({ page }) => {
+  await page.goto('/en/work/ice-friends-breaker');
+  await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');
+});

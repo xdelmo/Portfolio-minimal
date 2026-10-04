@@ -14,3 +14,12 @@ test('using the switch remembers the choice for Netlify', async ({ page, context
   const cookies = await context.cookies();
   expect(cookies.find((c) => c.name === 'nf_lang')?.value).toBe('it');
 });
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('the language switch already points at the same page', async ({ page }) => {
+    await page.goto('/en/work/apexflow');
+    await expect(page.locator('.language-switch')).toHaveAttribute('href', '/it/work/apexflow');
+  });
+});

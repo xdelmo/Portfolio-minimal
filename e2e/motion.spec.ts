@@ -49,17 +49,6 @@ test.describe('hero', () => {
   });
 });
 
-test.describe('scroll-driven motion', () => {
-  test.skip(({ browserName }) => browserName === 'firefox', 'no scroll-driven animations in Firefox: the line stays static');
-
-  test('the experience line draws with scroll', async ({ page }) => {
-    await page.goto('/en/');
-    const line = page.locator('app-experience-timeline .timeline');
-    // component keyframes get Angular's scoping prefix
-    expect(await line.evaluate((el) => getComputedStyle(el, '::before').animationName)).toMatch(/draw-line$/);
-  });
-});
-
 test('project title and case-study heading share a view-transition name', async ({ page }) => {
   await page.goto('/en/');
   const card = page.locator('#work h3').first();
@@ -76,8 +65,7 @@ test.describe('with reduced motion', () => {
     await page.goto('/en/');
     await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'off');
     expect(await page.locator('#experience h2').evaluate((el) => el.children.length)).toBe(0);
-    const line = page.locator('app-experience-timeline .timeline');
-    expect(await line.evaluate((el) => getComputedStyle(el, '::before').animationName)).toBe('none');
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
   });
 });
 
@@ -114,5 +102,44 @@ test.describe('project cards', () => {
     await expect.poll(lean).toBeGreaterThan(0.05);
     await page.mouse.move(5, 5);
     await expect.poll(lean, { timeout: 2000 }).toBeLessThan(0.005);
+  });
+});
+
+test.describe('experience', () => {
+  test('is pinned on desktop while its entries stack, and the pin goes away with the page', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'no pin on phones');
+    await page.goto('/en/');
+    await ready(page);
+    await expect(page.locator('.pin-spacer #experience')).toHaveCount(1);
+    const entries = page.locator('#experience li');
+    const last = entries.last();
+    // scroll to the end of the pinned stretch: the last entry has arrived on top of the deck. Scroll again on every
+    // attempt, because late content (the moai, images) can still move the pin while the page settles
+    const lastAtEnd = () =>
+      page.evaluate(() => {
+        const spacer = document.querySelector<HTMLElement>('.pin-spacer');
+        const section = document.getElementById('experience');
+        // the pin ends once the spacer's extra height (spacer minus section) has been scrolled
+        if (spacer && section) window.scrollTo(0, spacer.offsetTop + spacer.offsetHeight - section.offsetHeight);
+        const items = document.querySelectorAll('#experience li');
+        // vertical offset of the last card: 0 once it has slid onto the deck
+        return Math.round(new DOMMatrix(getComputedStyle(items[items.length - 1]).transform).m42);
+      });
+    await expect.poll(lastAtEnd, { timeout: 8000 }).toBe(0);
+    await expect(last).toBeInViewport();
+    await page.locator('#work h3 a').first().click();
+    await expect(page).toHaveURL(/\/work\//);
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    await page.goBack();
+    await ready(page);
+    await expect(page.locator('.pin-spacer')).toHaveCount(1);
+  });
+
+  test('is a plain list on phones', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones only');
+    await page.goto('/en/');
+    await ready(page);
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    await expect(page.locator('#experience ol')).not.toHaveClass(/is-stacked/);
   });
 });

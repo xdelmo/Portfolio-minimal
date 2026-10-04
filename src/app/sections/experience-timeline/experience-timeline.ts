@@ -33,23 +33,27 @@ import { ExperienceItem } from '../../content/content.model';
       width: 2px;
       background: var(--rule);
       transform-origin: top;
+      // grows with the pinned deck on desktop (motion/effects/experience.ts)
+      transform: scaleY(var(--progress, 1));
     }
-    @media (prefers-reduced-motion: no-preference) {
-      @supports (animation-timeline: view()) {
-        .timeline::before {
-          animation: draw-line linear both;
-          animation-timeline: view();
-          animation-range: entry 20% cover 60%;
-        }
-      }
+    // desktop with motion: the entries share one cell and stack like cards; cards waiting below the deck stay
+    // hidden, while the ones stepping back above it remain visible
+    .timeline.is-stacked {
+      // room for the cards stepping back above the deck, so they never cover the section title
+      margin-top: var(--space-12);
+      clip-path: inset(-8rem -2rem 0 -2rem);
     }
-    @keyframes draw-line {
-      from {
-        transform: scaleY(0);
-      }
-      to {
-        transform: scaleY(1);
-      }
+    .timeline.is-stacked > li {
+      grid-area: 1 / 1;
+      align-self: start;
+      min-height: 14rem;
+      padding: var(--space-6);
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      transform-origin: 50% 0;
+    }
+    .timeline.is-stacked h3 {
+      font-size: var(--step-3);
     }
     li {
       display: grid;

@@ -16,6 +16,11 @@ export function pageUrl(path: string, locale: Locale): string {
   return `${SITE_URL}/${locale}${clean === '' ? '/' : clean}`;
 }
 
+/** Open Graph image rendered by scripts/og-images.mjs; `key` is 'home' or a project slug. */
+export function ogImageUrl(key: string, locale: Locale): string {
+  return `${SITE_URL}/${locale}/og/${locale}-${key}.png`;
+}
+
 /** The page's Markdown version, written by scripts/geo-files.mjs. */
 export function markdownPath(path: string, locale: Locale): string {
   const clean = cleanPath(path);

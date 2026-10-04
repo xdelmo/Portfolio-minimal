@@ -6,7 +6,7 @@ import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
-import { extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
+import { extractOgImage, extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const ROOT = 'dist/portfolio/browser';
 const SITE_URL = 'https://www.emanueledelmonte.it';
@@ -26,6 +26,12 @@ for (const locale of ['en', 'it']) {
   for (const file of await htmlFiles(join(ROOT, locale))) {
     const html = withFontPreload(await readFile(file, 'utf8'), `media/${font}`);
     await writeFile(file, html);
+    const og = extractOgImage(html);
+    if (og) {
+      await readFile(join(ROOT, new URL(og).pathname)).catch(() => {
+        throw new Error(`postbuild: ${og} is missing, run npm run og:images`);
+      });
+    }
     const links = extractSeoLinks(html);
     if (links) pages.push(links);
   }

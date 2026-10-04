@@ -135,7 +135,7 @@ export class CaseStudy {
       this.seo.setJsonLd('ld-page', p ? caseStudyJsonLd(p, this.content.person, this.locale) : null);
       this.seo.update(
         p
-          ? { path: `/work/${p.slug}`, title: `${p.title} — Emanuele Del Monte`, description: p.summary }
+          ? { path: `/work/${p.slug}`, title: `${p.title} — Emanuele Del Monte`, description: p.summary, ogImage: p.slug }
           : { path: `/work/${this.slug()}`, title: 'Emanuele Del Monte', description: '', noindex: true },
       );
     });

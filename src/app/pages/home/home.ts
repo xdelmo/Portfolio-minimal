@@ -145,6 +145,7 @@ export class Home {
       path: '/',
       title: `${person.name} — ${person.role}`,
       description: `${this.content.hero.lede} ${person.availability}`,
+      ogImage: 'home',
     });
     this.seo.setJsonLd('ld-page', homeJsonLd(person, this.locale));
   }

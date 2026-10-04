@@ -1,13 +1,15 @@
 import { DOCUMENT, Injectable, LOCALE_ID, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { toLocale } from '../i18n/locale';
-import { SITE_URL, headLinks, markdownPath, pageUrl } from './seo';
+import { SITE_URL, headLinks, markdownPath, ogImageUrl, pageUrl } from './seo';
 
 export interface PageSeo {
   path: string;
   title: string;
   description: string;
   noindex?: boolean;
+  /** 'home' or a project slug, see ogImageUrl */
+  ogImage?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +31,18 @@ export class SeoService {
     this.meta.updateTag({ property: 'og:locale', content: this.locale === 'it' ? 'it_IT' : 'en_US' });
     this.meta.updateTag({ property: 'og:locale:alternate', content: this.locale === 'it' ? 'en_US' : 'it_IT' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    if (page.ogImage) {
+      const image = ogImageUrl(page.ogImage, this.locale);
+      this.meta.updateTag({ property: 'og:image', content: image });
+      this.meta.updateTag({ property: 'og:image:width', content: '1200' });
+      this.meta.updateTag({ property: 'og:image:height', content: '630' });
+      this.meta.updateTag({ property: 'og:image:alt', content: page.title });
+      this.meta.updateTag({ name: 'twitter:image', content: image });
+    } else {
+      for (const selector of ["property='og:image'", "property='og:image:width'", "property='og:image:height'", "property='og:image:alt'", "name='twitter:image'"]) {
+        this.meta.removeTag(selector);
+      }
+    }
 
     this.doc.head.querySelectorAll('link[data-seo]').forEach((el) => {
       el.remove();

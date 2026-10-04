@@ -1,6 +1,6 @@
 import { CONTENT_EN } from '../../content/content.en';
 import { CONTENT_IT } from '../../content/content.it';
-import { PERSON_ID, caseStudyJsonLd, headLinks, homeJsonLd, markdownPath, pageUrl } from './seo';
+import { PERSON_ID, caseStudyJsonLd, headLinks, homeJsonLd, markdownPath, ogImageUrl, pageUrl } from './seo';
 
 describe('pageUrl', () => {
   it('keeps the trailing slash on the home page only', () => {
@@ -30,6 +30,12 @@ describe('markdownPath', () => {
     expect(markdownPath('/', 'en')).toBe('/en/index.md');
     expect(markdownPath('/work/apexflow', 'it')).toBe('/it/work/apexflow.md');
     expect(markdownPath('/work/apexflow/?x=1', 'it')).toBe('/it/work/apexflow.md');
+  });
+});
+
+describe('ogImageUrl', () => {
+  it('points at the per-locale image inside the locale build', () => {
+    expect(ogImageUrl('home', 'it')).toBe('https://www.emanueledelmonte.it/it/og/it-home.png');
   });
 });
 

@@ -28,6 +28,11 @@ export function extractSeoLinks(html) {
   return canonical ? { canonical, alternates } : null;
 }
 
+export function extractOgImage(html) {
+  const tag = (html.match(/<meta\b[^>]*>/g) ?? []).find((t) => attr(t, 'property') === 'og:image');
+  return tag ? (attr(tag, 'content') ?? null) : null;
+}
+
 export function sitemapXml(pages) {
   const urls = pages
     .map(

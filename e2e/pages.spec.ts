@@ -123,3 +123,15 @@ test('every page links a Markdown twin that exists, and llms.txt is published', 
   const llms = await request.get('/llms.txt');
   expect(await llms.text()).toContain('/it/work/apexflow.md');
 });
+
+test('og:image follows the page and is dropped on the 404', async ({ page, request }) => {
+  await page.goto('/it/work/apexflow');
+  const og = page.locator('meta[property="og:image"]');
+  const src = await og.getAttribute('content');
+  expect(src).toContain('/it/og/it-apexflow.png');
+  expect((await request.get(new URL(src ?? '').pathname)).ok()).toBe(true);
+  await page.locator('a[href$="/it/"], a[href="/"]').first().click();
+  await expect(og).toHaveAttribute('content', /\/it\/og\/it-home\.png$/);
+  await page.goto('/it/404');
+  await expect(og).toHaveCount(0);
+});

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
+import { extractOgImage, extractSeoLinks, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const html = `<head>
 <link rel="canonical" href="https://www.emanueledelmonte.it/en/work/apexflow" data-seo="">
@@ -36,4 +36,9 @@ test('robotsTxt allows everyone, names AI crawlers and points to the sitemap', (
   }
   assert.match(txt, /Sitemap: https:\/\/www\.emanueledelmonte\.it\/sitemap\.xml/);
   assert.doesNotMatch(txt, /Disallow: \//);
+});
+
+test('extractOgImage reads the og:image meta, or null', () => {
+  assert.equal(extractOgImage('<meta property="og:image" content="https://x/en/og/en-home.png">'), 'https://x/en/og/en-home.png');
+  assert.equal(extractOgImage('<meta name="robots" content="noindex">'), null);
 });

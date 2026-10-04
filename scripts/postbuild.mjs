@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { URL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';

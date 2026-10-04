@@ -45,7 +45,7 @@ for (const [locale, c] of [['en', CONTENT_EN], ['it', CONTENT_IT]]) {
       svg { flex: none; margin: 0 40px 0 24px; align-self: center; }
     </style>
     <main><div><h1>${escape(title)}</h1><p>${escape(line)}</p></div><footer>${escape(c.person.name)}, ${escape(c.person.role)}</footer></main>${field}`);
-    await page.evaluate(() => document.fonts.ready);
+    await page.evaluate('document.fonts.ready.then(() => true)');
     await page.screenshot({ path: `public/og/${locale}-${key}.png` });
   }
 }

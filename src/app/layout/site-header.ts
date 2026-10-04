@@ -57,6 +57,8 @@ import { PauseToggle } from './pause-toggle';
     nav a {
       color: var(--fg);
       text-decoration: none;
+      // a two-word item ("Chi sono") must stay on one line, also while its letters scramble
+      white-space: nowrap;
     }
     nav a:hover {
       text-decoration: underline;

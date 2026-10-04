@@ -18,12 +18,15 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
     const word = link.getAttribute('aria-label') ?? link.textContent.trim();
     link.setAttribute('aria-label', word);
     link.style.width = `${String(link.getBoundingClientRect().width)}px`;
+    // wider random letters stay inside the held width instead of pushing on the next item
+    link.style.overflow = 'clip';
     let step = 0;
     const tick = (): void => {
       step++;
       if (step >= STEPS) {
         link.textContent = word;
         link.style.width = '';
+        link.style.overflow = '';
         timers.delete(link);
         return;
       }
@@ -51,6 +54,7 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
       if (timer) clearTimeout(timer);
       if (word) link.textContent = word;
       link.style.width = '';
+      link.style.overflow = '';
     }
     timers.clear();
   };

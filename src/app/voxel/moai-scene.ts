@@ -31,7 +31,7 @@ import { Gaze, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress }
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
-const SCLERA = '--surface';
+const SCLERA = '--moai-eye-white';
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',

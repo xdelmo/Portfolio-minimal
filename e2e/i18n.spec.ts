@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from './fixtures';
 
 const other = (page: import('@playwright/test').Page, lang: 'en' | 'it') => page.locator(`.language-menu a[hreflang="${lang}"]`);
@@ -78,3 +79,17 @@ test.describe('switching language', () => {
     });
   });
 });
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`the open language menu meets WCAG 2.2 AA, ${colorScheme} theme (axe)`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/');
+    await page.getByText('English').first().click();
+    await expect(page.getByRole('link', { name: 'Italiano' })).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .include('app-language-switch')
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}

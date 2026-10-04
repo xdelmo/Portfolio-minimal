@@ -199,3 +199,17 @@ test('its eyes follow the mouse', async ({ page, isMobile }) => {
   await page.mouse.move(1275, 795);
   await expect(host).toHaveAttribute('data-gaze', 'right-down');
 });
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`the whites of its eyes are lighter than the stone, ${colorScheme} theme`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/');
+    const luminance = (token: string) =>
+      page.evaluate((name) => {
+        const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      }, token);
+    expect(await luminance('--moai-eye-white')).toBeGreaterThan((await luminance('--stone-light')) + 0.2);
+  });
+}

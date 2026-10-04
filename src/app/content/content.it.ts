@@ -11,10 +11,10 @@ export const CONTENT_IT: SiteContent = {
   person: {
     ...CONTENT_EN.person,
     location: 'Latina, Italia',
-    availability: 'Disponibile per ruoli da remoto e in sede da marzo 2027.',
+    availability: 'Disponibile per ruoli da remoto.',
   },
   hero: {
-    headline: 'Costruisco interfacce Angular che restano veloci anche quando i dati crescono.',
+    headline: 'Interfacce Angular veloci anche con molti dati.',
     lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica nel 2026.',
   },
   about:
@@ -25,7 +25,7 @@ export const CONTENT_IT: SiteContent = {
     { label: 'Esperienza', value: 'Circa 3 anni nello sviluppo frontend' },
     { label: 'Stack principale', value: 'Angular, Signals, RxJS, TypeScript, PrimeNG' },
     { label: 'Formazione', value: 'Laurea in Ingegneria Informatica, Università Mercatorum, 2026' },
-    { label: 'Disponibilità', value: 'Ruoli da remoto e in sede da marzo 2027' },
+    { label: 'Disponibilità', value: 'Ruoli da remoto' },
   ],
   projects: [
     {

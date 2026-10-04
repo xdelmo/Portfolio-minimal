@@ -297,4 +297,5 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Cambio tema con un cerchio che si allarga dal pulsante su tutta la viewport (View Transitions; niente con riduzione del movimento) e icona animata all'hover | richiesta esplicita |
 | 2026-10-04 | Selettore lingua come menu a tendina (`<details>`, funziona senza JS; Esc e clic fuori lo chiudono) | il link "Italiano"/"English" da solo non diceva cosa faceva |
 | 2026-10-04 | Tolto il lampo pixelato sulle immagini dei progetti all'hover (e le copie `-40.jpg`) | richiesta esplicita |
+| 2026-10-04 | Titolo dell'hero in italiano accorciato ("Interfacce Angular veloci anche con molti dati."); disponibilità ridotta a "ruoli da remoto" (tolti "in sede" e "da marzo 2027") | richiesta esplicita |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |

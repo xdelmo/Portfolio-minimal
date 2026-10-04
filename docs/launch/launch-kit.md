@@ -41,7 +41,7 @@ Un iPhone e un Android:
 - [ ] **Bing Webmaster Tools**: importa il sito da Search Console e invia la stessa sitemap.
 - [ ] **LinkedIn**, stessi dati del sito (nome, ruolo, città, link):
   - Titolo: `Frontend Engineer · Angular, Signals, RxJS · IPS S.p.A. · Latina`
-  - Prima riga di "Informazioni": `Frontend Engineer a Latina: costruisco interfacce Angular che restano veloci anche quando i dati crescono. Progetti e case study su www.emanueledelmonte.it`
+  - Prima riga di "Informazioni": `Frontend Engineer a Latina: interfacce Angular veloci anche con molti dati. Progetti e case study su www.emanueledelmonte.it`
   - Sezione "In primo piano" e campo "Sito web": `https://www.emanueledelmonte.it`
 - [ ] **README del profilo GitHub** (repo `xdelmo/xdelmo`), bozza:
 

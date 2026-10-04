@@ -6,7 +6,7 @@ export const CONTENT_EN: SiteContent = {
     role: 'Frontend Engineer',
     employer: 'IPS S.p.A.',
     location: 'Latina, Italy',
-    availability: 'Open to remote and on-site roles from March 2027.',
+    availability: 'Open to remote roles.',
     email: 'info@emanueledelmonte.it',
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
@@ -24,7 +24,7 @@ export const CONTENT_EN: SiteContent = {
     { label: 'Experience', value: 'About 3 years building web front ends' },
     { label: 'Main stack', value: 'Angular, Signals, RxJS, TypeScript, PrimeNG' },
     { label: 'Education', value: 'BSc in Computer Engineering, Università Mercatorum, 2026' },
-    { label: 'Availability', value: 'Remote and on-site roles from March 2027' },
+    { label: 'Availability', value: 'Remote roles' },
   ],
   projects: [
     {

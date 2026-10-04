@@ -201,3 +201,48 @@ html.theme-switching::view-transition-new(root) {
   /* `translate` adds up with the `transform` of hover styles (the primary button's lift) */
   translate: var(--mx, 0px) var(--my, 0px);
 }
+
+/* Language switch: a full-screen curtain in pixel steps, with the new language's name. LanguageSwitch covers the old
+   page (phase out), the inline script in index.html starts the new one covered and lifts it (phase in). */
+html[data-lang-swap]::after {
+  content: attr(data-lang-swap);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: clamp(2.5rem, 10vw, 7rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+}
+html[data-lang-phase='out']::after {
+  animation: lang-cover 0.45s steps(9, jump-none) both;
+}
+html[data-lang-phase='in']::after {
+  animation: lang-lift 0.5s steps(9, jump-none) 0.15s both;
+}
+@keyframes lang-cover {
+  from {
+    clip-path: inset(100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes lang-lift {
+  from {
+    clip-path: inset(0);
+  }
+  to {
+    clip-path: inset(0 0 100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-lang-swap]::after {
+    display: none;
+  }
+}

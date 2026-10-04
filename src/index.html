@@ -17,6 +17,20 @@
           sessionStorage.setItem('intro', '1');
         }
       } catch (e) {}
+      // a language switch covered the old page (LanguageSwitch): this one starts covered and lifts the curtain
+      try {
+        var swap = sessionStorage.getItem('lang-swap');
+        sessionStorage.removeItem('lang-swap');
+        if (swap && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          var root = document.documentElement;
+          root.setAttribute('data-lang-swap', swap);
+          root.setAttribute('data-lang-phase', 'in');
+          setTimeout(function () {
+            root.removeAttribute('data-lang-swap');
+            root.removeAttribute('data-lang-phase');
+          }, 1000);
+        }
+      } catch (e) {}
     })();
   </script>
   <title>Emanuele Del Monte</title>

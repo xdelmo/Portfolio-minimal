@@ -38,3 +38,43 @@ test.describe('without JavaScript', () => {
     await expect(other(page, 'it')).toHaveAttribute('href', '/it/work/apexflow');
   });
 });
+
+test.describe('switching language', () => {
+  const overlay = (page: import('@playwright/test').Page) =>
+    page.evaluate(() => {
+      const html = document.documentElement;
+      return { name: html.dataset['langSwap'] ?? null, phase: html.dataset['langPhase'] ?? null };
+    });
+
+  test('a full-screen curtain covers the page with the new language, then lifts on arrival', async ({ page }) => {
+    await page.goto('/en/');
+    await page.getByText('English').first().click();
+    await page.getByRole('link', { name: 'Italiano' }).click();
+    // the old page is covered before it leaves
+    await expect.poll(() => overlay(page)).toEqual({ name: 'Italiano', phase: 'out' });
+    await page.waitForURL('**/it/');
+    // the new page starts covered and uncovers itself, then drops the curtain
+    await expect.poll(() => overlay(page)).toEqual({ name: null, phase: null });
+    await expect(page.locator('html')).toHaveAttribute('lang', 'it');
+  });
+
+  test('the new page starts under the curtain before the app boots', async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem('lang-swap', 'Italiano');
+    });
+    await page.route('**/*.js', (route) => route.abort());
+    await page.goto('/it/');
+    expect(await overlay(page)).toEqual({ name: 'Italiano', phase: 'in' });
+  });
+
+  test.describe('with reduced motion', () => {
+    test.use({ reducedMotion: 'reduce' });
+    test('the language changes at once, without the curtain', async ({ page }) => {
+      await page.goto('/en/');
+      await page.getByText('English').first().click();
+      await page.getByRole('link', { name: 'Italiano' }).click();
+      await page.waitForURL('**/it/');
+      expect(await overlay(page)).toEqual({ name: null, phase: null });
+    });
+  });
+});

@@ -4,10 +4,17 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { Locale, localizedUrl, toLocale } from './locale';
 
+/** Matches the `lang-cover` animation in styles/_base.scss. */
+const COVER_MS = 450;
+
 @Component({
   selector: 'app-language-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:click)': 'closeOutside($event)', '(keydown.escape)': 'close()' },
+  host: {
+    '(document:click)': 'closeOutside($event)',
+    '(keydown.escape)': 'close()',
+    '(window:pageshow)': 'uncover($event)',
+  },
   template: `
     <details class="language-menu">
       <summary>
@@ -25,7 +32,7 @@ import { Locale, localizedUrl, toLocale } from './locale';
             @if (locale === current) {
               <span aria-current="true" [attr.lang]="locale">{{ names[locale] }}</span>
             } @else {
-              <a [href]="href()" [attr.hreflang]="locale" [attr.lang]="locale" (click)="remember()">{{ names[locale] }}</a>
+              <a [href]="href()" [attr.hreflang]="locale" [attr.lang]="locale" (click)="switchTo($event)">{{ names[locale] }}</a>
             }
           </li>
         }
@@ -115,8 +122,33 @@ export class LanguageSwitch {
 
   protected readonly href = computed(() => localizedUrl(this.url(), this.target));
 
-  protected remember(): void {
+  /** Remembers the choice and, motion allowed, covers the page before leaving (index.html lifts it on arrival). */
+  protected switchTo(event: MouseEvent): void {
     this.doc.cookie = `nf_lang=${this.target}; path=/; max-age=31536000; samesite=lax`;
+    const win = this.doc.defaultView;
+    const plain = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+    if (!win || !plain || win.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    event.preventDefault();
+    const name = this.names[this.target];
+    try {
+      win.sessionStorage.setItem('lang-swap', name);
+    } catch {
+      // no storage: the new page just appears
+    }
+    const root = this.doc.documentElement;
+    root.dataset['langSwap'] = name;
+    root.dataset['langPhase'] = 'out';
+    const href = (event.currentTarget as HTMLAnchorElement).href;
+    win.setTimeout(() => {
+      win.location.href = href;
+    }, COVER_MS);
+  }
+
+  /** Back from the other language through the back/forward cache: the page comes back still covered. */
+  protected uncover(event: PageTransitionEvent): void {
+    if (!event.persisted) return;
+    delete this.doc.documentElement.dataset['langSwap'];
+    delete this.doc.documentElement.dataset['langPhase'];
   }
 
   protected close(): void {

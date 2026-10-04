@@ -302,3 +302,5 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Un solo pulsante "Metti in pausa le animazioni" nell'header al posto di quelli del pixel field e del moai | WCAG 2.2.2 con un controllo unico |
 | 2026-10-04 | Foto (`public/images/emanuele.jpg`) nel JSON-LD `Person.image` | identità per motori e agenti AI |
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |
+| 2026-10-04 | Cambio lingua con una tenda `--accent` a tutto schermo, a gradini pixel, con il nome della lingua: copre la pagina in uscita e si alza su quella nuova; niente tenda con riduzione del movimento | richiesta esplicita |
+| 2026-10-04 | Favicon "e." pixel (SVG, ICO 16/32/48, apple-touch-icon 180) al posto di quella di default di Angular | mancava la favicon |

@@ -30,7 +30,7 @@ Sostituire il sito attuale (Gatsby + `gatsby-theme-portfolio-minimal`) con un po
 | Riferimenti | matteovincenti.com (etichette monospace, oggetto 3D trascinabile, numeri grandi), marimba.design (fondo morbido, colonne di griglia, pastelli), craft.wild.as (campo di pixel, titolo maiuscolo stretto) |
 | 3D | Moai voxel (mascotte, richiamo al 🗿 del sito attuale) in Three.js, **nella v1** |
 | Località | "Latina, IT / Remote" |
-| CV | **Non pubblicato** (contiene dati sensibili). Nella sezione Contact: "CV disponibile su richiesta" |
+| CV | **Non pubblicato** (contiene dati sensibili). Nessuna menzione nel sito (tolta su richiesta il 2026-10-04) |
 
 ## 3. Struttura e contenuti
 
@@ -304,3 +304,5 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Dev server con `baseHref` per lingua e proxy tra 4200 e 4201 | il cambio lingua non funzionava in sviluppo |
 | 2026-10-04 | Cambio lingua con una tenda `--accent` a tutto schermo, a gradini pixel, con il nome della lingua: copre la pagina in uscita e si alza su quella nuova; niente tenda con riduzione del movimento | richiesta esplicita |
 | 2026-10-04 | Favicon "e." pixel (SVG, ICO 16/32/48, apple-touch-icon 180) al posto di quella di default di Angular | mancava la favicon |
+| 2026-10-04 | Foto di Emanuele nei Contatti; tolta la riga "CV disponibile su richiesta"; il footer prosegue la fascia scura dei Contatti (niente striscia di sfondo in mezzo) | richiesta esplicita |
+| 2026-10-04 | Dropdown della lingua: testo delle voci allineato all'etichetta del pulsante, quadratino della lingua attiva nella colonna dell'icona | spazi non coerenti |

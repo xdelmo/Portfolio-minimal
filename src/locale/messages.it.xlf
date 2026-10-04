@@ -154,14 +154,6 @@
           <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="home.contact.cv" datatype="html">
-        <source>CV available on request.</source>
-        <target>CV disponibile su richiesta.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
-          <context context-type="linenumber">42,45</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="notFound.title" datatype="html">
         <source>This page doesn&apos;t exist</source>
         <target>Questa pagina non esiste</target>

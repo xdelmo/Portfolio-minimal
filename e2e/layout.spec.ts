@@ -45,3 +45,30 @@ test('the header stays at the top while the page scrolls', async ({ page }) => {
   ]);
   expect(titleTop).toBeGreaterThanOrEqual(headerBottom);
 });
+
+test.describe('contact and footer', () => {
+  for (const [lang, alt] of [['en', 'Emanuele Del Monte'], ['it', 'Emanuele Del Monte']]) {
+    test(`${lang}: the contact section shows Emanuele's photo and no CV line`, async ({ page }) => {
+      await page.goto(`/${lang}/`);
+      const photo = page.locator('#contact img');
+      await photo.scrollIntoViewIfNeeded();
+      await expect(photo).toHaveAttribute('alt', alt);
+      await expect.poll(() => photo.evaluate((img) => (img as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+      await expect(page.locator('#contact')).not.toContainText('CV');
+    });
+  }
+
+  test('the footer continues the dark contact band, with no gap between them', async ({ page }) => {
+    await page.goto('/en/');
+    await page.evaluate(() => { window.scrollTo(0, document.body.scrollHeight); });
+    const box = (sel: string) =>
+      page.locator(sel).evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return { top: r.top, bottom: r.bottom, bg: getComputedStyle(el, '::before').backgroundColor };
+      });
+    const contact = await box('#contact');
+    const footer = await box('app-site-footer footer');
+    expect(footer.bg).toBe(contact.bg);
+    expect(Math.abs(footer.top - contact.bottom)).toBeLessThan(1);
+  });
+});

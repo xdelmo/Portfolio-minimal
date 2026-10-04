@@ -67,12 +67,14 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-stack-list [groups]="content.stack" />
     </section>
 
-    <section id="contact" class="section container band band--ink" aria-labelledby="contact-title">
-      <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
-      <p>
-        <a data-magnetic [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
-      </p>
-      <p class="muted" i18n="@@home.contact.cv">CV available on request.</p>
+    <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
+      <div class="contact-text">
+        <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
+        <p>
+          <a data-magnetic [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
+        </p>
+      </div>
+      <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
     </div>
   `,
@@ -106,6 +108,32 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     }
     .field {
       margin-top: var(--space-6);
+    }
+    .contact {
+      display: grid;
+      gap: var(--space-4);
+    }
+    .contact-text {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .contact-text > * {
+      margin: 0;
+    }
+    .contact-photo {
+      grid-row: 1;
+      width: 160px;
+      height: auto;
+    }
+    @include bp.up(md) {
+      .contact {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+      }
+      .contact-photo {
+        grid-row: auto;
+        width: 256px;
+      }
     }
     #contact h2 {
       font-size: clamp(3rem, 1rem + 8vw, 9rem);

@@ -63,12 +63,14 @@ const COVER_MS = 450;
     [open] .chevron {
       transform: rotate(180deg);
     }
+    /* the items' text lines up with the summary's label (8px padding + 16px icon + 8px gap); the current
+       language's square sits in the icon column */
     ul {
       position: absolute;
       top: 100%;
-      right: 0;
+      left: 0;
       z-index: 1;
-      min-width: 10rem;
+      min-width: 100%;
       margin: 0;
       padding: var(--space-1) 0;
       list-style: none;
@@ -76,23 +78,30 @@ const COVER_MS = 450;
       box-shadow: 0 0 0 1px var(--rule);
     }
     li > * {
+      position: relative;
       display: flex;
       align-items: center;
-      min-height: 44px;
-      padding-inline: var(--space-2);
+      min-height: 40px;
+      padding-inline: var(--space-4) var(--space-2);
       color: var(--fg);
+      white-space: nowrap;
+    }
+    a {
+      text-decoration: none;
     }
     a:hover {
       background: var(--bg);
+      text-decoration: underline;
     }
     [aria-current] {
       font-weight: 600;
     }
-    [aria-current]::after {
+    [aria-current]::before {
       content: '';
+      position: absolute;
+      left: calc(var(--space-1) + 5px);
       width: 6px;
       height: 6px;
-      margin-left: auto;
       background: var(--accent);
     }
     @media (prefers-reduced-motion: reduce) {

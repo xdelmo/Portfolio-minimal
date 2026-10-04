@@ -5,7 +5,7 @@ import { CONTENT } from '../content/content';
   selector: 'app-site-footer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <footer class="site-footer container">
+    <footer class="site-footer container band band--ink">
       <p>{{ content.person.name }}, {{ content.person.location }}</p>
       <ul>
         <li><a [href]="'mailto:' + content.person.email">{{ content.person.email }}</a></li>

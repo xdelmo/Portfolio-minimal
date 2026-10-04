@@ -5,8 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - Node 24 (from `.nvmrc`; Angular 22 needs ≥ 24.15). On this machine the Homebrew Node is not usable: prefix commands with `export PATH="$HOME/.local/node/current/bin:$PATH";`
-- `npm start` — dev server (English build) at http://localhost:4200
-- `npm run start:it` — dev server, Italian build
+- `npm start` — both dev servers: open http://localhost:4200 (English under `/en/`, Italian under `/it/` proxied from port 4201, so the language switch works); `npm run start:it` runs only the Italian one
 - `npm run build` — static prerender of both locales into `dist/portfolio/browser/{en,it}` + sitemap/robots
 - `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint, template a11y), zero warnings allowed
 - `npx ng test --no-watch` — unit tests (Vitest); one file: `npx ng test --no-watch --include src/app/core/theme/theme.spec.ts`

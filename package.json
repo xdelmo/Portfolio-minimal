@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve -c development-it --port 4201 & ng serve --port 4200",
     "build": "ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "start:it": "ng serve --configuration development-it",
+    "start:it": "ng serve -c development-it --port 4201",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
     "og:images": "node --import ./scripts/ts-resolve.mjs scripts/og-images.mjs",
     "verify:deploy": "node scripts/verify-deploy.mjs",
@@ -28,6 +28,7 @@
     "@angular/router": "^22.2.0",
     "@angular/ssr": "^22.2.1",
     "@fontsource-variable/instrument-sans": "^5.3.0",
+    "gsap": "^3.15.0",
     "rxjs": "~7.8.0",
     "three": "^0.186.1",
     "tslib": "^2.3.0"

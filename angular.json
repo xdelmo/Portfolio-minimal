@@ -82,7 +82,8 @@
               "sourceMap": true,
               "localize": [
                 "en"
-              ]
+              ],
+              "baseHref": "/en/"
             },
             "development-it": {
               "optimization": false,
@@ -90,7 +91,8 @@
               "sourceMap": true,
               "localize": [
                 "it"
-              ]
+              ],
+              "baseHref": "/it/"
             }
           },
           "defaultConfiguration": "production"
@@ -102,10 +104,12 @@
               "buildTarget": "portfolio:build:production"
             },
             "development": {
-              "buildTarget": "portfolio:build:development"
+              "buildTarget": "portfolio:build:development",
+              "proxyConfig": "proxy.en.json"
             },
             "development-it": {
-              "buildTarget": "portfolio:build:development-it"
+              "buildTarget": "portfolio:build:development-it",
+              "proxyConfig": "proxy.it.json"
             }
           },
           "defaultConfiguration": "development"

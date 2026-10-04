@@ -1,4 +1,4 @@
-import { type Locator, expect, test } from '@playwright/test';
+import { type Locator, expect, test } from './fixtures';
 
 const clip = (el: Locator) => el.evaluate((node) => getComputedStyle(node).clipPath);
 // a revealed title's clip box reaches past its border box, so descenders and accents are not cut

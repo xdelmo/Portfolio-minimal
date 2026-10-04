@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const WIDTHS = [320, 375, 768, 1024, 1440, 1920];
 

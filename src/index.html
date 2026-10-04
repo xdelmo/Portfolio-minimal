@@ -10,6 +10,13 @@
         t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
       document.documentElement.setAttribute('data-theme', t);
+      // the intro plays once per session, never with reduced motion (SiteIntro + motion/effects/intro.ts)
+      try {
+        if (matchMedia('(prefers-reduced-motion: no-preference)').matches && sessionStorage.getItem('intro') !== '1') {
+          document.documentElement.classList.add('intro-on');
+          sessionStorage.setItem('intro', '1');
+        }
+      } catch (e) {}
     })();
   </script>
   <title>Emanuele Del Monte</title>

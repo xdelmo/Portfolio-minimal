@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('follows the system theme on first visit, before the app boots', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });

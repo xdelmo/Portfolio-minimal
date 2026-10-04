@@ -22,6 +22,9 @@
   --stone: #a3a39d;
   --stone-dark: #85857f;
   --stone-light: #bdbdb6;
+  /* intro panel: opaque, so nothing of the page shows through */
+  --intro-bg: #1d1d1c;
+  --intro-fg: #e5e5e5;
 }
 
 :root[data-theme='dark'] {
@@ -44,6 +47,8 @@
   --stone: #7d7d78;
   --stone-dark: #62625e;
   --stone-light: #9a9a94;
+  --intro-bg: #e0e0e0;
+  --intro-fg: #121212;
 }
 
 :root {

@@ -14,7 +14,7 @@ import { SeoService } from '../../core/seo/seo.service';
     <article class="container case-study">
       @if (project(); as p) {
         <header class="intro">
-          <h1>{{ p.title }}</h1>
+          <h1 [style.view-transition-name]="'title-' + p.slug">{{ p.title }}</h1>
           <p class="summary">{{ p.summary }}</p>
           <ul class="stack" i18n-aria-label="@@case.stack" aria-label="Technologies">
             @for (tech of p.stack; track tech) {

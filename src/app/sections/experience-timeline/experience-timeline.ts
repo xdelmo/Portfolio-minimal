@@ -19,12 +19,37 @@ import { ExperienceItem } from '../../content/content.model';
     @use 'styles/breakpoints' as bp;
 
     .timeline {
+      position: relative;
       display: grid;
       gap: var(--space-6);
       margin: 0;
       padding: 0 0 0 var(--space-3);
       list-style: none;
-      border-left: 2px solid var(--rule);
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 2px;
+      background: var(--rule);
+      transform-origin: top;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        .timeline::before {
+          animation: draw-line linear both;
+          animation-timeline: view();
+          animation-range: entry 20% cover 60%;
+        }
+      }
+    }
+    @keyframes draw-line {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
     }
     li {
       display: grid;

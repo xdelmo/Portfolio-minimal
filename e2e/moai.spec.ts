@@ -21,23 +21,15 @@ test('swaps the still image for the 3D moai once it is in view', async ({ page }
   await expect(still(page)).toHaveCount(1);
   await page.locator('#about').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Rotate the moai right' })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test('the rotate buttons turn the moai, from the keyboard too', async ({ page }) => {
+test('has no rotate arrows, only the scroll and the drag turn it', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('#about').scrollIntoViewIfNeeded();
-  const right = page.getByRole('button', { name: 'Rotate the moai right' });
-  await expect(right).toBeVisible();
-  const stop = page.getByRole('button', { name: 'Stop the moai' });
-  if (await stop.isVisible()) await stop.click();
-  await page.waitForTimeout(1200); // entry animation
-  const before = await snapshot(page);
-  await right.focus();
-  await page.keyboard.press('Enter');
-  await expect.poll(() => snapshot(page)).not.toBe(before);
+  await expect(scene(page)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Rotate the moai/ })).toHaveCount(0);
 });
 
 test('repaints with the new colours when the theme changes', async ({ page }) => {

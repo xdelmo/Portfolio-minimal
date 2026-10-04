@@ -1,4 +1,4 @@
-import { SCROLL_SWING, approach, explodeAmount, scrollYaw, sectionProgress, smoothstep } from './motion';
+import { SCROLL_SWING, explodeAmount, scrollYaw, sectionProgress, smoothstep } from './motion';
 
 describe('moai motion', () => {
   it('measures how far the section has scrolled past the middle of the screen', () => {
@@ -25,13 +25,5 @@ describe('moai motion', () => {
     expect(explodeAmount(0)).toBe(0);
     expect(explodeAmount(0.5)).toBe(0);
     expect(explodeAmount(1)).toBe(1);
-  });
-
-  it('approaches a target without overshooting, whatever the frame time', () => {
-    expect(approach(0, 10, 10, 0)).toBe(0);
-    const step = approach(0, 10, 10, 16);
-    expect(step).toBeGreaterThan(0);
-    expect(step).toBeLessThan(10);
-    expect(approach(0, 10, 10, 10_000)).toBeCloseTo(10);
   });
 });

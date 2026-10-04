@@ -27,7 +27,7 @@ import {
 import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
-import { TURN_STEP, approach, explodeAmount, scrollYaw, sectionProgress } from './motion';
+import { explodeAmount, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -47,16 +47,6 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
     <canvas #canvas aria-hidden="true"></canvas>
     @if (ready()) {
       <div class="controls">
-        <button type="button" (click)="turn(-1)" i18n-aria-label="@@moai.left" aria-label="Rotate the moai left">
-          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d="M2 3h1v2H2zM3 2h1v4H3zM4 1h1v6H4zM5 3h2v2H5z" />
-          </svg>
-        </button>
-        <button type="button" (click)="turn(1)" i18n-aria-label="@@moai.right" aria-label="Rotate the moai right">
-          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d="M5 3h1v2H5zM4 2h1v4H4zM3 1h1v6H3zM1 3h2v2H1z" />
-          </svg>
-        </button>
         @if (!desktop()) {
           <button type="button" (click)="spinning.set(!spinning())" [attr.aria-label]="spinLabel()">
             <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
@@ -98,9 +88,6 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
       color: var(--fg);
       cursor: pointer;
     }
-    button + button {
-      border-left: 0;
-    }
   `,
 })
 export class MoaiScene {
@@ -119,8 +106,6 @@ export class MoaiScene {
   private readonly cleanups: (() => void)[] = [];
   private raf = 0;
   private visible = false;
-  private turnTarget = 0;
-  private turnNow = 0;
   private drag = 0;
   private spin = 0;
 
@@ -135,10 +120,6 @@ export class MoaiScene {
     inject(DestroyRef).onDestroy(() => {
       this.stop();
     });
-  }
-
-  protected turn(direction: 1 | -1): void {
-    this.turnTarget += direction * TURN_STEP;
   }
 
   private fail(): void {
@@ -246,7 +227,6 @@ export class MoaiScene {
       try {
         const dt = Math.min(100, Math.max(0, now - last));
         last = now;
-        this.turnNow = approach(this.turnNow, this.turnTarget, 8, dt);
         let scroll = 0;
         if (this.desktop() && section) {
           const box = section.getBoundingClientRect();
@@ -254,7 +234,7 @@ export class MoaiScene {
         } else if (this.spinning()) {
           this.spin += dt * SPIN_PER_MS * Math.PI * 2;
         }
-        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.turnNow + this.drag;
+        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag;
         // no fly-in: the scene replaces a still image that is already on screen
         place(Math.round(explodeAmount(scroll) * 1000) / 1000);
         renderer.render(scene, camera);

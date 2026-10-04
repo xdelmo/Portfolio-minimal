@@ -1,5 +1,4 @@
 export const SCROLL_SWING = 0.6; // radians the moai turns either way while its section crosses the screen
-export const TURN_STEP = Math.PI / 6;
 
 /** 0 while the section top is below the middle of the screen, 1 once its bottom is above it. */
 export function sectionProgress(top: number, height: number, viewport: number): number {
@@ -19,9 +18,4 @@ export function smoothstep(edge0: number, edge1: number, x: number): number {
 /** The moai bursts into cubes at the end of its section and comes back together on the way up. */
 export function explodeAmount(scroll: number): number {
   return smoothstep(0.8, 1, scroll);
-}
-
-/** Frame-rate independent smoothing: `rate` is per second, `dt` in milliseconds. */
-export function approach(current: number, target: number, rate: number, dt: number): number {
-  return target + (current - target) * Math.exp((-rate * dt) / 1000);
 }

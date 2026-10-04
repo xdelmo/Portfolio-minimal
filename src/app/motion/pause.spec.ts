@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { MotionPause } from './pause';
+import { MotionPause, watchPause } from './pause';
 
 describe('MotionPause', () => {
   beforeEach(() => {
     sessionStorage.clear();
+    document.documentElement.removeAttribute('data-motion-paused');
   });
 
   it('starts playing', () => {
@@ -25,5 +26,17 @@ describe('MotionPause', () => {
     pause.toggle();
     expect(pause.paused()).toBe(true);
     vi.restoreAllMocks();
+  });
+
+  it('tells code outside Angular through <html> and watchPause', () => {
+    const pause = TestBed.inject(MotionPause);
+    const seen: boolean[] = [];
+    const stop = watchPause((paused) => seen.push(paused));
+    pause.toggle();
+    expect(document.documentElement.hasAttribute('data-motion-paused')).toBe(true);
+    pause.toggle();
+    stop();
+    pause.toggle();
+    expect(seen).toEqual([false, true, false]);
   });
 });

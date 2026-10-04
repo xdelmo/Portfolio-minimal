@@ -180,3 +180,15 @@ test('the Person in the JSON-LD has a photo that is really served', async ({ pag
   expect(response.status()).toBe(200);
   expect(response.headers()['content-type']).toContain('image/jpeg');
 });
+
+for (const lang of ['en', 'it']) {
+  test(`${lang}: the favicons are the site's own and are served`, async ({ page, request }) => {
+    await page.goto(`/${lang}/`);
+    const icons = page.locator('link[rel="icon"], link[rel="apple-touch-icon"]');
+    const hrefs = await icons.evaluateAll((links) => links.map((l) => (l as HTMLLinkElement).href));
+    expect(hrefs.map((h) => new URL(h).pathname).sort()).toEqual(
+      [`/${lang}/apple-touch-icon.png`, `/${lang}/favicon.ico`, `/${lang}/favicon.svg`].sort(),
+    );
+    for (const href of hrefs) expect((await request.get(href)).status(), href).toBe(200);
+  });
+}

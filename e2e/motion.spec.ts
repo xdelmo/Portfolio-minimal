@@ -34,7 +34,7 @@ test.describe('hero', () => {
   test('the headline drifts as the page scrolls', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    await page.mouse.wheel(0, 400);
+    await page.evaluate(() => { window.scrollTo(0, 400); }); // mouse.wheel does not exist in mobile WebKit
     await expect.poll(() => page.locator('h1').evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
   });
 

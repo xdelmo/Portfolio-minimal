@@ -1,4 +1,4 @@
-import { SCROLL_SWING, explodeAmount, scrollYaw, sectionProgress, smoothstep } from './motion';
+import { BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, scrollYaw, sectionProgress, smoothstep } from './motion';
 
 describe('moai motion', () => {
   it('measures how far the section has scrolled past the middle of the screen', () => {
@@ -25,5 +25,24 @@ describe('moai motion', () => {
     expect(explodeAmount(0)).toBe(0);
     expect(explodeAmount(0.5)).toBe(0);
     expect(explodeAmount(1)).toBe(1);
+  });
+
+  it('breathes: a small pitch that returns every BREATH_MS', () => {
+    expect(breath(0)).toBeCloseTo(0);
+    expect(Math.abs(breath(BREATH_MS / 4))).toBeGreaterThan(0.01);
+    expect(Math.abs(breath(BREATH_MS / 4))).toBeLessThan(0.08);
+    expect(breath(BREATH_MS)).toBeCloseTo(0);
+  });
+
+  it('follows a target smoothly, whatever the frame time', () => {
+    expect(follow(0, 1, 0)).toBe(0);
+    const step = follow(0, 1, 16);
+    expect(step).toBeGreaterThan(0);
+    expect(step).toBeLessThan(1);
+    expect(follow(0, 1, 10_000)).toBeCloseTo(1);
+  });
+
+  it('lands exactly on the target once close, so a still scene stops changing', () => {
+    expect(follow(0.99995, 1, 16)).toBe(1);
   });
 });

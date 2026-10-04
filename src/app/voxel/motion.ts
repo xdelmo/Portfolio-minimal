@@ -19,3 +19,17 @@ export function smoothstep(edge0: number, edge1: number, x: number): number {
 export function explodeAmount(scroll: number): number {
   return smoothstep(0.8, 1, scroll);
 }
+
+/** One breath of the idle moai, in milliseconds. */
+export const BREATH_MS = 4000;
+
+/** Pitch of the idle moai, in radians: a slow nod of about two degrees. */
+export function breath(t: number): number {
+  return Math.sin((t / BREATH_MS) * Math.PI * 2) * 0.035;
+}
+
+/** Frame-rate independent easing towards `target`; `dt` in milliseconds. */
+export function follow(current: number, target: number, dt: number): number {
+  const next = target + (current - target) * Math.exp(-dt / 250);
+  return Math.abs(next - target) < 1e-4 ? target : next;
+}

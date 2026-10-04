@@ -58,6 +58,9 @@ import { StackGroup } from '../../content/content.model';
       aspect-ratio: 1;
       padding: var(--space-2);
       color: var(--orb-ink);
+      // idle bob and pointer push (motion/effects/stack-float.ts), apart from the scroll-scrubbed transform;
+      // !important because GSAP writes an inline "translate: none" on elements whose transform it drives
+      translate: var(--rx, 0px) calc(var(--ry, 0px) + var(--fy, 0px)) !important;
       font-size: var(--step-0);
       font-weight: 600;
       line-height: 1.15;

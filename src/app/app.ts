@@ -9,6 +9,7 @@ import { ambientEffect } from './motion/effects/ambient';
 import { cursorEffect } from './motion/effects/cursor';
 import { introEffect } from './motion/effects/intro';
 import { progressEffect } from './motion/effects/progress';
+import { scrambleEffect } from './motion/effects/scramble';
 import { SiteHeader } from './layout/site-header';
 
 @Component({
@@ -20,7 +21,7 @@ import { SiteHeader } from './layout/site-header';
 })
 export class App {
   protected readonly ambient = [ambientEffect];
-  protected readonly cursor = [cursorEffect];
+  protected readonly cursor = [cursorEffect, scrambleEffect];
   protected readonly intro = [introEffect];
   protected readonly progress = [progressEffect];
 }

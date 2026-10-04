@@ -27,7 +27,7 @@ import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { explodeAmount, scrollYaw, sectionProgress } from './motion';
+import { breath, explodeAmount, follow, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -189,6 +189,10 @@ export class MoaiScene {
     let last = performance.now();
     let pointerX: number | null = null;
     let firstDrawn = false;
+    // idle life: it breathes, and on desktop the head turns a little towards the pointer
+    let idle = 0;
+    let look = 0;
+    let lookTarget = 0;
     const frame = (now: number): void => {
       try {
         const dt = Math.min(100, Math.max(0, now - last));
@@ -200,7 +204,10 @@ export class MoaiScene {
         } else if (!this.pause.paused()) {
           this.spin += dt * SPIN_PER_MS * Math.PI * 2;
         }
-        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag;
+        if (!this.pause.paused()) idle += dt;
+        look = follow(look, this.desktop() ? lookTarget : 0, dt);
+        pivot.rotation.x = breath(idle);
+        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag + look;
         // no fly-in: the scene replaces a still image that is already on screen
         place(Math.round(explodeAmount(scroll) * 1000) / 1000);
         renderer.render(scene, camera);
@@ -235,6 +242,9 @@ export class MoaiScene {
     const onUp = (): void => {
       pointerX = null;
     };
+    const onLook = (e: PointerEvent): void => {
+      if (e.pointerType === 'mouse') lookTarget = (e.clientX / innerWidth - 0.5) * 0.5;
+    };
     const onDesktop = (): void => {
       this.desktop.set(desktopQuery.matches);
       resize();
@@ -247,6 +257,7 @@ export class MoaiScene {
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerup', onUp);
     canvas.addEventListener('pointercancel', onUp);
+    addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
     this.cleanups.push(() => {
@@ -258,6 +269,7 @@ export class MoaiScene {
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
       canvas.removeEventListener('pointercancel', onUp);
+      removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);
     });

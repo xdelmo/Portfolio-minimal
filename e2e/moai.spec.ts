@@ -167,3 +167,21 @@ test.describe('in dark theme with reduced motion', () => {
     await expect(still(page)).toHaveAttribute('src', /moai-dark\.png$/);
   });
 });
+
+test('breathes by itself while nobody scrolls, and the pause button stops it', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'phones already spin it');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await page.waitForTimeout(1200);
+  const before = await snapshot(page);
+  await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
+  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  // the head still follows the pointer that just clicked the button (a reply to the user): let it settle
+  await page.waitForTimeout(2500);
+  const still = await snapshot(page);
+  await page.waitForTimeout(800);
+  expect(await snapshot(page)).toBe(still);
+});

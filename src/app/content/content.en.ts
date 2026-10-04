@@ -186,12 +186,6 @@ export const CONTENT_EN: SiteContent = {
     },
     {
       period: '2026',
-      title: 'Flutter Bootcamp',
-      org: 'Udemy',
-      summary: 'Certificate in building cross-platform mobile apps with Flutter and Dart.',
-    },
-    {
-      period: '2026',
       title: 'Agile Masterclass',
       org: 'BIP × Joinrs',
       summary: 'Certificate in Agile ways of working. I won the final quiz.',

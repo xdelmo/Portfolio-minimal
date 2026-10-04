@@ -178,12 +178,6 @@ export const CONTENT_IT: SiteContent = {
     },
     {
       period: '2026',
-      title: 'Flutter Bootcamp',
-      org: 'Udemy',
-      summary: 'Certificato sullo sviluppo di app mobili multipiattaforma con Flutter e Dart.',
-    },
-    {
-      period: '2026',
       title: 'Agile Masterclass',
       org: 'BIP × Joinrs',
       summary: 'Certificato sui metodi di lavoro Agile. Ho vinto il quiz finale.',

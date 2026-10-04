@@ -50,3 +50,14 @@ test.describe('with reduced motion', () => {
     expect(await line.evaluate((el) => getComputedStyle(el, '::before').animationName)).toBe('none');
   });
 });
+
+test('hovering a project flashes its pixelated copy once', async ({ page, browserName, isMobile }) => {
+  test.skip(isMobile, 'no hover on touch screens');
+  await page.goto('/en/');
+  const project = page.locator('#work .project').first();
+  const pixels = project.locator('.pixels');
+  await project.hover();
+  expect(await pixels.evaluate((el) => getComputedStyle(el).animationName)).toMatch(/depixelate$/);
+  await expect.poll(() => pixels.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBe(40);
+  expect(await pixels.getAttribute('aria-hidden'), browserName).toBe('true');
+});

@@ -2,6 +2,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
+import { pixelSrc } from '../../content/image-loader';
 
 @Component({
   selector: 'app-work-list',
@@ -21,17 +22,20 @@ import { Project } from '../../content/content.model';
             </ul>
           </div>
           @if (project.image; as image) {
-            <img
-              class="shot"
-              [ngSrc]="image.src"
-              [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
-              [loaderParams]="{ full: image.width }"
-              [width]="image.width"
-              [height]="image.height"
-              [alt]="image.alt"
-              [priority]="first"
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
+            <div class="media">
+              <img
+                class="shot"
+                [ngSrc]="image.src"
+                [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
+                [loaderParams]="{ full: image.width }"
+                [width]="image.width"
+                [height]="image.height"
+                [alt]="image.alt"
+                [priority]="first"
+                sizes="(min-width: 768px) 50vw, 100vw"
+              />
+              <img class="pixels" [src]="pixelSrc(image.src)" alt="" aria-hidden="true" loading="lazy" decoding="async" [width]="image.width" [height]="image.height" />
+            </div>
           }
         </li>
       }
@@ -69,21 +73,49 @@ import { Project } from '../../content/content.model';
       color: var(--fg-muted);
       font-size: var(--step--1);
     }
+    .media {
+      position: relative;
+    }
     .shot {
+      display: block;
       width: 100%;
       height: auto;
       border: 1px solid var(--rule);
       background: var(--surface);
     }
-    .project--tall .shot {
+    .project--tall .media {
       max-width: 280px;
+    }
+    /* a blocky copy of the screenshot flashes and dissolves when the card is hovered or focused (spec §10.2) */
+    .pixels {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      opacity: 0;
+      pointer-events: none;
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .project:hover .pixels,
+      .project:focus-within .pixels {
+        animation: depixelate 480ms steps(4, end);
+      }
+    }
+    @keyframes depixelate {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
     }
     @include bp.up(md) {
       .project {
         grid-template-columns: 1fr 1fr;
         gap: var(--space-6);
       }
-      .project--tall .shot {
+      .project--tall .media {
         justify-self: center;
       }
     }
@@ -91,4 +123,5 @@ import { Project } from '../../content/content.model';
 })
 export class WorkList {
   readonly projects = input.required<readonly Project[]>();
+  protected readonly pixelSrc = pixelSrc;
 }

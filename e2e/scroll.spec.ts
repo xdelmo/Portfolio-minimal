@@ -18,7 +18,9 @@ async function travel(page: Page): Promise<number[]> {
   return page.evaluate(() => (window as unknown as { positions: number[] }).positions);
 }
 
-test('a header link glides to its section instead of jumping, and stops under the header', async ({ page }) => {
+test('a header link glides to its section instead of jumping, and stops under the header', async ({ page, browserName }) => {
+  // headless WebKit on Linux (CI) leaves smooth scrolling to a platform setting and often jumps; Safari glides
+  test.skip(browserName === 'webkit', 'smooth scrolling is a platform setting in headless WebKitGTK');
   await page.goto('/en/');
   test.skip(!(await navLink(page).isVisible()), 'no header nav on this viewport');
   const positions = await travel(page);

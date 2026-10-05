@@ -27,7 +27,7 @@ import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { Gaze, bubble, bubbleCells, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, Gaze, bubble, bubbleCells, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -160,7 +160,17 @@ export class MoaiScene {
     this.cleanups.push(() => {
       gumMaterial.dispose();
     });
+    // the bubble ends on a timer, not in the frame loop: the loop stops whenever the moai is off screen
     let gumStart: number | null = null;
+    let gumTimer = 0;
+    const endGum = (): void => {
+      gumStart = null;
+      gumBall.visible = false;
+      this.gum.set(false);
+    };
+    this.cleanups.push(() => {
+      clearTimeout(gumTimer);
+    });
 
     const scene = new Scene();
     scene.add(pivot, new HemisphereLight(0xffffff, 0x555555, 2.4));
@@ -258,10 +268,6 @@ export class MoaiScene {
         const size = gumStart === null || burst > 0 ? null : bubble(now - gumStart);
         gumBall.visible = size !== null && size > 0;
         if (size !== null) gumBall.scale.setScalar(Math.max(size, 0.001));
-        else if (gumStart !== null) {
-          gumStart = null;
-          this.gum.set(false);
-        }
         renderer.render(scene, camera);
         if (!firstDrawn) {
           firstDrawn = true;
@@ -303,6 +309,7 @@ export class MoaiScene {
       if (double && gumStart === null) {
         gumStart = performance.now();
         this.gum.set(true);
+        gumTimer = window.setTimeout(endGum, BUBBLE_MS);
       }
     };
     const onCancel = (): void => {

@@ -20,7 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Git workflow
 
 - Every feature or fix gets its own branch off `v2` (`feat/<topic>`, `fix/<topic>`), never a direct commit on `v2`.
-- When `npm run verify` exits 0: push the branch, open a PR into `v2` with `gh pr create`, wait for its CI to pass, then merge it yourself with `gh pr merge --squash --delete-branch` (the user does not review PRs). A red CI is fixed on the branch first.
+- When `npm run verify` exits 0: push the branch, open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
+- The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`.
 - `v2` → `master` (going live) still needs the user's explicit yes.
 
 ## Architecture

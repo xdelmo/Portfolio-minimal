@@ -1,0 +1,4 @@
+#!/bin/sh
+# Same gate as CI: a branch that fails `npm run verify` is not pushed.
+export PATH="$HOME/.local/node/current/bin:$PATH"
+exec npm run verify

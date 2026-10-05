@@ -40,3 +40,32 @@ export type Gaze = 'left-up' | 'left-down' | 'right-up' | 'right-down';
 export function gaze(dx: number, dy: number): Gaze {
   return `${dx < 0 ? 'left' : 'right'}-${dy < 0 ? 'up' : 'down'}` as const;
 }
+
+export const BUBBLE_GROW_MS = 900;
+export const BUBBLE_HOLD_MS = 500;
+const BUBBLE_POP_MS = 120;
+export const BUBBLE_MS = BUBBLE_GROW_MS + BUBBLE_HOLD_MS + BUBBLE_POP_MS;
+
+/**
+ * The moai's bubble gum, `t` ms after a double click: its size from 0 to 1 while it inflates (easing out), 1 while
+ * it holds, a little more as it pops, then null once it has burst.
+ */
+export function bubble(t: number): number | null {
+  if (t >= BUBBLE_MS) return null;
+  if (t < BUBBLE_GROW_MS) return 1 - (1 - t / BUBBLE_GROW_MS) ** 3;
+  if (t < BUBBLE_GROW_MS + BUBBLE_HOLD_MS) return 1;
+  return 1 + 0.25 * ((t - BUBBLE_GROW_MS - BUBBLE_HOLD_MS) / BUBBLE_POP_MS);
+}
+
+/** The bubble as voxels: a ball of radius 3 resting on the lips, z = 0 at the mouth and growing towards the viewer. */
+export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
+  const cells: { x: number; y: number; z: number }[] = [];
+  for (let y = -radius; y <= radius; y++) {
+    for (let z = 0; z <= 2 * radius; z++) {
+      for (let x = -radius; x <= radius; x++) {
+        if (x * x + y * y + (z - radius) ** 2 <= radius * radius + 1) cells.push({ x, y, z });
+      }
+    }
+  }
+  return cells;
+}

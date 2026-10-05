@@ -32,6 +32,8 @@
   --ambient-alpha: 0.12;
   /* section bands (.band in _base.scss): pastel for About, lavender for the side quests, ink for the contact finale;
      AA-checked */
+  /* the moai's bubble gum (voxel/moai-scene.ts), decoration only */
+  --gum: #f59ac1;
   --band-pastel-bg: #b9d5f5;
   --band-pastel-fg: #1d1d1c;
   --band-pastel-muted: #2f4560;
@@ -71,6 +73,7 @@
   --intro-fg: #121212;
   --orb-ink: #121212;
   --ambient-alpha: 0.18;
+  --gum: #ef86b6;
   --band-pastel-bg: #14243b;
   --band-pastel-fg: #e8f0fa;
   --band-pastel-muted: #a9bdd6;

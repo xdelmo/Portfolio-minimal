@@ -235,3 +235,25 @@ for (const colorScheme of ['light', 'dark'] as const) {
     expect(await luminance('--moai-eye-white')).toBeGreaterThan((await luminance('--stone-light')) + 0.2);
   });
 }
+
+test('a double click (or double tap) blows a pink bubble of gum, which pops by itself', async ({ page, isMobile }) => {
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  const host = page.locator('app-moai-scene');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  const before = await snapshot(page);
+  if (isMobile) {
+    // two quick taps on the same spot, as a finger does (locator.tap waits between them)
+    const box = await scene(page).boundingBox();
+    if (!box) throw new Error('no moai');
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+  } else {
+    await scene(page).dblclick();
+  }
+  await expect(host).toHaveAttribute('data-gum', '');
+  await page.waitForTimeout(700);
+  expect(await snapshot(page)).not.toBe(before);
+  await expect(host).not.toHaveAttribute('data-gum', '', { timeout: 4000 });
+});

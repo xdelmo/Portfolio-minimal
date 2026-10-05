@@ -27,11 +27,15 @@ import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { Gaze, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { Gaze, bubble, bubbleCells, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
 const SCLERA = '--moai-eye-white';
+const GUM = '--gum';
+/** Two taps or clicks closer than this, and closer than DOUBLE_TAP_PX, blow a bubble. */
+const DOUBLE_TAP_MS = 350;
+const DOUBLE_TAP_PX = 12;
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',
@@ -44,7 +48,7 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
 @Component({
   selector: 'app-moai-scene',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[attr.data-gaze]': 'gaze()' },
+  host: { '[attr.data-gaze]': 'gaze()', '[attr.data-gum]': 'gum() ? "" : null' },
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
   `,
@@ -72,6 +76,8 @@ export class MoaiScene {
   protected readonly desktop = signal(false);
   /** Where the pixel pupils look, on desktop once the mouse moves; null keeps the eyes fully lit. */
   protected readonly gaze = signal<Gaze | null>(null);
+  /** While a bubble of pink gum is out (a double click or double tap on the moai). */
+  protected readonly gum = signal(false);
   // phones: it spins by itself unless all motion is paused (one header button, WCAG 2.2.2)
   private readonly pause = inject(MotionPause);
 
@@ -135,6 +141,27 @@ export class MoaiScene {
     mesh.position.set(-0.5, 0, -0.5);
     pivot.add(mesh);
 
+    // the bubble gum: a ball of pink voxels blown from the lips (front face at z 5), set a little higher so that in
+    // the isometric view, where it comes towards the viewer and so down the screen, it covers the mouth
+    const gumCells = bubbleCells();
+    const gumMaterial = new MeshLambertMaterial();
+    const gumMesh = new InstancedMesh(geometry, gumMaterial, gumCells.length);
+    const gumDummy = new Object3D();
+    gumCells.forEach((c, i) => {
+      gumDummy.position.set(c.x, c.y, c.z + 0.5);
+      gumDummy.updateMatrix();
+      gumMesh.setMatrixAt(i, gumDummy.matrix);
+    });
+    const gumBall = new Group();
+    gumBall.position.set(0, 12.5, 4.5);
+    gumBall.visible = false;
+    gumBall.add(gumMesh);
+    pivot.add(gumBall);
+    this.cleanups.push(() => {
+      gumMaterial.dispose();
+    });
+    let gumStart: number | null = null;
+
     const scene = new Scene();
     scene.add(pivot, new HemisphereLight(0xffffff, 0x555555, 2.4));
     const sun = new DirectionalLight(0xffffff, 1.4);
@@ -167,6 +194,7 @@ export class MoaiScene {
         mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      gumMaterial.color.set(style.getPropertyValue(GUM).trim());
     };
     const dummy = new Object3D();
     let lastBurst = -1;
@@ -225,7 +253,15 @@ export class MoaiScene {
         pivot.rotation.x = breath(idle);
         pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag + look;
         // no fly-in: the scene replaces a still image that is already on screen
-        place(Math.round(explodeAmount(scroll) * 1000) / 1000);
+        const burst = Math.round(explodeAmount(scroll) * 1000) / 1000;
+        place(burst);
+        const size = gumStart === null || burst > 0 ? null : bubble(now - gumStart);
+        gumBall.visible = size !== null && size > 0;
+        if (size !== null) gumBall.scale.setScalar(Math.max(size, 0.001));
+        else if (gumStart !== null) {
+          gumStart = null;
+          this.gum.set(false);
+        }
         renderer.render(scene, camera);
         if (!firstDrawn) {
           firstDrawn = true;
@@ -258,7 +294,18 @@ export class MoaiScene {
       this.drag += (e.clientX - pointerX) * 0.01;
       pointerX = e.clientX;
     };
-    const onUp = (): void => {
+    let lastTap: { time: number; x: number; y: number } | null = null;
+    const onUp = (e: PointerEvent): void => {
+      pointerX = null;
+      const tap = { time: e.timeStamp, x: e.clientX, y: e.clientY };
+      const double = lastTap !== null && tap.time - lastTap.time < DOUBLE_TAP_MS && Math.hypot(tap.x - lastTap.x, tap.y - lastTap.y) < DOUBLE_TAP_PX;
+      lastTap = double ? null : tap;
+      if (double && gumStart === null) {
+        gumStart = performance.now();
+        this.gum.set(true);
+      }
+    };
+    const onCancel = (): void => {
       pointerX = null;
     };
     const onLook = (e: PointerEvent): void => {
@@ -283,7 +330,7 @@ export class MoaiScene {
     canvas.addEventListener('pointerdown', onDown);
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerup', onUp);
-    canvas.addEventListener('pointercancel', onUp);
+    canvas.addEventListener('pointercancel', onCancel);
     addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
@@ -295,7 +342,7 @@ export class MoaiScene {
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
-      canvas.removeEventListener('pointercancel', onUp);
+      canvas.removeEventListener('pointercancel', onCancel);
       removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);

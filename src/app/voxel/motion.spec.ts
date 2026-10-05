@@ -1,4 +1,4 @@
-import { BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, gaze, scrollYaw, sectionProgress, smoothstep } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, gaze, scrollYaw, sectionProgress, smoothstep } from './motion';
 
 describe('moai motion', () => {
   it('measures how far the section has scrolled past the middle of the screen', () => {
@@ -53,5 +53,40 @@ describe('gaze', () => {
     expect(gaze(80, -10)).toBe('right-up');
     expect(gaze(-5, 200)).toBe('left-down');
     expect(gaze(300, 1)).toBe('right-down');
+  });
+});
+
+describe('bubble', () => {
+  it('grows from nothing to full size, holds, then pops', () => {
+    expect(bubble(0)).toBe(0);
+    expect(bubble(BUBBLE_GROW_MS / 2)).toBeGreaterThan(0.4);
+    expect(bubble(BUBBLE_GROW_MS)).toBe(1);
+    expect(bubble(BUBBLE_GROW_MS + BUBBLE_HOLD_MS / 2)).toBe(1);
+  });
+
+  it('swells a little as it pops, then is gone for good', () => {
+    expect(bubble(BUBBLE_GROW_MS + BUBBLE_HOLD_MS + 40)).toBeGreaterThan(1);
+    expect(bubble(BUBBLE_MS)).toBeNull();
+    expect(bubble(BUBBLE_MS + 5000)).toBeNull();
+  });
+
+  it('never shrinks while it grows', () => {
+    let previous = 0;
+    for (let t = 0; t <= BUBBLE_GROW_MS; t += 50) {
+      const size = bubble(t) ?? 0;
+      expect(size).toBeGreaterThanOrEqual(previous);
+      previous = size;
+    }
+  });
+});
+
+describe('bubbleCells', () => {
+  it('is a ball of voxels in front of the lips, symmetric left to right', () => {
+    const cells = bubbleCells();
+    expect(cells.length).toBeGreaterThan(20);
+    expect(cells.every((c) => c.z >= 0)).toBe(true);
+    const key = (c: { x: number; y: number; z: number }) => `${String(c.x)},${String(c.y)},${String(c.z)}`;
+    const all = new Set(cells.map(key));
+    expect(cells.every((c) => all.has(key({ ...c, x: -c.x })))).toBe(true);
   });
 });

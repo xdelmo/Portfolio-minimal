@@ -20,7 +20,8 @@ test.describe('section titles', () => {
     await page.goto('/en/#work');
     await ready(page);
     expect(await isPlainText(page.locator('#work h2'))).toBe(true);
-    await expect(page.locator('#work h2')).toBeInViewport();
+    const where = await page.evaluate(() => `scrollY ${String(scrollY)}, #work top ${String(document.querySelector('#work')?.getBoundingClientRect().top)}, height ${String(document.documentElement.scrollHeight)}, hash ${location.hash}`);
+    await expect(page.locator('#work h2'), where).toBeInViewport();
   });
 });
 

@@ -13,7 +13,7 @@ export default defineConfig({
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 1 : 0,
   reporter: process.env['CI'] ? 'github' : 'list',
-  use: { baseURL: 'http://localhost:4300' },
+  use: { baseURL: 'http://localhost:4300', trace: 'retain-on-failure' },
   webServer: {
     command: 'npx http-server dist/portfolio/browser -p 4300 -s -c-1',
     url: 'http://localhost:4300/en/',

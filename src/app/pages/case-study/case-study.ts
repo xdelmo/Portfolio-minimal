@@ -3,7 +3,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
-import { caseStudyJsonLd } from '../../core/seo/seo';
+import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
 import { GithubMark } from '../../layout/github-mark';
 import { SeoService } from '../../core/seo/seo.service';
 
@@ -137,7 +137,7 @@ export class CaseStudy {
       this.seo.setJsonLd('ld-page', p ? caseStudyJsonLd(p, this.content.person, this.locale) : null);
       this.seo.update(
         p
-          ? { path: `/work/${p.slug}`, title: `${p.title} — Emanuele Del Monte`, description: p.summary, ogImage: p.slug }
+          ? { path: `/work/${p.slug}`, title: caseStudyTitle(p, this.content.person), description: p.summary, ogImage: p.slug }
           : { path: `/work/${this.slug()}`, title: 'Emanuele Del Monte', description: '', noindex: true },
       );
     });

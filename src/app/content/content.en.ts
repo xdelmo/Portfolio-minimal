@@ -11,6 +11,13 @@ export const CONTENT_EN: SiteContent = {
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
     knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Spring Boot'],
+    summary:
+      'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular front ends with Signals, RxJS and PrimeNG.',
+  },
+  seo: {
+    title: 'Emanuele Del Monte — Angular Frontend Engineer',
+    description:
+      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy, open to remote roles.',
   },
   hero: {
     headline: 'I build Angular interfaces that stay fast when the data gets big.',

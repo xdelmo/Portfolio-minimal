@@ -12,7 +12,7 @@ const project = {
   caseStudy: { context: 'Why.', architecture: ['One', 'Two'], decisions: [{ title: 'Pick A', body: 'Because.' }], outcome: 'Done.' },
 };
 const content = {
-  person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', availability: 'Open from March.', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada' },
+  person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', availability: 'Open from March.', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada', summary: 'Ada builds Angular front ends.' },
   hero: { headline: 'Headline.', lede: 'Lede.' },
   aboutStatement: 'I care.',
   about: 'About.',
@@ -43,7 +43,7 @@ test('project markdown has the case-study sections in the page language', () => 
 
 test('llms.txt links every markdown page of both languages', () => {
   const txt = llmsTxt({ en: content, it: content });
-  assert.match(txt, /^# Ada\n\n> Frontend Engineer, Latina, Italy\./);
+  assert.match(txt, /^# Ada\n\n> Ada builds Angular front ends\. Open from March\.\n/);
   for (const url of ['/en/index.md', '/it/index.md', '/en/work/demo.md', '/it/work/demo.md']) {
     assert.ok(txt.includes(`https://www.emanueledelmonte.it${url}`), url);
   }

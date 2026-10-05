@@ -303,12 +303,7 @@ export class Home {
 
   constructor() {
     const { person } = this.content;
-    this.seo.update({
-      path: '/',
-      title: `${person.name} — ${person.role}`,
-      description: `${this.content.hero.lede} ${person.availability}`,
-      ogImage: 'home',
-    });
+    this.seo.update({ path: '/', title: this.content.seo.title, description: this.content.seo.description, ogImage: 'home' });
     this.seo.setJsonLd('ld-page', homeJsonLd(person, this.locale));
   }
 }

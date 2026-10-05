@@ -6,8 +6,8 @@ const TAPS = 5;
 const TAP_WINDOW_MS = 2000;
 
 /**
- * Listens for the way into the easter egg: the Konami code on a keyboard, or five quick taps on the logo where there
- * are no arrow keys. Nothing is rendered until then; the card itself is a lazy chunk.
+ * Listens for the ways into the easter egg: the Konami code on a keyboard, five quick taps on the logo where there
+ * are no arrow keys, or the "Press start" button in the footer. Nothing is rendered until then; the card is a lazy chunk.
  */
 @Component({
   selector: 'app-game-trigger',
@@ -31,7 +31,12 @@ export class GameTrigger {
       }
     };
     const onClick = (event: MouseEvent): void => {
-      if (!(event.target instanceof Element) || !event.target.closest('.logo')) return;
+      if (!(event.target instanceof Element)) return;
+      if (event.target.closest('[data-press-start]')) {
+        void this.open();
+        return;
+      }
+      if (!event.target.closest('.logo')) return;
       const now = event.timeStamp;
       taps = [...taps.filter((t) => now - t < TAP_WINDOW_MS), now];
       if (taps.length >= TAPS) {

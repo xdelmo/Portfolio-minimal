@@ -24,7 +24,8 @@ export const finaleEffect: Effect = (root, { gsap, SplitText }) => {
   });
 
   if (title.getBoundingClientRect().top < innerHeight) return undefined;
-  const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
+  // the title holds a link: split its label, so the link and its arrow stay whole
+  const split = SplitText.create(title.querySelector('.contact-label') ?? title, { type: 'lines', mask: 'lines' });
   gsap.set(split.lines, { yPercent: 105 });
   gsap.to(split.lines, {
     yPercent: 0,

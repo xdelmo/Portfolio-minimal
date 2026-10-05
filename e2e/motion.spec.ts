@@ -235,7 +235,7 @@ test.describe('bands and finale', () => {
     await expect(page.locator('#contact h2')).toHaveAccessibleName('Get in touch');
     // the last line of the giant title has fully risen, even though the page ends before the trigger's end
     await expect
-      .poll(() => page.locator('#contact h2').evaluate((el) => {
+      .poll(() => page.locator('#contact .contact-label').evaluate((el) => {
         const lines = el.querySelectorAll<HTMLElement>(':scope > * > *');
         const last = lines[lines.length - 1] as HTMLElement | undefined;
         return last ? Math.round(new DOMMatrix(getComputedStyle(last).transform).m42) : 0;

@@ -281,3 +281,44 @@ test('the bubble ends on time even when the moai stops drawing (scrolled away mi
   await page.waitForTimeout(2000);
   await expect(host).not.toHaveAttribute('data-gum');
 });
+
+test('stays whole at the end of its section on desktop: no burst into cubes (removed on request)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the scroll drives the moai on desktop only');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  // the width of the drawn moai: the columns that hold at least one opaque pixel
+  const widthAt = async (progress: number): Promise<number> => {
+    await page.locator('#about').evaluate((el, p) => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, top - innerHeight / 2 + p * el.getBoundingClientRect().height);
+    }, progress);
+    await page.waitForTimeout(400);
+    return scene(page).evaluate((c) => {
+      const canvas = c as HTMLCanvasElement;
+      const copy = document.createElement('canvas');
+      copy.width = canvas.width;
+      copy.height = canvas.height;
+      const ctx = copy.getContext('2d');
+      if (!ctx) return -1;
+      ctx.drawImage(canvas, 0, 0);
+      const { data } = ctx.getImageData(0, 0, copy.width, copy.height);
+      let min = copy.width;
+      let max = -1;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] > 0) {
+          const x = ((i - 3) / 4) % copy.width;
+          min = Math.min(min, x);
+          max = Math.max(max, x);
+        }
+      }
+      return (max - min) / copy.width;
+    });
+  };
+  const middle = await widthAt(0.5);
+  const end = await widthAt(0.97);
+  expect(middle).toBeGreaterThan(0);
+  expect(end).toBeLessThan(middle * 1.25);
+});

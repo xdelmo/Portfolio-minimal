@@ -10,16 +10,6 @@ export function scrollYaw(progress: number): number {
   return Math.sin(progress * Math.PI * 2) * SCROLL_SWING;
 }
 
-export function smoothstep(edge0: number, edge1: number, x: number): number {
-  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
-
-/** The moai bursts into cubes at the end of its section and comes back together on the way up. */
-export function explodeAmount(scroll: number): number {
-  return smoothstep(0.8, 1, scroll);
-}
-
 /** One breath of the idle moai, in milliseconds. */
 export const BREATH_MS = 4000;
 
@@ -56,6 +46,9 @@ export function bubble(t: number): number | null {
   if (t < BUBBLE_GROW_MS + BUBBLE_HOLD_MS) return 1;
   return 1 + 0.25 * ((t - BUBBLE_GROW_MS - BUBBLE_HOLD_MS) / BUBBLE_POP_MS);
 }
+
+/** The model cell the bubble is blown from: the middle of the pursed lips, right under the nose. */
+export const GUM_LIPS = { y: 10, z: 4 } as const;
 
 /** The bubble as voxels: a ball of radius 3 resting on the lips, z = 0 at the mouth and growing towards the viewer. */
 export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {

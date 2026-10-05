@@ -19,15 +19,35 @@ for (const [width, height] of [[1440, 900], [1920, 1080]]) {
   });
 }
 
+// puts the top of a seam at a fraction of the viewport height
+const seamTopAt = (page: Page, where: string, fraction: number) =>
+  seam(page, where).evaluate((el, f) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * f);
+  }, fraction);
+
 for (const id of ['#about', '#side-quests', '#contact']) {
   test(`the ${id} band grows a pixel seam as it scrolls in`, async ({ page }) => {
     await page.goto('/en/');
     await expect(seam(page, id)).toHaveCount(1);
     await expect.poll(() => progress(page, id)).toBeLessThan(1);
-    await page.locator(id).evaluate((el) => {
-      window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.2);
-    });
+    await seamTopAt(page, id, 0.4);
     await expect.poll(() => progress(page, id)).toBe(1);
+  });
+}
+
+for (const where of ['.hero', '#about', '#side-quests']) {
+  test(`the ${where} seam crumbles away as it scrolls out under the header, and forms again on the way back`, async ({ page }) => {
+    await page.goto('/en/');
+    await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
+    await seamTopAt(page, where, 0.4);
+    await expect.poll(() => progress(page, where)).toBe(1);
+    await seamTopAt(page, where, 0.2);
+    await expect.poll(() => progress(page, where)).toBeGreaterThan(0);
+    await expect.poll(() => progress(page, where)).toBeLessThan(1);
+    await seamTopAt(page, where, 0.02);
+    await expect.poll(() => progress(page, where)).toBe(0);
+    await seamTopAt(page, where, 0.4);
+    await expect.poll(() => progress(page, where)).toBe(1);
   });
 }
 

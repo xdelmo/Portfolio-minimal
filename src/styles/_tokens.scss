@@ -26,8 +26,6 @@
   /* intro panel: opaque, so nothing of the page shows through */
   --intro-bg: #1d1d1c;
   --intro-fg: #e5e5e5;
-  /* text on the pastel stack orbs, which stay light in both themes */
-  --orb-ink: #1d1d1c;
   /* strength of the ambient orbs behind the page (layout/ambient.ts) */
   --ambient-alpha: 0.12;
   /* section bands (.band in _base.scss): pastel for About, lavender for the side quests, ink for the contact finale;
@@ -71,7 +69,6 @@
   --moai-eye-white: #d9d9d4;
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
-  --orb-ink: #121212;
   --ambient-alpha: 0.18;
   --gum: #ef86b6;
   --band-pastel-bg: #14243b;

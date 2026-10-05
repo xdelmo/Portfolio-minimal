@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     <div class="thread" aria-hidden="true"><span class="line"></span></div>
   `,
   styles: `
-    // above the bands, which stack over the section after them (#side-quests over the stack orbs)
+    // above the bands, which stack over the section after them (#side-quests over the stack)
     app-thread {
       position: absolute;
       inset: 0;

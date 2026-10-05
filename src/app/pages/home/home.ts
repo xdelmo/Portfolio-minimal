@@ -17,9 +17,7 @@ import { aboutWordsEffect } from '../../motion/effects/about-words';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
-import { stackFloatEffect } from '../../motion/effects/stack-float';
-import { stackOrbsEffect } from '../../motion/effects/stack-orbs';
-import { stackTapEffect } from '../../motion/effects/stack-tap';
+import { stackLevelsEffect } from '../../motion/effects/stack-levels';
 import { threadEffect } from '../../motion/effects/thread';
 import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
@@ -79,6 +77,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
 
     <section id="stack" class="section container" aria-labelledby="stack-title">
       <h2 id="stack-title" i18n="@@home.stack.title">Tools I use</h2>
+      <p class="muted" i18n="@@home.stack.lede">From the middle out: what I use every day, what runs in production, what I try in my side projects.</p>
       <app-stack-list [groups]="content.stack" />
     </section>
 
@@ -194,7 +193,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       padding: 0;
       list-style: none;
     }
-    // a circle drawn on the pixel grid, 16 cells across: round like the stack orbs, stepped like the pixel field
+    // a circle drawn on the pixel grid, 16 cells across: round like the tool rings, stepped like the pixel field
     .contact-photo {
       grid-row: 1;
       width: 160px;
@@ -274,7 +273,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     .trail {
       position: relative;
     }
-    // the stack orbs fly in from the screen edges: they pass under the side quests band above, and under the title
+    // the tool rings turn in under the side quests band above, and under the title
     #side-quests {
       z-index: 1;
     }
@@ -292,7 +291,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stackTapEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

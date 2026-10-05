@@ -10,7 +10,7 @@ export const finaleEffect: Effect = (root, { gsap, SplitText }) => {
   const title = contact?.querySelector<HTMLElement>('h2');
   if (!contact || !title) return undefined;
 
-  // start state set up front, the scrubbed tweens only move away from it (see stack-orbs.ts)
+  // start state set up front, the scrubbed tweens only move away from it (see stack-levels.ts)
   // the inset stops short of the text, so the light copy never sits on the light page
   const textLeft = Math.min(...Array.from(contact.querySelectorAll('h2, a, p'), (el) => el.getBoundingClientRect().left));
   const inset = Math.max(0, Math.min(0.06 * document.documentElement.clientWidth, textLeft - 8));

@@ -41,9 +41,9 @@ test('sections leave 64px above and below their content, not 96', async ({ page 
   expect(padding).toEqual(['64px', '64px']);
 });
 
-test('the stack orbs flying in pass under the side quests band, and the pixel thread stays over it', async ({ page }) => {
+test('the stack section passes under the side quests band, and the pixel thread stays over it', async ({ page }) => {
   await page.goto('/en/');
-  // the orbs fly in from the screen edges over the band above them: paint order decides who is on top
+  // the stack rings scale in next to the band above them: paint order decides who is on top
   const order = await page.evaluate(() => {
     const z = (selector: string) => {
       const el = document.querySelector(selector);

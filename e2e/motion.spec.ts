@@ -296,3 +296,22 @@ test.describe('stack on phones', () => {
     await expect(page.locator('#stack .group').nth(1)).not.toHaveClass(/is-picked/, { timeout: 3000 });
   });
 });
+
+test('with enlarged text, an experience card that would not fit under the header stops sticking', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.addInitScript(() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.style.fontSize = '150%';
+    });
+  });
+  await page.goto('/en/');
+  await page.locator('#experience').scrollIntoViewIfNeeded();
+  // every card is either free to scroll or short enough to be read whole while it sticks
+  await expect
+    .poll(() =>
+      page.locator('#experience li').evaluateAll((items) =>
+        items.every((li) => getComputedStyle(li).position !== 'sticky' || parseFloat(getComputedStyle(li).top) + li.getBoundingClientRect().height <= innerHeight),
+      ),
+    )
+    .toBe(true);
+});

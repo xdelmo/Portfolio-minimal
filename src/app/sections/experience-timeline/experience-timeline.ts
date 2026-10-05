@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, inject, input } from '@angular/core';
 import { ExperienceItem } from '../../content/content.model';
 
 @Component({
@@ -69,7 +69,6 @@ import { ExperienceItem } from '../../content/content.model';
         display: none;
       }
       li {
-        position: sticky;
         top: calc(var(--header-h) + var(--space-2) + var(--i, 0) * 8px);
         padding: var(--space-3);
         border: 1px solid var(--rule);
@@ -86,6 +85,13 @@ import { ExperienceItem } from '../../content/content.model';
     .org {
       font-weight: 400;
     }
+    // only cards that fit whole under the header stick (set by the component): with enlarged text a taller card
+    // would hide its last lines under the next one for good (WCAG 1.4.4)
+    @media (max-width: 1023.98px) {
+      li.sticks {
+        position: sticky;
+      }
+    }
     @include bp.up(md) {
       li {
         grid-template-columns: 12rem 1fr;
@@ -100,4 +106,24 @@ import { ExperienceItem } from '../../content/content.model';
 })
 export class ExperienceTimeline {
   readonly items = input.required<readonly ExperienceItem[]>();
+
+  constructor() {
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    let sizes: ResizeObserver | undefined;
+    const measure = (): void => {
+      for (const li of host.querySelectorAll<HTMLElement>('.timeline > li')) {
+        li.classList.toggle('sticks', parseFloat(getComputedStyle(li).top) + li.offsetHeight <= innerHeight);
+      }
+    };
+    afterNextRender(() => {
+      measure();
+      sizes = new ResizeObserver(measure);
+      for (const li of host.querySelectorAll('.timeline > li')) sizes.observe(li);
+      addEventListener('resize', measure);
+    });
+    inject(DestroyRef).onDestroy(() => {
+      sizes?.disconnect();
+      removeEventListener('resize', measure);
+    });
+  }
 }

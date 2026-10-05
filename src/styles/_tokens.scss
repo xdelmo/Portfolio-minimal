@@ -97,7 +97,7 @@
   --space-16: 128px;
 
   /* modular scale 1.25 on 18px */
-  --step--1: 0.8rem;     /* 14.4px */
+  --step--1: 0.9rem;     /* 14.4px: rem counts from the root's 16px, not the body's 18px */
   --step-0: 1.125rem;    /* 18px   */
   --step-1: 1.406rem;    /* 22.5px */
   --step-2: 1.758rem;    /* 28.1px */

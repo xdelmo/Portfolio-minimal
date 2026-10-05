@@ -67,7 +67,7 @@ A new section gets **one** idea in this family, not a new visual language.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).
-- Phones: scroll and touch versions of each idea (field first, sticky experience cards, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
+- Phones: scroll and touch versions of each idea (field first, sticky experience cards that step back under the next one, projects that straighten as they scroll in, pressed buttons, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
 - Decorations may fly in from the screen edges: the root (`html`) clips horizontally, so never clip a section just to hide them.
 
 ## Quality floor (every change)

@@ -101,3 +101,12 @@ test.describe('hero and work on phones', () => {
     expect(media.y).toBeLessThan(text.y);
   });
 });
+
+test('small text never drops under 14px, and section titles stay well below the headline', async ({ page }) => {
+  await page.goto('/en/');
+  const size = (selector: string) => page.locator(selector).first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  for (const selector of ['#work .stack li', '#side-quests .tags', 'app-site-footer p']) {
+    expect(await size(selector), selector).toBeGreaterThanOrEqual(14);
+  }
+  expect(await size('#work h2')).toBeLessThanOrEqual((await size('h1')) * 0.75);
+});

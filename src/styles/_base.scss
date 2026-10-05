@@ -42,12 +42,13 @@ h1 {
   letter-spacing: -0.01em;
 }
 
+/* section and item titles shrink on phones, so they stay well below the hero headline (44px there) */
 h2 {
-  font-size: var(--step-4);
+  font-size: clamp(2rem, 1.4rem + 2.5vw, var(--step-4)); /* 32px → 44px */
 }
 
 h3 {
-  font-size: var(--step-2);
+  font-size: clamp(var(--step-1), 1.1rem + 1.2vw, var(--step-2)); /* 22.5px → 28px */
 }
 
 p {
@@ -159,6 +160,13 @@ canvas {
     transform: translate(-4px, -4px);
     box-shadow: 4px 4px 0 var(--fg);
   }
+}
+
+/* pressed: buttons and repository tags give way 2px under a finger or a click, like a key */
+.button:active,
+.repo-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

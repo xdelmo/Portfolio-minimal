@@ -5,11 +5,13 @@ import { toLocale } from '../../core/i18n/locale';
 import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
 import { PixelField } from '../../pixel-field/pixel-field';
+import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
 import { ExperienceTimeline } from '../../sections/experience-timeline/experience-timeline';
 import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
+import { dissolveEffect } from '../../motion/effects/dissolve';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
@@ -23,7 +25,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -35,6 +37,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
         <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
       <app-pixel-field class="field" />
+      <app-pixel-dissolve class="seam seam--hero" [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
     </section>
 
     <section id="work" class="section container" aria-labelledby="work-title">
@@ -49,6 +52,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     </section>
 
     <section id="about" class="section container about band band--pastel" aria-labelledby="about-title">
+      <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="aboutSeam" grow="up" />
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
         <p>{{ content.about }}</p>
@@ -68,6 +72,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     </section>
 
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
+      <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
         <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
         <p>
@@ -86,6 +91,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     }
 
     .hero {
+      position: relative;
       display: grid;
       gap: var(--space-3);
       padding-block: var(--space-12) var(--space-16);
@@ -174,6 +180,20 @@ import { MoaiFigure } from '../../voxel/moai-figure';
         margin-top: 0;
       }
     }
+    // pixel seams: full-bleed strips of 16px cells; a band grows one above its top edge, the hero one at its foot
+    .seam {
+      position: absolute;
+      inset-inline: calc(50% - 50vw);
+      height: var(--space-6);
+      // follows the contact band while it widens from a card (finale.ts)
+      clip-path: inset(0 var(--band-inset, 0%));
+    }
+    .band > .seam {
+      bottom: 100%;
+    }
+    .seam--hero {
+      bottom: 0;
+    }
     .section {
       display: grid;
       gap: var(--space-4);
@@ -184,7 +204,11 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect];
+  // the band colour first (most cells), then the pixel tints that crumble off it
+  protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
+  protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];
+  protected readonly contactSeam = ['--band-ink-bg', '--px-1', '--px-2', '--px-4'];
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));
 

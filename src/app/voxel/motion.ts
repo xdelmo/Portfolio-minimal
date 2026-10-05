@@ -50,6 +50,12 @@ export function bubble(t: number): number | null {
 /** The model cell the bubble is blown from: the middle of the pursed lips, right under the nose. */
 export const GUM_LIPS = { y: 10, z: 4 } as const;
 
+/**
+ * Rows the ball hangs below the lips: its top row level with them. Centred on the lips it rose in front of the
+ * long nose, and in the isometric view the nose seemed to end in the bubble.
+ */
+export const GUM_DROP = 3;
+
 /** The bubble as voxels: a ball of radius 3 resting on the lips, z = 0 at the mouth and growing towards the viewer. */
 export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
   const cells: { x: number; y: number; z: number }[] = [];

@@ -26,7 +26,7 @@ import {
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -139,7 +139,7 @@ export class MoaiScene {
     mesh.position.set(-0.5, 0, -0.5);
     pivot.add(mesh);
 
-    // the bubble gum: a ball of pink voxels centred on the lips, its back on their front face
+    // the bubble gum: a ball of pink voxels hanging from the lips, its back on their front face; it grows from the lips
     const gumCells = bubbleCells();
     const gumMaterial = new MeshLambertMaterial();
     const gumMesh = new InstancedMesh(geometry, gumMaterial, gumCells.length);
@@ -152,6 +152,7 @@ export class MoaiScene {
     const gumBall = new Group();
     gumBall.position.set(0, GUM_LIPS.y + 0.5, GUM_LIPS.z + 0.5);
     gumBall.visible = false;
+    gumMesh.position.y = -GUM_DROP;
     gumBall.add(gumMesh);
     pivot.add(gumBall);
     this.cleanups.push(() => {

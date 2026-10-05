@@ -204,18 +204,21 @@ export const CONTENT_EN: SiteContent = {
       summary: 'A daily Pokémon crossword and a personal Pokédex: a WordPress plugin with a React app inside, styled like a Game Boy.',
       tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
       repo: 'https://github.com/xdelmo/pokeverba-site',
+      sprite: 'crossword',
     },
     {
       title: 'MagSafe card holder',
       summary: 'A 3D-printed holder for one Pokémon card on the back of an iPhone, modelled entirely in Python code with automatic fit checks.',
       tags: ['Python', 'build123d', '3D printing'],
       repo: 'https://github.com/xdelmo/magsafe-cardholder',
+      sprite: 'cardholder',
     },
     {
       title: 'Volkswagen Up storage tray',
       summary: 'A parametric insert for the door armrest of my car, with a pipeline that goes from code to a ready-to-print file in one command.',
       tags: ['Python', 'build123d', 'Bambu Studio'],
       repo: 'https://github.com/xdelmo/volkswagen-up-door-storage-box',
+      sprite: 'car',
     },
   ],
   stack: [

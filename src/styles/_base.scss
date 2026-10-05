@@ -212,6 +212,14 @@ html.theme-switching::view-transition-new(root) {
   --focus: var(--band-pastel-link);
   --rule: color-mix(in srgb, var(--band-pastel-fg) 20%, transparent);
 }
+.band--lavender {
+  --band-bg: var(--band-lavender-bg);
+  --fg: var(--band-lavender-fg);
+  --fg-muted: var(--band-lavender-muted);
+  --link: var(--band-lavender-link);
+  --focus: var(--band-lavender-link);
+  --rule: color-mix(in srgb, var(--band-lavender-fg) 20%, transparent);
+}
 .band--ink {
   --band-bg: var(--band-ink-bg);
   --fg: var(--band-ink-fg);

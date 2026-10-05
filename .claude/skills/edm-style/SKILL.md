@@ -29,7 +29,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 
 - **No green, ever** (the user's brand is greys, the blue family, lavender, peach). This includes "success" states and syntax colours.
 - The `--px-*` colours never carry text. Text on pastel uses the band or orb ink tokens (`--band-pastel-*`, `--orb-ink`).
-- Sections change mood through **bands** (`.band--pastel` for About, `.band--ink` for the contact finale and footer); a band re-points `--fg`, `--link`, `--focus`, `--rule`, so the contents follow by themselves.
+- Sections change mood through **bands** (`.band--pastel` for About, `.band--lavender` for the side quests, `.band--ink` for the contact finale and footer); on the home page plain sections and bands alternate; a band re-points `--fg`, `--link`, `--focus`, `--rule`, so the contents follow by themselves.
 
 ## Type
 
@@ -40,7 +40,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 
 ## Grid and shape
 
-- Spacing only from `--space-1` (8px) … `--space-16` (128px). Sizes of icons, cells and images are multiples of 8.
+- Spacing only from `--space-1` (8px) … `--space-16` (128px). Home sections pad 64px above and below; projects sit 64px apart. Sizes of icons, cells and images are multiples of 8.
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
 - No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.
 - **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
@@ -55,7 +55,8 @@ Spend boldness here, keep everything else calm:
 3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
 5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page; **veils** of page-coloured cells that clear off project images. All three are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
-6. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
+6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
+7. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
 
 A new section gets **one** idea in this family, not a new visual language.
 

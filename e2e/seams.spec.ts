@@ -19,7 +19,7 @@ for (const [width, height] of [[1440, 900], [1920, 1080]]) {
   });
 }
 
-for (const id of ['#about', '#contact']) {
+for (const id of ['#about', '#side-quests', '#contact']) {
   test(`the ${id} band grows a pixel seam as it scrolls in`, async ({ page }) => {
     await page.goto('/en/');
     await expect(seam(page, id)).toHaveCount(1);
@@ -37,6 +37,7 @@ test.describe('with reduced motion', () => {
     await page.goto('/en/');
     await page.waitForTimeout(500);
     expect(await progress(page, '#about')).toBe(1);
+    expect(await progress(page, '#side-quests')).toBe(1);
     expect(await progress(page, '#contact')).toBe(1);
   });
 });

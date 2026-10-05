@@ -30,11 +30,16 @@
   --orb-ink: #1d1d1c;
   /* strength of the ambient orbs behind the page (layout/ambient.ts) */
   --ambient-alpha: 0.12;
-  /* section bands (.band in _base.scss): pastel for About, ink for the contact finale; AA-checked */
+  /* section bands (.band in _base.scss): pastel for About, lavender for the side quests, ink for the contact finale;
+     AA-checked */
   --band-pastel-bg: #b9d5f5;
   --band-pastel-fg: #1d1d1c;
   --band-pastel-muted: #2f4560;
   --band-pastel-link: #0b4f96;
+  --band-lavender-bg: #dccff8;
+  --band-lavender-fg: #1d1d1c;
+  --band-lavender-muted: #4a3d6b;
+  --band-lavender-link: #0b4f96;
   --band-ink-bg: #1d1d1c;
   --band-ink-fg: #f2f2f2;
   --band-ink-muted: #b8b8b2;
@@ -70,6 +75,10 @@
   --band-pastel-fg: #e8f0fa;
   --band-pastel-muted: #a9bdd6;
   --band-pastel-link: #9ccaff;
+  --band-lavender-bg: #211a38;
+  --band-lavender-fg: #efeafc;
+  --band-lavender-muted: #bdb2dc;
+  --band-lavender-link: #9ccaff;
   --band-ink-bg: #0b1f3d;
   --band-ink-fg: #eef4fc;
   --band-ink-muted: #a9bdd6;

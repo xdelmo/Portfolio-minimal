@@ -84,7 +84,8 @@ for (const locale of ['en', 'it']) {
 test('the home page has every section in order', async ({ page }) => {
   await page.goto('/en/');
   const ids = await page.locator('main section[id]').evaluateAll((els) => els.map((e) => e.id));
-  expect(ids).toEqual(['work', 'side-quests', 'about', 'experience', 'stack', 'contact']);
+  // page and bands alternate: work, About (band), experience, side quests (band), tools, contact (band)
+  expect(ids).toEqual(['work', 'about', 'experience', 'side-quests', 'stack', 'contact']);
 });
 
 for (const path of ['/en/', '/it/work/apexflow']) {

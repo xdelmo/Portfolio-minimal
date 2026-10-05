@@ -1,3 +1,5 @@
+import type { SpriteName } from '../sections/side-quests/sprites';
+
 export interface Person {
   name: string;
   role: string;
@@ -58,6 +60,8 @@ export interface SideQuest {
   tags: readonly string[];
   /** The code on GitHub. */
   repo: string;
+  /** Its item in the side quests' inventory (sections/side-quests/sprites.ts). */
+  sprite: SpriteName;
 }
 
 export interface StackGroup {

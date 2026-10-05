@@ -53,7 +53,7 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 
     .projects {
       display: grid;
-      gap: var(--space-12);
+      gap: var(--space-8);
       margin: 0;
       padding: 0;
       list-style: none;
@@ -116,9 +116,11 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
       max-width: 280px;
     }
     @include bp.up(md) {
+      // the text sits level with the middle of its picture, so a short description leaves no hole below it
       .project {
         grid-template-columns: 1fr 1fr;
         gap: var(--space-6);
+        align-items: center;
       }
       .project--tall .media {
         justify-self: center;

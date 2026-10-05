@@ -51,12 +51,6 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-work-list [projects]="content.projects" />
     </section>
 
-    <section id="side-quests" class="section container" aria-labelledby="side-quests-title">
-      <h2 id="side-quests-title" i18n="@@home.sideQuests.title">Side quests</h2>
-      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from crosswords to 3D-printed parts.</p>
-      <app-side-quests [items]="content.sideQuests" />
-    </section>
-
     <section id="about" class="section container about band band--pastel" aria-labelledby="about-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="aboutSeam" grow="up" />
       <div class="about-text">
@@ -71,6 +65,13 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     <section id="experience" class="section container" aria-labelledby="experience-title">
       <h2 id="experience-title" i18n="@@home.experience.title">Experience</h2>
       <app-experience-timeline [items]="content.experience" />
+    </section>
+
+    <section id="side-quests" class="section container band band--lavender" aria-labelledby="side-quests-title">
+      <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="sideQuestsSeam" grow="up" />
+      <h2 id="side-quests-title" i18n="@@home.sideQuests.title">Side quests</h2>
+      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from crosswords to 3D-printed parts.</p>
+      <app-side-quests [items]="content.sideQuests" />
     </section>
 
     <section id="stack" class="section container" aria-labelledby="stack-title">
@@ -232,7 +233,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     .section {
       display: grid;
       gap: var(--space-4);
-      padding-block: var(--space-12);
+      padding-block: var(--space-8);
       scroll-margin-top: var(--space-2);
     }
   `,
@@ -243,6 +244,7 @@ export class Home {
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];
+  protected readonly sideQuestsSeam = ['--band-lavender-bg', '--px-4', '--px-5', '--px-6'];
   protected readonly contactSeam = ['--band-ink-bg', '--px-1', '--px-2', '--px-4'];
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));

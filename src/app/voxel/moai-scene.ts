@@ -53,10 +53,12 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
       position: relative;
       display: block;
     }
+    // a sideways swipe turns the moai; vertical panning and pinch-zoom stay with the browser
     canvas {
       display: block;
       width: 100%;
       height: 100%;
+      touch-action: pan-y pinch-zoom;
     }
   `,
 })
@@ -243,10 +245,13 @@ export class MoaiScene {
       event.preventDefault();
       this.fail();
     };
+    // desktop: drag with the mouse; phones: swipe with a finger (touch pointers are captured by the canvas already)
     const onDown = (e: PointerEvent): void => {
-      if (!this.desktop() || e.pointerType !== 'mouse') return;
+      const mouse = this.desktop() && e.pointerType === 'mouse';
+      const finger = !this.desktop() && e.pointerType === 'touch';
+      if (!mouse && !finger) return;
       pointerX = e.clientX;
-      canvas.setPointerCapture(e.pointerId);
+      if (mouse) canvas.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent): void => {
       if (pointerX === null) return;

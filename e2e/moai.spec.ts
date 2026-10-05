@@ -111,7 +111,29 @@ test('never blocks scrolling or pinch-zoom on touch screens', async ({ page }) =
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('#about').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  expect(['', 'auto']).toContain(await scene(page).evaluate((c) => getComputedStyle(c).touchAction));
+  // vertical panning and pinch-zoom stay with the browser; only a sideways swipe turns the moai
+  expect(await scene(page).evaluate((c) => getComputedStyle(c).touchAction)).toBe('pan-y pinch-zoom');
+});
+
+test('a sideways swipe turns the moai on a phone', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  // stop the automatic spin first, so only the finger moves it
+  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await page.waitForTimeout(600);
+  const before = await snapshot(page);
+  const box = await scene(page).boundingBox();
+  if (!box) throw new Error('no moai box');
+  const y = box.y + box.height / 2;
+  const at = (type: string, x: number) =>
+    scene(page).dispatchEvent(type, { pointerType: 'touch', pointerId: 7, isPrimary: true, clientX: x, clientY: y, bubbles: true });
+  await at('pointerdown', box.x + 40);
+  for (let x = box.x + 60; x <= box.x + 200; x += 20) await at('pointermove', x);
+  await at('pointerup', box.x + 200);
+  await expect.poll(() => snapshot(page)).not.toBe(before);
 });
 
 test.describe('with reduced motion', () => {

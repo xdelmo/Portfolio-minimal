@@ -1,5 +1,7 @@
 # Portfolio v2 · Piano 1: Fondamenta — Implementation Plan
 
+## Stato (2026-10-06): completato. Il sistema visivo di base è cresciuto nei piani successivi: lo stato attuale è in `.claude/skills/edm-style/SKILL.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** sostituire il sito Gatsby con uno scheletro Angular 22 statico, bilingue (IT/EN), con tema light/dark, sistema visivo di base, SEO tecnica completa e test automatici, pubblicato come anteprima Netlify sul branch `v2`.

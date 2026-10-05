@@ -1,5 +1,7 @@
 # Portfolio v2 — Piano 6: Lancio — Implementation Plan
 
+## Stato (2026-10-06): completato per la parte di codice (`npm run verify:deploy`, README). I passi manuali sono in `docs/launch/launch-kit.md`, e il merge su `master` aspetta il sì dell'utente.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make the launch a checklist instead of an improvisation: one command verifies a Netlify deploy (redirects, 404s, SEO/GEO files), the repository explains the new site, and a launch kit holds the texts and manual checks that only Emanuele can do.

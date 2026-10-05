@@ -1,5 +1,7 @@
 # Portfolio v2 · Piano 2: Contenuti — Implementation Plan
 
+## Stato (2026-10-06): completato. I contenuti vivono in `src/app/content/content.{en,it}.ts`; lo Stack è diventato "Strumenti per livelli" nel piano 12.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** riempire lo scheletro del Piano 1 con i contenuti reali in IT ed EN: progetti con case study completi e immagini, side quests, esperienza, stack e blocco "At a glance", secondo la spec §3 e §9.

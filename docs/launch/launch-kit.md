@@ -14,7 +14,7 @@ Quello che resta da fare per mettere online il nuovo sito. Tutto ciò che è qui
 
 Su `/en/`, `/it/` e un case study, in tema chiaro e scuro:
 
-- [ ] Solo tastiera: Tab dall'inizio alla fine, "Vai al contenuto", pulsanti del moai e pausa del pixel field; il focus si vede sempre.
+- [ ] Solo tastiera: Tab dall'inizio alla fine, "Vai al contenuto", il pulsante di pausa delle animazioni nell'header, il titolo dei Contatti (link email), "Back to top" e "Press start" nel footer; il focus si vede sempre.
 - [ ] VoiceOver su macOS (Cmd+F5) e su iPhone: titoli in ordine, immagini descritte, moai e pixel field ignorati.
 - [ ] Zoom del browser al 200%: niente testo tagliato né scroll orizzontale.
 - [ ] Text spacing (bookmarklet "Text spacing" di Steve Faulkner): niente testo coperto.
@@ -25,7 +25,7 @@ Su `/en/`, `/it/` e un case study, in tema chiaro e scuro:
 Un iPhone e un Android:
 
 - [ ] scroll fino in fondo senza blocchi, anche passando sul moai;
-- [ ] il moai ruota, i pulsanti funzionano; il pixel field si mette in pausa;
+- [ ] il moai gira con uno swipe laterale e fa la bolla di gomma al doppio tocco; il pulsante di pausa nell'header ferma tutte le animazioni;
 - [ ] tema e lingua cambiano e restano dopo il ricaricamento;
 - [ ] email, LinkedIn, GitHub e i link dei progetti si aprono.
 
@@ -67,4 +67,11 @@ Un iPhone e un Android:
 
 - [ ] **Lingue** nel blocco "At a glance": quali e a che livello (per esempio "Italiano madrelingua, inglese B2")?
 - [ ] **Titolo ufficiale**: `Frontend Engineer` (ora sul sito) oppure `Software Engineer, Frontend Specialist` come da contratto? Deve essere uguale su sito, LinkedIn e GitHub.
+- [ ] **Repo ancora private** citate nei progetti e nelle side quest: i link portano già lì; rendile pubbliche dopo una scansione dei segreti (vedi la riga sotto).
 - [ ] **Bot Telegram**: nel file `.env.example` di una repo pubblica ci sono due id Telegram che sembrano reali. Se lo sono, vanno sostituiti con valori finti.
+
+## 8. Pulizia che richiede te
+
+- [ ] Chiudi la issue [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2) (easter egg, fatto nel piano 10): da qui il permesso di scrittura su GitHub è stato negato.
+- [ ] Branch remoti già mergiati, rimasti su GitHub (facoltativo): `git push origin --delete chore/ci-gate chore/limit-test-cpu fix/about-first-person fix/gum-from-mouth fix/lhci-case-study-url fix/moai-bubble-timer fix/moai-gum-and-exit robustness-skills worktree-pixel-field-fade`. `archive/gatsby-master` e il tag `gatsby-final` restano: sono la copia del sito Gatsby.
+- [ ] Aggiornamenti maggiori in attesa, da fare su un branch con `npm run verify`: TypeScript 7 (quando Angular lo supporta) e `@types/node` allineato a Node 24.

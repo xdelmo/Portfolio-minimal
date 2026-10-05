@@ -2,12 +2,13 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
+import { GithubMark } from '../../layout/github-mark';
 import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, PixelDissolve],
+  imports: [RouterLink, NgOptimizedImage, PixelDissolve, GithubMark],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug; let first = $first) {
@@ -22,7 +23,7 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
             </ul>
             <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
               @for (repo of project.repos; track repo.url) {
-                <li><a [href]="repo.url">{{ repo.label }}</a></li>
+                <li><a class="repo-link" [href]="repo.url"><app-github-mark />{{ repo.label }}</a></li>
               }
             </ul>
           </div>
@@ -82,14 +83,10 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
     .repos {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-1) var(--space-3);
+      gap: var(--space-1);
       margin: 0;
-      padding: 0;
+      padding: var(--space-1) 0 0;
       list-style: none;
-    }
-    .repos a {
-      display: inline-block;
-      min-height: 24px;
     }
     .media {
       position: relative;

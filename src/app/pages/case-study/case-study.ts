@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd } from '../../core/seo/seo';
+import { GithubMark } from '../../layout/github-mark';
 import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [RouterLink, NgOptimizedImage, GithubMark],
   template: `
     <article class="container case-study">
       @if (project(); as p) {
@@ -24,7 +25,7 @@ import { SeoService } from '../../core/seo/seo.service';
           <p class="links">
             <!-- the code first: not every project is online, every one is on GitHub -->
             @for (repo of p.repos; track repo.url; let first = $first) {
-              <a class="button" [class.button--primary]="first" [href]="repo.url">{{ repo.label }}</a>
+              <a class="button" [class.button--primary]="first" [href]="repo.url"><app-github-mark />{{ repo.label }}</a>
             }
             @if (p.demoUrl) {
               <a class="button" [href]="p.demoUrl" i18n="@@case.demo">Open the live demo</a>

@@ -109,6 +109,7 @@ canvas {
 .button {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   min-height: 48px;
   padding: 0 var(--space-3);
   border: 2px solid var(--fg);
@@ -118,6 +119,30 @@ canvas {
   text-decoration: none;
   background: transparent;
   cursor: pointer;
+}
+
+/* A link to a GitHub repository: the pixel mark and the label in a hard-edged tag that turns to ink on hover */
+.repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 40px;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--fg);
+  color: var(--fg);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+}
+.repo-link:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .repo-link {
+    transition: background-color 120ms steps(2), color 120ms steps(2);
+  }
 }
 
 .button--primary {

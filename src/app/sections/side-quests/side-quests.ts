@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { SideQuest } from '../../content/content.model';
+import { GithubMark } from '../../layout/github-mark';
 
 @Component({
   selector: 'app-side-quests',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [GithubMark],
   template: `
     <ul class="quests">
       @for (quest of items(); track quest.title) {
@@ -11,7 +13,7 @@ import { SideQuest } from '../../content/content.model';
           <h3>{{ quest.title }}</h3>
           <p>{{ quest.summary }}</p>
           <p class="tags">{{ quest.tags.join(', ') }}</p>
-          <a class="repo" [href]="quest.repo" i18n="@@sideQuests.repo">Code on GitHub</a>
+          <a class="repo-link" [href]="quest.repo"><app-github-mark /><span i18n="@@sideQuests.repo">Code on GitHub</span></a>
         </li>
       }
     </ul>
@@ -36,9 +38,9 @@ import { SideQuest } from '../../content/content.model';
     h3 {
       font-size: var(--step-1);
     }
-    .repo {
+    .repo-link {
       justify-self: start;
-      min-height: 24px;
+      margin-top: var(--space-1);
     }
     .tags {
       color: var(--fg-muted);

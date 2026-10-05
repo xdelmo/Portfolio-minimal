@@ -1,3 +1,4 @@
+import type { ScrollTrigger as Trigger } from 'gsap/ScrollTrigger';
 import type { Effect } from '../motion-host';
 
 /**
@@ -16,20 +17,39 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
     return node;
   });
 
+  // a pinned section (the experience deck) stands still while the page scrolls through its pin spacer: its node and
+  // the dashes follow the scroll the pin uses up, or they would run away from a title that does not move
+  // `pin` is set at runtime on pinning triggers but missing from GSAP's types
+  type Pin = Trigger & { pin?: Element };
+  const pinsIn = (): Pin[] => (ScrollTrigger.getAll() as Pin[]).filter((t) => t.pin && trail.contains(t.pin));
+  const used = (pin: Pin): number => Math.min(Math.max(scrollY - pin.start, 0), pin.end - pin.start);
+
   let tops: number[] = [];
+  let pinOf: (Pin | undefined)[] = [];
   const place = (): void => {
     const base = trail.getBoundingClientRect().top;
+    const pins = pinsIn();
+    pinOf = titles.map((title) => pins.find((pin) => pin.pin?.contains(title)));
     tops = titles.map((title, i) => {
       const box = title.getBoundingClientRect();
-      const top = box.top - base + box.height / 2 - 6;
-      nodes[i].style.top = `${String(top)}px`;
-      return top;
+      const pin = pinOf[i]?.pin;
+      // inside a pin: where the title is when the pin starts, at the top of its spacer
+      const top = pin?.parentElement
+        ? pin.parentElement.getBoundingClientRect().top - base + box.top - pin.getBoundingClientRect().top
+        : box.top - base;
+      return top + box.height / 2 - 6;
     });
   };
   const light = (progress: number): void => {
     thread.style.setProperty('--thread', String(progress));
+    thread.style.backgroundPositionY = `${String(pinsIn().reduce((sum, pin) => sum + used(pin), 0))}px`;
     const tip = progress * trail.offsetHeight;
-    nodes.forEach((node, i) => node.classList.toggle('is-lit', tip >= tops[i]));
+    nodes.forEach((node, i) => {
+      const pin = pinOf[i];
+      const top = tops[i] + (pin ? used(pin) : 0);
+      node.style.top = `${String(top)}px`;
+      node.classList.toggle('is-lit', tip >= top);
+    });
   };
 
   place();
@@ -54,5 +74,6 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
     for (const node of nodes) node.remove();
     thread.classList.remove('is-on');
     thread.style.removeProperty('--thread');
+    thread.style.removeProperty('background-position-y');
   };
 };

@@ -275,7 +275,7 @@ Non realizzati rispetto alla prima versione: pin e esplosione del moai, effetto 
 Tracciato anche nelle issue GitHub con etichetta `v2`:
 
 - **Blog** dai post LinkedIn — [#1](https://github.com/xdelmo/Portfolio-minimal/issues/1)
-- **Easter egg in stile videogioco** (codice Konami, livello, XP, achievement) — [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2)
+- ~~**Easter egg in stile videogioco** (codice Konami, livello, XP, achievement) — [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2)~~ fatto nel piano 10
 - **Pagine Privacy e Imprint**, se si introducono analytics o cookie — [#3](https://github.com/xdelmo/Portfolio-minimal/issues/3)
 
 ## 17. Modifiche rispetto alla spec originale
@@ -317,3 +317,6 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-05 | Hero: tolto il volto in pixel (e lo script `npm run portrait`); resta solo il campo astratto di puntini pastello, a tutta larghezza dietro il testo su desktop (attenuato sotto la colonna del testo) e in una fascia sopra il titolo su telefono | "non mi piace la mia faccia pixelata nella hero"; scelta "Solo campo astratto" |
 | 2026-10-05 | Sezioni sotto la hero: ordine Progetti, About (fascia azzurra), Esperienza, Side quest (nuova fascia lavanda), Strumenti, Contatti (fascia scura), così pagina e fasce si alternano; spazio tra sezioni da 192 a 128 px e tra progetti da 96 a 64 px, testo dei progetti centrato sull'immagine; side quest come inventario di un videogioco, ognuna con uno sprite 16 × 16 che si compone allo scroll e salta al passaggio o al tocco | "troppo vuote/monotone", "side quest anonime"; proposta A |
 | 2026-10-05 | Tipografia: il testo piccolo (`--step--1`) torna a 14,4 px (era 12,8: `rem` conta dai 16 px della radice); h2 e h3 fluidi, 32→44 px e 22,5→28 px, così su telefono restano ben sotto il titolo dell'hero. Animazioni su telefono: la scheda dell'esperienza coperta arretra sotto la successiva, i progetti arrivano inclinati e si raddrizzano con lo scroll con il titolo che scivola dentro, pulsanti e link alle repo si premono di 2 px al tocco | "aggiungi animazioni sulla versione mobile"; "rivedi gli spazi e la tipografia della versione desktop e mobile" |
+| 2026-10-05 | Easter egg "Press start" (issue #2, piano 10): codice Konami o cinque tocchi sul logo aprono una scheda giocatore (classe, livello, punti esperienza verso il ruolo successivo, tre obiettivi in pixel art); le sfere degli Strumenti passano sotto la fascia lavanda, il filo resta sopra; etichette delle sfere centrate su telefono | goal "crea piani in modo indipendente"; "i testi non mi sembrano centrati nei pallini" |
+| 2026-10-05 | Tolti il velo di pixel sulle immagini dei progetti e la barra di avanzamento sotto la navbar; lista delle lingue senza padding; su telefono il campo di pixel sta dietro i testi dell'hero; paragrafo About tutto in prima persona | richieste esplicite |
+| 2026-10-05 | Il moai fa una bolla di gomma da masticare rosa (`--gum`) al doppio clic o doppio tocco | "al doppio click il moai deve fare una bolla con la gomma da masticare rosa" |

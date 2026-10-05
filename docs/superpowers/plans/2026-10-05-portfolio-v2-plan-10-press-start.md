@@ -2,6 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+## Stato (2026-10-05): completato
+
+Decisioni prese durante l'esecuzione:
+
+- Il test delle sfere sotto la fascia confronta l'ordine di impilamento (`z-index`): `elementFromPoint` non distingueva il prima e il dopo. Anche il filo di pixel è salito sopra le fasce.
+- I tocchi sul logo contano entro 2 s; un tocco singolo resta un link alla home.
+- Durante il piano, su richiesta: velo di pixel e barra di avanzamento tolti, lista delle lingue senza padding, campo di pixel dietro i testi dell'hero su telefono, About in prima persona, bolla di gomma rosa del moai (doppio clic o doppio tocco), flusso a branch e PR.
+- Le impostazioni del repository (auto-merge, CI obbligatoria su `v2`) non sono state cambiate: permesso negato; i merge li fa l'agente con `gh pr merge` a CI verde.
+
 **Goal:** The game-style easter egg of issue #2 (Konami code → a "player card" with level, class, XP towards the next role and three achievements), plus one polish fix: the stack orbs no longer fly over the side quests band.
 
 **Architecture:** A pure matcher (`konami.ts`) fed by one small listener in the app shell; the player card is a native `<dialog>` in a lazily loaded component (no weight on the initial JS). Its copy lives in `content.{en,it}.ts` (`game`), achievements drawn with the side quest sprite system (16 × 16 pixel items).

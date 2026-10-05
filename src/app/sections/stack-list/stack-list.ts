@@ -55,15 +55,18 @@ import { StackGroup } from '../../content/content.model';
       place-items: center;
       width: var(--orb);
       aspect-ratio: 1;
-      padding: var(--space-2);
+      // the longest word of a label ("strumenti", "Frontend") must fit inside: a word wider than the inner box
+      // overflows to the right only and pushes the label off centre
+      padding: var(--space-1);
       color: var(--orb-ink);
       // idle bob and pointer push (motion/effects/stack-float.ts), apart from the scroll-scrubbed transform;
       // !important because GSAP writes an inline "translate: none" on elements whose transform it drives
       translate: var(--rx, 0px) calc(var(--ry, 0px) + var(--fy, 0px)) !important;
-      font-size: var(--step-0);
+      font-size: clamp(1rem, 0.85rem + 0.6vw, var(--step-0));
       font-weight: 600;
       line-height: 1.15;
       text-align: center;
+      text-wrap: balance;
       isolation: isolate;
     }
     .orb::before {

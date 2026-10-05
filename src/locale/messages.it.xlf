@@ -258,6 +258,34 @@
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="game.title" datatype="html">
+        <source>Press start</source>
+        <target>Press start</target>
+      </trans-unit>
+      <trans-unit id="game.player" datatype="html">
+        <source>Player</source>
+        <target>Giocatore</target>
+      </trans-unit>
+      <trans-unit id="game.class" datatype="html">
+        <source>Class</source>
+        <target>Classe</target>
+      </trans-unit>
+      <trans-unit id="game.level" datatype="html">
+        <source>Level</source>
+        <target>Livello</target>
+      </trans-unit>
+      <trans-unit id="game.xp" datatype="html">
+        <source>Experience points to <x id="INTERPOLATION" equiv-text="{{ content.game.next }}"/></source>
+        <target>Punti esperienza verso <x id="INTERPOLATION" equiv-text="{{ content.game.next }}"/></target>
+      </trans-unit>
+      <trans-unit id="game.achievements" datatype="html">
+        <source>Achievements</source>
+        <target>Obiettivi</target>
+      </trans-unit>
+      <trans-unit id="game.continue" datatype="html">
+        <source>Continue</source>
+        <target>Continua</target>
+      </trans-unit>
       <trans-unit id="sideQuests.repo" datatype="html">
         <source>Code on GitHub</source>
         <target>Codice su GitHub</target>

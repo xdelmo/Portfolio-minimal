@@ -54,6 +54,22 @@ export interface ExperienceItem {
   summary: string;
 }
 
+export interface Achievement {
+  title: string;
+  detail: string;
+  sprite: SpriteName;
+}
+
+export interface Game {
+  /** About the years of experience. */
+  level: number;
+  /** The role the experience points lead to. */
+  next: string;
+  /** Progress towards `next`, from 0 to 1. */
+  xp: number;
+  achievements: readonly Achievement[];
+}
+
 export interface SideQuest {
   title: string;
   summary: string;
@@ -84,5 +100,7 @@ export interface SiteContent {
   projects: readonly Project[];
   experience: readonly ExperienceItem[];
   sideQuests: readonly SideQuest[];
+  /** The player card of the Konami code easter egg (game/player-card.ts). */
+  game: Game;
   stack: readonly StackGroup[];
 }

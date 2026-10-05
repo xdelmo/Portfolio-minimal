@@ -1,6 +1,6 @@
 # Portfolio v2 — Un filo di pixel — Design spec
 
-**Data:** 2026-10-05 · **Stato:** approvata (direzione), da pianificare (piano 9) · **Branch:** `v2`
+**Data:** 2026-10-05 · **Stato:** implementata (piano 9) · **Branch:** `v2`
 **Spec di riferimento:** `2026-10-03-portfolio-v2-design.md` (vincoli globali) e `2026-10-04-portfolio-v2-living-site-design.md` (oggetti vivi, pausa). Direttive di stile: skill `.claude/skills/edm-style/SKILL.md`.
 
 ## 1. Obiettivo

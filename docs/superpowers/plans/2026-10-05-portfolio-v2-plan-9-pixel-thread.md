@@ -10,6 +10,17 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-05-portfolio-v2-pixel-thread-design.md`. Style: `.claude/skills/edm-style/SKILL.md`.
 
+## Stato (2026-10-05): completato
+
+Decisioni prese durante l'esecuzione (registro in `.superpowers/sdd/…/progress.md`):
+
+- Le celle di una dissoluzione sono raggruppate in 8 livelli per colore, un `<path>` ciascuno: un `<rect>` per cella avrebbe aggiunto circa 200 KB di HTML prerenderizzato.
+- Nodi del filo da 12 px (8 px si perdevano); stili del filo senza incapsulamento, perché i nodi li crea l'effetto.
+- Frase dell'About: lo stato spento è l'inchiostro al 55% sul colore della fascia (circa 3,6:1, AA per testo grande); SplitText senza `aria-label` (non ammesso su un `<p>`).
+- Schede dell'esperienza sticky fino a 1023 px; il tocco sulle sfere funziona anche col clic; la pulsazione usa `element.animate`.
+- Lo swipe sul moai cattura solo il mouse: i tocchi sono già catturati dal canvas.
+- Fuori piano, su richiesta: link GitHub per progetti, case study e side quest; tolta la riga del CV anche da `llms.txt`.
+
 ## Global Constraints
 
 - WCAG 2.2 AA in both themes; axe already runs on every page in light and dark.

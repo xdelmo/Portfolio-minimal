@@ -54,7 +54,8 @@ Spend boldness here, keep everything else calm:
 2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor, explodes into cubes at the end of its section.
 3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
-5. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
+5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page; **veils** of page-coloured cells that clear off project images. All three are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
+6. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
 
 A new section gets **one** idea in this family, not a new visual language.
 
@@ -65,6 +66,7 @@ A new section gets **one** idea in this family, not a new visual language.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).
+- Phones: scroll and touch versions of each idea (face first, sticky experience cards, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
 - Decorations may fly in from the screen edges: the root (`html`) clips horizontally, so never clip a section just to hide them.
 
 ## Quality floor (every change)

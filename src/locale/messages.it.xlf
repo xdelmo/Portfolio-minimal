@@ -294,6 +294,22 @@
         <source>Code</source>
         <target>Codice</target>
       </trans-unit>
+      <trans-unit id="footer.top" datatype="html">
+        <source>Back to top</source>
+        <target>Torna su</target>
+      </trans-unit>
+      <trans-unit id="footer.email" datatype="html">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="footer.pressStart" datatype="html">
+        <source>Press start</source>
+        <target>Press start</target>
+      </trans-unit>
+      <trans-unit id="home.contact.lede" datatype="html">
+        <source>Building something with Angular, or hiring for a frontend role? Write to me.</source>
+        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

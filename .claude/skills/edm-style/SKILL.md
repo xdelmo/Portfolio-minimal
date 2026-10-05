@@ -43,7 +43,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - Spacing only from `--space-1` (8px) … `--space-16` (128px). Home sections pad 64px above and below; projects sit 64px apart. Sizes of icons, cells and images are multiples of 8.
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
 - No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.
-- **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
+- **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs (brand marks 16×16: `github-mark.ts`, `linkedin-mark.ts`) with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
 - Soft round things are allowed only as **light**: the pastel orbs of the stack and the ambient layer (radial gradients, no `filter: blur`).
 
 ## The living objects (where the boldness goes)
@@ -56,7 +56,7 @@ Spend boldness here, keep everything else calm:
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
 5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page, and at the foot of the hero: they form as they scroll in and crumble away as they rise towards the header. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
-7. **Press start** (`src/app/game/`): the Konami code or five taps on the logo open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way.
+7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way.
 8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
 
 A new section gets **one** idea in this family, not a new visual language.

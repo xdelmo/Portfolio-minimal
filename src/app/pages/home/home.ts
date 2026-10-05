@@ -25,11 +25,14 @@ import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
+import { GithubMark } from '../../layout/github-mark';
+import { PixelArrow } from '../../layout/pixel-arrow';
+import { LinkedinMark } from '../../layout/linkedin-mark';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -84,10 +87,14 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <h2 id="contact-title" i18n="@@home.contact.title">Get in touch</h2>
-        <p>
-          <a data-magnetic [href]="'mailto:' + content.person.email">{{ content.person.email }}</a>
-        </p>
+        <p class="contact-lede"><span i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</span> {{ content.person.availability }}</p>
+        <h2 id="contact-title">
+          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
+        </h2>
+        <ul class="profiles">
+          <li><a class="repo-link" [href]="content.person.linkedin" rel="me"><app-linkedin-mark />LinkedIn</a></li>
+          <li><a class="repo-link" [href]="content.person.github" rel="me"><app-github-mark />GitHub</a></li>
+        </ul>
       </div>
       <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
@@ -144,6 +151,48 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     }
     .contact-text > * {
       margin: 0;
+    }
+    .contact-lede {
+      max-width: 40ch;
+      font-size: var(--step-1);
+    }
+    // the giant title is the action, as in the references: the whole line writes an email
+    .contact-link {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0 0.12em;
+      color: inherit;
+      text-decoration: none;
+    }
+    .contact-label {
+      display: block;
+    }
+    .contact-arrow {
+      width: 0.5em;
+      height: 0.5em;
+      margin-bottom: 0.16em;
+      color: var(--link);
+    }
+    .contact-link:hover .contact-label {
+      text-decoration: underline;
+      text-decoration-thickness: 0.05em;
+      text-underline-offset: 0.08em;
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .contact-arrow {
+        transition: transform 160ms steps(2);
+      }
+      .contact-link:hover .contact-arrow {
+        transform: translate(0.08em, -0.08em);
+      }
+    }
+    .profiles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: 0;
+      list-style: none;
     }
     // a circle drawn on the pixel grid, 16 cells across: round like the stack orbs, stepped like the pixel field
     .contact-photo {

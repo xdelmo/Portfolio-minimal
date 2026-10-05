@@ -310,6 +310,10 @@
         <source>Building something with Angular, or hiring for a frontend role? Write to me.</source>
         <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.</target>
       </trans-unit>
+      <trans-unit id="home.stack.lede" datatype="html">
+        <source>From the middle out: what I use every day, what runs in production, what I try in my side projects.</source>
+        <target>Dal centro verso l&apos;esterno: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

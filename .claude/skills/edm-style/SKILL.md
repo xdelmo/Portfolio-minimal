@@ -44,7 +44,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
 - No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.
 - **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs (brand marks 16×16: `github-mark.ts`, `linkedin-mark.ts`) with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
-- Soft round things are allowed only as **light**: the pastel orbs of the stack and the ambient layer (radial gradients, no `filter: blur`).
+- Soft round things are allowed only as **light**: the glow inside the tool rings and the ambient layer (radial gradients, no `filter: blur`).
 
 ## The living objects (where the boldness goes)
 
@@ -52,7 +52,7 @@ Spend boldness here, keep everything else calm:
 
 1. **Hero pixel field** — an abstract field of pastel dots, no figure (the pixel face was removed on request): full-bleed behind the hero text on desktop (masked to 35% under the text column), a band above the title on phones; dots fly in, twinkle, step away from the pointer, ripple on tap.
 2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor (no exit animation: the burst into cubes was removed on request); a double click or double tap blows a bubble of pink gum (`--gum`) from its lips that pops by itself.
-3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
+3. **Tool rings** (`sections/stack-list/`) — the tools by level as concentric rings, every day in the middle, in production around it, side projects outside; the tools are tags on the rings and the rings turn into place on scroll. On phones the levels are rows that step right, with a pixel meter (3, 2, 1 cells) for the depth. The circle is the information, not a decoration (the orbs it replaced only repeated the category names).
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
 5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page, and at the foot of the hero: they form as they scroll in and crumble away as they rise towards the header. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
@@ -68,7 +68,7 @@ A new section gets **one** idea in this family, not a new visual language.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).
-- Phones: scroll and touch versions of each idea (field first, sticky experience cards that step back under the next one, projects that straighten as they scroll in, pressed buttons, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
+- Phones: scroll and touch versions of each idea (field first, sticky experience cards that step back under the next one, projects that straighten as they scroll in, pressed buttons, tool levels that step in, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
 - Decorations may fly in from the screen edges: the root (`html`) clips horizontally, so never clip a section just to hide them.
 
 ## Quality floor (every change)

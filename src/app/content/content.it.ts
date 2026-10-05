@@ -224,9 +224,8 @@ export const CONTENT_IT: SiteContent = {
     ],
   },
   stack: [
-    { name: 'Frontend', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Tailwind CSS', 'SCSS'] },
-    { name: 'Backend e dati', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Supabase', 'Node.js'] },
-    { name: 'Qualità e strumenti', items: ['Vitest', 'Playwright', 'ESLint', 'Git', 'Docker'] },
-    { name: 'Uso anche', items: ['React', 'Next.js', 'Flutter', 'Python'] },
+    { name: 'Ogni giorno', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Git'] },
+    { name: 'In produzione', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint'] },
+    { name: 'Nei progetti personali', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python'] },
   ],
 };

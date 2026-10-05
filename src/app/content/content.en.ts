@@ -231,10 +231,10 @@ export const CONTENT_EN: SiteContent = {
       { title: 'Flutter', detail: 'Also in the toolbox', sprite: 'phone' },
     ],
   },
+  // levels, from the middle out (piano 12): what I use every day, what runs in production, what I try on my own
   stack: [
-    { name: 'Front end', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Tailwind CSS', 'SCSS'] },
-    { name: 'Back end and data', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Supabase', 'Node.js'] },
-    { name: 'Quality and tooling', items: ['Vitest', 'Playwright', 'ESLint', 'Git', 'Docker'] },
-    { name: 'Also comfortable with', items: ['React', 'Next.js', 'Flutter', 'Python'] },
+    { name: 'Every day', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Git'] },
+    { name: 'In production', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint'] },
+    { name: 'In side projects', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python'] },
   ],
 };

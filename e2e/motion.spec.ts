@@ -174,42 +174,6 @@ test.describe('experience', () => {
   });
 });
 
-test.describe('stack orbs', () => {
-  // translation of an orb away from its place on the ring (0 when it sits there)
-  const drift = (orb: Locator) => orb.evaluate((el) => {
-    const m = new DOMMatrix(getComputedStyle(el).transform);
-    return Math.round(Math.hypot(m.m41, m.m42));
-  });
-
-  test('gather onto the ring as the section reaches the middle of the screen', async ({ page }) => {
-    await page.goto('/en/');
-    await ready(page);
-    const orbs = page.locator('#stack .orb');
-    // one orb per stack group
-    await expect(orbs).toHaveCount(await page.locator('#stack .group').count());
-    await expect(page.locator('#stack .orbs')).toHaveAttribute('aria-hidden', 'true');
-    expect(await drift(orbs.first())).toBeGreaterThan(20);
-    await expect
-      .poll(async () => {
-        await page.evaluate(() => {
-          const section = document.getElementById('stack');
-          if (section) window.scrollTo(0, section.getBoundingClientRect().top + scrollY + section.offsetHeight / 2 - innerHeight / 2);
-        });
-        return drift(orbs.first());
-      }, { timeout: 8000 })
-      .toBe(0);
-  });
-
-  test.describe('with reduced motion', () => {
-    test.use({ reducedMotion: 'reduce' });
-    test('already sit on the ring', async ({ page }) => {
-      await page.goto('/en/');
-      await expect(page.locator('#stack .orb')).toHaveCount(await page.locator('#stack .group').count());
-      expect(await drift(page.locator('#stack .orb').first())).toBe(0);
-    });
-  });
-});
-
 test.describe('bands and finale', () => {
   test('about sits on a pastel band and contact on a dark one', async ({ page }) => {
     await page.goto('/en/');
@@ -269,38 +233,14 @@ test.describe('bands and finale', () => {
   });
 });
 
-test('the stack orbs fly in from beyond the content column, without widening the page', async ({ page }) => {
-  await page.goto('/en/');
-  await page.locator('#stack').evaluate((el) => {
-    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.9);
-  });
-  // only the page clips them: the stack list itself lets them show outside its box
-  expect(await page.locator('app-stack-list').evaluate((el) => getComputedStyle(el).overflowX)).toBe('visible');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-});
-
 test.describe('stack on phones', () => {
-  test('the title stays above the orbs flying in', async ({ page }) => {
+  test('the title stays above the levels stepping in', async ({ page }) => {
     await page.goto('/en/');
     const style = await page.locator('#stack h2').evaluate((el) => ({ position: getComputedStyle(el).position, z: getComputedStyle(el).zIndex }));
     expect(style.position).toBe('relative');
     expect(Number(style.z)).toBeGreaterThan(0);
   });
 
-  test('tapping an orb picks out its group for a moment', async ({ page, isMobile }) => {
-    test.skip(!isMobile, 'touch');
-    await page.goto('/en/');
-    await ready(page);
-    await page.locator('#stack .orbs').evaluate((el) => {
-      window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.15);
-    });
-    await page.waitForTimeout(800);
-    // the orbs float for ever, so they are never "stable": a finger taps them anyway
-    await page.locator('#stack .orb').nth(1).tap({ force: true });
-    await expect(page.locator('#stack .group').nth(1)).toHaveClass(/is-picked/);
-    await expect(page.locator('#stack .group.is-picked')).toHaveCount(1);
-    await expect(page.locator('#stack .group').nth(1)).not.toHaveClass(/is-picked/, { timeout: 3000 });
-  });
 });
 
 test('with enlarged text, an experience card that would not fit under the header stops sticking', async ({ page }) => {

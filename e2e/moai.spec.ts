@@ -267,8 +267,12 @@ test('the bubble ends on time even when the moai stops drawing (scrolled away mi
   const host = page.locator('app-moai-scene');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  await scene(page).dispatchEvent('pointerup', { pointerType: 'mouse', clientX: 10, clientY: 10 });
-  await scene(page).dispatchEvent('pointerup', { pointerType: 'mouse', clientX: 10, clientY: 10 });
+  // a double click: two pointer-ups sent together, so a loaded machine cannot spread them past 350ms
+  await scene(page).evaluate((canvas) => {
+    const at = { pointerType: 'mouse', clientX: 10, clientY: 10, bubbles: true };
+    canvas.dispatchEvent(new PointerEvent('pointerup', at));
+    canvas.dispatchEvent(new PointerEvent('pointerup', at));
+  });
   await expect(host).toHaveAttribute('data-gum', '');
   // out of view the scene stops drawing; the bubble is still over after its 1.5s
   await page.evaluate(() => {

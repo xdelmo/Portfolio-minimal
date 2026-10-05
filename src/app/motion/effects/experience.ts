@@ -2,7 +2,7 @@ import type { Effect } from '../motion-host';
 
 /**
  * Desktop: the experience section is pinned while its entries arrive one by one and stack like a deck, the line
- * growing with them. Phones: each entry fades up once as it scrolls in. Without motion it stays a plain list.
+ * growing with them. Phones stack them as sticky cards in CSS. Without motion, desktop shows a plain list.
  */
 export const experienceEffect: Effect = (root, { gsap, desktop }) => {
   const section = root.querySelector<HTMLElement>('#experience');
@@ -10,13 +10,8 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
   const items = list ? [...list.querySelectorAll<HTMLElement>(':scope > li')] : [];
   if (!section || !list || items.length < 2) return undefined;
 
-  if (!desktop) {
-    for (const item of items) {
-      if (item.getBoundingClientRect().top < innerHeight) continue;
-      gsap.from(item, { autoAlpha: 0, y: 32, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: item, start: 'top 90%', once: true } });
-    }
-    return undefined;
-  }
+  // phones stack the entries as sticky cards in CSS (experience-timeline.ts)
+  if (!desktop) return undefined;
 
   list.classList.add('is-stacked');
   // the pinned section fills the screen with the deck in the middle

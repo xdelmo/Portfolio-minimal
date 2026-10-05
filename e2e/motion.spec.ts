@@ -131,12 +131,29 @@ test.describe('experience', () => {
     await expect(page.locator('.pin-spacer')).toHaveCount(1);
   });
 
-  test('is a plain list on phones', async ({ page, isMobile }) => {
+  test('stacks as sticky cards on phones, and lets the next section through', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones only');
     await page.goto('/en/');
     await ready(page);
     await expect(page.locator('.pin-spacer')).toHaveCount(0);
-    await expect(page.locator('#experience ol')).not.toHaveClass(/is-stacked/);
+    const cards = await page.locator('#experience li').evaluateAll((items) =>
+      items.map((li) => ({ position: getComputedStyle(li).position, top: parseFloat(getComputedStyle(li).top) })),
+    );
+    expect(cards.every((c) => c.position === 'sticky')).toBe(true);
+    for (let i = 1; i < cards.length; i++) expect(cards[i].top).toBeGreaterThan(cards[i - 1].top);
+    await page.locator('#stack h2').evaluate((el) => {
+      window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.5);
+    });
+    const title = await page.locator('#stack h2').boundingBox();
+    const last = await page.locator('#experience li').last().boundingBox();
+    if (!title || !last) throw new Error('missing boxes');
+    expect(last.y + last.height).toBeLessThanOrEqual(title.y);
+  });
+
+  test('is not sticky on desktop', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.goto('/en/');
+    expect(await page.locator('#experience li').first().evaluate((li) => getComputedStyle(li).position)).not.toBe('sticky');
   });
 });
 

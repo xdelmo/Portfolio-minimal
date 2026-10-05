@@ -6,8 +6,8 @@ import { ExperienceItem } from '../../content/content.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ol class="timeline">
-      @for (item of items(); track item.title + item.org) {
-        <li>
+      @for (item of items(); track item.title + item.org; let i = $index) {
+        <li [style.--i]="i">
           <p class="period">{{ item.period }}</p>
           <h3>{{ item.title }}<span class="org">, {{ item.org }}</span></h3>
           <p>{{ item.summary }}</p>
@@ -58,6 +58,23 @@ import { ExperienceItem } from '../../content/content.model';
     li {
       display: grid;
       gap: var(--space-1);
+    }
+    // phones and tablets: the entries are cards that stick under the header and pile up as you scroll, each 8px
+    // lower than the one before, the CSS cousin of the desktop deck. Layout, not motion: it stays with reduced motion.
+    @media (max-width: 1023.98px) {
+      .timeline {
+        padding-left: 0;
+      }
+      .timeline::before {
+        display: none;
+      }
+      li {
+        position: sticky;
+        top: calc(var(--header-h) + var(--space-2) + var(--i, 0) * 8px);
+        padding: var(--space-3);
+        border: 1px solid var(--rule);
+        background: var(--surface);
+      }
     }
     .period {
       color: var(--fg-muted);

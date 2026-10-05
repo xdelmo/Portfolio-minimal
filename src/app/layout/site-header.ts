@@ -28,7 +28,7 @@ import { PauseToggle } from './pause-toggle';
   styles: `
     @use 'styles/breakpoints' as bp;
 
-    /* always on screen: sticky over the page, under the progress bar (z 50) and the intro (z 100) */
+    /* always on screen: sticky over the page, under the intro (z 100) */
     :host {
       position: sticky;
       top: 0;

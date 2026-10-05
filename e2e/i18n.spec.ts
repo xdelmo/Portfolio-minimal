@@ -119,3 +119,9 @@ test('a page load runs no view transition of its own: the curtain is the only th
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual([]);
 });
+
+test('the open language list has no padding: its items reach its edges', async ({ page }) => {
+  await page.goto('/en/');
+  await page.getByText('Language: English').click();
+  await expect(page.locator('.language-menu ul')).toHaveCSS('padding', '0px');
+});

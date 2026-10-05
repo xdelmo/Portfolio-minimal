@@ -72,7 +72,7 @@ const COVER_MS = 500;
       z-index: 1;
       min-width: 100%;
       margin: 0;
-      padding: var(--space-1) 0;
+      padding: 0;
       list-style: none;
       background: var(--surface);
       box-shadow: 0 0 0 1px var(--rule);

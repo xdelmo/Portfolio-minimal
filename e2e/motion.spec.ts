@@ -246,21 +246,10 @@ test.describe('bands and finale', () => {
     expect(bandEdge).toBeLessThan(textEdge);
   });
 
-  test('a progress bar follows the scroll', async ({ page }) => {
+  test('no progress bar runs along the header (removed on request)', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    const bar = page.locator('.scroll-progress');
-    await expect(bar).toHaveAttribute('aria-hidden', 'true');
-    const scale = () => bar.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).a);
-    expect(await scale()).toBeLessThan(0.05);
-    await expect
-      .poll(async () => {
-        await page.evaluate(() => {
-          window.scrollTo(0, document.documentElement.scrollHeight);
-        });
-        return scale();
-      }, { timeout: 8000 })
-      .toBeGreaterThan(0.95);
+    await expect(page.locator('.scroll-progress, app-scroll-progress')).toHaveCount(0);
   });
 });
 

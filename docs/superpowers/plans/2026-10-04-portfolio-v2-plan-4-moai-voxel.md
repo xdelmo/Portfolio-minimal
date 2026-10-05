@@ -1,5 +1,7 @@
 # Portfolio v2 · Piano 4: Moai voxel — Implementation Plan
 
+## Stato (2026-10-06): completato, poi modificato: l'esplosione a fine sezione e le frecce di rotazione sono state tolte; il moai respira, segue il cursore, gira con lo swipe e fa la bolla di gomma (spec §17).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** il moai voxel della sezione About (spec §4.3, §10.2 riga About, §10.3): modello definito in TypeScript, scena Three.js caricata solo quando serve, rotazione con lo scroll e trascinamento su desktop, rotazione automatica su mobile, esplosione in cubetti a fine sezione, e un'immagine statica identica come riserva per movimento ridotto, assenza di WebGL, errori o JavaScript disattivato.

@@ -1,5 +1,7 @@
 # Portfolio v2 · Piano 3: Pixel field — Implementation Plan
 
+## Stato (2026-10-06): completato, poi superato: niente più glifo "edm." né volto in pixel; l'hero tiene solo il campo astratto di puntini pastello (spec §17, 2026-10-05).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** il campo di pixel dell'hero (spec §10.2 riga Hero, §10.4): pixel che si compongono in "edm.", poi un'onda continua; il mouse li respinge e li accende; un tocco o un clic genera un'onda circolare. Con controllo di pausa (WCAG 2.2.2), immagine ferma con `prefers-reduced-motion`, nessun impatto su CLS, LCP e scroll.

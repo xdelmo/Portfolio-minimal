@@ -148,11 +148,11 @@ Regole:
 ## 8. SEO
 
 - HTML completo prerenderizzato per ogni pagina e lingua.
-- Per pagina: `title`, `description`, `canonical`, `hreflang` IT/EN + `x-default` → `/en/`.
+- Per pagina: `title`, `description`, `canonical`, `hreflang` IT/EN + `x-default` → `/en/`. Il `title` dice la competenza, non solo il nome: home "Emanuele Del Monte — Angular Frontend Engineer" (`content.seo`), case study "Progetto: prime tre tecnologie — Emanuele Del Monte" (`caseStudyTitle`).
 - `sitemap.xml` (con alternate per lingua) e `robots.txt` generati a build time.
 - Dominio canonico unico `www.emanueledelmonte.it`: 301 dalla versione senza `www` e da `*.netlify.app`.
 - JSON-LD:
-  - `Person`: nome, `jobTitle`, `worksFor` IPS S.p.A., `alumniOf` Università Mercatorum, `address` Latina, `sameAs` LinkedIn e GitHub, `knowsAbout`;
+  - `Person`: nome, `jobTitle`, `worksFor` IPS S.p.A., `alumniOf` Università Mercatorum, `address` Latina, `sameAs` LinkedIn e GitHub, `knowsAbout`, `knowsLanguage`, `description` (una frase citabile, `person.summary`, che apre anche `llms.txt`);
   - `ProfilePage` e `WebSite` sulla home;
   - `BreadcrumbList` e `SoftwareSourceCode` sui case study.
 - Immagini Open Graph e Twitter in stile pixel, una per pagina e per lingua.
@@ -278,6 +278,8 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 - ~~**Easter egg in stile videogioco** (codice Konami, livello, XP, achievement) — [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2)~~ fatto nel piano 10
 - **Pagine Privacy e Imprint**, se si introducono analytics o cookie — [#3](https://github.com/xdelmo/Portfolio-minimal/issues/3)
 
+Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle lingue, repo da rendere pubbliche) e la pulizia che richiede l'utente (issue #2 da chiudere, branch remoti mergiati) stanno in `docs/launch/launch-kit.md` §7 e §8. Il blog parte solo dai post originali dell'utente.
+
 ## 17. Modifiche rispetto alla spec originale
 
 | Data | Modifica | Perché |
@@ -323,3 +325,6 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-05 | Tolta l'esplosione in cubi del moai a fine sezione; la bolla di gomma esce dalle labbra (prima nasceva sul naso); i divisori di pixel si sgretolano anche in uscita, mentre salgono verso la navbar (anche quello in fondo all'hero) | "elimina l'animazione di uscita del moai"; "la bolla esce dal naso e non dalla bocca"; "i pixel a fine sezione devono avere animazione anche in uscita" |
 | 2026-10-05 | Contatti e footer (piano 11, confronto con matteovincenti.com, marimba.design, craft.wild.as): una frase su cosa scrivermi con la disponibilità; il titolo gigante è il link email, con una freccia a pixel; LinkedIn e GitHub come tag con marchio a pixel; niente indirizzo stampato; footer con © anno, "Back to top", Email, LinkedIn, GitHub e un tasto "Press start" che apre la player card. La foto resta | "come possiamo migliorare la sezione contatti e footer?", "la foto deve comunque rimanere", "l'email con il bottone non mi piace", "manca l'icona linkedin pixelata come github" |
 | 2026-10-06 | Strumenti per livelli (piano 12) al posto delle quattro sfere: anelli concentrici con gli strumenti come tag (ogni giorno al centro, in produzione intorno, progetti personali fuori), righe a gradini con un indicatore a pixel su telefono; via galleggiamento, repulsione e tocco delle sfere. Divisione nei livelli ricavata dai contenuti | "come migliorare la sezione dei tools? vedi i 3 siti riferimento" (scelta A) |
+| 2026-10-05 | GSAP caricato dopo il primo paint (`afterPaint`), niente `priority` né `modulepreload` nell'head, immagini dei progetti ricompresse (PR #12) | Lighthouse Performance 0.94 sulla home: tutto ciò che parte prima del primo paint entra nel percorso dell'LCP |
+| 2026-10-06 | Titoli e descrizioni per i motori di ricerca e gli agenti AI: il titolo della home nomina la competenza (Angular), quelli dei case study le prime tre tecnologie; `Person` con una frase citabile e le lingue (PR #19) | "controlla tutti i testi in modo che trasmettano qualcosa e che siano seo e geo friendly"; gli altri testi erano già specifici |
+| 2026-10-06 | Pulizia: via il token `--orb-ink` e `@angular/forms`, mai usati dopo il piano 12; worktree e branch locali mergiati rimossi (PR #20) | "fai un controllo generale su tutta la repo" |

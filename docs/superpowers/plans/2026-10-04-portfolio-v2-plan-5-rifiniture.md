@@ -1,5 +1,7 @@
 # Portfolio v2 — Piano 5: Rifiniture — Implementation Plan
 
+## Stato (2026-10-06): completato. Il movimento CSS-first è stato sostituito da GSAP lazy nel piano 7.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Finish SEO/GEO (JSON-LD graph, Open Graph images, `llms.txt` and Markdown pages), add the remaining motion from spec §10.2, close the cheap user-facing minors and pin the manual WCAG checks that can be automated.

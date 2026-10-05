@@ -3,12 +3,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
-import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, PixelDissolve, GithubMark],
+  imports: [RouterLink, NgOptimizedImage, GithubMark],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug; let first = $first) {
@@ -29,8 +28,6 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
           </div>
           @if (project.image; as image) {
             <div class="media">
-              <!-- a veil of page-coloured cells that clears in steps as the image scrolls in (effects/dissolve.ts) -->
-              <app-pixel-dissolve class="veil" data-scrub [cols]="24" [rows]="16" [colors]="veilColors" />
               <img
                 class="shot"
                 [ngSrc]="image.src"
@@ -88,14 +85,6 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
       padding: var(--space-1) 0 0;
       list-style: none;
     }
-    .media {
-      position: relative;
-    }
-    .veil {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-    }
     // phones: the picture first, then what it is
     .media {
       order: -1;
@@ -129,6 +118,5 @@ import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
   `,
 })
 export class WorkList {
-  protected readonly veilColors = ['--bg'];
   readonly projects = input.required<readonly Project[]>();
 }

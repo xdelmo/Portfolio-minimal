@@ -17,6 +17,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
 - `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)
 
+## Git workflow
+
+- Every feature or fix gets its own branch off `v2` (`feat/<topic>`, `fix/<topic>`), never a direct commit on `v2`.
+- When `npm run verify` exits 0: push the branch, open a PR into `v2` with `gh pr create`, wait for its CI to pass, then merge it yourself with `gh pr merge --squash --delete-branch` (the user does not review PRs). A red CI is fixed on the branch first.
+- `v2` → `master` (going live) still needs the user's explicit yes.
+
 ## Architecture
 
 Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "static"`, no Node server), deployed on Netlify. Spec: `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md`; plans in `docs/superpowers/plans/`.
@@ -25,7 +31,7 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - Logic that can break lives in pure, unit-tested functions next to thin services: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts`.
 - Theme: an inline script in `src/index.html` sets `data-theme` before first paint; `ThemeService` takes over after hydration. All colors are CSS variables in `src/styles/_tokens.scss`.
 - Netlify (`netlify.toml`) does the language redirect on `/` (honouring the `nf_lang` cookie set by the language switch), the canonical-domain 301s, legacy Gatsby URLs and per-locale 404s. `scripts/postbuild.mjs` also writes `_redirects` (200 rewrites so case studies answer at their slash-less canonical URL). The Netlify UI must not have `@netlify/plugin-gatsby` installed: it fails every Angular deploy.
-- Motion: GSAP (ScrollTrigger, SplitText) loads as a lazy chunk through `MOTION_LOADER`; the `[appMotion]` directive (`src/app/motion/motion-host.ts`) runs the effects in `src/app/motion/effects/` inside `gsap.matchMedia`, and does nothing with reduced motion. Pins and pointer effects are desktop only (≥ 1024px with hover). Use `gsap.set` + `.to()` for scrubbed tweens (a scrubbed `.from()` is not redrawn in Firefox after a refresh). E2E skip the intro through `e2e/fixtures.ts`. `MotionPause` (`src/app/motion/pause.ts`) is the one pause switch: Angular code injects it, GSAP effects use `watchPause()`. Effects that move elements GSAP also transforms go through CSS `translate` variables. `PixelDissolve` (`src/app/pixel-dissolve/`) draws the seams and image veils; `effects/dissolve.ts` scrubs its `--p`, `effects/thread.ts` drives the home's pixel thread.
+- Motion: GSAP (ScrollTrigger, SplitText) loads as a lazy chunk through `MOTION_LOADER`; the `[appMotion]` directive (`src/app/motion/motion-host.ts`) runs the effects in `src/app/motion/effects/` inside `gsap.matchMedia`, and does nothing with reduced motion. Pins and pointer effects are desktop only (≥ 1024px with hover). Use `gsap.set` + `.to()` for scrubbed tweens (a scrubbed `.from()` is not redrawn in Firefox after a refresh). E2E skip the intro through `e2e/fixtures.ts`. `MotionPause` (`src/app/motion/pause.ts`) is the one pause switch: Angular code injects it, GSAP effects use `watchPause()`. Effects that move elements GSAP also transforms go through CSS `translate` variables. `PixelDissolve` (`src/app/pixel-dissolve/`) draws the band seams; `effects/dissolve.ts` scrubs its `--p`, `effects/thread.ts` drives the home's pixel thread.
 - `scripts/postbuild.mjs` builds `sitemap.xml` and `robots.txt` at the publish root from the prerendered pages' canonical/hreflang tags.
 
 ## Conventions

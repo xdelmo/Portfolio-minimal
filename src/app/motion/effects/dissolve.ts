@@ -1,7 +1,7 @@
 import type { Effect } from '../motion-host';
 
 /**
- * Pixel seams and side quest sprites form, and pixel veils clear, as they scroll into view (`--p` 0 → 1). Ones
+ * Pixel seams and side quest sprites form as they scroll into view (`--p` 0 → 1). Ones
  * already on screen when the page opens stay as they are, so nothing flickers at load.
  */
 export const dissolveEffect: Effect = (root, { gsap }) => {

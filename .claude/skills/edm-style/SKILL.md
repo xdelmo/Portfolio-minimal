@@ -54,7 +54,7 @@ Spend boldness here, keep everything else calm:
 2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor, explodes into cubes at the end of its section.
 3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
-5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page; **veils** of page-coloured cells that clear off project images. All three are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
+5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
 7. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
 

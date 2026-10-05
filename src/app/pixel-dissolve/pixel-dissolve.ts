@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { dissolvePaths } from './dissolve';
 
 /**
- * A strip of pixels that forms (or, as a `veil`, clears) in steps as one CSS variable `--p` goes from 0 to 1.
- * Without JavaScript or motion `--p` is unset and counts as 1: seams are formed, veils are clear.
+ * A strip of pixels that forms in steps as one CSS variable `--p` goes from 0 to 1.
+ * Without JavaScript or motion `--p` is unset and counts as 1: the seams are formed.
  */
 @Component({
   selector: 'app-pixel-dissolve',
@@ -27,9 +27,6 @@ import { dissolvePaths } from './dissolve';
     }
     path {
       opacity: clamp(0, calc((var(--p, 1) - var(--t)) * 1000), 1);
-    }
-    :host(.veil) path {
-      opacity: calc(1 - clamp(0, calc((var(--p, 1) - var(--t)) * 1000), 1));
     }
   `,
 })

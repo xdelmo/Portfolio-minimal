@@ -213,6 +213,16 @@ export const CONTENT_IT: SiteContent = {
       sprite: 'car',
     },
   ],
+  game: {
+    level: 3,
+    next: 'Senior Frontend Engineer',
+    xp: 0.6,
+    achievements: [
+      { title: 'Laureato', detail: 'Laurea in Ingegneria Informatica, 2026', sprite: 'cap' },
+      { title: 'Agile Masterclass', detail: 'Ho vinto il quiz finale', sprite: 'trophy' },
+      { title: 'Flutter', detail: 'Anche questo nella cassetta degli attrezzi', sprite: 'phone' },
+    ],
+  },
   stack: [
     { name: 'Frontend', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Tailwind CSS', 'SCSS'] },
     { name: 'Backend e dati', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Supabase', 'Node.js'] },

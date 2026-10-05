@@ -118,8 +118,9 @@ test.describe('hero and work on phones', () => {
     // the hero fills the first screen, so no project picture is preloaded or fetched eagerly
     await page.goto('/en/');
     await expect(page.locator('link[rel="preload"][as="image"]')).toHaveCount(0);
-    // nor do the app's chunks: the page is prerendered, so the font comes before Angular (angular.json preloadInitial)
-    await expect(page.locator('link[rel="modulepreload"]')).toHaveCount(0);
+    // nor do the app's chunks in the head: the page is prerendered, so the font comes before Angular (angular.json
+    // preloadInitial); @angular/ssr still lists the route's lazy chunks at the end of the body, for hydration
+    await expect(page.locator('head link[rel="modulepreload"]')).toHaveCount(0);
     for (const shot of await page.locator('#work .shot').all()) {
       await expect(shot).toHaveAttribute('loading', 'lazy');
     }

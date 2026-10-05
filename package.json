@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prepare": "git config core.hooksPath .githooks",
     "start": "ng serve -c development-it --port 4201 & ng serve --port 4200",
     "build": "ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",

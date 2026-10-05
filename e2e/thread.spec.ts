@@ -38,3 +38,36 @@ test.describe('with reduced motion', () => {
     await expect(thread(page)).toBeHidden();
   });
 });
+
+test('while the experience deck is pinned the thread stands still with it, and its node stays on the title after', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the deck is pinned on desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  await expect(page.locator('#experience ol.is-stacked')).toHaveCount(1);
+  const pinTop = await page.locator('#experience').evaluate((el) => (el.parentElement?.getBoundingClientRect().top ?? 0) + scrollY);
+  const pinLength = await page.locator('#experience').evaluate((el) => (el.parentElement?.offsetHeight ?? 0) - el.offsetHeight);
+  // the experience node sits on its title, and the dashes keep their place on screen
+  const sample = () =>
+    page.evaluate(() => {
+      const nodes = [...document.querySelectorAll<HTMLElement>('app-thread .node')];
+      const titles = [...document.querySelectorAll<HTMLElement>('.trail section[id] h2')];
+      const i = titles.findIndex((t) => t.closest('#experience'));
+      const node = nodes[i].getBoundingClientRect();
+      const title = titles[i].getBoundingClientRect();
+      const track = document.querySelector<HTMLElement>('app-thread .thread');
+      if (!track) return { gap: Infinity, phase: NaN };
+      const phase = (track.getBoundingClientRect().top + parseFloat(getComputedStyle(track).backgroundPositionY)) % 16;
+      return { gap: Math.abs(node.top + node.height / 2 - (title.top + title.height / 2)), phase: (phase + 16) % 16 };
+    });
+  const header = 96;
+  const seen: number[] = [];
+  for (const into of [0, 0.5, 0.95]) {
+    await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header + pinLength * into);
+    await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
+    seen.push((await sample()).phase);
+  }
+  expect(Math.max(...seen) - Math.min(...seen)).toBeLessThan(1);
+  // past the pin the section has moved down by the pin length, and the node with it
+  await page.evaluate((y) => { scrollTo(0, y); }, pinTop + pinLength - header + 200);
+  await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
+});

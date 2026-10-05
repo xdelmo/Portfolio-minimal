@@ -244,11 +244,14 @@ test('a double click (or double tap) blows a pink bubble of gum, which pops by i
   await expect(scene(page)).toBeVisible();
   const before = await snapshot(page);
   if (isMobile) {
-    // two quick taps on the same spot, as a finger does (locator.tap waits between them)
-    const box = await scene(page).boundingBox();
-    if (!box) throw new Error('no moai');
-    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    // a double tap is two touch pointer-ups close in time and place: sent together, as a loaded CI machine cannot
+    // replay two separate taps within 350ms
+    await scene(page).evaluate((canvas) => {
+      const box = canvas.getBoundingClientRect();
+      const at = { pointerType: 'touch', clientX: box.left + box.width / 2, clientY: box.top + box.height / 2, bubbles: true };
+      canvas.dispatchEvent(new PointerEvent('pointerup', at));
+      canvas.dispatchEvent(new PointerEvent('pointerup', at));
+    });
   } else {
     await scene(page).dblclick();
   }
@@ -256,4 +259,21 @@ test('a double click (or double tap) blows a pink bubble of gum, which pops by i
   await page.waitForTimeout(700);
   expect(await snapshot(page)).not.toBe(before);
   await expect(host).not.toHaveAttribute('data-gum', '', { timeout: 4000 });
+});
+
+test('the bubble ends on time even when the moai stops drawing (scrolled away mid-bubble)', async ({ page }) => {
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  const host = page.locator('app-moai-scene');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await scene(page).dispatchEvent('pointerup', { pointerType: 'mouse', clientX: 10, clientY: 10 });
+  await scene(page).dispatchEvent('pointerup', { pointerType: 'mouse', clientX: 10, clientY: 10 });
+  await expect(host).toHaveAttribute('data-gum', '');
+  // out of view the scene stops drawing; the bubble is still over after its 1.5s
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(2000);
+  await expect(host).not.toHaveAttribute('data-gum');
 });

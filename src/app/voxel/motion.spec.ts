@@ -1,4 +1,4 @@
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
 import { moaiCell } from './moai.model';
 
 describe('moai motion', () => {
@@ -84,5 +84,10 @@ describe('GUM_LIPS', () => {
   it('is the middle of the lips, under the nose: the bubble comes out of the mouth', () => {
     expect(moaiCell(0, GUM_LIPS.y, GUM_LIPS.z)).toBe('stoneDark');
     expect(moaiCell(0, GUM_LIPS.y + 1, GUM_LIPS.z)).toBe('stoneLight');
+  });
+
+  it('hangs the bubble from the lips, all of it below the nose, so the nose never seems to blow it', () => {
+    const rows = bubbleCells().map((c) => GUM_LIPS.y + c.y - GUM_DROP);
+    expect(Math.max(...rows)).toBe(GUM_LIPS.y);
   });
 });

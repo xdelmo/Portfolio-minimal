@@ -51,10 +51,10 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 Spend boldness here, keep everything else calm:
 
 1. **Hero pixel field** — an abstract field of pastel dots, no figure (the pixel face was removed on request): full-bleed behind the hero text on desktop (masked to 35% under the text column), a band above the title on phones; dots fly in, twinkle, step away from the pointer, ripple on tap.
-2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor, explodes into cubes at the end of its section; a double click or double tap blows a bubble of pink gum (`--gum`) that pops by itself.
+2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor (no exit animation: the burst into cubes was removed on request); a double click or double tap blows a bubble of pink gum (`--gum`) from its lips that pops by itself.
 3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
-5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
+5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page, and at the foot of the hero: they form as they scroll in and crumble away as they rise towards the header. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
 7. **Press start** (`src/app/game/`): the Konami code or five taps on the logo open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way.
 8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.

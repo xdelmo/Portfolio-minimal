@@ -41,7 +41,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
         <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
       <app-pixel-field class="field" />
-      <app-pixel-dissolve class="seam seam--hero" [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
+      <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
     </section>
 
     <div class="trail">

@@ -23,11 +23,10 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { hash } from '../pixel-field/field';
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, Gaze, bubble, bubbleCells, breath, explodeAmount, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SPIN_PER_MS = 0.0004;
@@ -135,14 +134,12 @@ export class MoaiScene {
       material.dispose();
     });
     const base = voxels.map((v) => new Vector3(v.x + 0.5, v.y + 0.5, v.z + 0.5));
-    const centre = base.reduce((sum, p) => sum.add(p), new Vector3()).divideScalar(base.length);
     const pivot = new Group();
     pivot.position.set(0.5, 0, 0.5);
     mesh.position.set(-0.5, 0, -0.5);
     pivot.add(mesh);
 
-    // the bubble gum: a ball of pink voxels blown from the lips (front face at z 5), set a little higher so that in
-    // the isometric view, where it comes towards the viewer and so down the screen, it covers the mouth
+    // the bubble gum: a ball of pink voxels centred on the lips, its back on their front face
     const gumCells = bubbleCells();
     const gumMaterial = new MeshLambertMaterial();
     const gumMesh = new InstancedMesh(geometry, gumMaterial, gumCells.length);
@@ -153,7 +150,7 @@ export class MoaiScene {
       gumMesh.setMatrixAt(i, gumDummy.matrix);
     });
     const gumBall = new Group();
-    gumBall.position.set(0, 12.5, 4.5);
+    gumBall.position.set(0, GUM_LIPS.y + 0.5, GUM_LIPS.z + 0.5);
     gumBall.visible = false;
     gumBall.add(gumMesh);
     pivot.add(gumBall);
@@ -207,22 +204,12 @@ export class MoaiScene {
       gumMaterial.color.set(style.getPropertyValue(GUM).trim());
     };
     const dummy = new Object3D();
-    let lastBurst = -1;
-    const place = (burst: number): void => {
-      if (burst === lastBurst) return;
-      lastBurst = burst;
-      base.forEach((p, i) => {
-        const away = p.clone().sub(centre).multiplyScalar(burst * (0.8 + hash(i) * 0.8));
-        dummy.position.copy(p).add(away);
-        dummy.position.y += burst * hash(i + 11) * 3;
-        dummy.scale.setScalar(1 - 0.4 * burst);
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
-    };
+    base.forEach((p, i) => {
+      dummy.position.copy(p);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    });
     paint();
-    place(0);
 
     const resize = (): void => {
       const dpr = Math.min(devicePixelRatio || 1, this.desktop() ? 2 : 1.5);
@@ -263,9 +250,7 @@ export class MoaiScene {
         pivot.rotation.x = breath(idle);
         pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag + look;
         // no fly-in: the scene replaces a still image that is already on screen
-        const burst = Math.round(explodeAmount(scroll) * 1000) / 1000;
-        place(burst);
-        const size = gumStart === null || burst > 0 ? null : bubble(now - gumStart);
+        const size = gumStart === null ? null : bubble(now - gumStart);
         gumBall.visible = size !== null && size > 0;
         if (size !== null) gumBall.scale.setScalar(Math.max(size, 0.001));
         renderer.render(scene, camera);

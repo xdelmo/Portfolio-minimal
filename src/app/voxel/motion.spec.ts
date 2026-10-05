@@ -1,4 +1,5 @@
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, explodeAmount, gaze, scrollYaw, sectionProgress, smoothstep } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { moaiCell } from './moai.model';
 
 describe('moai motion', () => {
   it('measures how far the section has scrolled past the middle of the screen', () => {
@@ -13,18 +14,6 @@ describe('moai motion', () => {
     expect(scrollYaw(0.25)).toBeCloseTo(SCROLL_SWING);
     expect(scrollYaw(0.75)).toBeCloseTo(-SCROLL_SWING);
     expect(scrollYaw(1)).toBeCloseTo(0);
-  });
-
-  it('eases between two edges', () => {
-    expect(smoothstep(0.8, 1, 0.5)).toBe(0);
-    expect(smoothstep(0.8, 1, 0.9)).toBeCloseTo(0.5);
-    expect(smoothstep(0.8, 1, 2)).toBe(1);
-  });
-
-  it('bursts only at the end of the section', () => {
-    expect(explodeAmount(0)).toBe(0);
-    expect(explodeAmount(0.5)).toBe(0);
-    expect(explodeAmount(1)).toBe(1);
   });
 
   it('breathes: a small pitch that returns every BREATH_MS', () => {
@@ -88,5 +77,12 @@ describe('bubbleCells', () => {
     const key = (c: { x: number; y: number; z: number }) => `${String(c.x)},${String(c.y)},${String(c.z)}`;
     const all = new Set(cells.map(key));
     expect(cells.every((c) => all.has(key({ ...c, x: -c.x })))).toBe(true);
+  });
+});
+
+describe('GUM_LIPS', () => {
+  it('is the middle of the lips, under the nose: the bubble comes out of the mouth', () => {
+    expect(moaiCell(0, GUM_LIPS.y, GUM_LIPS.z)).toBe('stoneDark');
+    expect(moaiCell(0, GUM_LIPS.y + 1, GUM_LIPS.z)).toBe('stoneLight');
   });
 });

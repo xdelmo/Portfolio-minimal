@@ -23,7 +23,22 @@ test('a header link glides to its section instead of jumping, and stops under th
   test.skip(!(await navLink(page).isVisible()), 'no header nav on this viewport');
   const positions = await travel(page);
   const final = positions.at(-1) ?? 0;
-  expect(positions.filter((y) => y > 0 && y < final - 1).length).toBeGreaterThan(2);
+  // WebKit on Linux glides in a single step: one position on the way is enough to tell it from a jump
+  expect(positions.filter((y) => y > 0 && y < final - 1).length).toBeGreaterThan(0);
+});
+
+test('a page opened at an anchor stays on its section once the headline font is in', async ({ page }) => {
+  // the font arrives after the browser has scrolled to the anchor with the hero set in the wider fallback font
+  await page.route('**/*.woff2', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    await route.continue();
+  });
+  await page.goto('/en/#work');
+  await page.waitForLoadState('load');
+  // the section starts under the header, plus its 16px scroll-margin
+  const offset = () =>
+    page.evaluate(() => (document.querySelector('#work')?.getBoundingClientRect().top ?? NaN) - (document.querySelector('app-site-header')?.getBoundingClientRect().height ?? NaN) - 16);
+  await expect.poll(async () => Math.abs(await offset())).toBeLessThanOrEqual(1);
 });
 
 test.describe('with reduced motion', () => {

@@ -5,8 +5,8 @@
       "url": [
         "http://localhost/en/",
         "http://localhost/it/",
-        "http://localhost/en/work/apexflow",
-        "http://localhost/it/work/apexflow"
+        "http://localhost/en/work/apexflow/",
+        "http://localhost/it/work/apexflow/"
       ],
       "numberOfRuns": 3
     },

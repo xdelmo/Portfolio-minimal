@@ -10,7 +10,7 @@ import { GithubMark } from '../../layout/github-mark';
   imports: [RouterLink, NgOptimizedImage, GithubMark],
   template: `
     <ul class="projects">
-      @for (project of projects(); track project.slug; let first = $first) {
+      @for (project of projects(); track project.slug) {
         <li class="project" [class.project--tall]="project.image && project.image.height > project.image.width">
           <div class="text">
             <h3 [style.view-transition-name]="'title-' + project.slug"><a [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
@@ -36,8 +36,7 @@ import { GithubMark } from '../../layout/github-mark';
                 [width]="image.width"
                 [height]="image.height"
                 [alt]="image.alt"
-                [priority]="first"
-                sizes="(min-width: 768px) 50vw, 100vw"
+                [sizes]="image.height > image.width ? '280px' : '(min-width: 768px) 50vw, 100vw'"
               />
             </div>
           }
@@ -101,6 +100,7 @@ import { GithubMark } from '../../layout/github-mark';
       border: 1px solid var(--rule);
       background: var(--surface);
     }
+    // keep in step with the 280px in the image's sizes
     .project--tall .media {
       max-width: 280px;
     }

@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { type Effect, MOTION_LOADER, MotionHost, type MotionLib } from './motion-host';
+import { type Effect, MOTION_LOADER, MotionHost, type MotionLib, afterPaint } from './motion-host';
 
 @Component({
   imports: [MotionHost],
@@ -61,5 +61,26 @@ describe('MotionHost', () => {
     fixture.componentInstance.shown.set(false);
     await fixture.whenStable();
     expect(revert).toHaveBeenCalled();
+  });
+});
+
+describe('afterPaint', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('resolves only after a frame and the task that follows its paint', async () => {
+    let frame: FrameRequestCallback | undefined;
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frame = callback;
+      return 1;
+    });
+    const done = vi.fn();
+    void afterPaint().then(done);
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(done).not.toHaveBeenCalled();
+    frame?.(0);
+    await Promise.resolve();
+    expect(done).not.toHaveBeenCalled();
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(done).toHaveBeenCalledTimes(1);
   });
 });

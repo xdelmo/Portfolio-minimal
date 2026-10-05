@@ -19,9 +19,22 @@ export interface Motion extends MotionLib {
  */
 export type Effect = (root: HTMLElement, motion: Motion) => (() => void) | undefined;
 
+/**
+ * Resolves after the next frame has been painted: a frame callback runs just before a paint, a task queued from it
+ * just after. On a fast device hydration ends before the first paint, and fetching GSAP then would put its 50 KB
+ * on the headline's critical path (Lighthouse LCP).
+ */
+export function afterPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      setTimeout(resolve);
+    });
+  });
+}
+
 export const MOTION_LOADER = new InjectionToken<() => Promise<MotionLib>>('MOTION_LOADER', {
   providedIn: 'root',
-  factory: () => () => import('./gsap'),
+  factory: () => () => afterPaint().then(() => import('./gsap')),
 });
 
 const CONDITIONS = {

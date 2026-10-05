@@ -25,6 +25,22 @@ test.describe('section titles', () => {
   });
 });
 
+test('the motion library downloads only after the first paint, out of the way of the headline', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'paint timing is read in Chromium');
+  await page.goto('/en/');
+  await ready(page);
+  const timing = await page.evaluate(async () => {
+    const paint = performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? Infinity;
+    const scripts = performance.getEntriesByType('resource').filter((entry) => entry.name.endsWith('.js'));
+    // the GSAP chunk is the one with GSAP's core config (autoSleep); the browser serves it from its cache here
+    for (const entry of scripts) {
+      if ((await (await fetch(entry.name)).text()).includes('autoSleep')) return { paint, gsap: entry.startTime };
+    }
+    return { paint, gsap: -1 };
+  });
+  expect(timing.gsap).toBeGreaterThanOrEqual(timing.paint);
+});
+
 test.describe('hero', () => {
   test('a returning visitor sees the headline at once, never split or hidden', async ({ page }) => {
     await page.goto('/en/');

@@ -101,6 +101,29 @@ test.describe('hero and work on phones', () => {
     if (!media || !text) throw new Error('missing project boxes');
     expect(media.y).toBeLessThan(text.y);
   });
+
+  test('a phone screenshot downloads the half-width copy on a phone', async ({ browser, browserName }) => {
+    test.skip(browserName !== 'chromium', 'image choice is checked once, in Chromium');
+    // a 1x phone: the tall picture is shown at most 280px wide, so the 300px copy is enough
+    const context = await browser.newContext({ viewport: { width: 412, height: 900 }, deviceScaleFactor: 1 });
+    const page = await context.newPage();
+    await page.goto('/en/');
+    const shot = page.locator('#work .project--tall .shot');
+    await shot.scrollIntoViewIfNeeded();
+    await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/ice-friends-breaker-300\.jpg$/);
+    await context.close();
+  });
+
+  test('project pictures below the hero leave the bandwidth to the hero', async ({ page }) => {
+    // the hero fills the first screen, so no project picture is preloaded or fetched eagerly
+    await page.goto('/en/');
+    await expect(page.locator('link[rel="preload"][as="image"]')).toHaveCount(0);
+    // nor do the app's chunks: the page is prerendered, so the font comes before Angular (angular.json preloadInitial)
+    await expect(page.locator('link[rel="modulepreload"]')).toHaveCount(0);
+    for (const shot of await page.locator('#work .shot').all()) {
+      await expect(shot).toHaveAttribute('loading', 'lazy');
+    }
+  });
 });
 
 test('small text never drops under 14px, and section titles stay well below the headline', async ({ page }) => {

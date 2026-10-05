@@ -115,9 +115,7 @@ test.describe('without JavaScript', () => {
 });
 
 test.describe('the abstract field', () => {
-  test('on desktop it spreads behind the whole hero, under the text', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
-    await page.setViewportSize({ width: 1280, height: 800 });
+  test('it spreads behind the whole hero, under the text, on phones as on desktop', async ({ page }) => {
     await page.goto('/en/');
     const field = await page.locator('.hero app-pixel-field').boundingBox();
     const title = await page.locator('.hero h1').boundingBox();
@@ -125,6 +123,7 @@ test.describe('the abstract field', () => {
     expect(field.x).toBeLessThanOrEqual(title.x);
     expect(field.x + field.width).toBeGreaterThanOrEqual(title.x + title.width);
     expect(field.y).toBeLessThanOrEqual(title.y);
+    expect(field.y + field.height).toBeGreaterThanOrEqual(title.y + title.height);
     // the text stays on top and readable
     const onTop = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('h1') !== null, [title.x + 20, title.y + title.height / 2]);
     expect(onTop).toBe(true);

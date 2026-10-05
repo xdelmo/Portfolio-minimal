@@ -122,9 +122,17 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       gap: var(--space-2);
       margin-top: var(--space-2);
     }
-    // phones: the field opens the page, above the title
+    // the field fills the whole hero, edge to edge, behind the text. Phones: lit in the space above the title, faint
+    // under the text, which runs the full width there
+    .hero {
+      isolation: isolate;
+    }
     .field {
-      order: -1;
+      position: absolute;
+      inset: 0 calc(50% - 50vw);
+      z-index: -1;
+      height: auto;
+      mask-image: linear-gradient(to bottom, #000 0, rgb(0 0 0 / 0.6) var(--space-16));
     }
     .contact {
       display: grid;
@@ -195,16 +203,8 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       .hero > :not(.field) {
         grid-column: 1;
       }
-      // desktop: the field fills the whole hero, edge to edge, behind the text; it stays faint under the text column
-      // so the words keep their contrast, and comes alive towards the right
-      .hero {
-        isolation: isolate;
-      }
+      // desktop: faint under the text column so the words keep their contrast, alive towards the right
       .field {
-        position: absolute;
-        inset: 0 calc(50% - 50vw);
-        z-index: -1;
-        height: auto;
         mask-image: linear-gradient(to right, rgb(0 0 0 / 0.35) 0 40%, #000 70%);
       }
     }

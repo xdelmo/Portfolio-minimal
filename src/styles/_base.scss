@@ -204,12 +204,15 @@ html.theme-switching::view-transition-new(root) {
   translate: var(--mx, 0px) var(--my, 0px);
 }
 
-/* Language switch: a full-screen curtain in pixel steps, with the new language's name. LanguageSwitch covers the old
-   page (phase out), the inline script in index.html starts the new one covered and lifts it (phase in). */
+/* Language switch: a full-screen panel with the new language's name slides up over the old page (phase out,
+   LanguageSwitch), and the new page starts under it and sees it slide away upwards (phase in, inline script in
+   index.html). It moves with transform, which the compositor animates even while the new page hydrates; its top and
+   bottom edges are crumbling rows of 16px cells, the site's seams. */
 html[data-lang-swap]::after {
+  --fringe: var(--space-6);
   content: attr(data-lang-swap);
   position: fixed;
-  inset: 0;
+  inset: calc(-1 * var(--fringe)) 0;
   z-index: 1000;
   display: grid;
   place-items: center;
@@ -220,27 +223,36 @@ html[data-lang-swap]::after {
   font-weight: 600;
   letter-spacing: -0.03em;
   pointer-events: none;
+  will-change: transform;
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM1 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1z'/%3E%3C/svg%3E") top left / calc(12 * 16px) var(--fringe) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--fringe)) no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1z'/%3E%3C/svg%3E") bottom left / calc(12 * 16px) var(--fringe) repeat-x;
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM1 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1z'/%3E%3C/svg%3E") top left / calc(12 * 16px) var(--fringe) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--fringe)) no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1z'/%3E%3C/svg%3E") bottom left / calc(12 * 16px) var(--fringe) repeat-x;
 }
 html[data-lang-phase='out']::after {
-  animation: lang-cover 0.45s steps(9, jump-none) both;
+  animation: lang-cover 0.5s cubic-bezier(0.7, 0, 0.3, 1) both;
 }
 html[data-lang-phase='in']::after {
-  animation: lang-lift 0.5s steps(9, jump-none) 0.15s both;
+  animation: lang-lift 0.55s cubic-bezier(0.7, 0, 0.3, 1) 0.1s both;
 }
 @keyframes lang-cover {
   from {
-    clip-path: inset(100% 0 0);
+    transform: translateY(100%);
   }
   to {
-    clip-path: inset(0);
+    transform: translateY(0);
   }
 }
 @keyframes lang-lift {
   from {
-    clip-path: inset(0);
+    transform: translateY(0);
   }
   to {
-    clip-path: inset(0 0 100%);
+    transform: translateY(-100%);
   }
 }
 @media (prefers-reduced-motion: reduce) {

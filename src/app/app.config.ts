@@ -16,7 +16,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withComponentInputBinding(),
-      withViewTransitions(),
+      // only between pages of the app: the first navigation at hydration would cross-fade the page it just loaded
+      withViewTransitions({ skipInitialTransition: true }),
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),

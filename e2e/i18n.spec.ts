@@ -59,6 +59,21 @@ test.describe('switching language', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'it');
   });
 
+  test('the curtain slides on the compositor, with a smooth ease (not stepped clip-path)', async ({ page }) => {
+    await page.goto('/en/');
+    await page.getByText('English').first().click();
+    await page.getByRole('link', { name: 'Italiano' }).click();
+    const curtain = await page.evaluate(() => {
+      const anim = document.getAnimations().find((a) => (a.effect as KeyframeEffect | null)?.pseudoElement === '::after');
+      const effect = anim?.effect as KeyframeEffect | undefined;
+      if (!effect) return null;
+      return { props: Object.keys(effect.getKeyframes()[0]).filter((k) => !['offset', 'easing', 'composite', 'computedOffset'].includes(k)), easing: effect.getComputedTiming().easing ?? '', keyEasing: effect.getKeyframes()[0].easing };
+    });
+    expect(curtain).not.toBeNull();
+    expect(curtain?.props).toEqual(['transform']);
+    expect(`${curtain?.easing ?? ''} ${curtain?.keyEasing ?? ''}`).not.toContain('steps');
+  });
+
   test('the new page starts under the curtain before the app boots', async ({ page }) => {
     await page.addInitScript(() => {
       sessionStorage.setItem('lang-swap', 'Italiano');
@@ -93,3 +108,14 @@ for (const colorScheme of ['light', 'dark'] as const) {
     expect(results.violations).toEqual([]);
   });
 }
+
+test('a page load runs no view transition of its own: the curtain is the only thing that moves', async ({ page }) => {
+  await page.addInitScript(() => {
+    const seen: string[] = [];
+    (window as unknown as { seen: string[] }).seen = seen;
+    document.addEventListener('animationstart', (e) => { if (e.animationName.includes('view-transition')) seen.push(e.animationName); }, true);
+  });
+  await page.goto('/it/');
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual([]);
+});

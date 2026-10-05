@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs';
 import { Locale, localizedUrl, toLocale } from './locale';
 
 /** Matches the `lang-cover` animation in styles/_base.scss. */
-const COVER_MS = 450;
+const COVER_MS = 500;
 
 @Component({
   selector: 'app-language-switch',

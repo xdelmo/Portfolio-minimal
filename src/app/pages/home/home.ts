@@ -13,6 +13,7 @@ import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 import { dissolveEffect } from '../../motion/effects/dissolve';
+import { aboutWordsEffect } from '../../motion/effects/about-words';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
@@ -59,6 +60,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="aboutSeam" grow="up" />
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
+        <p class="statement">{{ content.aboutStatement }}</p>
         <p>{{ content.about }}</p>
         <app-at-a-glance [items]="content.glance" />
       </div>
@@ -157,6 +159,17 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       display: grid;
       gap: var(--space-4);
     }
+    // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
+    .statement {
+      max-width: 18ch;
+      font-size: clamp(2.2rem, 1.2rem + 4vw, var(--step-5));
+      font-weight: 600;
+      line-height: 1.05;
+      font-variation-settings: 'wdth' 75;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+
     @include bp.up(lg) {
       .about {
         grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -214,7 +227,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

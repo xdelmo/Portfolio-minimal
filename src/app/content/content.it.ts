@@ -17,8 +17,9 @@ export const CONTENT_IT: SiteContent = {
     headline: 'Interfacce Angular veloci anche con molti dati.',
     lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica nel 2026.',
   },
+  aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about:
-    "Emanuele Del Monte è un Frontend Engineer di Latina che costruisce frontend enterprise con Angular, Signals e RxJS. Mi interessano le parti che l'utente non vede ma sente sempre: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
+    "Emanuele Del Monte è un Frontend Engineer di Latina che costruisce frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
   glance: [
     { label: 'Ruolo', value: 'Frontend Engineer, specializzato in Angular' },
     { label: 'Dove', value: 'Latina, Italia (anche da remoto)' },

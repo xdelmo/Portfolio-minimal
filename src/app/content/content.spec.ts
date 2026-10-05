@@ -2,6 +2,14 @@ import { CONTENT_EN } from './content.en';
 import { CONTENT_IT } from './content.it';
 
 describe('content', () => {
+  it('opens the About with one statement in each language, not repeated in the paragraph', () => {
+    for (const c of [CONTENT_EN, CONTENT_IT]) {
+      expect(c.aboutStatement.length).toBeGreaterThan(20);
+      expect(c.about).not.toContain(c.aboutStatement.replace(/\.$/, ''));
+    }
+    expect(CONTENT_IT.aboutStatement).not.toBe(CONTENT_EN.aboutStatement);
+  });
+
   it('has the same projects, in the same order, in both languages', () => {
     expect(CONTENT_IT.projects.map((p) => p.slug)).toEqual(CONTENT_EN.projects.map((p) => p.slug));
   });

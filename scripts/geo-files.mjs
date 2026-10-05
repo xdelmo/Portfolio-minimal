@@ -2,8 +2,8 @@
 const SITE_URL = 'https://www.emanueledelmonte.it';
 // the same words as the page headings (messages.it.xlf)
 const LABELS = {
-  en: { work: 'Selected work', quests: 'Side quests', about: 'About', experience: 'Experience', stack: 'Tools I use', contact: 'Get in touch', cv: 'CV available on request.', context: 'Context', architecture: 'How it is built', decisions: 'Key decisions', outcome: 'Outcome', links: 'Links' },
-  it: { work: 'Progetti selezionati', quests: 'Side quest', about: 'Chi sono', experience: 'Esperienza', stack: 'Strumenti che uso', contact: 'Contatti', cv: 'CV disponibile su richiesta.', context: 'Contesto', architecture: 'Come è costruito', decisions: 'Scelte chiave', outcome: 'Risultato', links: 'Link' },
+  en: { work: 'Selected work', quests: 'Side quests', about: 'About', experience: 'Experience', stack: 'Tools I use', contact: 'Get in touch', context: 'Context', architecture: 'How it is built', decisions: 'Key decisions', outcome: 'Outcome', links: 'Links' },
+  it: { work: 'Progetti selezionati', quests: 'Side quest', about: 'Chi sono', experience: 'Esperienza', stack: 'Strumenti che uso', contact: 'Contatti', context: 'Contesto', architecture: 'Come è costruito', decisions: 'Scelte chiave', outcome: 'Risultato', links: 'Link' },
 };
 const url = (locale, path = '') => `${SITE_URL}/${locale}/${path}`;
 const list = (items, line) => items.map(line).join('\n');
@@ -18,15 +18,16 @@ export function homeMarkdown(c, locale) {
     `## ${l.work}`,
     list(c.projects, (p) => `- [${p.title}](${url(locale, `work/${p.slug}`)}): ${p.summary}`),
     `## ${l.quests}`,
-    list(c.sideQuests, (q) => `- ${q.title}: ${q.summary}`),
+    list(c.sideQuests, (q) => `- [${q.title}](${q.repo}): ${q.summary}`),
     `## ${l.about}`,
+    c.aboutStatement,
     c.about,
     `## ${l.experience}`,
     list(c.experience, (e) => `- ${e.period} — ${e.title}, ${e.org}: ${e.summary}`),
     `## ${l.stack}`,
     list(c.stack, (g) => `- ${g.name}: ${g.items.join(', ')}`),
     `## ${l.contact}`,
-    [`Email: ${c.person.email}`, `LinkedIn: ${c.person.linkedin}`, `GitHub: ${c.person.github}`, l.cv].join('\n'),
+    [`Email: ${c.person.email}`, `LinkedIn: ${c.person.linkedin}`, `GitHub: ${c.person.github}`].join('\n'),
   ].join('\n\n')}\n`;
 }
 

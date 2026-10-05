@@ -17,16 +17,19 @@ import { GlanceItem } from '../../content/content.model';
   styles: `
     @use 'styles/breakpoints' as bp;
 
+    // straight on the band: big values under small labels, a rule above each
     .glance {
       display: grid;
-      gap: var(--space-2);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3) var(--space-3);
       margin: 0;
-      padding: var(--space-3);
-      background: var(--surface);
     }
     div {
       display: grid;
-      gap: 2px;
+      align-content: start;
+      gap: var(--space-1);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--rule);
     }
     dt {
       color: var(--fg-muted);
@@ -34,10 +37,14 @@ import { GlanceItem } from '../../content/content.model';
     }
     dd {
       margin: 0;
+      font-size: clamp(var(--step-0), 1rem + 0.6vw, var(--step-1));
+      font-weight: 600;
+      line-height: 1.25;
+      font-variation-settings: 'wdth' 85;
     }
     @include bp.up(md) {
       .glance {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: var(--space-4);
       }
     }

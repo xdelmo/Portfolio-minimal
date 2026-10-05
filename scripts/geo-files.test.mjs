@@ -14,20 +14,23 @@ const project = {
 const content = {
   person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', availability: 'Open from March.', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada' },
   hero: { headline: 'Headline.', lede: 'Lede.' },
+  aboutStatement: 'I care.',
   about: 'About.',
   glance: [{ label: 'Role', value: 'FE' }],
   projects: [project],
   experience: [{ period: '2026', title: 'Engineer', org: 'IPS', summary: 'Work.' }],
-  sideQuests: [{ title: 'Quest', summary: 'Fun.', tags: ['WP'] }],
+  sideQuests: [{ title: 'Quest', summary: 'Fun.', tags: ['WP'], repo: 'https://github.com/x/quest' }],
   stack: [{ name: 'Front end', items: ['Angular'] }],
 };
 
 test('home markdown starts with the person and lists every section as plain text', () => {
   const md = homeMarkdown(content, 'en');
   assert.match(md, /^# Ada — Frontend Engineer\n\nHeadline\.\n\nLede\. Open from March\./);
-  for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work.', '- Front end: Angular', 'Email: a@x.it', 'CV available on request.']) {
+  for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work.', '- Front end: Angular', 'Email: a@x.it', '- [Quest](https://github.com/x/quest): Fun.', 'I care.\n\nAbout.']) {
     assert.ok(md.includes(part), part);
   }
+  // the CV is not online (sensitive data), and the site no longer mentions it
+  assert.ok(!md.includes('CV'));
 });
 
 test('project markdown has the case-study sections in the page language', () => {

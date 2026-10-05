@@ -248,3 +248,11 @@ html[data-lang-phase='in']::after {
     display: none;
   }
 }
+
+/* About statement (home.ts): SplitText wraps each word at runtime, outside Angular's style scope; --lit (0 → 1, from
+   motion/effects/about-words.ts) takes it from a faded ink (55% ink on the band colour, about 3.6:1: AA for large
+   text) to full ink. */
+#about .statement .word {
+  --faded: color-mix(in srgb, var(--fg) 55%, var(--band-bg, var(--bg)));
+  color: color-mix(in srgb, var(--fg) calc(var(--lit, 1) * 100%), var(--faded));
+}

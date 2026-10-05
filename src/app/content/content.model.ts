@@ -73,6 +73,8 @@ export interface GlanceItem {
 export interface SiteContent {
   person: Person;
   hero: { headline: string; lede: string };
+  /** One sentence that opens the About section, in large type. */
+  aboutStatement: string;
   about: string;
   glance: readonly GlanceItem[];
   projects: readonly Project[];

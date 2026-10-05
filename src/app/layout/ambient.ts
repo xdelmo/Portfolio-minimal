@@ -24,7 +24,9 @@ import { MotionHost } from '../motion/motion-host';
       position: fixed;
       inset: 0;
       z-index: -1;
-      overflow: hidden;
+      // no overflow clip: the scroll parallax lifts the layer by up to 12%, and a clip would cut the orbs on a
+      // hard line above the fold; the gradients fade out by themselves, html clips sideways, and a fixed box never
+      // makes the page longer
       pointer-events: none;
     }
     .orb {

@@ -40,3 +40,15 @@ test.describe('with reduced motion', () => {
     await expect(page.locator('app-ambient .ambient')).toBeHidden();
   });
 });
+
+test('at the end of the page the orbs still reach the bottom of the screen, with no hard edge', async ({ page }) => {
+  await page.goto('/en/');
+  await ready(page);
+  await page.evaluate(() => { scrollTo(0, document.documentElement.scrollHeight); });
+  // the scroll parallax lifts the layer: if it clipped its orbs, its bottom edge would cut them above the fold
+  await expect.poll(() => page.locator('app-ambient .ambient').evaluate((el) => {
+    const { top, bottom } = el.getBoundingClientRect();
+    const clips = getComputedStyle(el).overflow !== 'visible';
+    return !clips || (top <= 0 && bottom >= innerHeight);
+  })).toBe(true);
+});

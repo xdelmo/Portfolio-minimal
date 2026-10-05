@@ -18,7 +18,7 @@ export const CONTENT_EN: SiteContent = {
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   about:
-    'Emanuele Del Monte is a Frontend Engineer based in Latina, Italy, who builds enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.',
+    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.",
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },

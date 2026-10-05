@@ -10,6 +10,13 @@ describe('content', () => {
     expect(CONTENT_IT.aboutStatement).not.toBe(CONTENT_EN.aboutStatement);
   });
 
+  it('writes the About paragraph in the first person, like the rest of the site', () => {
+    expect(CONTENT_EN.about).toMatch(/^I'm Emanuele Del Monte/);
+    expect(CONTENT_EN.about).not.toMatch(/Emanuele Del Monte is /);
+    expect(CONTENT_IT.about).toMatch(/^Sono Emanuele Del Monte/);
+    expect(CONTENT_IT.about).not.toMatch(/Emanuele Del Monte è /);
+  });
+
   it('has the same projects, in the same order, in both languages', () => {
     expect(CONTENT_IT.projects.map((p) => p.slug)).toEqual(CONTENT_EN.projects.map((p) => p.slug));
   });

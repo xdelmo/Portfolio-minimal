@@ -82,13 +82,14 @@ test.describe('contact and footer', () => {
 });
 
 test.describe('hero and work on phones', () => {
-  test('the field comes before the title on phones and behind it on desktop', async ({ page, isMobile }) => {
+  test('the field sits behind the title on phones and on desktop', async ({ page }) => {
     await page.goto('/en/');
     const field = await page.locator('.hero app-pixel-field').boundingBox();
     const title = await page.locator('.hero h1').boundingBox();
     if (!field || !title) throw new Error('missing hero boxes');
-    if (isMobile) expect(field.y + field.height).toBeLessThanOrEqual(title.y + 1);
-    else expect(field.x).toBeLessThanOrEqual(title.x);
+    expect(field.x).toBeLessThanOrEqual(title.x);
+    expect(field.y).toBeLessThanOrEqual(title.y);
+    expect(field.y + field.height).toBeGreaterThanOrEqual(title.y + title.height);
   });
 
   test('on phones each project shows its image before its text', async ({ page, isMobile }) => {

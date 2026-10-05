@@ -5,7 +5,7 @@ import type { Effect } from '../motion-host';
  * After the intro the headline rises line by line; on every visit it drifts and grows as the hero scrolls away.
  * Returning visitors never see the headline hidden: the entrance only plays while the intro covers the page.
  */
-export const heroEffect: Effect = (root, { gsap, SplitText }) => {
+export const heroEffect: Effect = (root, { gsap, SplitText, desktop }) => {
   const hero = root.querySelector<HTMLElement>('.hero');
   const title = hero?.querySelector<HTMLElement>('h1');
   if (!hero || !title) return;
@@ -30,5 +30,6 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
   const away = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
   gsap.to(title, { yPercent: -18, scale: 1.08, transformOrigin: '0% 100%', ease: 'none', scrollTrigger: away });
   const field = hero.querySelector('.field');
-  if (field) gsap.to(field, { y: 90, ease: 'none', scrollTrigger: away });
+  // desktop: the face sinks beside the title; phones: it sits above the title, so it rises ahead of it
+  if (field) gsap.to(field, { y: desktop ? 90 : -60, ease: 'none', scrollTrigger: away });
 };

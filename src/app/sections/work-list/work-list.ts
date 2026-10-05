@@ -2,11 +2,12 @@ import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
+import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [RouterLink, NgOptimizedImage, PixelDissolve],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug; let first = $first) {
@@ -27,6 +28,8 @@ import { Project } from '../../content/content.model';
           </div>
           @if (project.image; as image) {
             <div class="media">
+              <!-- a veil of page-coloured cells that clears in steps as the image scrolls in (effects/dissolve.ts) -->
+              <app-pixel-dissolve class="veil" data-scrub [cols]="24" [rows]="16" [colors]="veilColors" />
               <img
                 class="shot"
                 [ngSrc]="image.src"
@@ -91,6 +94,20 @@ import { Project } from '../../content/content.model';
     .media {
       position: relative;
     }
+    .veil {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    // phones: the picture first, then what it is
+    .media {
+      order: -1;
+    }
+    @include bp.up(md) {
+      .media {
+        order: 0;
+      }
+    }
     .shot {
       display: block;
       width: 100%;
@@ -113,5 +130,6 @@ import { Project } from '../../content/content.model';
   `,
 })
 export class WorkList {
+  protected readonly veilColors = ['--bg'];
   readonly projects = input.required<readonly Project[]>();
 }

@@ -31,3 +31,26 @@ test.describe('with reduced motion', () => {
     expect(await progress(page, '#contact')).toBe(1);
   });
 });
+
+test('a pixel veil over each project image clears as it scrolls in', async ({ page }) => {
+  await page.goto('/en/');
+  const veil = page.locator('#work .media').last().locator('app-pixel-dissolve.veil');
+  await expect(veil).toHaveCount(1);
+  const p = () => veil.evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue('--p') || '1'));
+  await expect.poll(p).toBe(0);
+  await veil.evaluate((el) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.2);
+  });
+  await expect.poll(p).toBe(1);
+});
+
+test.describe('veils with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('never cover the images', async ({ page }) => {
+    await page.goto('/en/');
+    await page.waitForTimeout(500);
+    const values = await page.locator('#work app-pixel-dissolve.veil').evaluateAll((els) => els.map((el) => getComputedStyle(el).getPropertyValue('--p') || '1'));
+    expect(values.length).toBeGreaterThan(0);
+    expect(values.every((v) => parseFloat(v) === 1)).toBe(true);
+  });
+});

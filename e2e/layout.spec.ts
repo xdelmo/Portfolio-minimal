@@ -80,3 +80,24 @@ test.describe('contact and footer', () => {
     expect(Math.abs(footer.top - contact.bottom)).toBeLessThan(1);
   });
 });
+
+test.describe('hero and work on phones', () => {
+  test('the face comes before the title on phones and beside it on desktop', async ({ page, isMobile }) => {
+    await page.goto('/en/');
+    const field = await page.locator('.hero app-pixel-field').boundingBox();
+    const title = await page.locator('.hero h1').boundingBox();
+    if (!field || !title) throw new Error('missing hero boxes');
+    if (isMobile) expect(field.y + field.height).toBeLessThanOrEqual(title.y + 1);
+    else expect(field.x).toBeGreaterThan(title.x + title.width - 1);
+  });
+
+  test('on phones each project shows its image before its text', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones only');
+    await page.goto('/en/');
+    const first = page.locator('#work .project').first();
+    const media = await first.locator('.media').boundingBox();
+    const text = await first.locator('.text').boundingBox();
+    if (!media || !text) throw new Error('missing project boxes');
+    expect(media.y).toBeLessThan(text.y);
+  });
+});

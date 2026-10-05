@@ -117,8 +117,9 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       gap: var(--space-2);
       margin-top: var(--space-2);
     }
+    // phones: the face opens the page, above the title
     .field {
-      margin-top: var(--space-6);
+      order: -1;
     }
     .contact {
       display: grid;
@@ -178,6 +179,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       }
       // beside the whole text block, taking its height instead of stretching it
       .field {
+        order: 0;
         grid-column: 2;
         grid-row: 1 / span 4;
         height: auto;

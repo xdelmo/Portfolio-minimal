@@ -22,11 +22,12 @@ import { SeoService } from '../../core/seo/seo.service';
             }
           </ul>
           <p class="links">
-            @if (p.demoUrl) {
-              <a class="button button--primary" [href]="p.demoUrl" i18n="@@case.demo">Open the live demo</a>
+            <!-- the code first: not every project is online, every one is on GitHub -->
+            @for (repo of p.repos; track repo.url; let first = $first) {
+              <a class="button" [class.button--primary]="first" [href]="repo.url">{{ repo.label }}</a>
             }
-            @for (repo of p.repos; track repo.url) {
-              <a class="button" [href]="repo.url">{{ repo.label }}</a>
+            @if (p.demoUrl) {
+              <a class="button" [href]="p.demoUrl" i18n="@@case.demo">Open the live demo</a>
             }
           </p>
         </header>

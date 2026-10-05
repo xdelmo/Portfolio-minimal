@@ -8,6 +8,8 @@ const webkitAvailable = !!process.env['CI'] || process.platform !== 'darwin' || 
 export default defineConfig({
   testDir: 'e2e',
   fullyParallel: true,
+  // The fanless MacBook Air overheats with one browser per two cores; override with --workers.
+  workers: process.env['CI'] ? undefined : 2,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 1 : 0,
   reporter: process.env['CI'] ? 'github' : 'list',

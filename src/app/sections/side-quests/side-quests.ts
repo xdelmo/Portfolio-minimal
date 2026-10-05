@@ -11,6 +11,7 @@ import { SideQuest } from '../../content/content.model';
           <h3>{{ quest.title }}</h3>
           <p>{{ quest.summary }}</p>
           <p class="tags">{{ quest.tags.join(', ') }}</p>
+          <a class="repo" [href]="quest.repo" i18n="@@sideQuests.repo">Code on GitHub</a>
         </li>
       }
     </ul>
@@ -34,6 +35,10 @@ import { SideQuest } from '../../content/content.model';
     }
     h3 {
       font-size: var(--step-1);
+    }
+    .repo {
+      justify-self: start;
+      min-height: 24px;
     }
     .tags {
       color: var(--fg-muted);

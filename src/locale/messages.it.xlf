@@ -258,6 +258,14 @@
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="sideQuests.repo" datatype="html">
+        <source>Code on GitHub</source>
+        <target>Codice su GitHub</target>
+      </trans-unit>
+      <trans-unit id="work.repos" datatype="html">
+        <source>Code</source>
+        <target>Codice</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

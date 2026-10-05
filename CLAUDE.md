@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Node 24 (from `.nvmrc`; Angular 22 needs ≥ 24.15). On this machine the Homebrew Node is not usable: prefix commands with `export PATH="$HOME/.local/node/current/bin:$PATH";`
 - `npm start` — both dev servers: open http://localhost:4200 (English under `/en/`, Italian under `/it/` proxied from port 4201, so the language switch works); `npm run start:it` runs only the Italian one
 - `npm run verify` — the CI gate locally (lint, unit, scripts, build, e2e), stops at the first failure. Run it before saying a task is done and judge it by its exit code, never by grepping the output (a grep once hid 3 lint errors). WebKit runs only in CI on this machine. The e2e reuse any server already on port 4300: in a worktree, check `lsof -i :4300` first, or the tests run against another checkout's `dist`
+- The machine is a fanless MacBook Air: while iterating run only the affected test (one spec file, `--project=chromium`), keep the full `npm run verify` for the end, and never run two suites or builds at once (check `pgrep -fl "playwright|ng build|vitest"` first)
 - `npm run build` — static prerender of both locales into `dist/portfolio/browser/{en,it}` + sitemap/robots
 - `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint, template a11y), zero warnings allowed
 - `npx ng test --no-watch` — unit tests (Vitest); one file: `npx ng test --no-watch --include src/app/core/theme/theme.spec.ts`

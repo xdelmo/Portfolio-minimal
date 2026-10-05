@@ -56,6 +56,8 @@ export interface SideQuest {
   title: string;
   summary: string;
   tags: readonly string[];
+  /** The code on GitHub. */
+  repo: string;
 }
 
 export interface StackGroup {

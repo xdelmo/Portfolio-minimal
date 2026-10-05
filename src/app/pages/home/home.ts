@@ -6,6 +6,7 @@ import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
 import { PixelField } from '../../pixel-field/pixel-field';
 import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
+import { Thread } from '../../layout/thread';
 import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
 import { ExperienceTimeline } from '../../sections/experience-timeline/experience-timeline';
 import { SideQuests } from '../../sections/side-quests/side-quests';
@@ -17,6 +18,7 @@ import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { stackFloatEffect } from '../../motion/effects/stack-float';
 import { stackOrbsEffect } from '../../motion/effects/stack-orbs';
+import { threadEffect } from '../../motion/effects/thread';
 import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
@@ -25,7 +27,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -40,6 +42,8 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-pixel-dissolve class="seam seam--hero" [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
     </section>
 
+    <div class="trail">
+    <app-thread />
     <section id="work" class="section container" aria-labelledby="work-title">
       <h2 id="work-title" i18n="@@home.work.title">Selected work</h2>
       <app-work-list [projects]="content.projects" />
@@ -81,6 +85,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       </div>
       <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
+    </div>
     </div>
   `,
   styles: `
@@ -194,6 +199,9 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     .seam--hero {
       bottom: 0;
     }
+    .trail {
+      position: relative;
+    }
     .section {
       display: grid;
       gap: var(--space-4);
@@ -204,7 +212,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

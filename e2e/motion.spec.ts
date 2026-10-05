@@ -116,7 +116,7 @@ test.describe('experience', () => {
         const spacer = document.querySelector<HTMLElement>('.pin-spacer');
         const section = document.getElementById('experience');
         // the pin ends once the spacer's extra height (spacer minus section) has been scrolled
-        if (spacer && section) window.scrollTo(0, spacer.offsetTop + spacer.offsetHeight - section.offsetHeight);
+        if (spacer && section) window.scrollTo(0, spacer.getBoundingClientRect().top + scrollY + spacer.offsetHeight - section.offsetHeight);
         const items = document.querySelectorAll('#experience li');
         // vertical offset of the last card: 0 once it has slid onto the deck
         return Math.round(new DOMMatrix(getComputedStyle(items[items.length - 1]).transform).m42);

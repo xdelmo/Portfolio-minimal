@@ -75,6 +75,15 @@ import { StackGroup } from '../../content/content.model';
       background: radial-gradient(circle at 35% 30%, var(--from), var(--to));
       filter: blur(6px);
     }
+    // a tap on an orb outlines its group for a moment (motion/effects/stack-tap.ts)
+    .group {
+      outline: 2px solid transparent;
+      outline-offset: var(--space-1);
+      transition: outline-color 0.2s steps(2);
+    }
+    .group.is-picked {
+      outline-color: var(--accent);
+    }
     .orb--0 {
       --from: var(--px-3);
       --to: var(--px-4);

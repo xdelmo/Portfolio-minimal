@@ -19,6 +19,7 @@ import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { stackFloatEffect } from '../../motion/effects/stack-float';
 import { stackOrbsEffect } from '../../motion/effects/stack-orbs';
+import { stackTapEffect } from '../../motion/effects/stack-tap';
 import { threadEffect } from '../../motion/effects/thread';
 import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
@@ -217,6 +218,11 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     .trail {
       position: relative;
     }
+    // the stack orbs fly in from the screen edges: the title stays on top of them
+    #stack h2 {
+      position: relative;
+      z-index: 1;
+    }
     .section {
       display: grid;
       gap: var(--space-4);
@@ -227,7 +233,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackOrbsEffect, stackFloatEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stackTapEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

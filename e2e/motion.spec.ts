@@ -272,3 +272,27 @@ test('the stack orbs fly in from beyond the content column, without widening the
   expect(await page.locator('app-stack-list').evaluate((el) => getComputedStyle(el).overflowX)).toBe('visible');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+
+test.describe('stack on phones', () => {
+  test('the title stays above the orbs flying in', async ({ page }) => {
+    await page.goto('/en/');
+    const style = await page.locator('#stack h2').evaluate((el) => ({ position: getComputedStyle(el).position, z: getComputedStyle(el).zIndex }));
+    expect(style.position).toBe('relative');
+    expect(Number(style.z)).toBeGreaterThan(0);
+  });
+
+  test('tapping an orb picks out its group for a moment', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'touch');
+    await page.goto('/en/');
+    await ready(page);
+    await page.locator('#stack .orbs').evaluate((el) => {
+      window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.15);
+    });
+    await page.waitForTimeout(800);
+    // the orbs float for ever, so they are never "stable": a finger taps them anyway
+    await page.locator('#stack .orb').nth(1).tap({ force: true });
+    await expect(page.locator('#stack .group').nth(1)).toHaveClass(/is-picked/);
+    await expect(page.locator('#stack .group.is-picked')).toHaveCount(1);
+    await expect(page.locator('#stack .group').nth(1)).not.toHaveClass(/is-picked/, { timeout: 3000 });
+  });
+});

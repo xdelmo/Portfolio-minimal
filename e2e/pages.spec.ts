@@ -37,6 +37,16 @@ test('pages declare the right language', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
 
+test('search results get a title that names the skill, in the page language', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page).toHaveTitle('Emanuele Del Monte — Angular Frontend Engineer');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /^I build Angular interfaces/);
+  await page.goto('/it/');
+  await expect(page).toHaveTitle('Emanuele Del Monte — Frontend Engineer Angular');
+  await page.goto('/en/work/apexflow');
+  await expect(page).toHaveTitle('ApexFlow: Angular, Signals, RxJS — Emanuele Del Monte');
+});
+
 test('case study has canonical and hreflang links', async ({ page }) => {
   await page.goto('/it/work/apexflow');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://www.emanueledelmonte.it/it/work/apexflow');

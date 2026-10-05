@@ -1,6 +1,6 @@
 import { CONTENT_EN } from '../../content/content.en';
 import { CONTENT_IT } from '../../content/content.it';
-import { PERSON_ID, caseStudyJsonLd, headLinks, homeJsonLd, markdownPath, ogImageUrl, pageUrl } from './seo';
+import { PERSON_ID, caseStudyJsonLd, caseStudyTitle, headLinks, homeJsonLd, markdownPath, ogImageUrl, pageUrl } from './seo';
 
 describe('pageUrl', () => {
   it('keeps the trailing slash on the home page only', () => {
@@ -61,6 +61,20 @@ describe('homeJsonLd', () => {
     expect(person['alumniOf']).toEqual({ '@type': 'CollegeOrUniversity', name: 'Università Mercatorum' });
     expect(nodeOf(ld, 'ProfilePage')['url']).toBe('https://www.emanueledelmonte.it/en/');
     expect(nodeOf(ld, 'ProfilePage')['inLanguage']).toBe('en');
+  });
+
+  it('gives agents one quotable sentence about the person and the languages spoken', () => {
+    const person = nodeOf(ld, 'Person');
+    expect(person['description']).toBe(CONTENT_EN.person.summary);
+    expect(person['description']).toMatch(/Angular/);
+    expect(person['knowsLanguage']).toEqual(['it', 'en']);
+  });
+});
+
+describe('caseStudyTitle', () => {
+  it('says what the project is built with, not only its name', () => {
+    const project = CONTENT_EN.projects[0];
+    expect(caseStudyTitle(project, CONTENT_EN.person)).toBe('ApexFlow: Angular, Signals, RxJS — Emanuele Del Monte');
   });
 });
 

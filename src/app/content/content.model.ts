@@ -10,6 +10,8 @@ export interface Person {
   linkedin: string;
   github: string;
   knowsAbout: readonly string[];
+  /** One sentence about me that search engines and AI assistants can quote (JSON-LD description). */
+  summary: string;
 }
 
 export interface Repo {
@@ -92,6 +94,8 @@ export interface GlanceItem {
 
 export interface SiteContent {
   person: Person;
+  /** The home page's <title> and meta description: what a search result shows. */
+  seo: { title: string; description: string };
   hero: { headline: string; lede: string };
   /** One sentence that opens the About section, in large type. */
   aboutStatement: string;

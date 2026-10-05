@@ -61,7 +61,7 @@ export function llmsTxt(contents) {
       ...c.projects.map((p) => `- [${p.title}](${url(locale, `work/${p.slug}.md`)}): ${p.summary}`),
     ].join('\n'),
   );
-  return `${[`# ${en.person.name}`, `> ${en.person.role}, ${en.person.location}. ${en.hero.lede} ${en.person.availability}`, ...sections].join('\n\n')}\n`;
+  return `${[`# ${en.person.name}`, `> ${en.person.summary} ${en.person.availability}`, ...sections].join('\n\n')}\n`;
 }
 
 export function geoFiles(contents) {

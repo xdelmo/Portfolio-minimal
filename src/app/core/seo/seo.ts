@@ -53,7 +53,14 @@ function personNode(person: Person, locale: Locale): Record<string, unknown> {
     // the real photo; only search engines and agents see it
     image: `${SITE_URL}/en/images/emanuele.jpg`,
     knowsAbout: person.knowsAbout,
+    description: person.summary,
+    knowsLanguage: ['it', 'en'],
   };
+}
+
+/** A case study's <title>: the project and what it is built with, then my name. */
+export function caseStudyTitle(project: Project, person: Person): string {
+  return `${project.title}: ${project.stack.slice(0, 3).join(', ')} — ${person.name}`;
 }
 
 export function homeJsonLd(person: Person, locale: Locale): Record<string, unknown> {

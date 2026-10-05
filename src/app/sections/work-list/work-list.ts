@@ -19,6 +19,11 @@ import { Project } from '../../content/content.model';
                 <li>{{ tech }}</li>
               }
             </ul>
+            <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
+              @for (repo of project.repos; track repo.url) {
+                <li><a [href]="repo.url">{{ repo.label }}</a></li>
+              }
+            </ul>
           </div>
           @if (project.image; as image) {
             <div class="media">
@@ -70,6 +75,18 @@ import { Project } from '../../content/content.model';
       list-style: none;
       color: var(--fg-muted);
       font-size: var(--step--1);
+    }
+    .repos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .repos a {
+      display: inline-block;
+      min-height: 24px;
     }
     .media {
       position: relative;

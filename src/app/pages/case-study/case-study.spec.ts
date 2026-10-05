@@ -33,12 +33,12 @@ describe('CaseStudy', () => {
   it('labels each repository link', async () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());
-    expect(labels).toEqual(['Open the live demo', 'Front-end code', 'Back-end code']);
+    expect(labels).toEqual(['Front-end code', 'Back-end code', 'Open the live demo']);
   });
 
   it('shows no demo button for a project without a demo', async () => {
     const el = await render('mcp-server');
-    expect(el.querySelector('.links .button--primary')).toBeNull();
+    expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub']);
     expect(el.querySelector('img')).toBeNull();
   });
 });

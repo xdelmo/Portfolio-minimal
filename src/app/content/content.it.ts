@@ -194,16 +194,19 @@ export const CONTENT_IT: SiteContent = {
       title: 'PokèVerba',
       summary: 'Un cruciverba Pokémon quotidiano e un Pokédex personale: un plugin WordPress con dentro un\'app React, in stile Game Boy.',
       tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
+      repo: 'https://github.com/xdelmo/pokeverba-site',
     },
     {
       title: 'Porta-carte MagSafe',
       summary: "Un supporto stampato in 3D per una carta Pokémon sul retro dell'iPhone, modellato interamente in codice Python con controlli automatici degli incastri.",
       tags: ['Python', 'build123d', 'Stampa 3D'],
+      repo: 'https://github.com/xdelmo/magsafe-cardholder',
     },
     {
       title: 'Vano portaoggetti per la Volkswagen Up',
       summary: 'Un inserto parametrico per il bracciolo della portiera della mia auto, con una pipeline che va dal codice al file pronto per la stampa con un solo comando.',
       tags: ['Python', 'build123d', 'Bambu Studio'],
+      repo: 'https://github.com/xdelmo/volkswagen-up-door-storage-box',
     },
   ],
   stack: [

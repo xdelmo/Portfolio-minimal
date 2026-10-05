@@ -310,3 +310,4 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 | 2026-10-04 | Occhi del moai che seguono il cursore (desktop): ogni occhio 2×2 diventa bianco con una pupilla accento nel quadrante del puntatore, oltre alla rotazione della testa | richiesta esplicita |
 | 2026-10-05 | Foto dei Contatti ritagliata in un cerchio a gradini sulla griglia pixel (16 celle, `mask` SVG) | richiesta esplicita: una mask sferica |
 | 2026-10-05 | Le sfere dello Stack entrano dai bordi dello schermo senza essere tagliate dalla colonna centrale: il clip orizzontale sta su `html` | le sfere apparivano tagliate |
+| 2026-10-05 | I progetti portano al codice su GitHub: link alle repo nella lista Progetti, repo come pulsanti principali nei case study (la demo viene dopo), link alla repo per ogni side quest; anche alle repo ancora private, che Emanuele renderà pubbliche | richiesta esplicita: non tutti i progetti sono online |

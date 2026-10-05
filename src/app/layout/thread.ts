@@ -13,10 +13,11 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     <div class="thread" aria-hidden="true"><span class="line"></span></div>
   `,
   styles: `
+    // above the bands, which stack over the section after them (#side-quests over the stack orbs)
     app-thread {
       position: absolute;
       inset: 0;
-      z-index: 1;
+      z-index: 2;
       pointer-events: none;
     }
     // 24px left of the content column, or 4px from the screen edge when there is no room

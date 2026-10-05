@@ -225,7 +225,10 @@ import { MoaiFigure } from '../../voxel/moai-figure';
     .trail {
       position: relative;
     }
-    // the stack orbs fly in from the screen edges: the title stays on top of them
+    // the stack orbs fly in from the screen edges: they pass under the side quests band above, and under the title
+    #side-quests {
+      z-index: 1;
+    }
     #stack h2 {
       position: relative;
       z-index: 1;

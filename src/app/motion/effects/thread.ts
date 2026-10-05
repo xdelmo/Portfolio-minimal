@@ -1,7 +1,7 @@
 import type { Effect } from '../motion-host';
 
 /**
- * The pixel thread grows with the scroll through the sections after the hero, and lights the node of each section
+ * The pixel thread grows with the scroll through the sections between the hero and the contact finale, and lights the node of each section
  * once it reaches that section's title. Nodes are placed again whenever ScrollTrigger refreshes (pins, resizes).
  */
 export const threadEffect: Effect = (root, { ScrollTrigger }) => {
@@ -37,7 +37,8 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
   const trigger = ScrollTrigger.create({
     trigger: trail,
     start: 'top 60%',
-    end: 'bottom bottom',
+    // drawn to the end once the last stop reaches the same line, just as the contact band arrives
+    end: 'bottom 60%',
     onUpdate: (self) => {
       light(self.progress);
     },

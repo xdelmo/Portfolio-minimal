@@ -30,9 +30,9 @@ Nuovo: ogni effetto di questa spec ha una versione per il telefono guidata dallo
 
 Riferimento: le tappe numerate collegate da una linea di matteovincenti.com.
 
-- Una linea di pixel `--accent` larga 4 px scende lungo il margine sinistro della home, dall'inizio della sezione Progetti alla fine dei Contatti.
+- Una linea di pixel `--accent` larga 4 px scende lungo il margine sinistro della home, dall'inizio della sezione Progetti fino alla cucitura della fascia dei Contatti, dove si ferma: il finale è l'arrivo, non una tappa (modifica del 2026-10-05).
 - Si **disegna con lo scroll**: la parte visibile segue l'avanzamento della pagina (scrub).
-- A ogni sezione (Progetti, Side quests, Chi sono, Esperienza, Strumenti, Contatti) c'è un **nodo**: un quadrato di 8 px all'altezza del titolo, spento (`--rule`) finché la linea non lo raggiunge, poi acceso (`--accent`) con un piccolo scatto a gradini.
+- A ogni sezione (Progetti, Side quests, Chi sono, Esperienza, Strumenti) c'è un **nodo**: un quadrato di 8 px all'altezza del titolo, spento (`--rule`) finché la linea non lo raggiunge, poi acceso (`--accent`) con un piccolo scatto a gradini.
 - Posizione: 24 px a sinistra della colonna di contenuto quando c'è spazio, altrimenti a 4 px dal bordo dello schermo (dentro il gutter di 16 px su telefono).
 - Decorativo: `aria-hidden`, `pointer-events: none`. Con riduzione del movimento non compare.
 

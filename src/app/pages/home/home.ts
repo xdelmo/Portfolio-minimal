@@ -78,6 +78,8 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       <app-stack-list [groups]="content.stack" />
     </section>
 
+    </div>
+
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
@@ -88,7 +90,6 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       </div>
       <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
-    </div>
     </div>
   `,
   styles: `

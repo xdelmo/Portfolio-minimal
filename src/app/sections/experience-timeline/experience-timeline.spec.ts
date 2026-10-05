@@ -14,4 +14,15 @@ describe('ExperienceTimeline', () => {
     const text = items[0].textContent;
     expect(text.indexOf('2026 – present')).toBeLessThan(text.indexOf('Software Engineer'));
   });
+
+  it('can be destroyed where window listeners do not exist, as during prerendering', () => {
+    const fixture = TestBed.createComponent(ExperienceTimeline);
+    fixture.componentRef.setInput('items', CONTENT_EN.experience);
+    // like the server: built and destroyed without a browser render, so afterNextRender never runs
+    vi.stubGlobal('removeEventListener', undefined);
+    expect(() => {
+      fixture.destroy();
+    }).not.toThrow();
+    vi.unstubAllGlobals();
+  });
 });

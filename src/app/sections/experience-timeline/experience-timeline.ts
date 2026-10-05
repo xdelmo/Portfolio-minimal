@@ -109,21 +109,22 @@ export class ExperienceTimeline {
 
   constructor() {
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    let sizes: ResizeObserver | undefined;
+    const destroyRef = inject(DestroyRef);
     const measure = (): void => {
       for (const li of host.querySelectorAll<HTMLElement>('.timeline > li')) {
         li.classList.toggle('sticks', parseFloat(getComputedStyle(li).top) + li.offsetHeight <= innerHeight);
       }
     };
+    // browser only: the server prerenders the cards without measuring them (and has no window to listen to)
     afterNextRender(() => {
       measure();
-      sizes = new ResizeObserver(measure);
-      for (const li of host.querySelectorAll('.timeline > li')) sizes.observe(li);
       addEventListener('resize', measure);
-    });
-    inject(DestroyRef).onDestroy(() => {
-      sizes?.disconnect();
-      removeEventListener('resize', measure);
+      const sizes = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : undefined;
+      for (const li of host.querySelectorAll('.timeline > li')) sizes?.observe(li);
+      destroyRef.onDestroy(() => {
+        sizes?.disconnect();
+        removeEventListener('resize', measure);
+      });
     });
   }
 }

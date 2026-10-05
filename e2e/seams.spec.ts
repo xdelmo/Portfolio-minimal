@@ -10,6 +10,15 @@ test('the hero ends in a pixel seam', async ({ page }) => {
   await expect(seam(page, '.hero').locator('svg')).toHaveAttribute('aria-hidden', 'true');
 });
 
+for (const [width, height] of [[1440, 900], [1920, 1080]]) {
+  test(`on a ${String(width)}×${String(height)} desktop the hero seam sits on the bottom edge of the first screen, under the header`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto('/en/');
+    const box = await seam(page, '.hero').boundingBox();
+    expect(Math.abs((box?.y ?? 0) + (box?.height ?? 0) - height)).toBeLessThanOrEqual(1);
+  });
+}
+
 for (const id of ['#about', '#contact']) {
   test(`the ${id} band grows a pixel seam as it scrolls in`, async ({ page }) => {
     await page.goto('/en/');

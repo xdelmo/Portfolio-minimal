@@ -187,7 +187,9 @@ import { MoaiFigure } from '../../voxel/moai-figure';
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
         column-gap: var(--space-8);
         align-content: start;
-        padding-top: var(--space-8);
+        // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport
+        min-height: calc(100svh - var(--header-h));
+        padding-block: var(--space-8);
       }
       .hero > :not(.field) {
         grid-column: 1;

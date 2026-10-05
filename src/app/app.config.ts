@@ -1,5 +1,5 @@
-import { IMAGE_LOADER } from '@angular/common';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { IMAGE_LOADER, ViewportScroller } from '@angular/common';
+import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideEnvironmentInitializer } from '@angular/core';
 import { provideClientHydration, withEventReplay, withI18nSupport } from '@angular/platform-browser';
 import {
   provideRouter,
@@ -22,5 +22,17 @@ export const appConfig: ApplicationConfig = {
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),
     { provide: IMAGE_LOADER, useValue: workImageLoader },
+    // The router reaches an anchor with window.scrollTo: an instant jump that ignores the sticky header's scroll-padding.
+    // scrollIntoView honours scroll-padding and scroll-margin, and glides unless the visitor asked for reduced motion.
+    provideEnvironmentInitializer(() => {
+      const scroller = inject(ViewportScroller);
+      scroller.scrollToAnchor = (anchor) => {
+        const target = document.getElementById(anchor);
+        if (!target) return;
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth' });
+        target.focus({ preventScroll: true });
+      };
+    }),
   ],
 };

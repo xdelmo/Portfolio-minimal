@@ -50,7 +50,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 
 Spend boldness here, keep everything else calm:
 
-1. **Hero pixel field** — Emanuele's face in pixel art (`npm run portrait` regenerates it from `public/images/emanuele.jpg`); pixels fly in, twinkle, step away from the pointer, ripple on tap.
+1. **Hero pixel field** — an abstract field of pastel dots, no figure (the pixel face was removed on request): full-bleed behind the hero text on desktop (masked to 35% under the text column), a band above the title on phones; dots fly in, twinkle, step away from the pointer, ripple on tap.
 2. **Voxel moai** (About) — Three.js, breathes, turns its head to the mouse, pixel pupils follow the cursor, explodes into cubes at the end of its section.
 3. **Stack orbs** — pastel orbs that gather onto a ring on scroll, then float and dodge the pointer.
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
@@ -66,7 +66,7 @@ A new section gets **one** idea in this family, not a new visual language.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).
-- Phones: scroll and touch versions of each idea (face first, sticky experience cards, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
+- Phones: scroll and touch versions of each idea (field first, sticky experience cards, tap on stack orbs, swipe on the moai); `touch-action: pan-y pinch-zoom` on anything swipeable, never block vertical scrolling.
 - Decorations may fly in from the screen edges: the root (`html`) clips horizontally, so never clip a section just to hide them.
 
 ## Quality floor (every change)

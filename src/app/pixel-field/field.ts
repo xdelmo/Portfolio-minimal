@@ -15,14 +15,12 @@ export interface FieldLayout {
   /** Offset of the first cell, so the grid sits centred in the canvas. */
   x0: number;
   y0: number;
-  /** Portrait palette slot of each cell (0 = none), indexed row * cols + col. */
-  face: Uint8Array;
 }
 
-export function layout(width: number, height: number, portrait: { size: number; cells: string }): FieldLayout {
+export function layout(width: number, height: number): FieldLayout {
   const cols = Math.max(1, Math.floor(width / CELL));
   const rows = Math.max(1, Math.floor(height / CELL));
-  return { cols, rows, x0: (width - cols * CELL) / 2, y0: (height - rows * CELL) / 2, face: portraitCells(cols, rows, portrait) };
+  return { cols, rows, x0: (width - cols * CELL) / 2, y0: (height - rows * CELL) / 2 };
 }
 
 /** Deterministic pseudo-random number in [0, 1). */
@@ -33,12 +31,6 @@ export function hash(n: number): number {
 
 export function easeOutCubic(t: number): number {
   return 1 - (1 - Math.min(1, Math.max(0, t))) ** 3;
-}
-
-/** How far portrait cell `index` has travelled to its place, with a per-cell delay. */
-export function composeProgress(index: number, t: number): number {
-  const delay = hash(index) * 500;
-  return easeOutCubic((t - delay) / (COMPOSE_MS - 500));
 }
 
 /** Each cell pulses at its own speed and phase, so the field twinkles at random. */
@@ -62,22 +54,4 @@ export function ripple(distance: number, age: number): number {
   if (age < 0 || age >= RIPPLE_MS) return 0;
   const ring = Math.max(0, 1 - Math.abs(distance - age * RIPPLE_SPEED) / RIPPLE_WIDTH);
   return ring * (1 - age / RIPPLE_MS);
-}
-
-/**
- * Palette slots of the portrait laid on the field: a centred square that fits the shorter side, sampled from
- * the generated grid (src/app/pixel-field/portrait.ts). 0 where the cell shows no portrait.
- */
-export function portraitCells(cols: number, rows: number, portrait: { size: number; cells: string }): Uint8Array {
-  const out = new Uint8Array(cols * rows);
-  const n = Math.max(1, Math.floor(Math.min(cols, rows) * 0.95));
-  const left = Math.floor((cols - n) / 2);
-  const top = Math.floor((rows - n) / 2);
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      const src = Math.floor((r * portrait.size) / n) * portrait.size + Math.floor((c * portrait.size) / n);
-      out[(top + r) * cols + left + c] = Number(portrait.cells[src]);
-    }
-  }
-  return out;
 }

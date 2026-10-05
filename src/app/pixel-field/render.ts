@@ -1,10 +1,8 @@
-import { CELL, COMPOSE_MS, DOT, FieldLayout, composeProgress, easeOutCubic, falloff, hash, ripple, twinkle, vignette } from './field';
+import { CELL, COMPOSE_MS, DOT, FieldLayout, easeOutCubic, falloff, hash, ripple, twinkle, vignette } from './field';
 
 export interface Palette {
   dot: string;
   lit: readonly string[];
-  /** Colours of portrait slots 1–5. */
-  face: readonly string[];
 }
 
 export interface Point {
@@ -32,8 +30,6 @@ export function readPalette(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>
   return {
     dot: read('--fg'),
     lit: ['--px-2', '--px-3', '--px-4', '--px-5', '--px-6'].map(read),
-    // slots: 1–2 clothes, beard and glasses in the blues; 3 skin in shadow in lavender; 4–5 skin in peach
-    face: ['--px-1', '--px-2', '--px-4', '--px-6', '--px-6'].map(read),
   };
 }
 
@@ -63,20 +59,6 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
       }
       for (const r of f.ripples) energy = Math.max(energy, ripple(Math.hypot(x - r.x, y - r.y), t - r.start));
 
-      const face = l.face[i];
-      if (face) {
-        // portrait pixels fly in from random spots and settle on their cell
-        const c = composeProgress(i, t);
-        ctx.globalAlpha = c * (face === 4 ? 0.75 : 1);
-        ctx.fillStyle = p.face[face - 1];
-        ctx.fillRect(
-          x + (hash(i + 7) - 0.5) * l.cols * CELL * (1 - c) - DOT / 2,
-          y + (hash(i + 13) - 0.5) * l.rows * CELL * (1 - c) - DOT / 2,
-          DOT,
-          DOT,
-        );
-        continue;
-      }
       const e = Math.max(energy, 0.6 * twinkle(i, t) ** 10 * waveIn);
       const size = DOT * (0.25 + 0.75 * e);
       ctx.globalAlpha = (REST_ALPHA + (1 - REST_ALPHA) * e) * vignette(col, row, l.cols, l.rows);

@@ -121,7 +121,7 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       gap: var(--space-2);
       margin-top: var(--space-2);
     }
-    // phones: the face opens the page, above the title
+    // phones: the field opens the page, above the title
     .field {
       order: -1;
     }
@@ -192,14 +192,17 @@ import { MoaiFigure } from '../../voxel/moai-figure';
       .hero > :not(.field) {
         grid-column: 1;
       }
-      // beside the whole text block, taking its height instead of stretching it
+      // desktop: the field fills the whole hero, edge to edge, behind the text; it stays faint under the text column
+      // so the words keep their contrast, and comes alive towards the right
+      .hero {
+        isolation: isolate;
+      }
       .field {
-        order: 0;
-        grid-column: 2;
-        grid-row: 1 / span 4;
+        position: absolute;
+        inset: 0 calc(50% - 50vw);
+        z-index: -1;
         height: auto;
-        min-height: 0;
-        margin-top: 0;
+        mask-image: linear-gradient(to right, rgb(0 0 0 / 0.35) 0 40%, #000 70%);
       }
     }
     // pixel seams: full-bleed strips of 16px cells; a band grows one above its top edge, the hero one at its foot

@@ -11,7 +11,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { FieldLayout, RIPPLE_MS, layout } from './field';
-import { PORTRAIT } from './portrait';
 import { MotionPause } from '../motion/pause';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
@@ -47,7 +46,7 @@ export class PixelField {
 
   private ctx: CanvasRenderingContext2D | null = null;
   private grid: FieldLayout | null = null;
-  private palette: Palette = { dot: '', lit: [], face: [] };
+  private palette: Palette = { dot: '', lit: [] };
   private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [] };
   private visible = true;
   private raf = 0;
@@ -87,7 +86,7 @@ export class PixelField {
       canvas.width = Math.round(canvas.clientWidth * dpr);
       canvas.height = Math.round(canvas.clientHeight * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.grid = layout(canvas.clientWidth, canvas.clientHeight, PORTRAIT);
+      this.grid = layout(canvas.clientWidth, canvas.clientHeight);
       this.render();
     };
     const sizes = new ResizeObserver(resize);

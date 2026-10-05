@@ -15,8 +15,7 @@
     "e2e": "playwright test",
     "lhci": "lhci autorun",
     "lint": "ng lint --max-warnings=0",
-    "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e",
-    "portrait": "node scripts/portrait.mjs"
+    "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

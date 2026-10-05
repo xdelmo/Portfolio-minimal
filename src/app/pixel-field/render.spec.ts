@@ -19,34 +19,16 @@ function fakeContext() {
 const palette: Palette = {
   dot: '#1d1d1c',
   lit: ['#7fb2ec', '#b9d5f5', '#c9b8f5', '#dccff8', '#ffc9a8'],
-  face: ['#f01', '#f02', '#f03', '#f04', '#f05'],
 };
-// a 2×2 portrait: dark top-left, skin bottom-right, empty elsewhere
-const grid = layout(600, 240, { size: 2, cells: '1004' });
+const grid = layout(600, 240);
 const still: FrameState = { t: 0, animate: false, pointer: null, ripples: [] };
 
 describe('drawFrame', () => {
-  const faceCells = (slot: number) => grid.face.reduce((n, v) => n + (v === slot ? 1 : 0), 0);
-
-  it('draws one square per cell, the portrait in its own colours', () => {
-    const { ctx, rects } = fakeContext();
-    drawFrame(ctx, grid, palette, still);
-    expect(rects).toHaveLength(grid.cols * grid.rows);
-    expect(rects.filter((r) => r.color === '#f01' && r.alpha === 1)).toHaveLength(faceCells(1));
-    expect(rects.filter((r) => r.color === '#f04')).toHaveLength(faceCells(4));
-  });
-
-  it('shows the finished portrait and a calm field when not animating', () => {
+  it('draws one square per cell, all calm dots when nothing moves', () => {
     const { ctx, rects } = fakeContext();
     drawFrame(ctx, grid, palette, { ...still, t: 50 });
-    const dots = rects.filter((r) => !palette.face.includes(r.color));
-    expect(new Set(dots.map((r) => r.color))).toEqual(new Set([palette.dot]));
-  });
-
-  it('starts with the portrait invisible and scattered when animating', () => {
-    const { ctx, rects } = fakeContext();
-    drawFrame(ctx, grid, palette, { ...still, animate: true, t: 0 });
-    expect(rects.filter((r) => palette.face.includes(r.color)).every((r) => r.alpha === 0)).toBe(true);
+    expect(rects).toHaveLength(grid.cols * grid.rows);
+    expect(new Set(rects.map((r) => r.color))).toEqual(new Set([palette.dot]));
   });
 
   it('lights the pixels around the pointer', () => {
@@ -68,6 +50,6 @@ describe('readPalette', () => {
   it('reads the pixel colours from CSS custom properties', () => {
     const values: Record<string, string> = { '--px-1': ' #0066d4', '--fg': '#1d1d1c', '--px-2': 'a', '--px-3': 'b', '--px-4': 'c', '--px-5': 'd', '--px-6': 'e' };
     const p = readPalette({ getPropertyValue: (name: string) => values[name] });
-    expect(p).toEqual({ dot: '#1d1d1c', lit: ['a', 'b', 'c', 'd', 'e'], face: ['#0066d4', 'a', 'c', 'e', 'e'] });
+    expect(p).toEqual({ dot: '#1d1d1c', lit: ['a', 'b', 'c', 'd', 'e'] });
   });
 });

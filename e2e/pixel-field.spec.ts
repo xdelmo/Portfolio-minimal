@@ -114,34 +114,19 @@ test.describe('without JavaScript', () => {
   });
 });
 
-test.describe('the face', () => {
-  // counts the canvas pixels in the peach of the skin (--px-6), the colour only the portrait uses at full size
-  const peach = (page: Page) =>
-    canvas(page).evaluate((c) => {
-      const el = c as HTMLCanvasElement;
-      const css = getComputedStyle(document.documentElement).getPropertyValue('--px-6').trim();
-      const [r, g, b] = [1, 3, 5].map((i) => parseInt(css.slice(i, i + 2), 16));
-      const data = el.getContext('2d')?.getImageData(0, 0, el.width, el.height).data ?? new Uint8ClampedArray();
-      let n = 0;
-      for (let i = 0; i < data.length; i += 4) {
-        if (data[i + 3] > 200 && Math.abs(data[i] - r) < 8 && Math.abs(data[i + 1] - g) < 8 && Math.abs(data[i + 2] - b) < 8) n++;
-      }
-      return n;
-    });
-
-  test('the field draws the face from the start, with no "edm." scene', async ({ page }) => {
+test.describe('the abstract field', () => {
+  test('on desktop it spreads behind the whole hero, under the text', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/en/');
-    await canvas(page).scrollIntoViewIfNeeded();
-    await expect.poll(() => peach(page), { timeout: 4000 }).toBeGreaterThan(500);
-    await expect(page.locator('app-pixel-field')).not.toHaveAttribute('data-scene');
-  });
-
-  test.describe('with reduced motion', () => {
-    test.use({ reducedMotion: 'reduce' });
-    test('the still picture is the face', async ({ page }) => {
-      await page.goto('/en/');
-      await canvas(page).scrollIntoViewIfNeeded();
-      await expect.poll(() => peach(page)).toBeGreaterThan(500);
-    });
+    const field = await page.locator('.hero app-pixel-field').boundingBox();
+    const title = await page.locator('.hero h1').boundingBox();
+    if (!field || !title) throw new Error('missing hero boxes');
+    expect(field.x).toBeLessThanOrEqual(title.x);
+    expect(field.x + field.width).toBeGreaterThanOrEqual(title.x + title.width);
+    expect(field.y).toBeLessThanOrEqual(title.y);
+    // the text stays on top and readable
+    const onTop = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('h1') !== null, [title.x + 20, title.y + title.height / 2]);
+    expect(onTop).toBe(true);
   });
 });

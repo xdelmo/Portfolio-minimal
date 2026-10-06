@@ -34,6 +34,40 @@ test.describe('on a desktop with a mouse', () => {
     await expect(cursor(page)).not.toHaveClass(/is-over/);
   });
 
+  test('near a section title the pixel turns into an arrow pointing at its centre, and back away from it', async ({ page }) => {
+    const arrow = page.locator('app-pixel-cursor .pixel-arrow');
+    await page.goto('/en/');
+    await ready(page);
+    const title = page.locator('#work h2');
+    await title.scrollIntoViewIfNeeded();
+    // the words, not the full-width block
+    const box = await title.evaluate((el) => {
+      const range = document.createRange();
+      const rects: DOMRect[] = [];
+      const words = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let node = words.nextNode(); node; node = words.nextNode()) {
+        range.selectNodeContents(node);
+        rects.push(range.getBoundingClientRect());
+      }
+      const left = Math.min(...rects.map((r) => r.left));
+      const top = Math.min(...rects.map((r) => r.top));
+      return { x: left, y: top, width: Math.max(...rects.map((r) => r.right)) - left, height: Math.max(...rects.map((r) => r.bottom)) - top };
+    });
+    // to the right of the title, level with it: the arrow points left
+    await page.mouse.move(box.x + box.width + 60, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width + 64, box.y + box.height / 2);
+    await expect(arrow).toBeVisible();
+    await expect(cursor(page)).toBeHidden();
+    const angle = Number(await arrow.getAttribute('data-angle'));
+    expect(Math.abs(Math.abs(angle) - 180)).toBeLessThan(20);
+    // well away from every title the pixel comes back
+    await page.evaluate(() => { scrollTo(0, 0); });
+    await page.mouse.move(700, 130);
+    await page.mouse.move(710, 140);
+    await expect(arrow).toBeHidden();
+    await expect(cursor(page)).toBeVisible();
+  });
+
   test('buttons lean towards the pointer and settle back when it leaves', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
@@ -60,5 +94,6 @@ test.describe('with reduced motion', () => {
     await page.goto('/en/');
     await page.mouse.move(400, 300);
     await expect(cursor(page)).toBeHidden();
+    await expect(page.locator('app-pixel-cursor .pixel-arrow')).toBeHidden();
   });
 });

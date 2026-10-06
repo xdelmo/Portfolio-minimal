@@ -23,8 +23,10 @@ export const introEffect: Effect = (root, { gsap }) => {
     )
     .to(panel, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '+=0.25');
   // the motion script came late (a slow phone, a busy CI): replaying the intro now would hold the page past the
-  // CSS fallback's 3.6s, so the fallback finishes the lift
-  if (!introFits(performance.now(), intro.duration())) {
+  // CSS fallback, so the fallback finishes the lift
+  // the CSS animation starts with the first render, not with the navigation: its own start time is the reference
+  const cssStart = Number(panel.getAnimations()[0]?.startTime ?? 0);
+  if (!introFits(performance.now(), intro.duration(), cssStart)) {
     intro.revert();
     if (getComputedStyle(panel).visibility === 'hidden') endIntro();
     else panel.addEventListener('animationend', endIntro, { once: true });

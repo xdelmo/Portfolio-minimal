@@ -56,9 +56,20 @@ test.describe('intro', () => {
     page.on('load', () => {
       loaded = true;
     });
+    // when the CSS lift really started (the first render, later on a slow machine), before GSAP may replace it
+    await page.addInitScript(() => {
+      const look = (): void => {
+        const start = document.querySelector('.site-intro')?.getAnimations()[0]?.startTime;
+        if (start == null) requestAnimationFrame(look);
+        else Object.assign(window, { cssStart: Number(start) });
+      };
+      requestAnimationFrame(look);
+    });
     await page.goto('/en/');
-    await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 8000 });
-    expect(await page.evaluate(() => performance.now())).toBeLessThan(3900);
+    await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 10000 });
+    const { end, cssStart } = await page.evaluate(() => ({ end: performance.now(), cssStart: (window as unknown as { cssStart: number }).cssStart }));
+    // 3.6s of CSS lift, and a few frames for the polling
+    expect(end - cssStart).toBeLessThan(3600 + 300);
   });
 
   // phones skip it: it would delay the first paint, and the page is the point there

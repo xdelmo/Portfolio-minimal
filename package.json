@@ -14,9 +14,10 @@
     "verify:deploy": "node scripts/verify-deploy.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",
     "e2e": "playwright test",
+    "e2e:webkit": "bash scripts/e2e-webkit.sh",
     "lhci": "lhci autorun",
     "lint": "ng lint --max-warnings=0",
-    "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e"
+    "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e && npm run e2e:webkit"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

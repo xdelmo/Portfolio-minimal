@@ -57,7 +57,10 @@ export const GUM_LIPS = { y: 10, z: 4 } as const;
  */
 export const GUM_DROP = 3;
 
-/** The bubble as voxels: a ball of radius 3 resting on the lips, z = 0 at the mouth and growing towards the viewer. */
+/**
+ * The bubble as voxels: a ball of radius 3, z = 0 at the mouth and growing towards the viewer, joined to the lips
+ * (the row GUM_DROP above its centre) by a neck of pink cubes.
+ */
 export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
   const cells: { x: number; y: number; z: number }[] = [];
   for (let y = -radius; y <= radius; y++) {
@@ -67,5 +70,6 @@ export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
       }
     }
   }
+  for (let z = 0; !cells.some((c) => c.x === 0 && c.y === GUM_DROP && c.z === z); z++) cells.push({ x: 0, y: GUM_DROP, z });
   return cells;
 }

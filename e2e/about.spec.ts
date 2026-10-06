@@ -30,3 +30,18 @@ test.describe('with reduced motion', () => {
     expect(await lit(page)).toHaveLength(0);
   });
 });
+
+for (const [lang, sentence, daily] of [
+  ['en', 'Claude Code is part of my day', 'Every day'],
+  ['it', 'Claude Code fa parte della mia giornata', 'Ogni giorno'],
+] as const) {
+  test(`${lang}: how I use AI is said once, with the proof, and Claude Code is an everyday tool`, async ({ page }) => {
+    await page.goto(`/${lang}/`);
+    await expect(page.locator('#about')).toContainText(sentence);
+    await expect(page.locator('#about')).toContainText('MCP');
+    const everyDay = page.locator('#stack .level').filter({ has: page.getByRole('heading', { name: daily }) });
+    await expect(everyDay.getByText('Claude Code', { exact: true })).toHaveCount(1);
+    const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(ld.join()).toContain('Model Context Protocol');
+  });
+}

@@ -19,7 +19,7 @@ test('swaps the still image for the 3D moai once it is in view', async ({ page }
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await expect(still(page)).toHaveCount(1);
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -27,7 +27,7 @@ test('swaps the still image for the 3D moai once it is in view', async ({ page }
 test('has no rotate arrows, only the scroll and the drag turn it', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await expect(page.getByRole('button', { name: /Rotate the moai/ })).toHaveCount(0);
 });
@@ -35,7 +35,7 @@ test('has no rotate arrows, only the scroll and the drag turn it', async ({ page
 test('repaints with the new colours when the theme changes', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await page.getByRole('button', { name: 'Pause animations' }).click();
   await page.waitForTimeout(1200);
@@ -56,7 +56,7 @@ test('falls back to the still image without WebGL', async ({ page }) => {
     };
   });
   await page.goto('/en/');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(still(page)).toBeVisible();
   await expect(scene(page)).toHaveCount(0);
   await page.locator('footer').scrollIntoViewIfNeeded();
@@ -71,7 +71,7 @@ test('falls back when the 3D code cannot be downloaded', async ({ page }) => {
     else await route.fulfill({ response, body });
   });
   await page.goto('/en/');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
   await expect(still(page)).toBeVisible();
   await page.locator('footer').scrollIntoViewIfNeeded();
@@ -82,7 +82,7 @@ test('goes back to the still image when the WebGL context is lost', async ({ pag
   const errors = collectErrors(page);
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await scene(page).evaluate((c) => {
     const gl = (c as HTMLCanvasElement).getContext('webgl2') ?? (c as HTMLCanvasElement).getContext('webgl');
@@ -97,7 +97,7 @@ test('releases WebGL when leaving and coming back many times', async ({ page }) 
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   for (let i = 0; i < 8; i++) {
-    await page.locator('#about').scrollIntoViewIfNeeded();
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
     await expect(scene(page)).toBeVisible();
     await page.getByRole('link', { name: 'ApexFlow' }).first().click();
     await expect(page.locator('h1')).toHaveText('ApexFlow');
@@ -109,7 +109,7 @@ test('releases WebGL when leaving and coming back many times', async ({ page }) 
 test('never blocks scrolling or pinch-zoom on touch screens', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   // vertical panning and pinch-zoom stay with the browser; only a sideways swipe turns the moai
   expect(await scene(page).evaluate((c) => getComputedStyle(c).touchAction)).toBe('pan-y pinch-zoom');
@@ -121,7 +121,7 @@ test('a sideways swipe turns the moai on a phone', async ({ page, isMobile }) =>
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   // stop the automatic spin first, so only the finger moves it
   await page.getByRole('button', { name: 'Pause animations' }).click();
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await page.waitForTimeout(600);
   const before = await snapshot(page);
@@ -145,7 +145,7 @@ test.describe('with reduced motion', () => {
       if (response.url().endsWith('.js') && (await response.text()).includes('WebGLRenderer')) scripts.push(response.url());
     });
     await page.goto('/en/');
-    await page.locator('#about').scrollIntoViewIfNeeded();
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
     await expect(still(page)).toBeVisible();
     await expect(scene(page)).toHaveCount(0);
@@ -158,7 +158,7 @@ test.describe('without JavaScript', () => {
 
   test('shows the still moai', async ({ page }) => {
     await page.goto('/en/');
-    await page.locator('#about').scrollIntoViewIfNeeded();
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
     await expect(still(page)).toBeVisible();
   });
 });
@@ -194,13 +194,13 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   test.skip(isMobile, 'phones already spin it');
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await page.waitForTimeout(1200);
   const before = await snapshot(page);
   await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
   await page.getByRole('button', { name: 'Pause animations' }).click();
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   // the head still follows the pointer that just clicked the button (a reply to the user): let it settle
   await page.waitForTimeout(2500);
   const still = await snapshot(page);
@@ -213,7 +213,7 @@ test('its eyes follow the mouse', async ({ page, isMobile }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   const host = page.locator('app-moai-scene');
   await page.mouse.move(5, 120);
@@ -287,7 +287,7 @@ test('stays whole at the end of its section on desktop: no burst into cubes (rem
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await page.locator('#about').scrollIntoViewIfNeeded();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   // the width of the drawn moai: the columns that hold at least one opaque pixel
   const widthAt = async (progress: number): Promise<number> => {

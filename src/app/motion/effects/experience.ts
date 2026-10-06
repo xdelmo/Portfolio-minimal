@@ -78,6 +78,8 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
     if (i < 0 || !pin) return;
     // a frame later: the browser scrolls the focused element into view after focusin, which would undo this
     requestAnimationFrame(() => {
+      // the focus may have moved on meanwhile (a busy frame): never pull the page back to a card left behind
+      if (!items[i].contains(document.activeElement)) return;
       scrollTo({ top: pin.start + ((pin.end - pin.start) * i) / steps });
       // no scrub lag: the card is on top at once, where the scroll will keep it
       deck.progress(i / steps);

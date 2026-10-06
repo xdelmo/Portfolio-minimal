@@ -186,8 +186,8 @@ export const CONTENT_IT: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Sono entrato nel team frontend mentre finivo la laurea.',
       highlights: [
-        'Ho costruito ApexFlow, una dashboard per flussi di dati complessi, in Angular 19 con Signals.',
-        'Filtri e paginazione su grandi quantità di dati, permessi per ruolo, unit test.',
+        'Ho costruito ApexFlow, una dashboard per dati complessi, in Angular 19 con Signals.',
+        'Filtri e paginazione su grandi dataset, permessi per ruolo, unit test.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'Case study di ApexFlow' },
@@ -199,9 +199,9 @@ export const CONTENT_IT: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Nel team di prodotto di un gestionale enterprise per la cybersecurity.',
       highlights: [
-        'Porto i componenti legacy su Signals, con facade tra loro e lo store NgRx.',
-        'Un query builder per filtri avanzati su grandi quantità di dati, mostrati in Kendo Grid.',
-        'Un player video HTML5 su misura che cerca nel testo dei sottotitoli.',
+        'Componenti legacy portati su Signals, con facade sullo store NgRx.',
+        'Un query builder per filtri avanzati su big data, in Kendo Grid.',
+        'Un player video HTML5 su misura con ricerca nei sottotitoli.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },

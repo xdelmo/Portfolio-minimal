@@ -167,6 +167,20 @@ test.describe('experience', () => {
     expect(last.y + last.height).toBeLessThanOrEqual(title.y);
   });
 
+  // the smallest phone screen we test (iPhone 15): a card that does not fit whole under the header stops sticking
+  for (const locale of ['en', 'it']) {
+    test(`every job card fits under the header on a small phone (${locale})`, async ({ page, isMobile }) => {
+      test.skip(!isMobile, 'phones only');
+      await page.setViewportSize({ width: 393, height: 659 });
+      await page.goto(`/${locale}/`);
+      await ready(page);
+      const fits = await page.locator('#experience .timeline > li').evaluateAll((items) =>
+        items.map((li) => parseFloat(getComputedStyle(li).top) + li.getBoundingClientRect().height + 16 <= innerHeight),
+      );
+      expect(fits).toEqual(fits.map(() => true));
+    });
+  }
+
   test('the chapter track fills with the deck, marks the job on top and jumps to a job on click', async ({ page, isMobile }) => {
     test.skip(isMobile, 'the deck is desktop only');
     await page.goto('/en/');

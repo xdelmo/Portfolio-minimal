@@ -1,13 +1,14 @@
-export const SCROLL_SWING = 0.6; // radians the moai turns either way while its section crosses the screen
+// radians the moai turns towards the viewer while its section crosses the screen: from the camera's 45° to facing it
+export const SCROLL_SWING = Math.PI / 4;
 
 /** 0 while the section top is below the middle of the screen, 1 once its bottom is above it. */
 export function sectionProgress(top: number, height: number, viewport: number): number {
   return Math.min(1, Math.max(0, (viewport / 2 - top) / height));
 }
 
-/** Turns one way and back while the section scrolls: 0 at both ends, so the face is shown and the swap from the still image is invisible. */
+/** Turns to face the viewer and back while the section scrolls: 0 at both ends, so the swap from the still image is invisible. */
 export function scrollYaw(progress: number): number {
-  return Math.sin(progress * Math.PI * 2) * SCROLL_SWING;
+  return ((1 - Math.cos(progress * Math.PI * 2)) / 2) * SCROLL_SWING;
 }
 
 /** One breath of the idle moai, in milliseconds. */

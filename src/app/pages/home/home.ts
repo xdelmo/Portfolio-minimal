@@ -242,7 +242,8 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       }
       .about-moai {
         position: sticky;
-        top: var(--space-8);
+        // below the sticky header, never under it
+        top: calc(var(--header-h) + var(--space-8));
         justify-self: center;
       }
       .hero {

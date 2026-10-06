@@ -9,11 +9,12 @@ describe('moai motion', () => {
     expect(sectionProgress(-1000, 800, 900)).toBe(1);
   });
 
-  it('swings the moai and brings it back facing forward', () => {
+  // the camera sits at 45°: turning the other way would show its profile while the text beside it is being read
+  it('turns the moai towards the viewer in the middle of its section, never away, and back at both ends', () => {
     expect(scrollYaw(0)).toBe(0);
-    expect(scrollYaw(0.25)).toBeCloseTo(SCROLL_SWING);
-    expect(scrollYaw(0.75)).toBeCloseTo(-SCROLL_SWING);
+    expect(scrollYaw(0.5)).toBeCloseTo(SCROLL_SWING);
     expect(scrollYaw(1)).toBeCloseTo(0);
+    for (let p = 0; p <= 1; p += 0.05) expect(scrollYaw(p)).toBeGreaterThanOrEqual(0);
   });
 
   it('breathes: a small pitch that returns every BREATH_MS', () => {

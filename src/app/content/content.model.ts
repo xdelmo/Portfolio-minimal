@@ -65,6 +65,8 @@ export interface ExperienceItem {
 
 /** A degree or a certificate: listed under the jobs, never a card. */
 export interface StudyItem {
+  /** Its pixel item, the same one the player card shows for this achievement. */
+  sprite: SpriteName;
   period: string;
   title: string;
   org: string;

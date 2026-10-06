@@ -213,6 +213,7 @@ export const CONTENT_EN: SiteContent = {
   ],
   studies: [
     {
+      sprite: 'cap',
       period: '2026',
       title: 'BSc in Computer Engineering',
       org: 'Università Mercatorum',
@@ -220,6 +221,7 @@ export const CONTENT_EN: SiteContent = {
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
     {
+      sprite: 'trophy',
       period: '2026',
       title: 'Agile Masterclass',
       org: 'BIP × Joinrs',

@@ -1,27 +1,31 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StudyItem } from '../../content/content.model';
+import { QuestSprite } from '../side-quests/quest-sprite';
 
 /**
- * Degrees and certificates, under the jobs. Outside the pinned deck on purpose: a pinned section cannot be scrolled,
- * so anything below its fold would be out of reach while it is pinned (keyboard focus included).
+ * Degrees and certificates, under the jobs, as unlocked achievements: each one with the pixel item the player card
+ * gives it, built as it scrolls in (effects/dissolve.ts). Outside the pinned deck on purpose: a pinned section cannot
+ * be scrolled, so anything below its fold would be out of reach while it is pinned (keyboard focus included).
  */
 @Component({
   selector: 'app-experience-studies',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, QuestSprite],
   template: `
     <h3 i18n="@@home.experience.studies">Studies and certificates</h3>
     <ul>
       @for (study of studies(); track study.title) {
         <li>
-          <p class="period">{{ study.period }}</p>
-          <p>
-            <strong>{{ study.title }}</strong>, {{ study.org }}. {{ study.summary }}
+          <app-quest-sprite class="sprite" [name]="study.sprite" />
+          <div class="text">
+            <h4>{{ study.title }}</h4>
+            <p class="meta">{{ study.org }}, {{ study.period }}</p>
+            <p>{{ study.summary }}</p>
             @if (study.caseStudy; as cs) {
               <a [routerLink]="['/work', cs.slug]">{{ cs.label }}</a>
             }
-          </p>
+          </div>
         </li>
       }
     </ul>
@@ -45,22 +49,39 @@ import { StudyItem } from '../../content/content.model';
     }
     li {
       display: grid;
+      grid-template-columns: var(--space-8) 1fr;
+      column-gap: var(--space-3);
+      align-items: start;
+      padding: var(--space-3);
+      border: 1px solid var(--rule);
+    }
+    .sprite {
+      width: var(--space-8);
+      height: var(--space-8);
+    }
+    .text {
+      display: grid;
       gap: 4px;
+    }
+    h4 {
+      margin: 0;
+      font-size: var(--step-0);
+      font-weight: 600;
     }
     p {
       margin: 0;
     }
-    .period {
+    .meta {
       color: var(--fg-muted);
       font-size: var(--step--1);
     }
+    a {
+      justify-self: start;
+      margin-top: 4px;
+    }
     @include bp.up(md) {
-      li {
-        grid-template-columns: 12rem 1fr;
-        column-gap: var(--space-4);
-      }
-      .period {
-        padding-top: 0.2em;
+      ul {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   `,

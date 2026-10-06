@@ -66,6 +66,7 @@ describe('content', () => {
     expect(CONTENT_IT.experience.length).toBe(CONTENT_EN.experience.length);
     expect(CONTENT_IT.experience.map((e) => [e.highlights.length, e.tags, e.caseStudy?.slug])).toEqual(CONTENT_EN.experience.map((e) => [e.highlights.length, e.tags, e.caseStudy?.slug]));
     expect(CONTENT_IT.studies.length).toBe(CONTENT_EN.studies.length);
+    expect(CONTENT_IT.privacy.sections.map((x) => x.paragraphs.length)).toEqual(CONTENT_EN.privacy.sections.map((x) => x.paragraphs.length));
     expect(CONTENT_IT.sideQuests.length).toBe(CONTENT_EN.sideQuests.length);
     expect(CONTENT_IT.stack.map((g) => g.items)).toEqual(CONTENT_EN.stack.map((g) => g.items));
     expect(CONTENT_IT.glance.length).toBe(CONTENT_EN.glance.length);

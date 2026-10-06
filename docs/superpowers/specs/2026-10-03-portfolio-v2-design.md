@@ -276,7 +276,7 @@ Tracciato anche nelle issue GitHub con etichetta `v2`:
 
 - **Blog** dai post LinkedIn — [#1](https://github.com/xdelmo/Portfolio-minimal/issues/1)
 - ~~**Easter egg in stile videogioco** (codice Konami, livello, XP, achievement) — [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2)~~ fatto nel piano 10
-- **Pagine Privacy e Imprint**, se si introducono analytics o cookie — [#3](https://github.com/xdelmo/Portfolio-minimal/issues/3)
+- ~~**Pagine Privacy e Imprint** — [#3](https://github.com/xdelmo/Portfolio-minimal/issues/3)~~ Privacy fatta il 2026-10-06 (`/privacy`, dal footer); l'imprint non serve per un sito personale non commerciale in Italia. Statistiche rimandate: quando si aggiungono (senza cookie, dati in UE), la pagina Privacy va aggiornata.
 
 Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle lingue, repo da rendere pubbliche) e la pulizia che richiede l'utente (issue #2 da chiudere, branch remoti mergiati) stanno in `docs/launch/launch-kit.md` §7 e §8. Il blog parte solo dai post originali dell'utente.
 
@@ -330,3 +330,4 @@ Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle ling
 | 2026-10-06 | Pulizia: via il token `--orb-ink` e `@angular/forms`, mai usati dopo il piano 12; worktree e branch locali mergiati rimossi (PR #20) | "fai un controllo generale su tutta la repo" |
 | 2026-10-06 | Esperienza a capitoli (piano 13, spec `2026-10-06-portfolio-v2-experience-chapters-design.md`): solo i lavori nel mazzo, in ordine cronologico (finisce sul ruolo attuale), ognuno con punti, tag e link al case study; laurea e certificato in "Studi e certificati"; sopra il mazzo una traccia a capitoli a pixel che si riempie e porta alla carta con un clic | "la sezione esperienza è scarna sia di contenuto che di interazione"; date solo per anni |
 | 2026-10-06 | About con l'uso quotidiano di Claude Code e il server MCP come prova; Claude Code tra gli strumenti di ogni giorno, MCP nei progetti personali (PR #24) | "sarebbe da aggiungere qualche riferimento allo studio e utilizzo della AI?" |
+| 2026-10-06 | Pagina Privacy bilingue (`/en/privacy`, `/it/privacy`), linkata dal footer, `noindex`: dice esattamente cosa tiene il sito nel browser (cookie `nf_lang`, `theme`, tre voci di sessione), l'hosting Netlify, l'email, i diritti GDPR e il Garante. Nessuna statistica per ora | "Analytics + privacy" → scelta "Solo privacy, analytics dopo"; issue #3 |

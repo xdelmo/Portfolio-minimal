@@ -218,6 +218,48 @@ export const CONTENT_IT: SiteContent = {
       summary: 'Certificato sui metodi di lavoro Agile. Ho vinto il quiz finale.',
     },
   ],
+  privacy: {
+    updated: 'Ultimo aggiornamento: 6 ottobre 2026',
+    intro:
+      'Questo sito è il mio portfolio personale. Non ha statistiche, pubblicità, tracciamento né script di terze parti: tiene nel tuo browser solo quello che serve a ricordare le tue scelte.',
+    sections: [
+      {
+        heading: 'Chi è il titolare',
+        paragraphs: ['Il titolare del trattamento è Emanuele Del Monte. Per qualsiasi domanda sui tuoi dati scrivi a info@emanueledelmonte.it.'],
+      },
+      {
+        heading: 'Cosa tiene il sito nel tuo browser',
+        paragraphs: [
+          'Il cookie nf_lang ricorda la lingua che hai scelto con il selettore, così la home si apre in quella lingua la volta successiva. Dura un anno e arriva al server solo per scegliere la lingua.',
+          'La voce theme nel local storage ricorda se hai scelto il tema chiaro o quello scuro.',
+          "Tre voci nel session storage (intro, pausa delle animazioni e tenda della lingua) ricordano, finché non chiudi la scheda, se l'intro iniziale è già stata mostrata, se hai messo in pausa le animazioni e verso quale lingua stai passando.",
+          'Sono preferenze tecniche: non identificano nessuno, non vengono condivise e non richiedono consenso. Puoi cancellarle quando vuoi dalle impostazioni del browser.',
+        ],
+      },
+      {
+        heading: 'Hosting',
+        paragraphs: [
+          "Il sito è ospitato da Netlify, Inc. Come ogni server web, tratta i dati tecnici di ogni richiesta (indirizzo IP, browser, pagina e orario) per consegnare le pagine e tenere il servizio sicuro. La base giuridica è il mio legittimo interesse a far funzionare il sito. Netlify ha sede negli Stati Uniti e il suo accordo sul trattamento dei dati copre i trasferimenti fuori dall'UE.",
+        ],
+      },
+      {
+        heading: 'Se mi scrivi',
+        paragraphs: [
+          'Se mi mandi un\'email, uso il tuo indirizzo e il tuo messaggio solo per risponderti, e li conservo per il tempo che serve alla conversazione. Non li condivido mai.',
+        ],
+      },
+      {
+        heading: 'Link ad altri siti',
+        paragraphs: ['I link a GitHub, LinkedIn e alle demo dei progetti portano a siti con le loro informative sulla privacy.'],
+      },
+      {
+        heading: 'I tuoi diritti',
+        paragraphs: [
+          'Puoi chiedere di accedere ai tuoi dati, correggerli o cancellarli, limitarne il trattamento o opporti, e riceverli in un formato portabile (GDPR, articoli da 15 a 21): scrivi a info@emanueledelmonte.it. Puoi anche presentare reclamo al Garante per la protezione dei dati personali (garanteprivacy.it).',
+        ],
+      },
+    ],
+  },
   sideQuests: [
     {
       title: 'PokèVerba',

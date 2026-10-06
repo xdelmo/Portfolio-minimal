@@ -126,8 +126,16 @@ export interface SiteContent {
   projects: readonly Project[];
   experience: readonly ExperienceItem[];
   studies: readonly StudyItem[];
+  privacy: PrivacyContent;
   sideQuests: readonly SideQuest[];
   /** The player card of the Konami code easter egg (game/player-card.ts). */
   game: Game;
   stack: readonly StackGroup[];
+}
+
+/** The privacy page: what the site really stores and who handles it. */
+export interface PrivacyContent {
+  updated: string;
+  intro: string;
+  sections: readonly { heading: string; paragraphs: readonly string[] }[];
 }

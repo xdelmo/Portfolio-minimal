@@ -326,6 +326,10 @@
         <source>Studies and certificates</source>
         <target>Studi e certificati</target>
       </trans-unit>
+      <trans-unit id="footer.privacy" datatype="html">
+        <source>Privacy</source>
+        <target>Privacy</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

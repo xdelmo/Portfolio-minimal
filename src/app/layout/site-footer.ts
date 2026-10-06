@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CONTENT } from '../content/content';
 
 /**
- * The end of every page: the year, a way back up, my profiles, and the door to the easter egg (craft.wild.as closes
+ * The end of every page: the year, a way back up, my profiles, the privacy page, and the door to the easter egg (craft.wild.as closes
  * with a game too). The email is a link named "Email", so the home page does not print the address twice.
  */
 @Component({
   selector: 'app-site-footer',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <footer class="site-footer container band band--ink">
       <p>© {{ year }} {{ content.person.name }}</p>
@@ -16,6 +18,7 @@ import { CONTENT } from '../content/content';
         <li><a [href]="'mailto:' + content.person.email" i18n="@@footer.email">Email</a></li>
         <li><a [href]="content.person.linkedin" rel="me">LinkedIn</a></li>
         <li><a [href]="content.person.github" rel="me">GitHub</a></li>
+        <li><a routerLink="/privacy" i18n="@@footer.privacy">Privacy</a></li>
         @if (ready()) {
           <!-- game-trigger.ts listens for clicks on [data-press-start]; it needs JavaScript, so it appears only then -->
           <li><button type="button" class="press-start" data-press-start i18n="@@footer.pressStart">Press start</button></li>

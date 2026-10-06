@@ -8,6 +8,7 @@ import { PixelField } from '../../pixel-field/pixel-field';
 import { PixelDissolve } from '../../pixel-dissolve/pixel-dissolve';
 import { Thread } from '../../layout/thread';
 import { AtAGlance } from '../../sections/at-a-glance/at-a-glance';
+import { ExperienceStudies } from '../../sections/experience-timeline/experience-studies';
 import { ExperienceTimeline } from '../../sections/experience-timeline/experience-timeline';
 import { SideQuests } from '../../sections/side-quests/side-quests';
 import { StackList } from '../../sections/stack-list/stack-list';
@@ -30,7 +31,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -64,8 +65,12 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     </section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title">
-      <h2 id="experience-title" i18n="@@home.experience.title">Experience</h2>
-      <app-experience-timeline [items]="content.experience" />
+      <!-- only the deck is pinned (motion/effects/experience.ts); the studies below stay in the page flow -->
+      <div class="deck">
+        <h2 id="experience-title" i18n="@@home.experience.title">Experience</h2>
+        <app-experience-timeline [items]="content.experience" />
+      </div>
+      <app-experience-studies [studies]="content.studies" />
     </section>
 
     <section id="side-quests" class="section container band band--lavender" aria-labelledby="side-quests-title">
@@ -281,11 +286,14 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       position: relative;
       z-index: 1;
     }
-    .section {
+    .section,
+    .deck {
       display: grid;
       gap: var(--space-4);
-      padding-block: var(--space-8);
       scroll-margin-top: var(--space-2);
+    }
+    .section {
+      padding-block: var(--space-8);
     }
   `,
 })

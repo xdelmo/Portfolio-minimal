@@ -314,6 +314,18 @@
         <source>From the middle out: what I use every day, what runs in production, what I try in my side projects.</source>
         <target>Dal centro verso l&apos;esterno: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.</target>
       </trans-unit>
+      <trans-unit id="home.experience.chapters" datatype="html">
+        <source>Career chapters</source>
+        <target>Capitoli della carriera</target>
+      </trans-unit>
+      <trans-unit id="home.experience.tools" datatype="html">
+        <source>Tools</source>
+        <target>Strumenti</target>
+      </trans-unit>
+      <trans-unit id="home.experience.studies" datatype="html">
+        <source>Studies and certificates</source>
+        <target>Studi e certificati</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

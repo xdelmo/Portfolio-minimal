@@ -123,18 +123,18 @@ test.describe('experience', () => {
     test.skip(isMobile, 'no pin on phones');
     await page.goto('/en/');
     await ready(page);
-    await expect(page.locator('.pin-spacer #experience')).toHaveCount(1);
-    const entries = page.locator('#experience li');
+    await expect(page.locator('#experience .pin-spacer > .deck')).toHaveCount(1);
+    const entries = page.locator('#experience .timeline > li');
     const last = entries.last();
     // scroll to the end of the pinned stretch: the last entry has arrived on top of the deck. Scroll again on every
     // attempt, because late content (the moai, images) can still move the pin while the page settles
     const lastAtEnd = () =>
       page.evaluate(() => {
         const spacer = document.querySelector<HTMLElement>('.pin-spacer');
-        const section = document.getElementById('experience');
+        const section = document.querySelector<HTMLElement>('#experience .deck');
         // the pin ends once the spacer's extra height (spacer minus section) has been scrolled
         if (spacer && section) window.scrollTo(0, spacer.getBoundingClientRect().top + scrollY + spacer.offsetHeight - section.offsetHeight);
-        const items = document.querySelectorAll('#experience li');
+        const items = document.querySelectorAll('#experience .timeline > li');
         // vertical offset of the last card: 0 once it has slid onto the deck
         return Math.round(new DOMMatrix(getComputedStyle(items[items.length - 1]).transform).m42);
       });
@@ -153,7 +153,7 @@ test.describe('experience', () => {
     await page.goto('/en/');
     await ready(page);
     await expect(page.locator('.pin-spacer')).toHaveCount(0);
-    const cards = await page.locator('#experience li').evaluateAll((items) =>
+    const cards = await page.locator('#experience .timeline > li').evaluateAll((items) =>
       items.map((li) => ({ position: getComputedStyle(li).position, top: parseFloat(getComputedStyle(li).top) })),
     );
     expect(cards.every((c) => c.position === 'sticky')).toBe(true);
@@ -162,15 +162,36 @@ test.describe('experience', () => {
       window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * 0.5);
     });
     const title = await page.locator('#stack h2').boundingBox();
-    const last = await page.locator('#experience li').last().boundingBox();
+    const last = await page.locator('#experience .timeline > li').last().boundingBox();
     if (!title || !last) throw new Error('missing boxes');
     expect(last.y + last.height).toBeLessThanOrEqual(title.y);
+  });
+
+  test('the chapter track fills with the deck, marks the job on top and jumps to a job on click', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'the deck is desktop only');
+    await page.goto('/en/');
+    await ready(page);
+    await expect(page.locator('#experience .pin-spacer > .deck')).toHaveCount(1);
+    const chapters = page.locator('#experience nav.chapters a');
+    await expect(chapters).toHaveCount(3);
+    // at the start of the pin only the first chapter is lit and current
+    await page.evaluate(() => {
+      const spacer = document.querySelector<HTMLElement>('.pin-spacer');
+      if (spacer) window.scrollTo(0, spacer.getBoundingClientRect().top + scrollY - 96 + 2);
+    });
+    await expect(chapters.first()).toHaveAttribute('aria-current', 'step');
+    await expect.poll(() => chapters.last().evaluate((a) => getComputedStyle(a).getPropertyValue('--fill'))).toBe('0');
+    // a click on the current job's chapter scrolls the pin to where its card is on top
+    await chapters.last().click();
+    await expect(chapters.last()).toHaveAttribute('aria-current', 'step', { timeout: 5000 });
+    await expect(page.locator('#exp-2')).toBeFocused();
+    await expect.poll(() => page.locator('#exp-2').evaluate((li) => Math.round(new DOMMatrix(getComputedStyle(li).transform).m42)), { timeout: 5000 }).toBe(0);
   });
 
   test('is not sticky on desktop', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
     await page.goto('/en/');
-    expect(await page.locator('#experience li').first().evaluate((li) => getComputedStyle(li).position)).not.toBe('sticky');
+    expect(await page.locator('#experience .timeline > li').first().evaluate((li) => getComputedStyle(li).position)).not.toBe('sticky');
   });
 });
 
@@ -255,7 +276,7 @@ test('with enlarged text, an experience card that would not fit under the header
   // every card is either free to scroll or short enough to be read whole while it sticks
   await expect
     .poll(() =>
-      page.locator('#experience li').evaluateAll((items) =>
+      page.locator('#experience .timeline > li').evaluateAll((items) =>
         items.every((li) => getComputedStyle(li).position !== 'sticky' || parseFloat(getComputedStyle(li).top) + li.getBoundingClientRect().height <= innerHeight),
       ),
     )

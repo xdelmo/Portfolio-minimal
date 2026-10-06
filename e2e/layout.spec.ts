@@ -43,7 +43,8 @@ test('the header stays at the top while the page scrolls', async ({ page }) => {
     document.querySelector('app-site-header header')?.getBoundingClientRect().bottom ?? 0,
     document.querySelector('#experience h2')?.getBoundingClientRect().top ?? 0,
   ]);
-  expect(titleTop).toBeGreaterThanOrEqual(headerBottom);
+  // Firefox lands the anchor on fractional pixels (95.85 under a 96px header): allow less than one pixel
+  expect(titleTop).toBeGreaterThanOrEqual(headerBottom - 1);
 });
 
 test.describe('contact and footer', () => {

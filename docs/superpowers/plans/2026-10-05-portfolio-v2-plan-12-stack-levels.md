@@ -4,7 +4,7 @@
 
 ## Stato (2026-10-06): completato
 
-- Etichette dei livelli: "Every day / Ogni giorno", "In production / In produzione", "In side projects / Nei progetti personali", più una frase sotto il titolo che spiega la lettura dal centro verso l'esterno.
+- Etichette dei livelli: "Every day / Ogni giorno", "In production / In produzione", "In side projects / Nei progetti personali", più una frase sotto il titolo che nomina i tre livelli (2026-10-06: non parla più di "centro", perché su telefono i livelli sono righe, non anelli).
 - Il diagramma non supera l'altezza dello schermo sotto la navbar (a 720 px il nome dell'anello esterno finiva sotto l'header).
 
 **Goal:** The tools section says how deep each tool goes: three levels (every day, in production and in my thesis, in side projects) drawn as concentric rings on desktop and as steps on phones, instead of four categories repeated by four orbs.

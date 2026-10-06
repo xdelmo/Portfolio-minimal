@@ -82,7 +82,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
 
     <section id="stack" class="section container" aria-labelledby="stack-title">
       <h2 id="stack-title" i18n="@@home.stack.title">Tools I use</h2>
-      <p class="muted" i18n="@@home.stack.lede">From the middle out: what I use every day, what runs in production, what I try in my side projects.</p>
+      <p class="muted" i18n="@@home.stack.lede">Three levels: what I use every day, what runs in production, what I try in my side projects.</p>
       <app-stack-list [groups]="content.stack" />
     </section>
 

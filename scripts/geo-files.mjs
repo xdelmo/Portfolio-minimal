@@ -23,7 +23,9 @@ export function homeMarkdown(c, locale) {
     c.aboutStatement,
     c.about,
     `## ${l.experience}`,
-    list(c.experience, (e) => `- ${e.period} — ${e.title}, ${e.org}: ${e.summary}`),
+    // newest first here: the page tells the story oldest first, a reader who skims wants the current job
+    list([...c.experience].reverse(), (e) => `- ${e.period} — ${e.title}, ${e.org}: ${[e.summary, ...e.highlights].join(' ')}`),
+    list(c.studies, (s) => `- ${s.period} — ${s.title}, ${s.org}: ${s.summary}`),
     `## ${l.stack}`,
     list(c.stack, (g) => `- ${g.name}: ${g.items.join(', ')}`),
     `## ${l.contact}`,

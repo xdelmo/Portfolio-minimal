@@ -49,11 +49,33 @@ export interface Project {
   caseStudy: CaseStudyBody;
 }
 
+/** A job: a card in the deck, with a chapter in the track above it. */
 export interface ExperienceItem {
+  period: string;
+  /** The role in a few words, for the chapter track. */
+  short: string;
+  title: string;
+  org: string;
+  summary: string;
+  highlights: readonly string[];
+  tags: readonly string[];
+  /** The related case study, if any. */
+  caseStudy?: CaseStudyLink;
+}
+
+/** A degree or a certificate: listed under the jobs, never a card. */
+export interface StudyItem {
   period: string;
   title: string;
   org: string;
   summary: string;
+  caseStudy?: CaseStudyLink;
+}
+
+export interface CaseStudyLink {
+  slug: string;
+  /** The link text, naming the project. */
+  label: string;
 }
 
 export interface Achievement {
@@ -103,6 +125,7 @@ export interface SiteContent {
   glance: readonly GlanceItem[];
   projects: readonly Project[];
   experience: readonly ExperienceItem[];
+  studies: readonly StudyItem[];
   sideQuests: readonly SideQuest[];
   /** The player card of the Konami code easter egg (game/player-card.ts). */
   game: Game;

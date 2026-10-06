@@ -18,7 +18,11 @@ const content = {
   about: 'About.',
   glance: [{ label: 'Role', value: 'FE' }],
   projects: [project],
-  experience: [{ period: '2026', title: 'Engineer', org: 'IPS', summary: 'Work.' }],
+  experience: [
+    { period: '2024', title: 'Developer', org: 'Agency', summary: 'Sites.', highlights: ['Flexie.'] },
+    { period: '2026', title: 'Engineer', org: 'IPS', summary: 'Work.', highlights: ['Tables.', 'Signals.'] },
+  ],
+  studies: [{ period: '2026', title: 'BSc', org: 'Uni', summary: 'Graduated.' }],
   sideQuests: [{ title: 'Quest', summary: 'Fun.', tags: ['WP'], repo: 'https://github.com/x/quest' }],
   stack: [{ name: 'Front end', items: ['Angular'] }],
 };
@@ -26,9 +30,12 @@ const content = {
 test('home markdown starts with the person and lists every section as plain text', () => {
   const md = homeMarkdown(content, 'en');
   assert.match(md, /^# Ada — Frontend Engineer\n\nHeadline\.\n\nLede\. Open from March\./);
-  for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work.', '- Front end: Angular', 'Email: a@x.it', '- [Quest](https://github.com/x/quest): Fun.', 'I care.\n\nAbout.']) {
+  for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work. Tables. Signals.', '- Front end: Angular', 'Email: a@x.it', '- [Quest](https://github.com/x/quest): Fun.', 'I care.\n\nAbout.']) {
     assert.ok(md.includes(part), part);
   }
+  // jobs newest first for readers who skim, then studies
+  assert.ok(md.indexOf('Engineer, IPS') < md.indexOf('Developer, Agency'));
+  assert.ok(md.includes('- 2026 — BSc, Uni: Graduated.'));
   // the CV is not online (sensitive data), and the site no longer mentions it
   assert.ok(!md.includes('CV'));
 });

@@ -66,7 +66,7 @@ test.describe('without JavaScript', () => {
   test('content is still there', async ({ page }) => {
     await page.goto('/en/');
     await expect(page.locator('h1')).toContainText('Angular');
-    await expect(page.getByRole('link', { name: 'ApexFlow' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'ApexFlow', exact: true })).toBeVisible();
   });
 });
 

@@ -68,6 +68,7 @@ Un iPhone e un Android:
 - [ ] **Lingue** nel blocco "At a glance": quali e a che livello (per esempio "Italiano madrelingua, inglese B2")?
 - [ ] **Titolo ufficiale**: `Frontend Engineer` (ora sul sito) oppure `Software Engineer, Frontend Specialist` come da contratto? Deve essere uguale su sito, LinkedIn e GitHub.
 - [ ] **Repo ancora private** citate nei progetti e nelle side quest: i link portano già lì; rendile pubbliche dopo una scansione dei segreti (vedi la riga sotto).
+- [ ] **Esperienza**: controlla con LinkedIn gli anni dell'agenzia (sul sito `2024 – 2026`, ricavati da "circa due anni") e i punti di ogni lavoro; incollami la sezione Esperienza di LinkedIn e li allineo.
 - [ ] **Bot Telegram**: nel file `.env.example` di una repo pubblica ci sono due id Telegram che sembrano reali. Se lo sono, vanno sostituiti con valori finti.
 
 ## 8. Pulizia che richiede te

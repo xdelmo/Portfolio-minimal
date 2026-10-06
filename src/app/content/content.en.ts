@@ -175,34 +175,55 @@ export const CONTENT_EN: SiteContent = {
   ],
   experience: [
     {
-      period: '2026 – present',
-      title: 'Software Engineer, Frontend Specialist',
-      org: 'IPS S.p.A.',
-      summary: 'Enterprise front ends in Angular: data-heavy tables with server-side pagination and filtering, reactive state with Signals and RxJS.',
+      period: '2024 – 2026',
+      short: 'Frontend Developer',
+      title: 'Frontend Developer',
+      org: 'Web agency',
+      summary: 'About two years building CRMs, e-commerce sites and tools for clients.',
+      highlights: [
+        'Flexie, a B2B configurator for flexible packaging: more than 100 combinations of materials, formats and accessories, priced in real time.',
+        'CRMs and e-commerce sites in production, where I learned why maintainable code matters.',
+      ],
+      tags: ['JavaScript', 'jQuery', 'PHP'],
     },
     {
       period: '2026',
+      short: 'Intern',
       title: 'Software engineering intern',
       org: 'IPS S.p.A.',
-      summary: 'Joined the frontend team while finishing my degree, working on the same problems I then tackled in my thesis.',
+      summary: 'Joined the frontend team while finishing my degree.',
+      highlights: [
+        'Worked on the problems my thesis then tackled: large tables, server-side filtering, predictable state.',
+      ],
+      tags: ['Angular', 'RxJS'],
+      caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
+    {
+      period: '2026 – present',
+      short: 'Frontend Specialist',
+      title: 'Software Engineer, Frontend Specialist',
+      org: 'IPS S.p.A.',
+      summary: 'Enterprise front ends in Angular, built around large amounts of data.',
+      highlights: [
+        'Data-heavy tables with pagination and filtering done on the server.',
+        'Reactive state with Signals and RxJS.',
+      ],
+      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'TypeScript'],
+    },
+  ],
+  studies: [
     {
       period: '2026',
       title: 'BSc in Computer Engineering',
       org: 'Università Mercatorum',
-      summary: 'Graduated in April 2026 with ApexFlow, a full-stack CRM dashboard built with Angular and Spring Boot.',
+      summary: 'Graduated in April 2026 with ApexFlow, a full-stack CRM dashboard in Angular and Spring Boot.',
+      caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
     {
       period: '2026',
       title: 'Agile Masterclass',
       org: 'BIP × Joinrs',
       summary: 'Certificate in Agile ways of working. I won the final quiz.',
-    },
-    {
-      period: 'About 2 years',
-      title: 'Frontend Developer',
-      org: 'Web agency',
-      summary: 'CRMs, e-commerce sites and Flexie, a B2B configurator for flexible packaging that handles more than 100 combinations of materials, formats and accessories with real-time pricing.',
     },
   ],
   sideQuests: [

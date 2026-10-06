@@ -44,8 +44,8 @@ test('while the experience deck is pinned the thread stands still with it, and i
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/en/');
   await expect(page.locator('#experience ol.is-stacked')).toHaveCount(1);
-  const pinTop = await page.locator('#experience').evaluate((el) => (el.parentElement?.getBoundingClientRect().top ?? 0) + scrollY);
-  const pinLength = await page.locator('#experience').evaluate((el) => (el.parentElement?.offsetHeight ?? 0) - el.offsetHeight);
+  const pinTop = await page.locator('#experience .deck').evaluate((el) => (el.parentElement?.getBoundingClientRect().top ?? 0) + scrollY);
+  const pinLength = await page.locator('#experience .deck').evaluate((el) => (el.parentElement?.offsetHeight ?? 0) - el.offsetHeight);
   // the experience node sits on its title, and the dashes keep their place on screen
   const sample = () =>
     page.evaluate(() => {

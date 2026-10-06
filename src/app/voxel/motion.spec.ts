@@ -79,6 +79,28 @@ describe('bubbleCells', () => {
     const all = new Set(cells.map(key));
     expect(cells.every((c) => all.has(key({ ...c, x: -c.x })))).toBe(true);
   });
+
+  // the ball hangs GUM_DROP rows below the lips: without a neck it floats in front of the mouth, seen from the side
+  it('is joined to the lips: a pink neck from the mouth, every cell touching the next', () => {
+    const cells = bubbleCells();
+    const key = (x: number, y: number, z: number) => `${String(x)},${String(y)},${String(z)}`;
+    const all = new Set(cells.map((c) => key(c.x, c.y, c.z)));
+    const lips = key(0, GUM_DROP, 0);
+    expect(all.has(lips)).toBe(true);
+    const seen = new Set([lips]);
+    const queue = [lips];
+    while (queue.length) {
+      const [x, y, z] = (queue.shift() ?? '').split(',').map(Number);
+      for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) {
+        const next = key(x + dx, y + dy, z + dz);
+        if (all.has(next) && !seen.has(next)) {
+          seen.add(next);
+          queue.push(next);
+        }
+      }
+    }
+    expect(seen.size).toBe(all.size);
+  });
 });
 
 describe('GUM_LIPS', () => {

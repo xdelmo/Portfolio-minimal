@@ -10,12 +10,22 @@ interface Box { x: number; y: number; w: number; h: number }
 const overlap = (a: Box, b: Box) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 
 test.describe('tools by level', () => {
-  test('three levels from the middle out: every day, in production, in side projects', async ({ page }) => {
+  test('three levels: every day, in production, in side projects', async ({ page }) => {
     await page.goto('/en/');
     await expect(page.locator('#stack .level h3')).toHaveText(['Every day', 'In production', 'In side projects']);
     await expect(page.locator('#stack .level').first().getByText('Angular', { exact: true })).toBeVisible();
-    await expect(page.locator('#stack')).toContainText('From the middle out');
   });
+
+  // the rings are a desktop layout: phones show stepped rows, so the lede must not speak of a middle or of circles
+  for (const [lang, lede] of [
+    ['en', 'Three levels: what I use every day, what runs in production, what I try in my side projects.'],
+    ['it', 'Tre livelli: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.'],
+  ] as const) {
+    test(`${lang}: the lede is true on every screen`, async ({ page }) => {
+      await page.goto(`/${lang}/`);
+      await expect(page.locator('#stack p.muted')).toHaveText(lede);
+    });
+  }
 
   for (const lang of ['en', 'it']) {
     for (const [width, height] of [[1024, 900], [1440, 720]]) {

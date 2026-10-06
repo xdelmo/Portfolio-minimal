@@ -58,7 +58,7 @@ Spend boldness here, keep everything else calm:
 5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page, and at the foot of the hero: they form as they scroll in and crumble away as they rise towards the header. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
 7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way.
-8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets.
+8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets. Near a section `h2` the pixel cursor becomes a pixel arrow pointing at the title's words (`motion/arrow.ts`): drawn as lines on 8px cells, in eight directions only, because in between it smudges; never over the words themselves.
 
 A new section gets **one** idea in this family, not a new visual language.
 

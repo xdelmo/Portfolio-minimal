@@ -327,3 +327,22 @@ test('stays whole at the end of its section on desktop: no burst into cubes (rem
   await expect.poll(async () => (end = await widthAt(0.97))).toBeGreaterThan(0);
   expect(end).toBeLessThan(middle * 1.25);
 });
+
+// desktop: the moai stays beside the text as it scrolls, fully below the sticky header, at least 400px tall
+for (const height of [720, 900]) {
+  test(`on desktop the moai pins below the header, whole, beside the text (${String(height)}px tall)`, async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height });
+    await page.goto('/en/');
+    await page.evaluate(() => {
+      const about = document.querySelector('#about');
+      if (about) scrollTo(0, about.getBoundingClientRect().top + scrollY + 300);
+    });
+    const [headerBottom, top, bottom] = await page.evaluate(() => {
+      const moai = document.querySelector('app-moai-figure')?.getBoundingClientRect();
+      return [document.querySelector('app-site-header header')?.getBoundingClientRect().bottom ?? 0, moai?.top ?? 0, moai?.bottom ?? 0];
+    });
+    expect(top).toBeGreaterThanOrEqual(headerBottom + 56);
+    expect(bottom).toBeLessThanOrEqual(height - 56);
+    expect(bottom - top).toBeGreaterThanOrEqual(400);
+  });
+}

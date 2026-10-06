@@ -47,11 +47,11 @@ import { MoaiScene } from './moai-scene';
     .covered {
       visibility: hidden;
     }
-    // shorter than the about text, so the sticky column has room to pin it
     @include bp.up(lg) {
       :host {
         width: auto;
-        height: min(22rem, 60svh);
+        // shorter than the about text, so the sticky column has room to pin it, and never taller than the screen below the header
+        height: min(26rem, calc(100svh - var(--header-h) - 2 * var(--space-8)));
       }
     }
   `,

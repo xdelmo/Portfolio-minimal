@@ -15,6 +15,9 @@ export interface Voxel {
 /** Room around the moai, as a multiple of its size, so it stays in frame at any angle. */
 export const MOAI_FRAME = 1.3;
 
+/** Extra canvas on each side of the figure, as a fraction of its width: room for the bubble when the moai turns. */
+export const MOAI_BLEED = 0.3;
+
 export const MOAI_BOUNDS = { minX: -5, maxX: 5, minY: 0, maxY: 24, minZ: -3, maxZ: 5 } as const;
 
 /** Shape only: the colour a cell has before moss and weathering, or null when it is empty. */

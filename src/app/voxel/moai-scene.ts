@@ -24,7 +24,7 @@ import {
   WebGLRenderer,
 } from 'three';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
+import { MOAI_BLEED, MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
 import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
 
@@ -179,7 +179,8 @@ export class MoaiScene {
     const sx = (bounds.minX + bounds.width / 2) / COS30;
     const sy = 2 * (bounds.minY + bounds.height / 2);
     const target = new Vector3((sx + sy) / 2, 0, (sy - sx) / 2);
-    const halfW = (bounds.width * ISO_TO_WORLD * MOAI_FRAME) / 2;
+    // the canvas is wider than the figure by MOAI_BLEED on each side, so the moai keeps its size and the bubble its room
+    const halfW = ((bounds.width * ISO_TO_WORLD * MOAI_FRAME) / 2) * (1 + 2 * MOAI_BLEED);
     const halfH = (bounds.height * ISO_TO_WORLD * MOAI_FRAME) / 2;
     const camera = new OrthographicCamera(-halfW, halfW, halfH, -halfH, 0.1, 200);
     camera.position.copy(target).add(new Vector3(50, 50, 50));

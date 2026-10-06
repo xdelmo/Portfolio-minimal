@@ -44,6 +44,23 @@ test.describe('intro', () => {
     await expect(page.locator('.site-intro')).toBeHidden({ timeout: 5000 });
   });
 
+  // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding
+  // the page past the CSS fallback, which then finishes the lift on time
+  test('lifts by the CSS fallback time even when the motion script comes late', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    let loaded = false;
+    await page.route('**/*.js', async (route) => {
+      if (loaded) await new Promise((resolve) => setTimeout(resolve, 2300));
+      await route.continue();
+    });
+    page.on('load', () => {
+      loaded = true;
+    });
+    await page.goto('/en/');
+    await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 8000 });
+    expect(await page.evaluate(() => performance.now())).toBeLessThan(3900);
+  });
+
   // phones skip it: it would delay the first paint, and the page is the point there
   test.describe('on a phone-sized screen', () => {
     test.use({ viewport: { width: 390, height: 844 } });

@@ -93,6 +93,8 @@ test('goes back to the still image when the WebGL context is lost', async ({ pag
 });
 
 test('releases WebGL when leaving and coming back many times', async ({ page }) => {
+  // eight round trips take about 30s on WebKit in CI (measured from its trace): a stress test, not a hang
+  test.slow();
   const errors = collectErrors(page);
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
@@ -317,8 +319,11 @@ test('stays whole at the end of its section on desktop: no burst into cubes (rem
       return (max - min) / copy.width;
     });
   };
-  const middle = await widthAt(0.5);
-  const end = await widthAt(0.97);
-  expect(middle).toBeGreaterThan(0);
+  // WebKit may hand back an empty WebGL buffer between frames (-1 = no opaque pixel): read until a frame is there,
+  // or an empty end frame would pass the comparison by itself
+  let middle = -1;
+  await expect.poll(async () => (middle = await widthAt(0.5))).toBeGreaterThan(0);
+  let end = -1;
+  await expect.poll(async () => (end = await widthAt(0.97))).toBeGreaterThan(0);
   expect(end).toBeLessThan(middle * 1.25);
 });

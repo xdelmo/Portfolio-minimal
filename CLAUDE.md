@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Every feature or fix gets its own branch off `v2` (`feat/<topic>`, `fix/<topic>`), never a direct commit on `v2`.
 - When `npm run verify` exits 0: push the branch, open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
 - The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`.
+- A WebKit or iPhone failure cannot be reproduced here (macOS 14): `gh run download <run-id> -n reports` gets the failed run's `test-results`; a test with a `-retry1` folder failed twice, one without it passed on retry. Read the steps and their durations from `trace.zip` before changing anything, and fix the cause rather than rerunning until green.
 - A CI failure that says "The job was not acquired by Runner" is GitHub's runners, not the code: `gh run rerun <id>`; it still is not a green CI.
 - `v2` → `master` (going live) still needs the user's explicit yes.
 

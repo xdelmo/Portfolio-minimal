@@ -26,6 +26,9 @@ for (const path of ['/en/', '/it/work/apexflow']) {
 test('keyboard focus is always visible and on screen', async ({ page, isMobile }) => {
   test.skip(isMobile, 'no Tab key on touch screens');
   await page.goto('/en/');
+  // start once the motion chunk is in: its experience pin lengthens the page and would move the footer away from a
+  // focus WebKit has just scrolled to
+  await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
   let stops = 0;
   for (let i = 0; i < 60; i++) {
     await page.keyboard.press('Tab');

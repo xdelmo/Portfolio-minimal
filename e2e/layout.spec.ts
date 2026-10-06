@@ -144,11 +144,9 @@ for (const width of [1280, 390]) {
   test(`every home section keeps the same space above its title and below its content at ${String(width)}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/en/');
-    // let the motion chunk add the experience pin first, then measure at rest at the top
-    await page.evaluate(() => { scrollTo(0, document.body.scrollHeight); });
-    await page.waitForTimeout(1000);
-    await page.evaluate(() => { scrollTo(0, 0); });
-    await page.waitForTimeout(300);
+    // measure with the experience pin in place, at rest at the top (a jump to the bottom and back left WebKit
+    // measuring the deck where the pin had parked it)
+    await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
     const gaps = await page.evaluate(() => {
       const top = (el: Element) => el.getBoundingClientRect().top + scrollY;
       const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')];

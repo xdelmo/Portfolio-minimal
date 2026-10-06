@@ -13,8 +13,12 @@ import { CONTENT } from '../content/content';
   template: `
     <footer class="site-footer container band band--ink">
       <p>© {{ year }} {{ content.person.name }}</p>
+      <a class="to-top" href="#main" (click)="toTop($event)"
+        ><span i18n="@@footer.top">Back to top</span
+        ><svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h6v1h-6zM0 3h2v1h-2zM3 3h2v5h-2zM6 3h2v1h-2z" /></svg
+      ></a>
       <ul>
-        <li><a href="#main" (click)="toTop($event)" i18n="@@footer.top">Back to top</a></li>
         <li><a [href]="'mailto:' + content.person.email" i18n="@@footer.email">Email</a></li>
         <li><a [href]="content.person.linkedin" rel="me">LinkedIn</a></li>
         <li><a [href]="content.person.github" rel="me">GitHub</a></li>
@@ -27,10 +31,12 @@ import { CONTENT } from '../content/content';
     </footer>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
+
+    // the year on the left, the way back up in the middle, the links on the right
     .site-footer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      display: grid;
+      justify-items: start;
       align-items: center;
       gap: var(--space-2);
       padding-block: var(--space-6);
@@ -40,6 +46,30 @@ import { CONTENT } from '../content/content';
     }
     p {
       margin: 0;
+    }
+    .to-top {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    .to-top svg {
+      width: 12px;
+      height: 12px;
+      transition: translate 0.2s steps(2);
+    }
+    .to-top:hover svg {
+      translate: 0 -4px;
+    }
+    @include bp.up(md) {
+      .site-footer {
+        grid-template-columns: 1fr auto 1fr;
+      }
+      .to-top {
+        justify-self: center;
+      }
+      ul {
+        justify-self: end;
+      }
     }
     ul {
       display: flex;

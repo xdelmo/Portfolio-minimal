@@ -169,3 +169,39 @@ for (const width of [1280, 390]) {
     }
   });
 }
+
+// the header signs the site: the edm. mark, a rule, then the full name on two lines
+for (const width of [1280, 390]) {
+  test(`the header shows the full name beside the mark, on two lines, at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    const name = page.locator('app-site-header .logo .name');
+    await expect(name).toBeVisible();
+    await expect(name).toHaveText(/Emanuele\s*Del Monte/);
+    const lines = await name.locator('span').evaluateAll((spans) => spans.map((s) => Math.round(s.getBoundingClientRect().top)));
+    expect(lines).toHaveLength(2);
+    expect(lines[1]).toBeGreaterThan(lines[0]);
+    // the header row still fits: nothing pushed off the right edge
+    const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
+    expect(right).toBeLessThanOrEqual(width);
+  });
+}
+
+test('on the narrowest phones the header keeps the mark alone, and still fits', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/en/');
+  await expect(page.locator('app-site-header .logo .name')).toBeHidden();
+  const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
+  expect(right).toBeLessThanOrEqual(320);
+});
+
+test('back to top sits in the middle of the footer, with an arrow pointing up', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const footer = await page.locator('app-site-footer footer').boundingBox();
+  const top = page.getByRole('link', { name: 'Back to top' });
+  const box = await top.boundingBox();
+  if (!footer || !box) throw new Error('missing boxes');
+  expect(Math.abs(box.x + box.width / 2 - (footer.x + footer.width / 2))).toBeLessThanOrEqual(8);
+  await expect(top.locator('svg')).toBeVisible();
+});

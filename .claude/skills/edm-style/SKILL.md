@@ -36,7 +36,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - One family: **Instrument Sans Variable** (`wght` 400–700, `wdth` 75–100), self-hosted with `font-display: optional` (keeps CLS 0; do not switch to the package CSS).
 - Headings weight 600: `h1` at `wdth` 75 (condensed, the hero's graphic element), `h2`/`h3` at `wdth` 85; body at `wdth` 100, 18px, line-height 1.55, max 68ch.
 - Modular scale 1.25 on 18px: `--step--1` … `--step-5`, `--step-hero` fluid 44→96px. Contact title is the one oversized exception (up to 9rem).
-- Sentence case everywhere. **No** all-caps labels, eyebrow labels, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline.
+- Sentence case everywhere (one exception the user asked for: the full name in the header, tracked capitals on two lines beside the `edm.` mark, like a letterhead). **No** all-caps labels, eyebrow labels, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline.
 
 ## Grid and shape
 

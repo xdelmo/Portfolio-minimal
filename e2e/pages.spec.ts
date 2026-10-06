@@ -203,3 +203,14 @@ for (const lang of ['en', 'it']) {
     for (const href of hrefs) expect((await request.get(href)).status(), href).toBe(200);
   });
 }
+
+// a case study without a screenshot shows the project's pixel item, the same one as in the work list
+for (const slug of ['mcp-server', 'telegram-bots']) {
+  test(`the ${slug} case study opens with its pixel item`, async ({ page }) => {
+    await page.goto(`/en/work/${slug}`);
+    const item = page.locator('.case-study .item app-quest-sprite');
+    await expect(item).toBeVisible();
+    await expect(item).toHaveAttribute('data-sprite', slug === 'mcp-server' ? 'plug' : 'robot');
+    await expect(page.locator('.case-study img.shot')).toHaveCount(0);
+  });
+}

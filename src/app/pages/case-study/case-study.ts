@@ -5,12 +5,13 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
 import { GithubMark } from '../../layout/github-mark';
+import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
 
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite],
   template: `
     <article class="container case-study">
       @if (project(); as p) {
@@ -35,6 +36,9 @@ import { SeoService } from '../../core/seo/seo.service';
 
         @if (p.image; as image) {
           <img class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
+        } @else if (p.sprite; as sprite) {
+          <!-- no screenshot: the project's pixel item, as in the work list -->
+          <div class="item"><app-quest-sprite [name]="sprite" /></div>
         }
 
         <section id="context" aria-labelledby="context-title">
@@ -121,6 +125,18 @@ import { SeoService } from '../../core/seo/seo.service';
     }
     .shot--tall {
       max-width: 360px;
+    }
+    .item {
+      display: grid;
+      place-items: center;
+      max-width: 480px;
+      aspect-ratio: 3 / 2;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+    }
+    .item app-quest-sprite {
+      width: 36%;
+      aspect-ratio: 1;
     }
   `,
 })

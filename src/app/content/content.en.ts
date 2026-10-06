@@ -226,6 +226,48 @@ export const CONTENT_EN: SiteContent = {
       summary: 'Certificate in Agile ways of working. I won the final quiz.',
     },
   ],
+  privacy: {
+    updated: 'Last updated: 6 October 2026',
+    intro:
+      'This site is my personal portfolio. It has no analytics, no ads, no tracking and no third-party scripts: it only keeps in your browser what it needs to remember your choices.',
+    sections: [
+      {
+        heading: 'Who is responsible',
+        paragraphs: ['Emanuele Del Monte is the data controller. For anything about your data, write to info@emanueledelmonte.it.'],
+      },
+      {
+        heading: 'What the site keeps in your browser',
+        paragraphs: [
+          'The nf_lang cookie remembers the language you chose with the language switch, so the home page opens in it next time. It lasts one year and is sent to the server only to pick the language.',
+          'The theme entry in local storage remembers whether you chose the light or the dark theme.',
+          'Three entries in session storage (intro, motion pause and the language curtain) remember, until you close the tab, whether the opening intro was already shown, whether you paused the animations and which language you are switching to.',
+          'These are technical preferences: they identify nobody, are never shared and need no consent. You can delete them at any time from your browser settings.',
+        ],
+      },
+      {
+        heading: 'Hosting',
+        paragraphs: [
+          'The site is hosted by Netlify, Inc. Like every web server, it processes the technical data of each request (IP address, browser, page and time) to deliver the pages and keep the service secure. I rely on my legitimate interest in running the site. Netlify is based in the United States, and its data processing agreement covers transfers outside the EU.',
+        ],
+      },
+      {
+        heading: 'If you write to me',
+        paragraphs: [
+          'If you email me, I use your address and your message only to reply, and keep them as long as the conversation needs. I never share them.',
+        ],
+      },
+      {
+        heading: 'Links to other sites',
+        paragraphs: ['Links to GitHub, LinkedIn and the project demos take you to sites with their own privacy policies.'],
+      },
+      {
+        heading: 'Your rights',
+        paragraphs: [
+          'You can ask to access, correct or delete your data, to restrict or object to its processing, and to receive it in a portable format (GDPR, articles 15 to 21): write to info@emanueledelmonte.it. You can also lodge a complaint with the Italian data protection authority, the Garante per la protezione dei dati personali (garanteprivacy.it).',
+        ],
+      },
+    ],
+  },
   sideQuests: [
     {
       title: 'PokèVerba',

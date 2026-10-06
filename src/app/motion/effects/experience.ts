@@ -26,10 +26,9 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
   }
 
   list.classList.add('is-stacked');
-  // the pinned deck fills the screen with the cards in the middle
-  // the pin starts below the sticky header, so the deck fills the screen under it
+  // the pin starts below the sticky header. The deck keeps its own height: stretched to the screen it would leave its
+  // spare room above the title and between the cards and the studies once the pin is over
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
-  gsap.set(section, { minHeight: `calc(100svh - ${String(header)}px)`, alignContent: 'center' });
   const steps = items.length - 1;
   // chapter i fills while card i slides onto the deck; the first one is already there
   const track = (progress: number): void => {

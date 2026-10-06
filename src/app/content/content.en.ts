@@ -10,7 +10,7 @@ export const CONTENT_EN: SiteContent = {
     email: 'info@emanueledelmonte.it',
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
-    knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Spring Boot'],
+    knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Spring Boot', 'Model Context Protocol', 'AI-assisted development'],
     summary:
       'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular front ends with Signals, RxJS and PrimeNG.',
   },
@@ -25,7 +25,7 @@ export const CONTENT_EN: SiteContent = {
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   about:
-    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.",
+    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end. Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
@@ -240,8 +240,8 @@ export const CONTENT_EN: SiteContent = {
   },
   // levels, from the middle out (piano 12): what I use every day, what runs in production, what I try on my own
   stack: [
-    { name: 'Every day', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Git'] },
-    { name: 'In production', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint'] },
-    { name: 'In side projects', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python'] },
+    { name: 'Every day', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Claude Code'] },
+    { name: 'In production', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint', 'Git'] },
+    { name: 'In side projects', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python', 'MCP'] },
   ],
 };

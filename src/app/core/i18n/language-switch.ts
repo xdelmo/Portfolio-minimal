@@ -21,7 +21,9 @@ const COVER_MS = 500;
         <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
           <path fill="currentColor" d="M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2zM3 1h2v6H3zM1 3h6v2H1z" />
         </svg>
-        <span><span class="visually-hidden" i18n="@@lang.label">Language:</span> {{ names[current] }}</span>
+        <!-- phones show the code, to leave the header room for the name; the full name is still read out -->
+        <span class="lang-name"><span class="visually-hidden" i18n="@@lang.label">Language:</span> {{ names[current] }}</span>
+        <span class="lang-code" aria-hidden="true">{{ current.toUpperCase() }}</span>
         <svg class="chevron" viewBox="0 0 8 8" width="12" height="12" shape-rendering="crispEdges" aria-hidden="true">
           <path fill="currentColor" d="M1 2h2v1H1zM5 2h2v1H5zM2 3h2v1H2zM4 3h2v1H4zM3 4h2v1H3z" />
         </svg>
@@ -40,6 +42,8 @@ const COVER_MS = 500;
     </details>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
+
     .language-menu {
       position: relative;
     }
@@ -53,6 +57,31 @@ const COVER_MS = 500;
       font-weight: 600;
       list-style: none;
       cursor: pointer;
+    }
+    // the whole summary opens the menu: the icons need not catch the pointer (on phones they sit over the hidden name)
+    summary svg {
+      flex: none;
+      pointer-events: none;
+    }
+    .lang-name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    @include bp.up(md) {
+      .lang-name {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip-path: none;
+      }
+      .lang-code {
+        display: none;
+      }
     }
     summary::-webkit-details-marker {
       display: none;

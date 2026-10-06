@@ -10,9 +10,9 @@ export const CONTENT_EN: SiteContent = {
     email: 'info@emanueledelmonte.it',
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
-    knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'Spring Boot', 'Model Context Protocol', 'AI-assisted development'],
+    knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'NgRx', 'PrimeNG', 'Spring Boot', 'Model Context Protocol', 'AI-assisted development'],
     summary:
-      'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular front ends with Signals, RxJS and PrimeNG.',
+      'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular front ends with Signals, RxJS and NgRx.',
   },
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
@@ -29,9 +29,10 @@ export const CONTENT_EN: SiteContent = {
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
-    { label: 'Experience', value: 'About 3 years building web front ends' },
-    { label: 'Main stack', value: 'Angular, Signals, RxJS, TypeScript, PrimeNG' },
+    { label: 'Experience', value: 'Building web front ends since 2022' },
+    { label: 'Main stack', value: 'Angular, Signals, RxJS, NgRx, TypeScript' },
     { label: 'Education', value: 'BSc in Computer Engineering, Università Mercatorum, 2026' },
+    { label: 'Languages', value: 'Italian (native), English (professional)' },
     { label: 'Availability', value: 'Remote roles' },
   ],
   projects: [
@@ -175,16 +176,16 @@ export const CONTENT_EN: SiteContent = {
   ],
   experience: [
     {
-      period: '2024 – 2026',
+      period: '2022 – 2024',
       short: 'Frontend Developer',
       title: 'Frontend Developer',
       org: 'Web agency',
-      summary: 'About two years building CRMs, e-commerce sites and tools for clients.',
+      summary: 'About two years building CRMs, single-page apps and e-commerce sites for clients.',
       highlights: [
         'Flexie, a B2B configurator for flexible packaging: more than 100 combinations of materials, formats and accessories, priced in real time.',
-        'CRMs and e-commerce sites in production, where I learned why maintainable code matters.',
+        'Custom WordPress plugins for e-commerce sites, and third-party REST APIs wired into them.',
       ],
-      tags: ['JavaScript', 'jQuery', 'PHP'],
+      tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],
     },
     {
       period: '2026',
@@ -193,9 +194,10 @@ export const CONTENT_EN: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Joined the frontend team while finishing my degree.',
       highlights: [
-        'Worked on the problems my thesis then tackled: large tables, server-side filtering, predictable state.',
+        'Built ApexFlow, a dashboard for complex data, in Angular 19 with Signals.',
+        'Filtering and pagination over large data sets, role-based permissions, unit tests.',
       ],
-      tags: ['Angular', 'RxJS'],
+      tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
     {
@@ -203,12 +205,13 @@ export const CONTENT_EN: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'Enterprise front ends in Angular, built around large amounts of data.',
+      summary: 'In the product team of an enterprise management platform for cybersecurity.',
       highlights: [
-        'Data-heavy tables with pagination and filtering done on the server.',
-        'Reactive state with Signals and RxJS.',
+        'Moving legacy components to Signals, with facades between them and the NgRx store.',
+        'A query builder for advanced filters on large data sets, shown in Kendo Grid.',
+        'A custom HTML5 video player that searches the full text of its subtitles.',
       ],
-      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'TypeScript'],
+      tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },
   ],
   studies: [
@@ -222,10 +225,17 @@ export const CONTENT_EN: SiteContent = {
     },
     {
       sprite: 'trophy',
-      period: '2026',
+      period: '2025',
       title: 'Agile Masterclass',
-      org: 'BIP × Joinrs',
-      summary: 'Certificate in Agile ways of working. I won the final quiz.',
+      org: 'Joinrs',
+      summary: 'Two sessions, the Agile mindset and then Scrum and Kanban, closed by a quiz I won.',
+    },
+    {
+      sprite: 'terminal',
+      period: '2026',
+      title: 'Claude Code and MCP courses',
+      org: 'Anthropic Academy',
+      summary: 'Claude Code 101, Claude Code in Action, Introduction to Model Context Protocol, its advanced topics, and AI Fluency.',
     },
   ],
   privacy: {
@@ -305,7 +315,7 @@ export const CONTENT_EN: SiteContent = {
   },
   // levels, from the middle out (piano 12): what I use every day, what runs in production, what I try on my own
   stack: [
-    { name: 'Every day', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Claude Code'] },
+    { name: 'Every day', items: ['Angular', 'Signals', 'RxJS', 'NgRx', 'TypeScript', 'SCSS', 'Claude Code'] },
     { name: 'In production', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint', 'Git'] },
     { name: 'In side projects', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python', 'MCP'] },
   ],

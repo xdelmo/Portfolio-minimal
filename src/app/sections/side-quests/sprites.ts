@@ -141,6 +141,28 @@ export const SPRITES = {
       '................',
     ],
   },
+  // the Claude Code courses: a terminal with its prompt and cursor
+  terminal: {
+    palette: { ...INK, w: '--surface', a: '--accent', l: '--px-4' },
+    rows: [
+      '................',
+      '.kkkkkkkkkkkkkk.',
+      '.kllllllllllllk.',
+      '.kkkkkkkkkkkkkk.',
+      '.kwwwwwwwwwwwwk.',
+      '.kwkwwwwwwwwwwk.',
+      '.kwwkwwwwwwwwwk.',
+      '.kwwwkwwwwwwwwk.',
+      '.kwwkwwwwwwwwwk.',
+      '.kwkwwaaaawwwwk.',
+      '.kwwwwaaaawwwwk.',
+      '.kwwwwwwwwwwwwk.',
+      '.kwwwwwwwwwwwwk.',
+      '.kkkkkkkkkkkkkk.',
+      '................',
+      '................',
+    ],
+  },
 } as const satisfies Record<string, Sprite>;
 
 export type SpriteName = keyof typeof SPRITES;

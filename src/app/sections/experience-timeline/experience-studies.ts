@@ -79,9 +79,10 @@ import { QuestSprite } from '../side-quests/quest-sprite';
       justify-self: start;
       margin-top: 4px;
     }
-    @include bp.up(md) {
+    // three tiles side by side, never two and an orphan
+    @include bp.up(lg) {
       ul {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
   `,

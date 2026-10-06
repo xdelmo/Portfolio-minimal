@@ -13,7 +13,7 @@ export const CONTENT_IT: SiteContent = {
     location: 'Latina, Italia',
     availability: 'Disponibile per ruoli da remoto.',
     summary:
-      'Emanuele Del Monte è un Frontend Engineer di Latina che sviluppa frontend enterprise in Angular con Signals, RxJS e PrimeNG.',
+      'Emanuele Del Monte è un Frontend Engineer di Latina che sviluppa frontend enterprise in Angular con Signals, RxJS e NgRx.',
   },
   seo: {
     title: 'Emanuele Del Monte — Frontend Engineer Angular',
@@ -30,9 +30,10 @@ export const CONTENT_IT: SiteContent = {
   glance: [
     { label: 'Ruolo', value: 'Frontend Engineer, specializzato in Angular' },
     { label: 'Dove', value: 'Latina, Italia (anche da remoto)' },
-    { label: 'Esperienza', value: 'Circa 3 anni nello sviluppo frontend' },
-    { label: 'Stack principale', value: 'Angular, Signals, RxJS, TypeScript, PrimeNG' },
+    { label: 'Esperienza', value: 'Sviluppo frontend dal 2022' },
+    { label: 'Stack principale', value: 'Angular, Signals, RxJS, NgRx, TypeScript' },
     { label: 'Formazione', value: 'Laurea in Ingegneria Informatica, Università Mercatorum, 2026' },
+    { label: 'Lingue', value: 'Italiano madrelingua, inglese professionale' },
     { label: 'Disponibilità', value: 'Ruoli da remoto' },
   ],
   projects: [
@@ -167,16 +168,16 @@ export const CONTENT_IT: SiteContent = {
   ],
   experience: [
     {
-      period: '2024 – 2026',
+      period: '2022 – 2024',
       short: 'Frontend Developer',
       title: 'Frontend Developer',
       org: 'Web agency',
-      summary: 'Circa due anni a costruire CRM, e-commerce e strumenti per i clienti.',
+      summary: 'Circa due anni a costruire CRM, single-page app ed e-commerce per i clienti.',
       highlights: [
         'Flexie, un configuratore B2B per packaging flessibile: più di 100 combinazioni di materiali, formati e accessori, con il prezzo calcolato in tempo reale.',
-        'CRM ed e-commerce in produzione, dove ho imparato perché conta un codice manutenibile.',
+        'Plugin WordPress su misura per gli e-commerce, collegati ad API REST di terze parti.',
       ],
-      tags: ['JavaScript', 'jQuery', 'PHP'],
+      tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],
     },
     {
       period: '2026',
@@ -185,9 +186,10 @@ export const CONTENT_IT: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Sono entrato nel team frontend mentre finivo la laurea.',
       highlights: [
-        'Ho lavorato sui problemi che la tesi ha poi affrontato: tabelle grandi, filtri lato server, uno stato prevedibile.',
+        'Ho costruito ApexFlow, una dashboard per flussi di dati complessi, in Angular 19 con Signals.',
+        'Filtri e paginazione su grandi quantità di dati, permessi per ruolo, unit test.',
       ],
-      tags: ['Angular', 'RxJS'],
+      tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'Case study di ApexFlow' },
     },
     {
@@ -195,12 +197,13 @@ export const CONTENT_IT: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'Frontend enterprise in Angular, costruiti attorno a grandi quantità di dati.',
+      summary: 'Nel team di prodotto di un gestionale enterprise per la cybersecurity.',
       highlights: [
-        'Tabelle piene di dati con paginazione e filtri fatti sul server.',
-        'Stato reattivo con Signals e RxJS.',
+        'Porto i componenti legacy su Signals, con facade tra loro e lo store NgRx.',
+        'Un query builder per filtri avanzati su grandi quantità di dati, mostrati in Kendo Grid.',
+        'Un player video HTML5 su misura che cerca nel testo dei sottotitoli.',
       ],
-      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'TypeScript'],
+      tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },
   ],
   studies: [
@@ -214,10 +217,17 @@ export const CONTENT_IT: SiteContent = {
     },
     {
       sprite: 'trophy',
-      period: '2026',
+      period: '2025',
       title: 'Agile Masterclass',
-      org: 'BIP × Joinrs',
-      summary: 'Certificato sui metodi di lavoro Agile. Ho vinto il quiz finale.',
+      org: 'Joinrs',
+      summary: 'Due incontri, il mindset Agile e poi Scrum e Kanban, chiusi da un quiz che ho vinto.',
+    },
+    {
+      sprite: 'terminal',
+      period: '2026',
+      title: 'Corsi su Claude Code e MCP',
+      org: 'Anthropic Academy',
+      summary: 'Claude Code 101, Claude Code in Action, Introduction to Model Context Protocol, i suoi temi avanzati e AI Fluency.',
     },
   ],
   privacy: {
@@ -296,7 +306,7 @@ export const CONTENT_IT: SiteContent = {
     ],
   },
   stack: [
-    { name: 'Ogni giorno', items: ['Angular', 'Signals', 'RxJS', 'TypeScript', 'PrimeNG', 'SCSS', 'Claude Code'] },
+    { name: 'Ogni giorno', items: ['Angular', 'Signals', 'RxJS', 'NgRx', 'TypeScript', 'SCSS', 'Claude Code'] },
     { name: 'In produzione', items: ['Spring Boot', 'Java', 'PostgreSQL', 'Docker', 'Node.js', 'Vitest', 'Playwright', 'ESLint', 'Git'] },
     { name: 'Nei progetti personali', items: ['Next.js', 'React', 'Supabase', 'Tailwind CSS', 'Flutter', 'Python', 'MCP'] },
   ],

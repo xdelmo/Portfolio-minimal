@@ -295,6 +295,13 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     .section {
       padding-block: var(--space-8);
     }
+    // a band grows its pixel seam above its top edge, into the section before it: that section keeps 64px of air
+    // below its last line on top of the seam, like every other section
+    .section:has(+ .band > .seam),
+    // the stack closes the pixel thread's trail, and the contact band comes right after it
+    .trail:has(+ .band > .seam) > .section:last-child {
+      padding-bottom: calc(var(--space-8) + var(--space-6));
+    }
   `,
 })
 export class Home {

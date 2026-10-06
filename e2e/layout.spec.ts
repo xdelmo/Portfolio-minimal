@@ -137,3 +137,34 @@ test('small text never drops under 14px, and section titles stay well below the 
   }
   expect(await size('#work h2')).toBeLessThanOrEqual((await size('h1')) * 0.75);
 });
+
+// one vertical rhythm: 64px from a section's edge to its title, and 64px from its last line to whatever comes next,
+// a band's pixel seam included (the seam sits above the band, inside the section before it)
+for (const width of [1280, 390]) {
+  test(`every home section keeps the same space above its title and below its content at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    // measure with the experience pin in place, at rest at the top (a jump to the bottom and back left WebKit
+    // measuring the deck where the pin had parked it)
+    await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
+    const gaps = await page.evaluate(() => {
+      const top = (el: Element) => el.getBoundingClientRect().top + scrollY;
+      const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')];
+      return sections.slice(0, -1).map((section, i) => {
+        const parts = [...section.querySelectorAll<HTMLElement>('*')].filter(
+          (el) => !el.closest('app-pixel-dissolve') && el.getBoundingClientRect().height > 0 && getComputedStyle(el).position !== 'absolute',
+        );
+        const bottom = Math.max(...parts.map((el) => el.getBoundingClientRect().bottom + scrollY));
+        const title = section.querySelector('h2');
+        const next = sections[i + 1];
+        const seam = next.querySelector(':scope > app-pixel-dissolve');
+        return { id: section.id, above: Math.round((title ? top(title) : 0) - top(section)), below: Math.round((seam ? top(seam) : top(next)) - bottom) };
+      });
+    });
+    for (const gap of gaps) {
+      expect(gap.above, `${gap.id}: space above the title`).toBeGreaterThanOrEqual(56);
+      expect(gap.above, `${gap.id}: space above the title`).toBeLessThanOrEqual(72);
+      expect(gap.below, `${gap.id}: space below the content`).toBeGreaterThanOrEqual(48);
+    }
+  });
+}

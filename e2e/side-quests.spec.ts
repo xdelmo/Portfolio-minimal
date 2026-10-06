@@ -35,10 +35,12 @@ test.describe('with reduced motion', () => {
   });
 });
 
-test('sections leave 64px above and below their content, not 96', async ({ page }) => {
+test('sections leave 64px above and below their content, not 96, plus the 48px seam of a band that follows', async ({ page }) => {
   await page.goto('/en/');
-  const padding = await page.locator('#experience').evaluate((el) => [getComputedStyle(el).paddingTop, getComputedStyle(el).paddingBottom]);
-  expect(padding).toEqual(['64px', '64px']);
+  const padding = (id: string) => page.locator(id).evaluate((el) => [getComputedStyle(el).paddingTop, getComputedStyle(el).paddingBottom]);
+  expect(await padding('#about')).toEqual(['64px', '64px']);
+  // the side quests band grows its seam above its edge, into the experience
+  expect(await padding('#experience')).toEqual(['64px', '112px']);
 });
 
 test('the stack section passes under the side quests band, and the pixel thread stays over it', async ({ page }) => {

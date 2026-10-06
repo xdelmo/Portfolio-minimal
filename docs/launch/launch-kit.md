@@ -57,7 +57,7 @@ Un iPhone e un Android:
 - [ ] **Titolo ufficiale**: `Frontend Engineer` (ora sul sito) oppure `Software Engineer, Frontend Specialist` come da contratto? Deve essere uguale su sito, LinkedIn e GitHub. Anche LinkedIn oggi ne ha due: il titolo del profilo dice `Software Engineer | Frontend Specialist`, la voce in Esperienza `Frontend Engineer | Angular Developer`.
 - [ ] **Repo ancora private** citate nei progetti e nelle side quest: i link portano già lì; rendile pubbliche dopo una scansione dei segreti (vedi la riga sotto).
 - [ ] **Issue #3** (Privacy): la pagina c'è (`/privacy`); chiudila tu. Se aggiungi statistiche, dimmelo: la pagina va aggiornata prima di attivarle.
-- [x] **Esperienza**: allineata a LinkedIn il 2026-10-06 (agenzia 2022 – 2024, punti e tag di ogni lavoro, certificati). Restano da confermare due dati che LinkedIn non riporta: "BIP" accanto a Joinrs (tolto) e la vittoria del quiz Agile (lasciata, viene dalla issue #2).
+- [x] **Esperienza**: allineata a LinkedIn il 2026-10-06 (agenzia 2022 – 2024, punti e tag di ogni lavoro, certificati). "BIP" accanto a Joinrs tolto (non è su LinkedIn); la vittoria del quiz Agile confermata dall'utente.
 - [ ] **Bot Telegram**: nel file `.env.example` di una repo pubblica ci sono due id Telegram che sembrano reali. Se lo sono, vanno sostituiti con valori finti.
 
 ## 8. Pulizia che richiede te

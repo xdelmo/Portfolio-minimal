@@ -296,13 +296,15 @@ export const CONTENT_IT: SiteContent = {
     },
   ],
   game: {
+    player: 'Delmo',
     level: 3,
     next: 'Senior Frontend Engineer',
     xp: 0.6,
     achievements: [
-      { title: 'Laureato', detail: 'Laurea in Ingegneria Informatica, 2026', sprite: 'cap' },
-      { title: 'Agile Masterclass', detail: 'Ho vinto il quiz finale', sprite: 'trophy' },
-      { title: 'Flutter', detail: 'Anche questo nella cassetta degli attrezzi', sprite: 'phone' },
+      { title: 'Batterista', detail: 'Più di dieci anni dietro la batteria', sprite: 'drum' },
+      { title: 'Raider hardcore', detail: 'World of Warcraft: il lavoro di squadra è il mio pane quotidiano', sprite: 'sword' },
+      { title: 'Team pizza', detail: 'Se potessi mangiare una cosa sola per sempre', sprite: 'pizza' },
+      { title: 'Distruttore di telefoni', detail: 'Ne ho brickati tantissimi', sprite: 'phone' },
     ],
   },
   stack: [

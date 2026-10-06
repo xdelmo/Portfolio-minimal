@@ -62,6 +62,20 @@ describe('content', () => {
     });
   });
 
+  // the easter egg is a reward for finding it: nothing on it is already on the page
+  it('keeps the player card to what the site does not say elsewhere', () => {
+    for (const content of [CONTENT_EN, CONTENT_IT]) {
+      const { game, studies, stack } = content;
+      expect(game.player).not.toBe(content.person.name);
+      const studied = new Set(studies.flatMap((s) => [s.title, s.sprite]));
+      const tools = new Set(stack.flatMap((level) => level.items));
+      for (const a of game.achievements) {
+        expect(studied.has(a.title) || studied.has(a.sprite) || tools.has(a.title)).toBe(false);
+      }
+    }
+    expect(CONTENT_IT.game.achievements.map((a) => a.sprite)).toEqual(CONTENT_EN.game.achievements.map((a) => a.sprite));
+  });
+
   it('has the same number of experience, side quest, stack and glance entries', () => {
     expect(CONTENT_IT.experience.length).toBe(CONTENT_EN.experience.length);
     expect(CONTENT_IT.experience.map((e) => [e.highlights.length, e.tags, e.caseStudy?.slug])).toEqual(CONTENT_EN.experience.map((e) => [e.highlights.length, e.tags, e.caseStudy?.slug]));

@@ -4,7 +4,7 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
 
 /**
  * The easter egg behind the Konami code (issue #2): Emanuele as a game character, with a level, a class, the
- * experience points towards the next role and three achievements. A native modal dialog: Escape and the button close
+ * experience points towards the next role and four achievements that the rest of the site does not mention. A native modal dialog: Escape and the button close
  * it, and the browser gives focus back to where it was. Loaded only when the code is entered (game-trigger.ts).
  */
 @Component({
@@ -17,7 +17,7 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
       <dl class="stats">
         <div>
           <dt i18n="@@game.player">Player</dt>
-          <dd>{{ content.person.name }}</dd>
+          <dd>{{ content.game.player }}</dd>
         </div>
         <div>
           <dt i18n="@@game.class">Class</dt>

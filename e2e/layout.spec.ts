@@ -69,13 +69,15 @@ test.describe('contact and footer', () => {
   test('the footer continues the dark contact band, with no gap between them', async ({ page }) => {
     await page.goto('/en/');
     await page.evaluate(() => { window.scrollTo(0, document.body.scrollHeight); });
-    const box = (sel: string) =>
-      page.locator(sel).evaluate((el) => {
+    // both boxes in one go: the lazy motion chunk may add the experience pin spacer between two separate reads
+    const [contact, footer] = await page.evaluate(() =>
+      ['#contact', 'app-site-footer footer'].map((sel) => {
+        const el = document.querySelector(sel);
+        if (!el) throw new Error(`missing ${sel}`);
         const r = el.getBoundingClientRect();
         return { top: r.top, bottom: r.bottom, bg: getComputedStyle(el, '::before').backgroundColor };
-      });
-    const contact = await box('#contact');
-    const footer = await box('app-site-footer footer');
+      }),
+    );
     expect(footer.bg).toBe(contact.bg);
     expect(Math.abs(footer.top - contact.bottom)).toBeLessThan(1);
   });

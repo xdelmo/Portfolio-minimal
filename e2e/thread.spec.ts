@@ -66,7 +66,8 @@ test('while the experience deck is pinned the thread stands still with it, and i
     await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
     seen.push((await sample()).phase);
   }
-  expect(Math.max(...seen) - Math.min(...seen)).toBeLessThan(1);
+  // WebKit rounds the pinned scroll to whole pixels: a desync would be hundreds of pixels, not one
+  expect(Math.max(...seen) - Math.min(...seen)).toBeLessThanOrEqual(2);
   // past the pin the section has moved down by the pin length, and the node with it
   await page.evaluate((y) => { scrollTo(0, y); }, pinTop + pinLength - header + 200);
   await expect.poll(async () => (await sample()).gap).toBeLessThan(8);

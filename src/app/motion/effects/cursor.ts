@@ -1,18 +1,58 @@
+import { ARROW_CELLS, arrowCells, pointing } from '../arrow';
 import type { Effect } from '../motion-host';
 
 const INTERACTIVE = 'a, button, summary, [role="button"]';
 const MAGNET = 8; // px an element can lean towards the pointer
+const TITLES = 'main h2';
+const CELL = 8;
+// the eight directions a line stays clean on a 7-cell grid (in between, the arrow smudges into a blob)
+const STEPS = 8;
 
 /**
  * Desktop: a pixel trails the pointer and opens into a frame over links and buttons; elements marked
- * `data-magnetic` lean a few pixels towards it. One delegated listener, so every route is covered.
+ * `data-magnetic` lean a few pixels towards it. Near a section title the pixel becomes an arrow pointing at the
+ * title's centre. One delegated listener, so every route is covered.
  */
 export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   const dot = root.querySelector<HTMLElement>('.pixel-cursor');
-  if (!desktop || !dot) return undefined;
+  const arrow = root.querySelector<HTMLCanvasElement>('.pixel-arrow');
+  const pen = arrow?.getContext('2d');
+  if (!desktop || !dot || !arrow || !pen) return undefined;
 
-  const toX = gsap.quickTo(dot, 'x', { duration: 0.15, ease: 'power3.out' });
-  const toY = gsap.quickTo(dot, 'y', { duration: 0.15, ease: 'power3.out' });
+  const toX = gsap.quickTo([dot, arrow], 'x', { duration: 0.15, ease: 'power3.out' });
+  const toY = gsap.quickTo([dot, arrow], 'y', { duration: 0.15, ease: 'power3.out' });
+  let drawn = '';
+  // the step and the colour (the theme can change between two moves) decide whether to redraw
+  const point = (angle: number | null): void => {
+    arrow.style.display = angle === null ? 'none' : 'block';
+    dot.style.visibility = angle === null ? '' : 'hidden';
+    if (angle === null) return;
+    const step = Math.round((angle / (Math.PI * 2)) * STEPS);
+    const color = getComputedStyle(dot).backgroundColor; // the pixel's --accent, never framed while the arrow shows
+    const key = `${String(step)} ${color}`;
+    if (key === drawn) return;
+    drawn = key;
+    pen.clearRect(0, 0, ARROW_CELLS * CELL, ARROW_CELLS * CELL);
+    pen.fillStyle = color;
+    for (const [c, r] of arrowCells((step / STEPS) * Math.PI * 2)) pen.fillRect(c * CELL, r * CELL, CELL, CELL);
+    arrow.dataset['angle'] = String(Math.round((step / STEPS) * 360)); // degrees, for the e2e
+  };
+  // titles (and the lines SplitText wraps them in) are full-width blocks: the arrow aims at the words themselves
+  const range = document.createRange();
+  const textBox = (title: Element): { left: number; top: number; right: number; bottom: number } => {
+    const box = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity };
+    const words = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+    for (let node = words.nextNode(); node; node = words.nextNode()) {
+      range.selectNodeContents(node);
+      const r = range.getBoundingClientRect();
+      if (!r.width) continue;
+      box.left = Math.min(box.left, r.left);
+      box.top = Math.min(box.top, r.top);
+      box.right = Math.max(box.right, r.right);
+      box.bottom = Math.max(box.bottom, r.bottom);
+    }
+    return box;
+  };
   const leaning = new Set<HTMLElement>();
   let shown = false;
 
@@ -27,12 +67,16 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     if (e.pointerType !== 'mouse') return;
     if (!shown) {
       gsap.set(dot, { display: 'block', x: e.clientX, y: e.clientY });
+      gsap.set(arrow, { x: e.clientX, y: e.clientY });
       shown = true;
     }
     toX(e.clientX);
     toY(e.clientY);
     const target = e.target instanceof Element ? e.target : null;
-    dot.classList.toggle('is-over', !!target?.closest(INTERACTIVE));
+    const over = !!target?.closest(INTERACTIVE);
+    dot.classList.toggle('is-over', over);
+    // links keep their frame; elsewhere the nearest title within reach turns the pixel into an arrow
+    point(over ? null : pointing(e.clientX, e.clientY, [...document.querySelectorAll(TITLES)].map(textBox)));
 
     const next = target?.closest<HTMLElement>('[data-magnetic]') ?? null;
     if (magnet && magnet !== next) lean(magnet, 0, 0);
@@ -45,7 +89,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     }
   };
   const onLeave = (): void => {
-    gsap.set(dot, { display: 'none' });
+    gsap.set([dot, arrow], { display: 'none' });
     shown = false;
   };
   addEventListener('pointermove', onMove, { passive: true });
@@ -54,7 +98,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   return () => {
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
-    gsap.set(dot, { clearProps: 'all' });
+    gsap.set([dot, arrow], { clearProps: 'all' });
     dot.classList.remove('is-over');
     for (const el of leaning) gsap.set(el, { '--mx': '0px', '--my': '0px' });
   };

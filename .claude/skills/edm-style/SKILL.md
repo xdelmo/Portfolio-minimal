@@ -60,6 +60,8 @@ Spend boldness here, keep everything else calm:
 7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way.
 8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets. Near a section `h2` the pixel cursor becomes a pixel arrow pointing at the title's words (`motion/arrow.ts`): drawn as lines on 8px cells, in eight directions only, because in between it smudges; never over the words themselves.
 
+Projects without a screenshot show their pixel sprite in the same 3:2 frame as the screenshots (`Project.sprite`).
+
 A new section gets **one** idea in this family, not a new visual language.
 
 ## Motion rules

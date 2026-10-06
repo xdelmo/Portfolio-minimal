@@ -117,6 +117,7 @@ export const CONTENT_EN: SiteContent = {
     },
     {
       slug: 'mcp-server',
+      sprite: 'plug',
       title: 'MCP Server',
       summary:
         'A Model Context Protocol server and client that lets an LLM read and edit documents through custom tools.',
@@ -144,6 +145,7 @@ export const CONTENT_EN: SiteContent = {
     },
     {
       slug: 'telegram-bots',
+      sprite: 'robot',
       title: 'Telegram bots',
       summary: 'Three bots I use every day: car deadlines, my Pokémon TCG binder and attendance timesheets.',
       stack: ['TypeScript', 'Python', 'grammY', 'SQLite', 'Docker'],

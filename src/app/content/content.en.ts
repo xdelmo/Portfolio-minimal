@@ -304,13 +304,16 @@ export const CONTENT_EN: SiteContent = {
     },
   ],
   game: {
+    player: 'Delmo',
     level: 3,
     next: 'Senior Frontend Engineer',
     xp: 0.6,
     achievements: [
-      { title: 'Graduated', detail: 'BSc in Computer Engineering, 2026', sprite: 'cap' },
-      { title: 'Agile Masterclass', detail: 'Won the final quiz', sprite: 'trophy' },
-      { title: 'Flutter', detail: 'Also in the toolbox', sprite: 'phone' },
+      // what the rest of the site does not say: the old About, the GitHub profile, a LinkedIn post
+      { title: 'Drummer', detail: 'More than ten years behind the kit', sprite: 'drum' },
+      { title: 'Hardcore raider', detail: 'World of Warcraft: teamwork is my daily bread', sprite: 'sword' },
+      { title: 'Team pizza', detail: 'If I could eat one thing forever', sprite: 'pizza' },
+      { title: 'Phone bricker', detail: 'I bricked so many phones', sprite: 'phone' },
     ],
   },
   // levels, from the middle out (piano 12): what I use every day, what runs in production, what I try on my own

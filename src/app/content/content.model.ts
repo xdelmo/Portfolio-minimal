@@ -87,6 +87,8 @@ export interface Achievement {
 }
 
 export interface Game {
+  /** The name on the card: the nickname, not the full name the header already shows. */
+  player: string;
   /** About the years of experience. */
   level: number;
   /** The role the experience points lead to. */

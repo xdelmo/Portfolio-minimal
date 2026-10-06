@@ -13,7 +13,7 @@ test('the Konami code opens the player card, Escape closes it', async ({ page })
   await page.goto('/en/');
   await typeCode(page);
   await expect(card(page)).toBeVisible();
-  await expect(card(page).getByRole('listitem')).toHaveCount(3);
+  await expect(card(page).getByRole('listitem')).toHaveCount(4);
   await expect(card(page).getByRole('meter')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(card(page)).toBeHidden();

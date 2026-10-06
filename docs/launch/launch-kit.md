@@ -43,19 +43,7 @@ Un iPhone e un Android:
   - Titolo: `Frontend Engineer · Angular, Signals, RxJS · IPS S.p.A. · Latina`
   - Prima riga di "Informazioni": `Frontend Engineer a Latina: interfacce Angular veloci anche con molti dati. Progetti e case study su www.emanueledelmonte.it`
   - Sezione "In primo piano" e campo "Sito web": `https://www.emanueledelmonte.it`
-- [ ] **README del profilo GitHub** (repo `xdelmo/xdelmo`), bozza:
-
-  ```markdown
-  # Emanuele Del Monte
-
-  Frontend Engineer at IPS S.p.A., based in Latina, Italy. I build Angular interfaces
-  that stay fast when the data gets big: Signals, RxJS, server-side filtering, large tables.
-
-  - Portfolio and case studies: https://www.emanueledelmonte.it
-  - Featured: [ApexFlow](https://www.emanueledelmonte.it/en/work/apexflow), a CRM dashboard with Angular and Spring Boot
-  - LinkedIn: https://www.linkedin.com/in/emanueledelmonte/
-  ```
-
+- [x] **README del profilo GitHub** (repo `xdelmo/xdelmo`), aggiornato il 2026-10-06 con gli stessi dati del sito. Linka solo cose raggiungibili oggi (sito, demo, repo pubbliche): `dashboard-tesi`, `ice-friends-breaker`, i bot e le side quest sono private. Dopo il merge su `master`: aggiungere i link ai case study (`/en/work/<slug>`) e, quando le repo diventano pubbliche, i link al codice.
 - [ ] Nel README di ogni repo pubblica citata nei case study: una riga con il link al case study sul sito.
 
 ## 6. Dopo qualche settimana (spec §9)

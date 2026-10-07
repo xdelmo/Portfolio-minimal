@@ -58,7 +58,7 @@ Un iPhone e un Android:
 - [ ] **Repo ancora private** citate nei progetti e nelle side quest: i link portano già lì; rendile pubbliche dopo una scansione dei segreti (vedi la riga sotto).
 - [x] **Issue #3** (Privacy): chiusa il 2026-10-07, la pagina `/privacy` copre tutto e l'imprint non serve per un sito personale. Se aggiungi statistiche, dimmelo: la pagina va aggiornata prima di attivarle.
 - [x] **Esperienza**: allineata a LinkedIn il 2026-10-06 (agenzia 2022 – 2024, punti e tag di ogni lavoro, certificati). "BIP" accanto a Joinrs tolto (non è su LinkedIn); la vittoria del quiz Agile confermata dall'utente.
-- [ ] **Bot Telegram**: nel file `.env.example` di una repo pubblica ci sono due id Telegram che sembrano reali. Se lo sono, vanno sostituiti con valori finti.
+- [x] **Bot Telegram**: controllato il 2026-10-07, nei `.env.example` di `auto-scadenze-bot`, `hoenn-binder` e `presenz-lazy-bot` (e nella loro history) ci sono solo segnaposto: gli id sono `123456789`, token e password non hanno la forma di quelli veri.
 
 ## 8. Pulizia che richiede te
 

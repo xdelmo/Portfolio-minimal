@@ -298,6 +298,10 @@
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="game.cheat" datatype="html">
+        <source>Cheat activated</source>
+        <target>Trucco attivato</target>
+      </trans-unit>
       <trans-unit id="game.title" datatype="html">
         <source>Press start</source>
         <target>Press start</target>

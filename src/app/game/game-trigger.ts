@@ -29,13 +29,13 @@ export class GameTrigger {
       progress = konamiStep(progress, event.key);
       if (progress === KONAMI.length) {
         progress = 0;
-        void this.open();
+        void this.open(true);
       }
     };
     const onClick = (event: MouseEvent): void => {
       if (!(event.target instanceof Element)) return;
       if (event.target.closest('[data-press-start]')) {
-        void this.open();
+        void this.open(false);
         return;
       }
       if (!event.target.closest('.logo')) return;
@@ -43,7 +43,7 @@ export class GameTrigger {
       taps = [...taps.filter((t) => now - t < TAP_WINDOW_MS), now];
       if (taps.length >= TAPS) {
         taps = [];
-        void this.open();
+        void this.open(true);
       }
     };
     // browser only: the server has no document to listen to
@@ -57,7 +57,8 @@ export class GameTrigger {
     });
   }
 
-  private async open(): Promise<void> {
+  /** `cheat`: the Konami code and its taps unlock the cheat card; Press start opens the plain one. */
+  private async open(cheat: boolean): Promise<void> {
     if (this.card || this.opening) return;
     this.opening = true;
     // the hero answers with a level up when it can be seen: the card waits for it, loading meanwhile
@@ -69,6 +70,7 @@ export class GameTrigger {
       this.opening = false;
     }
     const card = this.container.createComponent(PlayerCard);
+    card.setInput('cheat', cheat);
     this.card = card;
     card.instance.done.subscribe(() => {
       card.destroy();

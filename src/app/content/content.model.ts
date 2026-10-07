@@ -98,6 +98,8 @@ export interface Game {
   /** Progress towards `next`, from 0 to 1. */
   xp: number;
   achievements: readonly Achievement[];
+  /** The extra achievement the Konami code unlocks: the card it opens is the cheat version (level 99, full XP). */
+  cheat: Achievement;
 }
 
 export interface SideQuest {

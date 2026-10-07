@@ -317,6 +317,7 @@ export const CONTENT_EN: SiteContent = {
       { title: 'Team pizza', detail: 'If I could eat one thing forever', sprite: 'pizza' },
       { title: 'Phone bricker', detail: 'I bricked so many phones', sprite: 'phone' },
     ],
+    cheat: { title: 'Konami code', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },
   },
   // levels, from the middle out (piano 12): what I use every day, what runs in production, what I try on my own
   stack: [

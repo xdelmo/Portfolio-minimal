@@ -10,11 +10,10 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, layout } from './field';
+import { FieldLayout, RIPPLE_MS, addRipple, layout } from './field';
 import { MotionPause } from '../motion/pause';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
-const MAX_RIPPLES = 4;
 const MAX_STEP_MS = 100; // a long pause between frames must not jump the animation
 
 @Component({
@@ -132,7 +131,7 @@ export class PixelField {
     };
     const onDown = (e: PointerEvent): void => {
       if (!this.frame.animate) return;
-      this.frame.ripples = [...this.frame.ripples.slice(1 - MAX_RIPPLES), { ...local(e), start: this.frame.t }];
+      this.frame.ripples = addRipple(this.frame.ripples, { ...local(e), start: this.frame.t }, this.frame.t);
     };
     document.addEventListener('visibilitychange', onVisibility);
     motion.addEventListener('change', onMotion);

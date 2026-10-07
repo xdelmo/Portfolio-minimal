@@ -59,7 +59,10 @@ test.describe('hero', () => {
     test.use({ intro: true });
     test('the headline rises line by line and ends as plain text', async ({ page }) => {
       await page.goto('/en/');
-      await expect(page.locator('.site-intro')).toBeHidden({ timeout: 4000 });
+      // the panel lifts 3.6 s after the first render at the latest (the CSS fallback, or the GSAP timeline held to
+      // its deadline); counted from the end of goto, and with WebKit in CI delivering frames late under load (a run
+      // took the CSS path and ended past 4 s), 6 s is that bound plus the frames' lag
+      await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
       await expect.poll(() => isPlainText(page.locator('h1')), { timeout: 4000 }).toBe(true);
       await expect(page.locator('h1')).toBeInViewport();
     });

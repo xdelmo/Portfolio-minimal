@@ -54,6 +54,9 @@ test.describe('footer', () => {
   test('"Press start" opens the player card, and closing it gives the focus back', async ({ page }) => {
     await page.goto('/en/');
     const start = page.locator('app-site-footer').getByRole('button', { name: 'Press start' });
+    // the console's start key in pixels, above its label
+    await expect(start.locator('svg[shape-rendering="crispEdges"]')).toHaveCount(1);
+    await expect(start).toHaveText('Start');
     await start.click();
     const card = page.getByRole('dialog', { name: 'Press start' });
     await expect(card).toBeVisible();

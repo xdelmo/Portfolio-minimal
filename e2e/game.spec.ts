@@ -41,7 +41,11 @@ test('on a phone, five quick taps on the logo open it; one tap just goes home', 
   await expect(card(page)).toBeHidden();
   // taps count within 2 seconds: let that first one expire
   await page.waitForTimeout(2100);
-  for (let i = 0; i < 5; i++) await page.locator('.logo').click();
+  // quick taps by position, as a thumb does: locator clicks wait for the logo to be stable, about 0.5 s each in
+  // WebKit on CI, so five of them could outlast the 2-second window
+  const box = await page.locator('.logo').boundingBox();
+  if (!box) throw new Error('the logo has no box');
+  for (let i = 0; i < 5; i++) await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   await expect(card(page)).toBeVisible();
 });
 

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, DestroyRef, ViewContainerRef, afterNextRender, inject } from '@angular/core';
+import { LEAD_IN_MS, announceGameStart } from './game-start';
 import { KONAMI, konamiStep } from './konami';
 import type { PlayerCard } from './player-card';
 
@@ -17,6 +18,7 @@ const TAP_WINDOW_MS = 2000;
 export class GameTrigger {
   private readonly container = inject(ViewContainerRef);
   private card?: ComponentRef<PlayerCard>;
+  private opening = false;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -56,8 +58,16 @@ export class GameTrigger {
   }
 
   private async open(): Promise<void> {
-    if (this.card) return;
-    const { PlayerCard } = await import('./player-card');
+    if (this.card || this.opening) return;
+    this.opening = true;
+    // the hero answers with a level up when it can be seen: the card waits for it, loading meanwhile
+    const leadIn = announceGameStart() ? new Promise((resolve) => setTimeout(resolve, LEAD_IN_MS)) : null;
+    let PlayerCard: typeof import('./player-card').PlayerCard;
+    try {
+      [{ PlayerCard }] = await Promise.all([import('./player-card'), leadIn]);
+    } finally {
+      this.opening = false;
+    }
     const card = this.container.createComponent(PlayerCard);
     this.card = card;
     card.instance.done.subscribe(() => {

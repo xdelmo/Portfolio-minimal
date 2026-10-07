@@ -66,3 +66,14 @@ export function ripple(distance: number, age: number): number {
 export function addRipple<T extends { start: number }>(ripples: readonly T[], next: T, t: number): T[] {
   return [...ripples.filter((r) => t - r.start < RIPPLE_MS), next].slice(-MAX_RIPPLES);
 }
+
+/** Time between the rings of the Konami level up, a steady beat. */
+export const LEVEL_UP_GAP_MS = 150;
+
+/**
+ * The Konami level up: four rings from one point (the face's centre) on a steady beat, like a drummer's sticks
+ * counting a song in.
+ */
+export function levelUp(centre: { x: number; y: number }, t: number): { x: number; y: number; start: number }[] {
+  return [0, 1, 2, 3].map((i) => ({ ...centre, start: t + i * LEVEL_UP_GAP_MS }));
+}

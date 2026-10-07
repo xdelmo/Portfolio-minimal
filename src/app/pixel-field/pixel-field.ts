@@ -10,7 +10,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, addRipple, layout } from './field';
+import { FieldLayout, RIPPLE_MS, addRipple, layout, levelUp } from './field';
+import { GAME_START } from '../game/game-start';
 import { MotionPause } from '../motion/pause';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
@@ -133,6 +134,17 @@ export class PixelField {
       if (!this.frame.animate) return;
       this.frame.ripples = addRipple(this.frame.ripples, { ...local(e), start: this.frame.t }, this.frame.t);
     };
+    // the Konami code: the face counts the card in, and tells the card to wait for it, but only where it can be seen
+    const onGameStart = (e: Event): void => {
+      if (!this.frame.animate || !this.visible || document.hidden) return;
+      const centre = { x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 };
+      for (const ring of levelUp(centre, this.frame.t)) this.frame.ripples = addRipple(this.frame.ripples, ring, this.frame.t);
+      e.preventDefault();
+    };
+    document.addEventListener(GAME_START, onGameStart);
+    this.cleanups.push(() => {
+      document.removeEventListener(GAME_START, onGameStart);
+    });
     document.addEventListener('visibilitychange', onVisibility);
     motion.addEventListener('change', onMotion);
     canvas.addEventListener('pointermove', onMove);

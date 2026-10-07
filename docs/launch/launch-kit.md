@@ -56,12 +56,12 @@ Un iPhone e un Android:
 - [x] **Lingue** nel blocco "At a glance": italiano madrelingua, inglese professionale, come su LinkedIn.
 - [x] **Titolo ufficiale**: deciso il 2026-10-07, `Frontend Engineer | Angular Developer` come titolo del profilo LinkedIn (le ricerche dei recruiter passano da "Frontend Engineer" e "Angular"); il sito e il README di GitHub dicono già `Frontend Engineer`.
 - [ ] **Repo ancora private** citate nei progetti e nelle side quest: i link portano già lì; rendile pubbliche dopo una scansione dei segreti (vedi la riga sotto).
-- [ ] **Issue #3** (Privacy): la pagina c'è (`/privacy`); chiudila tu. Se aggiungi statistiche, dimmelo: la pagina va aggiornata prima di attivarle.
+- [x] **Issue #3** (Privacy): chiusa il 2026-10-07, la pagina `/privacy` copre tutto e l'imprint non serve per un sito personale. Se aggiungi statistiche, dimmelo: la pagina va aggiornata prima di attivarle.
 - [x] **Esperienza**: allineata a LinkedIn il 2026-10-06 (agenzia 2022 – 2024, punti e tag di ogni lavoro, certificati). "BIP" accanto a Joinrs tolto (non è su LinkedIn); la vittoria del quiz Agile confermata dall'utente.
 - [ ] **Bot Telegram**: nel file `.env.example` di una repo pubblica ci sono due id Telegram che sembrano reali. Se lo sono, vanno sostituiti con valori finti.
 
 ## 8. Pulizia che richiede te
 
-- [ ] Chiudi la issue [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2) (easter egg, fatto nel piano 10): da qui il permesso di scrittura su GitHub è stato negato.
+- [x] Chiudi la issue [#2](https://github.com/xdelmo/Portfolio-minimal/issues/2) (easter egg, fatto nel piano 10): chiusa il 2026-10-07.
 - [ ] Branch remoti già mergiati, rimasti su GitHub (facoltativo): `git push origin --delete chore/ci-gate chore/limit-test-cpu fix/about-first-person fix/gum-from-mouth fix/lhci-case-study-url fix/moai-bubble-timer fix/moai-gum-and-exit robustness-skills worktree-pixel-field-fade`. `archive/gatsby-master` e il tag `gatsby-final` restano: sono la copia del sito Gatsby.
 - [ ] Aggiornamenti maggiori in attesa, da fare su un branch con `npm run verify`: TypeScript 7 (quando Angular lo supporta) e `@types/node` allineato a Node 24.

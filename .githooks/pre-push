@@ -1,4 +1,6 @@
 #!/bin/sh
-# Same gate as CI: a branch that fails `npm run verify` is not pushed.
+# Same gate as CI: a branch without a prefix saying what it does (feat/, fix/, …), or that fails
+# `npm run verify`, is not pushed.
 export PATH="$HOME/.local/node/current/bin:$PATH"
+node scripts/branch-name.mjs --pre-push || exit 1
 exec npm run verify

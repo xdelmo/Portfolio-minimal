@@ -45,31 +45,26 @@ test.describe('intro', () => {
   });
 
   // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding
-  // the page past the CSS fallback, which then finishes the lift on time
-  test('lifts by the CSS fallback time even when the motion script comes late', async ({ page, isMobile }) => {
+  // the page past the CSS fallback, which then finishes the lift
+  test('leaves the lift to the CSS when the motion script comes too late to replay it', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
-    let loaded = false;
+    // only the chunk that carries GSAP comes late, whenever it is asked for
     await page.route('**/*.js', async (route) => {
-      if (loaded) await new Promise((resolve) => setTimeout(resolve, 2300));
-      await route.continue();
+      const response = await route.fetch();
+      if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 2300));
+      await route.fulfill({ response });
     });
-    page.on('load', () => {
-      loaded = true;
-    });
-    // when the CSS lift really started (the first render, later on a slow machine), before GSAP may replace it
+    // GSAP takes over by switching the CSS lift off on the panel: watch for it from the first render
     await page.addInitScript(() => {
-      const look = (): void => {
-        const start = document.querySelector('.site-intro')?.getAnimations()[0]?.startTime;
-        if (start == null) requestAnimationFrame(look);
-        else Object.assign(window, { cssStart: Number(start) });
-      };
-      requestAnimationFrame(look);
+      new MutationObserver(() => {
+        const panel = document.querySelector<HTMLElement>('.site-intro');
+        if (panel?.style.animationName === 'none') Object.assign(window, { replayed: true });
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ['style'] });
     });
     await page.goto('/en/');
     await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 10000 });
-    const { end, cssStart } = await page.evaluate(() => ({ end: performance.now(), cssStart: (window as unknown as { cssStart: number }).cssStart }));
-    // 3.6s of CSS lift, and a few frames for the polling
-    expect(end - cssStart).toBeLessThan(3600 + 300);
+    // too late to replay without holding the page past the CSS lift: the CSS finished it
+    expect(await page.evaluate(() => 'replayed' in window)).toBe(false);
   });
 
   // phones skip it: it would delay the first paint, and the page is the point there

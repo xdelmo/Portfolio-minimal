@@ -27,6 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `v2` → `master` (going live) still needs the user's explicit yes.
 - When several branches wait to be shipped, push first the ones that improve the automation (hooks, CI, scripts, guards), then features and content: every later push benefits from them (the user's rule, 2026-10-07).
 - The `pre-commit` hook runs ESLint on the staged files, so a lint error stops the commit, not the push.
+- Locally `verify` stops the e2e at the first failure (`--max-failures=1`), so a red test blocks the push in a minute, not after every browser; CI still runs them all for the full report.
 - The `pre-push` hook remembers the commit `verify` passed on (clean tree only): a push retried after a GitHub or network error on the same commit skips verify; any change runs it again.
 
 ## Lessons from failures (read before writing tests or motion code)

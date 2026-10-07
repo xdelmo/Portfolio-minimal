@@ -1,0 +1,47 @@
+name: Triage
+
+# Every new issue and pull request is assigned to the owner and labelled by its kind; a pull request from a branch
+# named like fix/45-topic is linked to issue #45 (Development) when its description does not close it already.
+# GitHub runs issue events from the default branch's copy of this file (master), pull requests from their base's.
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
+          NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          TITLE: ${{ github.event.issue.title || github.event.pull_request.title }}
+          BODY: ${{ github.event.issue.body || github.event.pull_request.body }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+        run: |
+          case "$TITLE" in
+            feat*) label=enhancement ;;
+            fix*) label=bug ;;
+            docs*) label=documentation ;;
+            chore* | ci* | test* | refactor* | perf* | build* | style*) label=maintenance ;;
+            # ponytail: keyword guess for titles without a conventional prefix; relabel by hand when it is wrong
+            *) grep -qiE 'bug|errore|rott|non funziona|broken|fail|crash' <<< "$TITLE $BODY" && label=bug || label=enhancement ;;
+          esac
+          labels="\"$label\""
+          [ "$BASE" = v2 ] && labels="$labels,\"v2\""
+          gh api "repos/$GH_REPO/issues/$NUMBER/assignees" --input - <<< "{\"assignees\":[\"$OWNER\"]}" > /dev/null
+          gh api "repos/$GH_REPO/issues/$NUMBER/labels" --input - <<< "{\"labels\":[$labels]}" > /dev/null
+          issue=$(grep -oE '^[a-z]+/[0-9]+' <<< "$HEAD" | grep -oE '[0-9]+$' || true)
+          # only an open issue that exists: a number in a branch name may mean something else (feat/404-page)
+          if [ -n "$issue" ] && [ "$(gh api "repos/$GH_REPO/issues/$issue" -q 'select(.pull_request == null) | .state' 2>/dev/null)" = open ] \
+            && ! grep -qiE "(close|fix|resolve)[sd]? #$issue\b" <<< "$BODY"; then
+            gh pr edit "$NUMBER" --body "$(printf '%s\n\nCloses #%s' "$BODY" "$issue")"
+          fi

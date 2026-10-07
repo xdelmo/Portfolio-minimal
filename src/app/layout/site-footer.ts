@@ -20,8 +20,8 @@ import { CONTENT } from '../content/content';
       ></a>
       <ul>
         <li><a [href]="'mailto:' + content.person.email" i18n="@@footer.email">Email</a></li>
-        <li><a [href]="content.person.linkedin" rel="me">LinkedIn</a></li>
-        <li><a [href]="content.person.github" rel="me">GitHub</a></li>
+        <li><a [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener">LinkedIn</a></li>
+        <li><a [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener">GitHub</a></li>
         <li><a routerLink="/privacy" i18n="@@footer.privacy">Privacy</a></li>
         @if (ready()) {
           <!-- game-trigger.ts listens for clicks on [data-press-start]; it needs JavaScript, so it appears only then -->

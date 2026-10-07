@@ -24,7 +24,7 @@ test.describe('contact finale', () => {
     await page.goto('/en/');
     for (const profile of ['LinkedIn', 'GitHub']) {
       const tag = page.locator('#contact').getByRole('link', { name: profile });
-      await expect(tag).toHaveAttribute('rel', 'me');
+      await expect(tag).toHaveAttribute('rel', /\bme\b/);
       await expect(tag.locator('svg[shape-rendering="crispEdges"]')).toHaveCount(1);
     }
   });
@@ -37,8 +37,8 @@ test.describe('footer', () => {
     const footer = page.locator('app-site-footer footer');
     await expect(footer.locator('p')).toHaveText(`© ${String(new Date().getFullYear())} Emanuele Del Monte`);
     await expect(footer.getByRole('link', { name: 'Email' })).toHaveAttribute('href', `mailto:${EMAIL}`);
-    await expect(footer.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('rel', 'me');
-    await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('rel', 'me');
+    await expect(footer.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('rel', /\bme\b/);
+    await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('rel', /\bme\b/);
     await expect(footer).not.toContainText(EMAIL);
   });
 

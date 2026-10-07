@@ -26,7 +26,7 @@ import { QuestSprite } from '../side-quests/quest-sprite';
             >
             <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
               @for (repo of project.repos; track repo.url) {
-                <li><a class="repo-link" [href]="repo.url"><app-github-mark />{{ repo.label }}</a></li>
+                <li><a class="repo-link" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a></li>
               }
             </ul>
           </div>

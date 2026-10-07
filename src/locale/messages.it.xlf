@@ -190,6 +190,10 @@
         <source>Bag: the player card</source>
         <target>Zaino: la scheda giocatore</target>
       </trans-unit>
+      <trans-unit id="a11y.newTab" datatype="html">
+        <source>Opens in a new tab</source>
+        <target>Si apre in una nuova scheda</target>
+      </trans-unit>
       <trans-unit id="notFound.title" datatype="html">
         <source>A wild 404 appeared!</source>
         <target>È apparso un 404 selvatico!</target>

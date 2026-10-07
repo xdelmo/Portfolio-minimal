@@ -54,11 +54,28 @@ test('case study has canonical and hreflang links', async ({ page }) => {
   await expect(page.locator('link[hreflang="x-default"]')).toHaveCount(1);
 });
 
-test('the 404 page is localized and offers a way home', async ({ page }) => {
-  await page.goto('/it/404');
-  await expect(page.locator('h1')).toHaveText('Questa pagina non esiste');
-  await expect(page.getByRole('link', { name: 'Vai alla home' })).toBeVisible();
-});
+const WILD = {
+  en: { title: 'A wild 404 appeared!', menu: 'What to do', moves: ['Run home', 'See my work', 'Contact me'] },
+  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', moves: ['Fuggi alla home', 'Guarda i miei lavori', 'Contattami'] },
+};
+for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
+  test(`the ${locale} 404 is a wild encounter with a battle menu`, async ({ page, request }) => {
+    // the local server answers 404 for any unknown URL; the per-locale page Netlify serves is checked by verify:deploy
+    expect((await request.get(`/${locale}/nope`)).status()).toBe(404);
+    await page.goto(`/${locale}/404`);
+    await expect(page.locator('h1')).toHaveText(title);
+    const menu = page.getByRole('navigation', { name: label }).getByRole('link');
+    await expect(menu).toHaveText(moves);
+    // arrows move through the menu like a game's, wrapping round
+    await menu.first().focus();
+    await page.keyboard.press('ArrowUp');
+    await expect(menu.last()).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(menu.first()).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(new RegExp(`/${locale}/$`));
+  });
+}
 
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });

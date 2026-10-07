@@ -273,6 +273,28 @@ export const SPRITES = {
       '................',
     ],
   },
+  // the 404 page (pages/not-found/): the wild creature a broken link runs into
+  wild404: {
+    palette: { ...INK, l: '--px-4', p: '--px-6', w: '--surface' },
+    rows: [
+      '................',
+      '.....kkkkkk.....',
+      '...kkllllllkk...',
+      '..kllllllllllk..',
+      '.kllllllllllllk.',
+      '.kllkkllllkkllk.',
+      '.kllkwllllkwllk.',
+      'kllllllllllllllk',
+      'klppllllllllpplk',
+      'klllllkkkklllllk',
+      'kllllllllllllllk',
+      'kllllllllllllllk',
+      'kllllllllllllllk',
+      'kllllllllllllllk',
+      'kllkkllkkllkkllk',
+      '.kk..kk..kk..kk.',
+    ],
+  },
 } as const satisfies Record<string, Sprite>;
 
 export type SpriteName = keyof typeof SPRITES;

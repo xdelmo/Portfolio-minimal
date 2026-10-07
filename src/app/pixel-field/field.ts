@@ -6,6 +6,9 @@ export const COMPOSE_MS = 1400;
 export const POINTER_RADIUS = 96;
 export const RIPPLE_MS = 1600;
 
+/** A guard against an autoclicker: a person tapping fast leaves about ten ripples alive at once. */
+export const MAX_RIPPLES = 16;
+
 const RIPPLE_SPEED = 0.45; // px per ms
 const RIPPLE_WIDTH = 36;
 
@@ -54,4 +57,12 @@ export function ripple(distance: number, age: number): number {
   if (age < 0 || age >= RIPPLE_MS) return 0;
   const ring = Math.max(0, 1 - Math.abs(distance - age * RIPPLE_SPEED) / RIPPLE_WIDTH);
   return ring * (1 - age / RIPPLE_MS);
+}
+
+/**
+ * The ripples after a tap at `t`: every one still spreading keeps going, only faded ones leave (and the oldest, past
+ * MAX_RIPPLES), so fast taps never cut a ring short.
+ */
+export function addRipple<T extends { start: number }>(ripples: readonly T[], next: T, t: number): T[] {
+  return [...ripples.filter((r) => t - r.start < RIPPLE_MS), next].slice(-MAX_RIPPLES);
 }

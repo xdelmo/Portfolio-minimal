@@ -1,4 +1,4 @@
-import { CELL, POINTER_RADIUS, RIPPLE_MS, easeOutCubic, falloff, hash, layout, ripple, twinkle, vignette } from './field';
+import { CELL, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, falloff, hash, layout, ripple, twinkle, vignette } from './field';
 
 describe('pixel field maths', () => {
   it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
@@ -38,5 +38,26 @@ describe('pixel field maths', () => {
     expect(peakLate.indexOf(Math.max(...peakLate))).toBeGreaterThan(0);
     expect(ripple(0, RIPPLE_MS)).toBe(0);
     expect(ripple(0, -1)).toBe(0);
+  });
+});
+
+describe('adding a ripple', () => {
+  const at = (start: number) => ({ start });
+
+  it('keeps every ripple still spreading, however fast the taps come', () => {
+    let ripples: { start: number }[] = [];
+    for (let t = 0; t < 1000; t += 100) ripples = addRipple(ripples, at(t), t);
+    expect(ripples.map((r) => r.start)).toEqual([0, 100, 200, 300, 400, 500, 600, 700, 800, 900]);
+  });
+
+  it('drops the ripples that have faded out', () => {
+    expect(addRipple([at(0), at(500)], at(RIPPLE_MS + 100), RIPPLE_MS + 100).map((r) => r.start)).toEqual([500, RIPPLE_MS + 100]);
+  });
+
+  it('caps the count against an autoclicker, dropping the oldest', () => {
+    let ripples: { start: number }[] = [];
+    for (let t = 0; t < MAX_RIPPLES + 4; t++) ripples = addRipple(ripples, at(t), t);
+    expect(ripples).toHaveLength(MAX_RIPPLES);
+    expect(ripples[0].start).toBe(4);
   });
 });

@@ -26,10 +26,10 @@ import { SeoService } from '../../core/seo/seo.service';
           <p class="links">
             <!-- the code first: not every project is online, every one is on GitHub -->
             @for (repo of p.repos; track repo.url; let first = $first) {
-              <a class="button" [class.button--primary]="first" [href]="repo.url"><app-github-mark />{{ repo.label }}</a>
+              <a class="button" [class.button--primary]="first" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a>
             }
             @if (p.demoUrl) {
-              <a class="button" [href]="p.demoUrl" i18n="@@case.demo">Open the live demo</a>
+              <a class="button" [href]="p.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@case.demo">Open the live demo</a>
             }
           </p>
         </header>

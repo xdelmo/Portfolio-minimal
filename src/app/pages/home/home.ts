@@ -96,8 +96,8 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
         <ul class="profiles">
-          <li><a class="repo-link" [href]="content.person.linkedin" rel="me"><app-linkedin-mark />LinkedIn</a></li>
-          <li><a class="repo-link" [href]="content.person.github" rel="me"><app-github-mark />GitHub</a></li>
+          <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
+          <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
         </ul>
       </div>
       <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />

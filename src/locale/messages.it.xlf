@@ -154,17 +154,41 @@
           <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="notFound.level" datatype="html">
+        <source>Lv. 4</source>
+        <target>Lv. 4</target>
+      </trans-unit>
+      <trans-unit id="notFound.hp" datatype="html">
+        <source>HP</source>
+        <target>PS</target>
+      </trans-unit>
+      <trans-unit id="notFound.menu" datatype="html">
+        <source>What to do</source>
+        <target>Cosa fare</target>
+      </trans-unit>
+      <trans-unit id="notFound.run" datatype="html">
+        <source>Run home</source>
+        <target>Fuggi alla home</target>
+      </trans-unit>
+      <trans-unit id="notFound.work" datatype="html">
+        <source>See my work</source>
+        <target>Guarda i miei lavori</target>
+      </trans-unit>
+      <trans-unit id="notFound.contact" datatype="html">
+        <source>Contact me</source>
+        <target>Contattami</target>
+      </trans-unit>
       <trans-unit id="notFound.title" datatype="html">
-        <source>This page doesn&apos;t exist</source>
-        <target>Questa pagina non esiste</target>
+        <source>A wild 404 appeared!</source>
+        <target>È apparso un 404 selvatico!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
           <context context-type="linenumber">10,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="notFound.text" datatype="html">
-        <source>The link may be old or mistyped.</source>
-        <target>Il link potrebbe essere vecchio o scritto male.</target>
+        <source>The link may be old or mistyped. What will you do?</source>
+        <target>Il link potrebbe essere vecchio o scritto male. Cosa vuoi fare?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
           <context context-type="linenumber">11,12</context>

@@ -2,7 +2,7 @@
 export const GAME_START = 'game:start';
 
 /** How long the card waits for a lead-in. */
-export const LEAD_IN_MS = 500;
+export const LEAD_IN_MS = 600;
 
 /** Announces the game; true when something on the page is playing a lead-in the card should wait for. */
 export function announceGameStart(): boolean {

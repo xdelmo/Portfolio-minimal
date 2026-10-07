@@ -63,12 +63,10 @@ describe('adding a ripple', () => {
 });
 
 describe('the Konami level up', () => {
-  it('sends three rings from one point, one after the other', () => {
+  // a drummer's count-in, sticks clicked before the song: one, two, three, four, evenly spaced
+  it('sends four rings from one point, on a steady beat', () => {
     const rings = levelUp({ x: 300, y: 200 }, 1000);
-    expect(rings).toEqual([
-      { x: 300, y: 200, start: 1000 },
-      { x: 300, y: 200, start: 1000 + LEVEL_UP_GAP_MS },
-      { x: 300, y: 200, start: 1000 + 2 * LEVEL_UP_GAP_MS },
-    ]);
+    expect(rings.map((r) => r.start)).toEqual([0, 1, 2, 3].map((i) => 1000 + i * LEVEL_UP_GAP_MS));
+    expect(rings.every((r) => r.x === 300 && r.y === 200)).toBe(true);
   });
 });

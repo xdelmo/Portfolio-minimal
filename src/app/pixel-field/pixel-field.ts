@@ -134,7 +134,7 @@ export class PixelField {
       if (!this.frame.animate) return;
       this.frame.ripples = addRipple(this.frame.ripples, { ...local(e), start: this.frame.t }, this.frame.t);
     };
-    // the Konami code: the face levels up, and tells the card to wait for it, but only where it can be seen
+    // the Konami code: the face counts the card in, and tells the card to wait for it, but only where it can be seen
     const onGameStart = (e: Event): void => {
       if (!this.frame.animate || !this.visible || document.hidden) return;
       const centre = { x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 };

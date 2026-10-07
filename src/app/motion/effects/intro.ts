@@ -1,4 +1,4 @@
-import { endIntro, introFits } from '../intro-state';
+import { endIntro, INTRO_CSS_MS, introFits } from '../intro-state';
 import type { Effect } from '../motion-host';
 
 // the pixel palette of src/styles/_tokens.scss
@@ -34,9 +34,15 @@ export const introEffect: Effect = (root, { gsap }) => {
   }
   panel.style.animation = 'none';
   intro.play();
+  // a busy main thread stretches the timeline (GSAP's lag smoothing slows its clock down), so the CSS fallback's
+  // deadline still holds: the page is never covered for longer than the fallback would have covered it
+  const deadline = window.setTimeout(() => {
+    intro.progress(1);
+  }, cssStart + INTRO_CSS_MS - performance.now());
   // a revert (reduced motion switched on, a resize across the desktop query) kills the timeline: end the intro
   // anyway, or the opaque panel would stay put with its CSS fallback turned off
   return () => {
+    window.clearTimeout(deadline);
     endIntro();
   };
 };

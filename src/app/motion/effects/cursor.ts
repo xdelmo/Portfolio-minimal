@@ -3,7 +3,8 @@ import type { Effect } from '../motion-host';
 
 const INTERACTIVE = 'a, button, summary, [role="button"]';
 const MAGNET = 8; // px an element can lean towards the pointer
-const TITLES = 'main h2';
+// the contact title is a link already, and the biggest words on the page: no arrow needed to find it
+const TITLES = 'main h2:not(#contact-title)';
 const CELL = 8;
 // the eight directions a line stays clean on a 7-cell grid (in between, the arrow smudges into a blob)
 const STEPS = 8;

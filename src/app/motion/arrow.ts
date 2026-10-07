@@ -1,7 +1,7 @@
 /** Cells across the cursor's arrow (8px each, so 56px: close to the 40px frame over links). */
 export const ARROW_CELLS = 7;
-/** How close (px from its box) the pointer must be for the cursor to point at a heading. */
-export const ARROW_REACH = 160;
+/** How close (px from its words) the pointer must be for the cursor to point at a heading: eight cells, close by. */
+export const ARROW_REACH = 64;
 
 /**
  * The arrow redrawn on the pixel grid for `angle` (radians, 0 = right, clockwise as on screen): cells stay square

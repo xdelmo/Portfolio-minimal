@@ -2,7 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from './fixtures';
 
 const CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-const card = (page: Page) => page.getByRole('dialog', { name: 'Press start' });
+// the code (and its taps on phones) unlocks the cheat version of the card; Press start opens the plain one
+const card = (page: Page) => page.getByRole('dialog', { name: 'Cheat activated' });
 
 async function typeCode(page: Page, keys: readonly string[] = CODE): Promise<void> {
   await page.locator('body').click({ position: { x: 4, y: 300 } });
@@ -13,10 +14,25 @@ test('the Konami code opens the player card, Escape closes it', async ({ page })
   await page.goto('/en/');
   await typeCode(page);
   await expect(card(page)).toBeVisible();
-  await expect(card(page).getByRole('listitem')).toHaveCount(4);
+  await expect(card(page).getByRole('listitem')).toHaveCount(5);
   await expect(card(page).getByRole('meter')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(card(page)).toBeHidden();
+});
+
+test('the code unlocks the cheat card, Press start the plain one', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the code needs a keyboard');
+  await page.goto('/en/');
+  await typeCode(page);
+  await expect(card(page)).toContainText('99');
+  await expect(card(page)).toContainText('Konami code');
+  await expect(card(page).locator('meter')).toHaveAttribute('value', '1');
+  await page.keyboard.press('Escape');
+  await page.locator('app-site-footer').getByRole('button', { name: 'Press start' }).click();
+  const plain = page.getByRole('dialog', { name: 'Press start' });
+  await expect(plain).toBeVisible();
+  await expect(plain).not.toContainText('Konami code');
+  await expect(plain.locator('dd').nth(2)).toHaveText('3');
 });
 
 test('a wrong sequence opens nothing', async ({ page }) => {

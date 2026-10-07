@@ -306,6 +306,7 @@ export const CONTENT_IT: SiteContent = {
       { title: 'Team pizza', detail: 'Se potessi mangiare una cosa sola per sempre', sprite: 'pizza' },
       { title: 'Distruttore di telefoni', detail: 'Ne ho brickati tantissimi', sprite: 'phone' },
     ],
+    cheat: { title: 'Codice Konami', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },
   },
   stack: [
     { name: 'Ogni giorno', items: ['Angular', 'Signals', 'RxJS', 'NgRx', 'TypeScript', 'SCSS', 'Claude Code'] },

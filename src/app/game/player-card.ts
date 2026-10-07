@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, output, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input, output, viewChild } from '@angular/core';
 import { CONTENT } from '../content/content';
 import { QuestSprite } from '../sections/side-quests/quest-sprite';
 
@@ -13,7 +13,11 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
   imports: [QuestSprite],
   template: `
     <dialog #dialog class="card band--ink" aria-labelledby="game-title" (close)="done.emit()">
-      <h2 id="game-title" i18n="@@game.title">Press start</h2>
+      @if (cheat()) {
+        <h2 id="game-title" i18n="@@game.cheat">Cheat activated</h2>
+      } @else {
+        <h2 id="game-title" i18n="@@game.title">Press start</h2>
+      }
       <dl class="stats">
         <div>
           <dt i18n="@@game.player">Player</dt>
@@ -25,12 +29,12 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
         </div>
         <div>
           <dt i18n="@@game.level">Level</dt>
-          <dd>{{ content.game.level }}</dd>
+          <dd>{{ cheat() ? 99 : content.game.level }}</dd>
         </div>
       </dl>
       <p class="xp">
         <label for="game-xp" i18n="@@game.xp">Experience points to {{ content.game.next }}</label>
-        <meter id="game-xp" min="0" max="1" [value]="content.game.xp">{{ content.game.xp * 100 }}%</meter>
+        <meter id="game-xp" min="0" max="1" [value]="xp()">{{ xp() * 100 }}%</meter>
       </p>
       <h3 i18n="@@game.achievements">Achievements</h3>
       <ul class="achievements">
@@ -38,6 +42,12 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
           <li>
             <app-quest-sprite class="sprite" [name]="achievement.sprite" />
             <span><strong>{{ achievement.title }}</strong> {{ achievement.detail }}</span>
+          </li>
+        }
+        @if (cheat()) {
+          <li class="unlocked">
+            <app-quest-sprite class="sprite" [name]="content.game.cheat.sprite" />
+            <span><strong>{{ content.game.cheat.title }}</strong> {{ content.game.cheat.detail }}</span>
           </li>
         }
       </ul>
@@ -144,6 +154,9 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
 })
 export class PlayerCard {
   protected readonly content = inject(CONTENT);
+  /** Opened by the Konami code (or its taps on phones): the cheat version, maxed out, with one more achievement. */
+  readonly cheat = input(false);
+  protected readonly xp = computed(() => (this.cheat() ? 1 : this.content.game.xp));
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
   /** The card was closed: its creator destroys it, and the next code entry makes a fresh one. */
   readonly done = output();

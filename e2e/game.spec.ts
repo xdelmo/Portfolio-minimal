@@ -56,3 +56,49 @@ for (const theme of ['light', 'dark'] as const) {
     expect(results.violations).toEqual([]);
   });
 }
+
+// the hero answers the code with a level up (three rings from the face) and the card waits for it; where the face
+// cannot be seen, or with reduced motion, nobody answers and the card opens at once
+const listenForLeadIn = (page: Page) =>
+  page.addInitScript(() => {
+    document.addEventListener('game:start', (event) => {
+      setTimeout(() => {
+        Object.assign(window, { leadIn: event.defaultPrevented });
+      });
+    });
+  });
+const leadIn = (page: Page) => page.evaluate(() => (window as unknown as { leadIn?: boolean }).leadIn);
+
+test('with the face on screen, the hero levels up before the card opens', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the code needs a keyboard');
+  await listenForLeadIn(page);
+  await page.goto('/en/');
+  await typeCode(page);
+  await expect(card(page)).toBeVisible();
+  expect(await leadIn(page)).toBe(true);
+});
+
+test('away from the face, the card opens without a lead-in', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the code needs a keyboard');
+  await listenForLeadIn(page);
+  await page.goto('/en/');
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await expect(page.locator('app-pixel-field canvas')).not.toBeInViewport();
+  // a click by screen position: clicking the body locator would scroll back to the top
+  await page.mouse.click(4, 300);
+  for (const key of CODE) await page.keyboard.press(key);
+  await expect(card(page)).toBeVisible();
+  expect(await leadIn(page)).toBe(false);
+});
+
+test.describe('with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('the card opens without a lead-in', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'the code needs a keyboard');
+    await listenForLeadIn(page);
+    await page.goto('/en/');
+    await typeCode(page);
+    await expect(card(page)).toBeVisible();
+    expect(await leadIn(page)).toBe(false);
+  });
+});

@@ -1,4 +1,4 @@
-import { CELL, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, falloff, hash, layout, ripple, twinkle, vignette } from './field';
+import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, vignette } from './field';
 
 describe('pixel field maths', () => {
   it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
@@ -59,5 +59,16 @@ describe('adding a ripple', () => {
     for (let t = 0; t < MAX_RIPPLES + 4; t++) ripples = addRipple(ripples, at(t), t);
     expect(ripples).toHaveLength(MAX_RIPPLES);
     expect(ripples[0].start).toBe(4);
+  });
+});
+
+describe('the Konami level up', () => {
+  it('sends three rings from one point, one after the other', () => {
+    const rings = levelUp({ x: 300, y: 200 }, 1000);
+    expect(rings).toEqual([
+      { x: 300, y: 200, start: 1000 },
+      { x: 300, y: 200, start: 1000 + LEVEL_UP_GAP_MS },
+      { x: 300, y: 200, start: 1000 + 2 * LEVEL_UP_GAP_MS },
+    ]);
   });
 });

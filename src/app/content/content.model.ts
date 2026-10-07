@@ -46,6 +46,8 @@ export interface Project {
   repos: readonly Repo[];
   demoUrl?: string;
   image?: ProjectImage;
+  /** The pixel item shown in the project's frame when there is no screenshot. */
+  sprite?: SpriteName;
   caseStudy: CaseStudyBody;
 }
 

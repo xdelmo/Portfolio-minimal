@@ -229,6 +229,50 @@ export const SPRITES = {
       '................',
     ],
   },
+  // Telegram bots, in the work list: a little robot with its antenna lit
+  robot: {
+    palette: { ...INK, w: '--surface', a: '--accent', l: '--px-4' },
+    rows: [
+      '.......kk.......',
+      '.......aa.......',
+      '.......kk.......',
+      '...kkkkkkkkkk...',
+      '..kwwwwwwwwwwk..',
+      '..kwkkwwwwkkwk..',
+      '..kwkakwwkakwk..',
+      '..kwkkwwwwkkwk..',
+      '.kkwwwwwwwwwwkk.',
+      '.kkwwwkkkkwwwkk.',
+      '..kwwwwwwwwwwk..',
+      '...kkkkkkkkkk...',
+      '.....kllllk.....',
+      '...kkllllllkk...',
+      '..kllllllllllk..',
+      '..kkkkkkkkkkkk..',
+    ],
+  },
+  // MCP server, in the work list: the plug a model uses to reach a tool
+  plug: {
+    palette: { ...INK, a: '--accent', b: '--px-2' },
+    rows: [
+      '.....k....k.....',
+      '.....k....k.....',
+      '.....k....k.....',
+      '...kkkkkkkkkk...',
+      '...kaaaaaaaak...',
+      '...kaaaaaaaak...',
+      '...kabaaaaaak...',
+      '....kaaaaaak....',
+      '.....kkkkkk.....',
+      '.......kk.......',
+      '.......kk.......',
+      '........kk......',
+      '.........kk.....',
+      '..........kk....',
+      '...........kkk..',
+      '................',
+    ],
+  },
 } as const satisfies Record<string, Sprite>;
 
 export type SpriteName = keyof typeof SPRITES;

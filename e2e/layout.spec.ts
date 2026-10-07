@@ -205,3 +205,32 @@ test('back to top sits in the middle of the footer, with an arrow pointing up', 
   expect(Math.abs(box.x + box.width / 2 - (footer.x + footer.width / 2))).toBeLessThanOrEqual(8);
   await expect(top.locator('svg')).toBeVisible();
 });
+
+// one frame per project, the same 3:2 window for a desktop screenshot, a phone screenshot or, without either,
+// the project's pixel item: the list keeps one rhythm and no column is left empty
+for (const width of [1280, 390]) {
+  test(`every project sits in a frame of the same shape at ${String(width)}px, with a picture or a pixel item`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    const frames = page.locator('#work .project .media');
+    const count = await frames.count();
+    expect(count).toBe(await page.locator('#work .project').count());
+    // the layout box: the reveal may still be scaling a frame
+    const boxes = await frames.evaluateAll((els) => els.map((el) => ({ w: (el as HTMLElement).offsetWidth, h: (el as HTMLElement).offsetHeight })));
+    for (const box of boxes) {
+      expect(Math.abs(box.w / box.h - 3 / 2)).toBeLessThan(0.02);
+      expect(Math.abs(box.h - boxes[0].h)).toBeLessThanOrEqual(1);
+    }
+    for (let i = 0; i < count; i++) {
+      expect(await frames.nth(i).locator('img.shot, app-quest-sprite').count(), `project ${String(i)}`).toBe(1);
+    }
+  });
+}
+
+test('the first thing each project offers is its case study', async ({ page }) => {
+  await page.goto('/en/');
+  const projects = page.locator('#work .project');
+  for (let i = 0; i < (await projects.count()); i++) {
+    await expect(projects.nth(i).getByRole('link', { name: 'Read the case study' })).toHaveAttribute('href', /\/work\/[\w-]+$/);
+  }
+});

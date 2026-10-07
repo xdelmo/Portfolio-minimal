@@ -330,6 +330,10 @@
         <source>Privacy</source>
         <target>Privacy</target>
       </trans-unit>
+      <trans-unit id="work.caseStudy" datatype="html">
+        <source>Read the case study</source>
+        <target>Leggi il case study</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

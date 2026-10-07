@@ -3,11 +3,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
+import { QuestSprite } from '../side-quests/quest-sprite';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug) {
@@ -20,14 +21,18 @@ import { GithubMark } from '../../layout/github-mark';
                 <li>{{ tech }}</li>
               }
             </ul>
+            <a class="button button--primary read" [routerLink]="['/work', project.slug]"
+              ><span i18n="@@work.caseStudy">Read the case study</span><span class="visually-hidden">: {{ project.title }}</span></a
+            >
             <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
               @for (repo of project.repos; track repo.url) {
                 <li><a class="repo-link" [href]="repo.url"><app-github-mark />{{ repo.label }}</a></li>
               }
             </ul>
           </div>
-          @if (project.image; as image) {
-            <div class="media">
+          <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
+          <div class="media">
+            @if (project.image; as image) {
               <img
                 class="shot"
                 [ngSrc]="image.src"
@@ -38,8 +43,10 @@ import { GithubMark } from '../../layout/github-mark';
                 [alt]="image.alt"
                 [sizes]="image.height > image.width ? '280px' : '(min-width: 768px) 50vw, 100vw'"
               />
-            </div>
-          }
+            } @else if (project.sprite; as sprite) {
+              <app-quest-sprite class="item" [name]="sprite" />
+            }
+          </div>
         </li>
       }
     </ul>
@@ -76,12 +83,17 @@ import { GithubMark } from '../../layout/github-mark';
       color: var(--fg-muted);
       font-size: var(--step--1);
     }
+    // the case study first, the code after it, smaller
+    .read {
+      justify-self: start;
+      margin-top: var(--space-1);
+    }
     .repos {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-1);
       margin: 0;
-      padding: var(--space-1) 0 0;
+      padding: 0;
       list-style: none;
     }
     // phones: the picture first, then what it is
@@ -93,16 +105,32 @@ import { GithubMark } from '../../layout/github-mark';
         order: 0;
       }
     }
-    .shot {
-      display: block;
-      width: 100%;
-      height: auto;
+    // one 3:2 window for every project: a desktop screenshot fills it, a phone one stands in it whole, a pixel item sits
+    // in its middle
+    .media {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
       border: 1px solid var(--rule);
       background: var(--surface);
     }
+    .shot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     // keep in step with the 280px in the image's sizes
-    .project--tall .media {
+    .project--tall .shot {
+      width: auto;
       max-width: 280px;
+      height: calc(100% - 2 * var(--space-3));
+      object-fit: contain;
+    }
+    .item {
+      width: 36%;
+      aspect-ratio: 1;
     }
     @include bp.up(md) {
       // the text sits level with the middle of its picture, so a short description leaves no hole below it
@@ -110,9 +138,6 @@ import { GithubMark } from '../../layout/github-mark';
         grid-template-columns: 1fr 1fr;
         gap: var(--space-6);
         align-items: center;
-      }
-      .project--tall .media {
-        justify-self: center;
       }
     }
   `,

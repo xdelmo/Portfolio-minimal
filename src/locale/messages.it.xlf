@@ -167,16 +167,28 @@
         <target>Cosa fare</target>
       </trans-unit>
       <trans-unit id="notFound.run" datatype="html">
-        <source>Run home</source>
-        <target>Fuggi alla home</target>
+        <source>Run</source>
+        <target>Fuggi</target>
       </trans-unit>
       <trans-unit id="notFound.work" datatype="html">
-        <source>See my work</source>
-        <target>Guarda i miei lavori</target>
+        <source>My work</source>
+        <target>Lavori</target>
       </trans-unit>
       <trans-unit id="notFound.contact" datatype="html">
-        <source>Contact me</source>
-        <target>Contattami</target>
+        <source>Contact</source>
+        <target>Contatti</target>
+      </trans-unit>
+      <trans-unit id="notFound.runLabel" datatype="html">
+        <source>Run: to the home page</source>
+        <target>Fuggi: alla home</target>
+      </trans-unit>
+      <trans-unit id="notFound.bag" datatype="html">
+        <source>Bag</source>
+        <target>Zaino</target>
+      </trans-unit>
+      <trans-unit id="notFound.bagLabel" datatype="html">
+        <source>Bag: the player card</source>
+        <target>Zaino: la scheda giocatore</target>
       </trans-unit>
       <trans-unit id="notFound.title" datatype="html">
         <source>A wild 404 appeared!</source>

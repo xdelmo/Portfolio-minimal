@@ -9,7 +9,8 @@ test.describe('intro', () => {
     const intro = page.locator('.site-intro');
     await expect(intro).toBeVisible();
     await expect(intro).toHaveAttribute('aria-hidden', 'true');
-    await expect(intro).toBeHidden({ timeout: 4000 });
+    // at the latest the CSS lift ends 3.6s after the first render, which a slow machine pushes back
+    await expect(intro).toBeHidden({ timeout: 6000 });
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {
@@ -31,7 +32,7 @@ test.describe('intro', () => {
 
   test('is shown once per session', async ({ page }) => {
     await page.goto('/en/');
-    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 4000 });
+    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
     await page.goto('/en/work/apexflow');
     await expect(page.locator('.site-intro')).toBeHidden();
   });

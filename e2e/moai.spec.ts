@@ -203,11 +203,18 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
   await page.getByRole('button', { name: 'Pause animations' }).click();
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
-  // the head still follows the pointer that just clicked the button (a reply to the user): let it settle
-  await page.waitForTimeout(2500);
-  const still = await snapshot(page);
-  await page.waitForTimeout(800);
-  expect(await snapshot(page)).toBe(still);
+  // the head still follows the pointer that just clicked the button (a reply to the user): it settles, then stays
+  // still. Polled rather than timed, because a slow machine draws few frames and the easing settles later
+  await expect
+    .poll(
+      async () => {
+        const before = await snapshot(page);
+        await page.waitForTimeout(800);
+        return (await snapshot(page)) === before;
+      },
+      { timeout: 10000 },
+    )
+    .toBe(true);
 });
 
 test('its eyes follow the mouse', async ({ page, isMobile }) => {

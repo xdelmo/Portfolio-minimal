@@ -25,7 +25,15 @@ import { CONTENT } from '../content/content';
         <li><a routerLink="/privacy" i18n="@@footer.privacy">Privacy</a></li>
         @if (ready()) {
           <!-- game-trigger.ts listens for clicks on [data-press-start]; it needs JavaScript, so it appears only then -->
-          <li><button type="button" class="press-start" data-press-start i18n="@@footer.pressStart">Press start</button></li>
+          <li>
+            <button type="button" class="press-start" data-press-start i18n-aria-label="@@footer.pressStart" aria-label="Press start">
+              <svg class="key" viewBox="0 0 16 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+                <path class="body" d="M0 1h10v1h-10zM0 2h12v1h-12zM0 3h14v1h-14zM0 4h14v1h-14zM0 5h12v1h-12zM0 6h10v1h-10zM0 7h8v1h-8z" />
+                <path class="lit" d="M0 0h8v1h-8z" />
+              </svg>
+              <span i18n="@@footer.start">Start</span>
+            </button>
+          </li>
         }
       </ul>
     </footer>
@@ -84,20 +92,43 @@ import { CONTENT } from '../content/content';
       display: inline-block;
       min-height: 24px;
     }
-    // a small key, like the pixel tags: the way into the game for anyone without a keyboard code
+    // the console's start key, drawn in pixels: a grey key pointing right, its top row lit, only "Start" under it as on
+    // the pad (the button is named "Press start", like the card it opens) (only the shape is borrowed: no logos, no face-button symbols). Pressed, it sinks 2px in steps
     .press-start {
-      min-height: 32px;
-      padding: 0 var(--space-1);
-      border: 2px solid var(--fg);
-      background: transparent;
+      display: grid;
+      justify-items: center;
+      gap: var(--space-1);
+      min-height: 48px;
+      padding: var(--space-1) 0 0;
+      border: 0;
+      background: none;
       color: var(--fg);
       font: inherit;
+      font-size: var(--step--1);
       font-weight: 600;
       cursor: pointer;
     }
-    .press-start:hover {
-      background: var(--fg);
-      color: var(--bg);
+    .key {
+      display: block;
+      width: 48px;
+      height: 24px;
+    }
+    .body {
+      fill: var(--band-ink-muted);
+    }
+    .lit {
+      fill: var(--fg);
+    }
+    .press-start:hover .body {
+      fill: var(--fg);
+    }
+    .press-start:active .key {
+      translate: 0 2px;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .key {
+        transition: translate 80ms steps(2);
+      }
     }
   `,
 })

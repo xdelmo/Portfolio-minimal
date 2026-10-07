@@ -342,6 +342,10 @@
         <source>Email</source>
         <target>Email</target>
       </trans-unit>
+      <trans-unit id="footer.start" datatype="html">
+        <source>Start</source>
+        <target>Start</target>
+      </trans-unit>
       <trans-unit id="footer.pressStart" datatype="html">
         <source>Press start</source>
         <target>Press start</target>

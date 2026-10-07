@@ -36,6 +36,7 @@ Every failure that reaches the `pre-push` hook or CI is closed in the same pull 
 - A test about a time window (five taps within 2 s, an intro that lifts by a deadline) must not depend on how fast Playwright acts: `locator.click()` waits for stability, about 0.5 s each in WebKit on CI. Use `page.mouse.click` at a measured position (`verify` repeats the changed specs 5 times; for a timing fix, `npm run e2e:webkit -- <spec> --repeat-each=10` too).
 - Anything bounded by a deadline in CSS must be bounded the same way when GSAP takes over: GSAP's lag smoothing slows its clock on a busy main thread (`effects/intro.ts` sets a timer on the fallback's deadline).
 - A timing assertion counts from what the app's own bound counts from, plus the lag of WebKit's frames in CI: the intro test waits 6 s for a 3.6 s bound that starts at the first render, not at the end of `goto`.
+- Before pushing a template change, `grep -rn` the e2e for the attributes and texts you changed and run those specs on Chromium: seconds, against ten minutes of hook (adding `noopener` broke two tests that wanted `rel="me"` exactly).
 - A GSAP timeline is thenable: a callback that returns one trips `no-misused-promises`; give it a block body.
 - `gh pr edit` fails on this repo (retired Projects classic fields): edit pull requests through `gh api`.
 

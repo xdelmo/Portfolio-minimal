@@ -28,8 +28,8 @@ import { CONTENT } from '../content/content';
           <li>
             <button type="button" class="press-start" data-press-start i18n-aria-label="@@footer.pressStart" aria-label="Press start">
               <svg class="key" viewBox="0 0 16 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
-                <path class="body" d="M0 1h10v1h-10zM0 2h12v1h-12zM0 3h14v1h-14zM0 4h14v1h-14zM0 5h12v1h-12zM0 6h10v1h-10zM0 7h8v1h-8z" />
-                <path class="lit" d="M0 0h8v1h-8z" />
+                <path class="fill" d="M1 1h7v1h-7zM1 2h9v1h-9zM1 3h11v1h-11zM1 4h11v1h-11zM1 5h9v1h-9zM1 6h7v1h-7z" />
+                <path class="line" d="M0 0h8v1h-8zM0 1h1v1h-1zM8 1h2v1h-2zM0 2h1v1h-1zM10 2h2v1h-2zM0 3h1v1h-1zM12 3h2v1h-2zM0 4h1v1h-1zM12 4h2v1h-2zM0 5h1v1h-1zM10 5h2v1h-2zM0 6h1v1h-1zM8 6h2v1h-2zM0 7h8v1h-8z" />
               </svg>
               <span i18n="@@footer.start">Start</span>
             </button>
@@ -92,35 +92,37 @@ import { CONTENT } from '../content/content';
       display: inline-block;
       min-height: 24px;
     }
-    // the console's start key, drawn in pixels: a grey key pointing right, its top row lit, only "Start" under it as on
-    // the pad (the button is named "Press start", like the card it opens) (only the shape is borrowed: no logos, no face-button symbols). Pressed, it sinks 2px in steps
+    // the console's start key, drawn in pixels: a small outline pointing right, "Start" beside it, on the line of the
+    // links (the button is named "Press start", like the card it opens; only the shape is borrowed: no logos, no
+    // face-button symbols). An easter egg should be found, not shout: it fills only under the pointer or when pressed
     .press-start {
-      display: grid;
-      justify-items: center;
+      display: inline-flex;
+      align-items: center;
       gap: var(--space-1);
-      min-height: 48px;
-      padding: var(--space-1) 0 0;
+      min-height: 24px;
+      padding: 0;
       border: 0;
       background: none;
-      color: var(--fg);
+      color: var(--link);
       font: inherit;
-      font-size: var(--step--1);
-      font-weight: 600;
       cursor: pointer;
     }
     .key {
       display: block;
-      width: 48px;
-      height: 24px;
+      flex: none;
+      width: 32px;
+      height: 16px;
     }
-    .body {
-      fill: var(--band-ink-muted);
+    .line {
+      fill: currentColor;
     }
-    .lit {
-      fill: var(--fg);
+    .fill {
+      fill: transparent;
     }
-    .press-start:hover .body {
-      fill: var(--fg);
+    .press-start:hover .fill,
+    .press-start:focus-visible .fill,
+    .press-start:active .fill {
+      fill: currentColor;
     }
     .press-start:active .key {
       translate: 0 2px;

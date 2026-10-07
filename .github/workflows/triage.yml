@@ -1,7 +1,8 @@
 name: Triage
 
 # Every new issue and pull request is assigned to the owner and labelled by its kind; a pull request from a branch
-# named like fix/45-topic is linked to issue #45 (Development) when its description does not close it already.
+# named like fix/45-topic gets "Closes #45" when its description does not close it already (GitHub turns that into a
+# Development link, and closes the issue, only for pull requests into the default branch; into v2 it is a reference).
 # GitHub runs issue events from the default branch's copy of this file (master), pull requests from their base's.
 on:
   issues:
@@ -43,5 +44,6 @@ jobs:
           # only an open issue that exists: a number in a branch name may mean something else (feat/404-page)
           if [ -n "$issue" ] && [ "$(gh api "repos/$GH_REPO/issues/$issue" -q 'select(.pull_request == null) | .state' 2>/dev/null)" = open ] \
             && ! grep -qiE "(close|fix|resolve)[sd]? #$issue\b" <<< "$BODY"; then
-            gh pr edit "$NUMBER" --body "$(printf '%s\n\nCloses #%s' "$BODY" "$issue")"
+            # REST, not `gh pr edit`: that one trips over the retired Projects (classic) fields
+            gh api -X PATCH "repos/$GH_REPO/pulls/$NUMBER" -f body="$(printf '%s\n\nCloses #%s' "$BODY" "$issue")" > /dev/null
           fi

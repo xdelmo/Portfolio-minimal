@@ -21,7 +21,7 @@ export const CONTENT_EN: SiteContent = {
   },
   hero: {
     headline: 'I build Angular interfaces that stay fast when the data gets big.',
-    lede: 'Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate, 2026.',
+    lede: 'Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate.',
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   about:

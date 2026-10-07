@@ -120,8 +120,11 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     .hero h1 {
       max-width: 16ch;
     }
+    // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
     .lede {
-      font-size: var(--step-1);
+      @include bp.up(md) {
+        font-size: var(--step-1);
+      }
     }
     .availability,
     .muted {

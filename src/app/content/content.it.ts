@@ -22,7 +22,7 @@ export const CONTENT_IT: SiteContent = {
   },
   hero: {
     headline: 'Interfacce Angular veloci anche con molti dati.',
-    lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica nel 2026.',
+    lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about:

@@ -15,6 +15,10 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      - if: github.event_name == 'pull_request'
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: node scripts/branch-name.mjs "$BRANCH"
       - run: npm ci
       - run: npm run lint
       - run: npx ng test --no-watch

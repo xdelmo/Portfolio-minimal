@@ -19,12 +19,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Git workflow
 
-- Every feature or fix gets its own branch off `v2` (`feat/<topic>`, `fix/<topic>`), never a direct commit on `v2`.
-- When `npm run verify` exits 0: push the branch, open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
-- The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`.
+- Every change gets its own branch off `v2`, named `<prefix>/<topic>` so the user can tell what a merge was from its name: `feat/` (new things), `fix/`, `docs/`, `chore/`, `ci/`, `test/`, `refactor/`, `perf/`, `style/`, `build/`; never a direct commit on `v2`. `scripts/branch-name.mjs` enforces it in the `pre-push` hook and in CI, so rename a branch before pushing (worktree tools name theirs `worktree-…`). New issues and pull requests are assigned, labelled and linked by `.github/workflows/triage.yml`.
+- Push the branch (the `pre-push` hook is the `npm run verify` run: do not run it by hand first, that doubles 20 minutes), open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
+- The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`; deleting a remote branch needs no bypass, the hook skips verify for a push that only deletes.
 - WebKit and iPhone do not run natively on the Mac (macOS 14): `npm run e2e:webkit` (part of `verify`, so of the `pre-push` hook) runs them in CI's Linux Playwright image through OrbStack, about 5 minutes; extra arguments go to Playwright (`npm run e2e:webkit -- e2e/moai.spec.ts`). On the Linux PC (Ubuntu 26.04, which Playwright's WebKit does not support: it launches but canvas animations never advance) `npm run e2e:webkit` runs them in the same image through Docker, about 10 minutes. There git has no global identity: the repo's local `user.name`/`user.email` are set to the user's. Most red CI runs before it were WebKit/iPhone failures nobody had seen locally. For a CI failure anyway, `gh run download <run-id> -n reports` gets the failed run's `test-results`; a test with a `-retry1` folder failed twice, one without it passed on retry. Read the steps and their durations from `trace.zip` before changing anything, and fix the cause rather than rerunning until green.
 - A CI failure that says "The job was not acquired by Runner" is GitHub's runners, not the code: `gh run rerun <id>`; it still is not a green CI.
 - `v2` → `master` (going live) still needs the user's explicit yes.
+- When several branches wait to be shipped, push first the ones that improve the automation (hooks, CI, scripts, guards), then features and content: every later push benefits from them (the user's rule, 2026-10-07).
+- The `pre-commit` hook runs ESLint on the staged files, so a lint error stops the commit, not the push.
+
+## Lessons from failures (read before writing tests or motion code)
+
+Every failure that reaches the `pre-push` hook or CI is closed in the same pull request with the fix of its cause **and** a guard that stops it coming back: a lint rule, a test, a check in a script or hook. Only when no automatic guard is possible, a line here. Already automatic: lint on commit (`pre-commit`), a foreign server on port 4300 stops the e2e (`scripts/e2e-port.sh`), the e2e specs a branch changes run 5 more times at the end of `verify` (`scripts/e2e-changed.sh`), branch names (`scripts/branch-name.mjs`).
+
+- A test about a time window (five taps within 2 s, an intro that lifts by a deadline) must not depend on how fast Playwright acts: `locator.click()` waits for stability, about 0.5 s each in WebKit on CI. Use `page.mouse.click` at a measured position (`verify` repeats the changed specs 5 times; for a timing fix, `npm run e2e:webkit -- <spec> --repeat-each=10` too).
+- Anything bounded by a deadline in CSS must be bounded the same way when GSAP takes over: GSAP's lag smoothing slows its clock on a busy main thread (`effects/intro.ts` sets a timer on the fallback's deadline).
+- A GSAP timeline is thenable: a callback that returns one trips `no-misused-promises`; give it a block body.
+- `gh pr edit` fails on this repo (retired Projects classic fields): edit pull requests through `gh api`.
 
 ## Architecture
 

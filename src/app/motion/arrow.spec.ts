@@ -33,9 +33,15 @@ describe('pixel arrow', () => {
     const near = { left: 100, top: 100, right: 300, bottom: 150 };
     const far = { left: 100, top: 900, right: 300, bottom: 950 };
     // below the first heading: it points up, at its centre
-    expect(pointing(200, 250, [far, near])).toBeCloseTo(-Math.PI / 2);
+    expect(pointing(200, 200, [far, near])).toBeCloseTo(-Math.PI / 2);
     expect(pointing(200, 600, [far, near])).toBeNull();
     // on the title itself it would hide the words
     expect(pointing(200, 120, [far, near])).toBeNull();
+  });
+
+  it('turns into an arrow only close to the words, not a hand-span away', () => {
+    const title = { left: 100, top: 100, right: 300, bottom: 150 };
+    expect(pointing(200, 150 + 56, [title])).not.toBeNull();
+    expect(pointing(200, 150 + 120, [title])).toBeNull();
   });
 });

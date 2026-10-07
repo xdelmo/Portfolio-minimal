@@ -1,10 +1,25 @@
-import { expect, test, type Page } from './fixtures';
+import { expect, test, type Locator, type Page } from './fixtures';
 
 const cursor = (page: Page) => page.locator('app-pixel-cursor .pixel-cursor');
 const ready = (page: Page) => expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
 // the lean lives in the `translate` property, apart from hover transforms
 const translate = (page: Page, selector: string) =>
   page.locator(selector).first().evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
+
+// a title's words, not its full-width block (SplitText wraps them in lines as wide as the column)
+const words = (title: Locator) =>
+  title.evaluate((el) => {
+    const range = document.createRange();
+    const rects: DOMRect[] = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      range.selectNodeContents(node);
+      rects.push(range.getBoundingClientRect());
+    }
+    const left = Math.min(...rects.map((r) => r.left));
+    const top = Math.min(...rects.map((r) => r.top));
+    return { x: left, y: top, width: Math.max(...rects.map((r) => r.right)) - left, height: Math.max(...rects.map((r) => r.bottom)) - top };
+  });
 
 test.describe('on a desktop with a mouse', () => {
   test.skip(({ isMobile }) => isMobile, 'mouse only');
@@ -40,22 +55,10 @@ test.describe('on a desktop with a mouse', () => {
     await ready(page);
     const title = page.locator('#work h2');
     await title.scrollIntoViewIfNeeded();
-    // the words, not the full-width block
-    const box = await title.evaluate((el) => {
-      const range = document.createRange();
-      const rects: DOMRect[] = [];
-      const words = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-      for (let node = words.nextNode(); node; node = words.nextNode()) {
-        range.selectNodeContents(node);
-        rects.push(range.getBoundingClientRect());
-      }
-      const left = Math.min(...rects.map((r) => r.left));
-      const top = Math.min(...rects.map((r) => r.top));
-      return { x: left, y: top, width: Math.max(...rects.map((r) => r.right)) - left, height: Math.max(...rects.map((r) => r.bottom)) - top };
-    });
+    const box = await words(title);
     // to the right of the title, level with it: the arrow points left
-    await page.mouse.move(box.x + box.width + 60, box.y + box.height / 2);
-    await page.mouse.move(box.x + box.width + 64, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width + 36, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width + 40, box.y + box.height / 2);
     await expect(arrow).toBeVisible();
     await expect(cursor(page)).toBeHidden();
     const angle = Number(await arrow.getAttribute('data-angle'));
@@ -66,6 +69,34 @@ test.describe('on a desktop with a mouse', () => {
     await page.mouse.move(710, 140);
     await expect(arrow).toBeHidden();
     await expect(cursor(page)).toBeVisible();
+  });
+
+  test('a hand-span from a title the pixel stays a pixel', async ({ page }) => {
+    const title = page.locator('#work h2');
+    await page.goto('/en/');
+    await ready(page);
+    await title.scrollIntoViewIfNeeded();
+    const box = await words(title);
+    await page.mouse.move(box.x + box.width + 116, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width + 120, box.y + box.height / 2);
+    await expect(cursor(page)).toBeVisible();
+    await expect(page.locator('app-pixel-cursor .pixel-arrow')).toBeHidden();
+  });
+
+  // the contact title is a link already, and big enough to find: no arrow pointing at it
+  test('the contact title gets no arrow', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const link = page.locator('#contact h2 a');
+    await link.scrollIntoViewIfNeeded();
+    const box = await link.boundingBox();
+    if (!box) throw new Error('no contact title');
+    // beside the title, level with it, off the link
+    await page.mouse.move(box.x + box.width + 20, box.y + box.height / 2);
+    await page.mouse.move(box.x + box.width + 24, box.y + box.height / 2);
+    await expect(cursor(page)).toBeVisible();
+    await expect(cursor(page)).not.toHaveClass(/is-over/);
+    await expect(page.locator('app-pixel-cursor .pixel-arrow')).toBeHidden();
   });
 
   test('buttons lean towards the pointer and settle back when it leaves', async ({ page }) => {

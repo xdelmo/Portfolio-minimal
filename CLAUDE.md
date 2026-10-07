@@ -42,7 +42,7 @@ Every failure that reaches the `pre-push` hook or CI is closed in the same pull 
 
 ## Architecture
 
-Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "static"`, no Node server), deployed on Netlify. Spec: `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md`; plans in `docs/superpowers/plans/` (each opens with its status); every change to the spec gets a row in its §17. Manual launch steps, open questions for the user and the cleanup only they can do: `docs/launch/launch-kit.md`.
+Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "static"`, no Node server), deployed on Netlify. Spec: `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md`; plans in `docs/superpowers/plans/` (each opens with its status); every change to the spec gets a row in its §17 (`.gitattributes` merges the spec with `union`, so rows appended by parallel branches never conflict). Manual launch steps, open questions for the user and the cleanup only they can do: `docs/launch/launch-kit.md`.
 
 - Two locale builds via `@angular/localize`: English is the template source language, Italian lives in `src/locale/messages.it.xlf` (missing translations fail the build). UI strings use explicit `@@ids`; long content comes from `src/app/content/content.{en,it}.ts`, picked by `LOCALE_ID` through the `CONTENT` token.
 - Logic that can break lives in pure, unit-tested functions next to thin services: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts`.

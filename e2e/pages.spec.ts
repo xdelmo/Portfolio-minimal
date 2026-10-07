@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from './fixtures';
+import { expect, test, type Page } from './fixtures';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -55,8 +55,8 @@ test('case study has canonical and hreflang links', async ({ page }) => {
 });
 
 const WILD = {
-  en: { title: 'A wild 404 appeared!', menu: 'What to do', moves: ['Run home', 'See my work', 'Contact me'] },
-  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', moves: ['Fuggi alla home', 'Guarda i miei lavori', 'Contattami'] },
+  en: { title: 'A wild 404 appeared!', menu: 'What to do', moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
+  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
 };
 for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
   test(`the ${locale} 404 is a wild encounter with a battle menu`, async ({ page, request }) => {
@@ -64,18 +64,53 @@ for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
     expect((await request.get(`/${locale}/nope`)).status()).toBe(404);
     await page.goto(`/${locale}/404`);
     await expect(page.locator('h1')).toHaveText(title);
-    const menu = page.getByRole('navigation', { name: label }).getByRole('link');
-    await expect(menu).toHaveText(moves);
-    // arrows move through the menu like a game's, wrapping round
+    const nav = page.getByRole('navigation', { name: label });
+    const menu = nav.locator('.move');
+    for (const [i, name] of moves.entries()) await expect(menu.nth(i)).toHaveAccessibleName(name);
+    // two by two, as in the game: right and left in a row, down and up between rows, wrapping round
     await menu.first().focus();
-    await page.keyboard.press('ArrowUp');
-    await expect(menu.last()).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect(menu.nth(1)).toBeFocused();
     await page.keyboard.press('ArrowDown');
+    await expect(menu.nth(3)).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(menu.nth(1)).toBeFocused();
+    await page.keyboard.press('ArrowLeft');
     await expect(menu.first()).toBeFocused();
-    await page.keyboard.press('Enter');
+    // the bag opens the player card of the Press start easter egg
+    await menu.nth(2).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await menu.nth(3).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/$`));
   });
 }
+
+const idle = (page: Page) =>
+  page.locator('.foe').evaluate((el) =>
+    el
+      .getAnimations()
+      .map((a) => `${(a as CSSAnimation).animationName}:${a.playState}`)
+      .filter((a) => a.includes('idle:'))
+      // Angular prefixes keyframe names with the component's scope
+      .map((a) => a.replace(/^.*idle:/, 'idle:')),
+  );
+
+test('the wild 404 bobs while it waits, and the pause button stops it', async ({ page }) => {
+  await page.goto('/en/404');
+  await expect.poll(() => idle(page)).toEqual(['idle:running']);
+  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await expect.poll(() => idle(page)).toEqual(['idle:paused']);
+});
+
+test.describe('with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('the wild 404 stands still', async ({ page }) => {
+    await page.goto('/en/404');
+    await expect(page.locator('h1')).toBeVisible();
+    expect(await idle(page)).toEqual([]);
+  });
+});
 
 test.describe('without JavaScript', () => {
   test.use({ javaScriptEnabled: false });

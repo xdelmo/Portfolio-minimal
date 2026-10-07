@@ -9,7 +9,7 @@ specs=()
 while IFS= read -r spec; do specs+=("$spec"); done < <(git diff --name-only --diff-filter=AM "$base" -- 'e2e/*.spec.ts')
 [ ${#specs[@]} -eq 0 ] && { echo "e2e:changed: no e2e spec changed"; exit 0; }
 echo "e2e:changed: ${specs[*]} ×5"
-npx playwright test "${specs[@]}" --repeat-each=5 --project=chromium --project=firefox --project=android
+npx playwright test "${specs[@]}" --repeat-each=5 --max-failures=1 --project=chromium --project=firefox --project=android
 # ponytail: on macOS >= 15 e2e-webkit.sh exits early, so WebKit is not repeated there; pass the projects to the
 # line above if that machine ever comes back
-bash scripts/e2e-webkit.sh "${specs[@]}" --repeat-each=5
+bash scripts/e2e-webkit.sh "${specs[@]}" --repeat-each=5 --max-failures=1

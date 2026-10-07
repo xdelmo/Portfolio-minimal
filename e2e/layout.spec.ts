@@ -234,3 +234,23 @@ test('the first thing each project offers is its case study', async ({ page }) =
     await expect(projects.nth(i).getByRole('link', { name: 'Read the case study' })).toHaveAttribute('href', /\/work\/[\w-]+$/);
   }
 });
+
+// at 1024px a third of the column left the words two or three to a line beside the sprite
+test('the study tiles keep their words readable at 1024px', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await page.goto('/en/');
+  const widths = await page.locator('#experience li .text').evaluateAll((els) => els.map((el) => (el as HTMLElement).offsetWidth));
+  expect(widths.length).toBeGreaterThan(0);
+  for (const w of widths) expect(w).toBeGreaterThanOrEqual(200);
+});
+
+test('below the About text on a tablet, the moai stands in the middle', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto('/en/');
+  const centre = await page.locator('app-moai-figure').evaluate((el) => {
+    const b = el.getBoundingClientRect();
+    const p = (el.parentElement ?? el).getBoundingClientRect();
+    return { el: b.left + b.width / 2, parent: p.left + p.width / 2 };
+  });
+  expect(Math.abs(centre.el - centre.parent)).toBeLessThanOrEqual(2);
+});

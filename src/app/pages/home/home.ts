@@ -219,6 +219,10 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       font-size: clamp(3rem, 1rem + 8vw, 9rem);
       line-height: 0.95;
     }
+    // below the text on phones and tablets: centred, not stranded on the left of an empty band
+    .about-moai {
+      justify-self: center;
+    }
     .about-text {
       display: grid;
       gap: var(--space-4);
@@ -244,7 +248,6 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
         position: sticky;
         // below the sticky header, never under it
         top: calc(var(--header-h) + var(--space-8));
-        justify-self: center;
       }
       .hero {
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);

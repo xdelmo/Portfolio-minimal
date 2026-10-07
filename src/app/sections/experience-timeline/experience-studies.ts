@@ -84,6 +84,12 @@ import { QuestSprite } from '../side-quests/quest-sprite';
       ul {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+      // a third of the column is too narrow for a sprite beside the words: it sits above them
+      li {
+        grid-template-columns: 1fr;
+        align-content: start;
+        row-gap: var(--space-2);
+      }
     }
   `,
 })

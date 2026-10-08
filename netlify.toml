@@ -21,7 +21,7 @@
 # Old Gatsby URLs (the old site was in Italian)
 [[redirects]]
   from = "/privacy"
-  to = "/it/"
+  to = "/it/privacy/"
   status = 301
 
 [[redirects]]

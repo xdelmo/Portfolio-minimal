@@ -40,6 +40,8 @@ Every failure that reaches the `pre-push` hook or CI is closed in the same pull 
 - Anything bounded by a deadline in CSS must be bounded the same way when GSAP takes over: GSAP's lag smoothing slows its clock on a busy main thread (`effects/intro.ts` sets a timer on the fallback's deadline).
 - A timing assertion counts from what the app's own bound counts from, plus the lag of WebKit's frames in CI: the intro test waits 6 s for a 3.6 s bound that starts at the first render, not at the end of `goto`.
 - Before pushing a template change, `grep -rn` the e2e for the attributes and texts you changed and run those specs on Chromium: seconds, against ten minutes of hook (adding `noopener` broke two tests that wanted `rel="me"` exactly).
+- The motion effects start one task at a time after the first paint, and their pins make the page taller: a test that scrolls or measures right after loading the home finds its target moved (issue #86, red CI on `devel` and `v2` after green pull requests). `e2e/fixtures.ts` therefore waits, after every `page.goto`, until no `[data-motion="pending"]` is left; never bypass it with a raw navigation, and opt out (`test.use({ motionReady: false })`) only in a test about that moment.
+- Judge each check by its own exit code: in `a && b` a failing `a` skips `b` without a word (twice on 2026-10-08 a failed lint hid unit tests and an e2e run against a stale build). Run lint, tests and build as separate commands while iterating.
 - A GSAP timeline is thenable: a callback that returns one trips `no-misused-promises`; give it a block body.
 - `gh pr edit` fails on this repo (retired Projects classic fields): edit pull requests through `gh api`.
 

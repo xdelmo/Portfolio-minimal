@@ -15,7 +15,11 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
 
   const play = (link: HTMLElement): void => {
     if (timers.has(link)) return;
-    const word = link.getAttribute('aria-label') ?? link.textContent.trim();
+    // the letters change inside the link's one text node, never a new one: a click pressed on the old node and
+    // released on a new one has no target in WebKit, and Safari dropped it
+    const text = link.firstChild;
+    if (!(text instanceof Text) || link.childNodes.length !== 1) return;
+    const word = link.getAttribute('aria-label') ?? text.data.trim();
     link.setAttribute('aria-label', word);
     link.style.width = `${String(link.getBoundingClientRect().width)}px`;
     // wider random letters stay inside the held width instead of pushing on the next item
@@ -24,7 +28,7 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
     const tick = (): void => {
       step++;
       if (step >= STEPS) {
-        link.textContent = word;
+        text.data = word;
         link.style.width = '';
         link.style.overflow = '';
         timers.delete(link);
@@ -32,7 +36,7 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
       }
       // letters settle from the left as the steps go by
       const settled = Math.floor((word.length * step) / STEPS);
-      link.textContent = Array.from(word, (c, i) => (i < settled || c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join('');
+      text.data = Array.from(word, (c, i) => (i < settled || c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)])).join('');
       timers.set(link, window.setTimeout(tick, STEP_MS));
     };
     tick();

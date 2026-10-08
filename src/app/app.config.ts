@@ -29,8 +29,23 @@ export const appConfig: ApplicationConfig = {
       inject(ViewportScroller).scrollToAnchor = (anchor) => {
         const target = document.getElementById(anchor);
         if (!target) return;
-        target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-        target.focus({ preventScroll: true });
+        const go = (): void => {
+          target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+          target.focus({ preventScroll: true });
+        };
+        // Coming from another page, the anchor's motion effects are still starting: their first measure (ScrollTrigger
+        // scrolls to the top and back) would stop the smooth scroll a few pixels in. Scroll once they are running.
+        const host = target.closest('[data-motion="pending"]');
+        if (!host) {
+          go();
+          return;
+        }
+        const started = new MutationObserver(() => {
+          if (host.getAttribute('data-motion') === 'pending') return;
+          started.disconnect();
+          requestAnimationFrame(go);
+        });
+        started.observe(host, { attributes: true, attributeFilter: ['data-motion'] });
       };
       // A page opened at an anchor (/en/#work) is scrolled by the browser alone, often while the hero is still set in the
       // wider fallback font: once the condensed headline is in, the hero is shorter and the page sits past its section.

@@ -260,7 +260,9 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
         min-height: calc(100svh - var(--header-h));
         padding-block: var(--space-8);
       }
-      .hero > :not(.field) {
+      // not the seam: an absolute child placed in a column takes that column's area as its box, and its full-bleed
+      // inset (50% - 50vw) then starts 16px in from the left edge (issue #85)
+      .hero > :not(.field, .seam) {
         grid-column: 1;
       }
       // desktop: faint under the text column so the words keep their contrast, alive towards the right

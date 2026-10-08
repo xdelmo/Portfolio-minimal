@@ -275,7 +275,8 @@ for (const [from, name, link] of [
   ['/en/404', 'Contact', (page: Page) => page.locator('.move', { hasText: 'Contact' })],
   ['/en/work/apexflow', 'Experience', (page: Page) => page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Experience' })],
 ] as const) {
-  test(`${from}: ${name} lands on its home section`, async ({ page }) => {
+  test(`${from}: ${name} lands on its home section`, async ({ page, isMobile }) => {
+    test.skip(isMobile && from !== '/en/404', 'on phones the header links sit in the menu');
     await page.goto(from);
     const target = link(page);
     const id = ((await target.getAttribute('href')) ?? '').split('#')[1];

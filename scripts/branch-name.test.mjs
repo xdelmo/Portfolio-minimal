@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { pushedBranches, validBranch } from './branch-name.mjs';
 
 test('a branch says what it does before the slash', () => {
-  for (const name of ['feat/404-wild-encounter', 'fix/hero-lede', 'docs/claude-md-linux', 'chore/triage', 'fix/45-hero', 'v2', 'master', 'archive/gatsby-master']) {
+  for (const name of ['feat/404-wild-encounter', 'fix/hero-lede', 'docs/claude-md-linux', 'chore/triage', 'fix/45-hero', 'v2', 'master', 'devel', 'archive/gatsby-master']) {
     assert.ok(validBranch(name), name);
   }
   for (const name of ['hero-lede', 'worktree-pixel-field-fade', 'robustness-skills', 'feature/x', 'feat/', 'feat/Hero', 'fix/a/b', 'v3']) {

@@ -32,9 +32,15 @@ export function afterPaint(): Promise<void> {
   });
 }
 
-export const MOTION_LOADER = new InjectionToken<() => Promise<MotionLib>>('MOTION_LOADER', {
+function nextTask(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve);
+  });
+}
+
+export const MOTION_LOADER =new InjectionToken<() => Promise<MotionLib>>('MOTION_LOADER', {
   providedIn: 'root',
-  factory: () => () => afterPaint().then(() => import('./gsap')),
+  factory: () => () => afterPaint().then(async () => (await import('./gsap')).loadGsap()),
 });
 
 const CONDITIONS = {
@@ -56,6 +62,8 @@ export class MotionHost {
     const load = inject(MOTION_LOADER);
     let revert: (() => void) | undefined;
     let destroyed = false;
+    // read through a function: after an await, TypeScript still narrows the flag to its first value
+    const isDestroyed = (): boolean => destroyed;
     inject(DestroyRef).onDestroy(() => {
       destroyed = true;
       revert?.();
@@ -67,29 +75,29 @@ export class MotionHost {
         return;
       }
       load()
-        .then((lib) => {
+        .then(async (lib) => {
           if (destroyed) return;
           const mm = lib.gsap.matchMedia();
           revert = () => {
             mm.revert();
           };
-          // matchMedia re-runs (and reverts) the effects when a condition flips, e.g. resizing across 1024px
-          mm.add(CONDITIONS, (ctx) => {
-            const conditions = ctx.conditions ?? {};
-            if (!conditions['motion']) return;
-            const cleanups: (() => void)[] = [];
-            for (const effect of this.appMotion()) {
+          // matchMedia re-runs (and reverts) an effect when a condition flips, e.g. resizing across 1024px.
+          // One task per effect, in page order: all at once they held the main thread for one long task at load
+          // (Lighthouse's Total Blocking Time on the home).
+          for (const effect of this.appMotion()) {
+            await nextTask();
+            if (isDestroyed()) return;
+            mm.add(CONDITIONS, (ctx) => {
+              const conditions = ctx.conditions ?? {};
+              if (!conditions['motion']) return;
               try {
-                const cleanup = effect(el, { ...lib, desktop: conditions['desktop'] });
-                if (cleanup) cleanups.push(cleanup);
+                return effect(el, { ...lib, desktop: conditions['desktop'] });
               } catch (error) {
                 console.warn('motion effect failed', error);
+                return undefined;
               }
-            }
-            return () => {
-              for (const cleanup of cleanups) cleanup();
-            };
-          });
+            });
+          }
           this.state.set('ready');
         })
         .catch(() => {

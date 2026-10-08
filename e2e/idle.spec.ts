@@ -33,3 +33,20 @@ test('a scrambling menu link never wraps onto two lines', async ({ page, isMobil
   }
   expect(tallest).toBeLessThanOrEqual(height + 1);
 });
+
+// A click pressed and released while the letters shuffle still follows the link. Replacing the link's text node
+// between mousedown and mouseup left WebKit without a target for the click, so a quick click did nothing (Safari).
+test('a menu link clicked while its letters shuffle still navigates', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the menu is hidden on phones');
+  await page.goto('/en/work/apexflow');
+  await expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
+  const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Experience' });
+  const box = await link.boundingBox();
+  if (!box) throw new Error('no menu link');
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  // more than one shuffle step (45 ms) between press and release
+  await page.waitForTimeout(100);
+  await page.mouse.up();
+  await expect(page).toHaveURL(/\/en\/#experience$/);
+});

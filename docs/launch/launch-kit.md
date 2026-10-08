@@ -31,6 +31,14 @@ Un iPhone e un Android:
 
 ## 4. Lancio
 
+- [ ] **Prova generale su `devel`** (creato da `master` il 2026-10-08): `v2` entra prima in `devel` con una PR e un merge commit, così i problemi del lancio escono lì e non su `master`. Cosa ha mostrato finora:
+  - nessun conflitto: `master` è il commit da cui parte `v2`, il merge aggiunge solo i 188 commit sopra;
+  - merge commit, non squash: lo squash schiaccerebbe tutta la storia di `v2` in un commit;
+  - il controllo dei nomi dei branch e la CI conoscevano solo `v2` e `master`: aggiunto `devel` (per `master` erano già a posto);
+  - `master` non ha protezione del branch su GitHub: niente impedisce un merge con la CI rossa, restano l'hook locale e la regola di aspettare la CI;
+  - `master` oggi non ha `netlify.toml`: la produzione legge build command, cartella e Node 24 da quello di `v2` solo dopo il merge. Prima del merge vero, nella UI di Netlify controlla che non restino il build command di Gatsby né `@netlify/plugin-gatsby`;
+  - se Netlify fa il branch deploy di `devel` (`https://devel--emanueledelmonte.netlify.app`), lancia `npm run verify:deploy` anche lì: è la copia più fedele di quello che andrà online;
+  - `netlify.toml` manda il vecchio `/privacy` di Gatsby su `/it/`: ora che `/it/privacy` esiste, decidi se puntarlo lì.
 - [ ] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione. Il sito Gatsby su `master` non ha più il plugin Gatsby: se serve ribuildarlo prima del merge, è un sito statico e builda comunque.
 - [ ] Subito dopo: `npm run verify:deploy -- https://www.emanueledelmonte.it`.
 - [ ] `curl -sI https://emanueledelmonte.it/` deve dare `301` verso `https://www.emanueledelmonte.it/`.

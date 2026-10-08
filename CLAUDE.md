@@ -19,6 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Git workflow
 
+- Every problem the user reports gets a GitHub issue first (`gh issue create`), before any investigation or fix; its branch carries the number (`fix/<n>-topic`) so `triage.yml` links the pull request to it (the user's rule, 2026-10-08).
 - Every change gets its own branch off `v2`, named `<prefix>/<topic>` so the user can tell what a merge was from its name: `feat/` (new things), `fix/`, `docs/`, `chore/`, `ci/`, `test/`, `refactor/`, `perf/`, `style/`, `build/`; never a direct commit on `v2`. `scripts/branch-name.mjs` enforces it in the `pre-push` hook and in CI, so rename a branch before pushing (worktree tools name theirs `worktree-…`). New issues and pull requests are assigned, labelled and linked by `.github/workflows/triage.yml`.
 - Push the branch (the `pre-push` hook is the `npm run verify` run: do not run it by hand first, that doubles 20 minutes), open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
 - The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`; deleting a remote branch needs no bypass, the hook skips verify for a push that only deletes.

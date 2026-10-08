@@ -32,6 +32,11 @@ async function render(effects: readonly Effect[], reduce: boolean, revert = vi.f
   await Promise.resolve();
   await fixture.whenStable();
   const el = (fixture.nativeElement as HTMLElement).querySelector('div') as HTMLElement;
+  // the effects start one task at a time: wait until the last one has
+  await vi.waitFor(() => {
+    fixture.detectChanges();
+    expect(el.dataset['motion']).not.toBe('pending');
+  });
   return { fixture, el, revert };
 }
 
@@ -54,6 +59,22 @@ describe('MotionHost', () => {
     expect(working).toHaveBeenCalledTimes(1);
     expect(working.mock.calls[0][0]).toBe(el);
     expect(el.dataset['motion']).toBe('ready');
+  });
+
+  it('starts each effect in its own task, in page order (one long task at load cost the home its Lighthouse score)', async () => {
+    const order: string[] = [];
+    const first: Effect = () => {
+      order.push('first');
+      queueMicrotask(() => order.push('same task'));
+      setTimeout(() => order.push('next task'));
+      return undefined;
+    };
+    const second: Effect = () => {
+      order.push('second');
+      return undefined;
+    };
+    await render([first, second], false);
+    expect(order).toEqual(['first', 'same task', 'next task', 'second']);
   });
 
   it('reverts every animation when destroyed', async () => {

@@ -39,7 +39,7 @@ Un iPhone e un Android:
   - `master` oggi non ha `netlify.toml`: la produzione legge build command, cartella e Node 24 da quello di `v2` solo dopo il merge. Prima del merge vero, nella UI di Netlify controlla che non restino il build command di Gatsby né `@netlify/plugin-gatsby`;
   - `v2` è entrato in `devel` il 2026-10-08 (PR #73, merge commit, CI verde). Il deploy preview della PR (`https://deploy-preview-73--emanueledelmonte.netlify.app`) passa tutte le 18 righe di `npm run verify:deploy`: build, redirect di lingua, 404 per lingua, sitemap, robots, llms.txt e immagini OG funzionano sulla build che andrà online;
   - Netlify non pubblica `devel`: `https://devel--emanueledelmonte.netlify.app` dà 404 ovunque, perché i branch deploy sono attivi solo per `v2`. Se vuoi un indirizzo fisso di `devel`, aggiungi `devel` in Netlify → Site configuration → Build & deploy → Branches and deploy contexts → Branch deploys; altrimenti basta il deploy preview della PR;
-  - `netlify.toml` manda il vecchio `/privacy` di Gatsby su `/it/`: ora che `/it/privacy` esiste, decidi se puntarlo lì.
+  - il vecchio `/privacy` di Gatsby andava su `/it/`: ora va su `/it/privacy/` (2026-10-08), e `verify:deploy` lo controlla.
 - [ ] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione. Il sito Gatsby su `master` non ha più il plugin Gatsby: se serve ribuildarlo prima del merge, è un sito statico e builda comunque.
 - [ ] Subito dopo: `npm run verify:deploy -- https://www.emanueledelmonte.it`.
 - [ ] `curl -sI https://emanueledelmonte.it/` deve dare `301` verso `https://www.emanueledelmonte.it/`.

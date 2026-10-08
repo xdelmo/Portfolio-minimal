@@ -43,6 +43,7 @@ export interface Project {
   title: string;
   summary: string;
   stack: readonly string[];
+  /** Every repository, private ones too: the build links only the public ones (content/public-repos.ts). */
   repos: readonly Repo[];
   demoUrl?: string;
   image?: ProjectImage;
@@ -106,8 +107,8 @@ export interface SideQuest {
   title: string;
   summary: string;
   tags: readonly string[];
-  /** The code on GitHub. */
-  repo: string;
+  /** The code on GitHub; the build drops it while the repository is private (content/public-repos.ts). */
+  repo?: string;
   /** Its item in the side quests' inventory (sections/side-quests/sprites.ts). */
   sprite: SpriteName;
 }

@@ -1,10 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { CONTENT } from '../../content/content';
+import { CONTENT_EN } from '../../content/content.en';
 import { CaseStudy } from './case-study';
 
 describe('CaseStudy', () => {
   async function render(slug: string) {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    // every link, whatever GitHub answers today: the page is under test, not which repositories are public
+    TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: CONTENT, useValue: CONTENT_EN }] });
     const fixture = TestBed.createComponent(CaseStudy);
     fixture.componentRef.setInput('slug', slug);
     await fixture.whenStable();
@@ -34,6 +37,20 @@ describe('CaseStudy', () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());
     expect(labels).toEqual(['Front-end code', 'Back-end code', 'Open the live demo']);
+  });
+
+  it('leads with the demo when no code is public, and drops the row when there is neither', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [] })) } }],
+    });
+    const fixture = TestBed.createComponent(CaseStudy);
+    fixture.componentRef.setInput('slug', 'ice-friends-breaker');
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect([...el.querySelectorAll('.links a')].map((a) => [a.textContent.trim(), a.classList.contains('button--primary')])).toEqual([['Open the live demo', true]]);
+    fixture.componentRef.setInput('slug', 'telegram-bots');
+    await fixture.whenStable();
+    expect(el.querySelector('.links')).toBeNull();
   });
 
   it('shows no demo button for a project without a demo', async () => {

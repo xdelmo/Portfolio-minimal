@@ -18,7 +18,7 @@ export function homeMarkdown(c, locale) {
     `## ${l.work}`,
     list(c.projects, (p) => `- [${p.title}](${url(locale, `work/${p.slug}`)}): ${p.summary}`),
     `## ${l.quests}`,
-    list(c.sideQuests, (q) => `- [${q.title}](${q.repo}): ${q.summary}`),
+    list(c.sideQuests, (q) => `- ${q.repo ? `[${q.title}](${q.repo})` : q.title}: ${q.summary}`),
     `## ${l.about}`,
     c.aboutStatement,
     c.about,

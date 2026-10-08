@@ -17,7 +17,7 @@
     "e2e": "playwright test",
     "e2e:changed": "bash scripts/e2e-changed.sh",
     "e2e:webkit": "bash scripts/e2e-webkit.sh",
-    "lhci": "lhci autorun",
+    "lhci": "bash scripts/lhci.sh",
     "lint": "ng lint --max-warnings=0",
     "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e -- --max-failures=1 && npm run e2e:webkit -- --max-failures=1 && npm run e2e:changed"
   },

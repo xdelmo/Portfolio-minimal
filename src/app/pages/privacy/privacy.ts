@@ -44,6 +44,8 @@ import { SeoService } from '../../core/seo/seo.service';
     }
     .intro {
       font-size: var(--step-1);
+      // the larger size would stretch 68ch past the body's measure (issue #93)
+      max-width: 56ch;
     }
   `,
 })

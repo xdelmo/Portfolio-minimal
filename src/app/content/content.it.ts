@@ -25,8 +25,10 @@ export const CONTENT_IT: SiteContent = {
     lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
-  about:
-    "Sono Emanuele Del Monte, Frontend Engineer a Latina. Costruisco frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot. Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
+  about: [
+    "Sono Emanuele Del Monte, Frontend Engineer a Latina. Costruisco frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
+    "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
+  ],
   glance: [
     { label: 'Ruolo', value: 'Frontend Engineer, specializzato in Angular' },
     { label: 'Dove', value: 'Latina, Italia (anche da remoto)' },
@@ -34,7 +36,6 @@ export const CONTENT_IT: SiteContent = {
     { label: 'Stack principale', value: 'Angular, Signals, RxJS, NgRx, TypeScript' },
     { label: 'Formazione', value: 'Laurea in Ingegneria Informatica, Università Mercatorum, 2026' },
     { label: 'Lingue', value: 'Italiano madrelingua, inglese professionale' },
-    { label: 'Disponibilità', value: 'Ruoli da remoto' },
   ],
   projects: [
     {

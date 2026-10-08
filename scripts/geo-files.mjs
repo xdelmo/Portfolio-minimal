@@ -21,7 +21,7 @@ export function homeMarkdown(c, locale) {
     list(c.sideQuests, (q) => `- ${q.repo ? `[${q.title}](${q.repo})` : q.title}: ${q.summary}`),
     `## ${l.about}`,
     c.aboutStatement,
-    c.about,
+    c.about.join('\n\n'),
     `## ${l.experience}`,
     // newest first here: the page tells the story oldest first, a reader who skims wants the current job
     list([...c.experience].reverse(), (e) => `- ${e.period} — ${e.title}, ${e.org}: ${[e.summary, ...e.highlights].join(' ')}`),

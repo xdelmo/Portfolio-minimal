@@ -58,7 +58,11 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
         <p class="statement">{{ content.aboutStatement }}</p>
-        <p>{{ content.about }}</p>
+        <div class="about-body">
+          @for (paragraph of content.about; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
         <app-at-a-glance [items]="content.glance" />
       </div>
       <app-moai-figure class="about-moai" />
@@ -229,6 +233,11 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     .about-text {
       display: grid;
       gap: var(--space-4);
+    }
+    // paragraphs of one text sit closer than the blocks of the section (issue #95)
+    .about-body {
+      display: grid;
+      gap: var(--space-2);
     }
     // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
     .statement {

@@ -212,6 +212,16 @@ test('an unknown URL shows the not-found page and keeps the URL', async ({ page 
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 });
 
+test('a case study ends with the next one, which opens at its top (#91)', async ({ page }) => {
+  await page.goto('/it/work/apexflow');
+  const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
+  await next.scrollIntoViewIfNeeded();
+  await next.click();
+  await expect(page).toHaveURL(/\/it\/work\/ice-friends-breaker$/);
+  await expect(page.locator('h1')).toHaveText('Ice Friends Breaker');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+});
+
 test('a tall project image asks for the size it is shown at', async ({ page }) => {
   await page.goto('/en/work/ice-friends-breaker');
   await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');

@@ -70,7 +70,16 @@ import { SeoService } from '../../core/seo/seo.service';
           <p>{{ p.caseStudy.outcome }}</p>
         </section>
 
-        <p class="back"><a routerLink="/" fragment="work" i18n="@@case.back">See all projects</a></p>
+        <!-- the next project, so a reader goes on without going back to the home (issue #91) -->
+        <nav class="more" i18n-aria-label="@@case.more" aria-label="More projects">
+          @if (next(); as n) {
+            <a class="next" [routerLink]="['/work', n.slug]">
+              <span class="next-label" i18n="@@case.next">Next project</span>
+              <span class="next-title">{{ n.title }}</span>
+            </a>
+          }
+          <a routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>
+        </nav>
       } @else {
         <h1 i18n="@@case.notFound">Project not found</h1>
         <p><a routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
@@ -119,6 +128,34 @@ import { SeoService } from '../../core/seo/seo.service';
       margin: 0;
       padding-left: var(--space-3);
     }
+    .more {
+      display: grid;
+      justify-items: start;
+      gap: var(--space-3);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--rule);
+    }
+    .next {
+      display: grid;
+      gap: var(--space-1);
+      color: inherit;
+      text-decoration: none;
+    }
+    .next-label {
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    .next-title {
+      font-size: var(--step-3);
+      font-weight: 600;
+      font-variation-settings: 'wdth' 85;
+      line-height: 1.1;
+    }
+    .next:hover .next-title {
+      text-decoration: underline;
+      text-decoration-thickness: 0.06em;
+      text-underline-offset: 0.1em;
+    }
     .shot {
       width: 100%;
       height: auto;
@@ -146,6 +183,13 @@ export class CaseStudy {
   private readonly content = inject(CONTENT);
   readonly slug = input.required<string>();
   protected readonly project = computed(() => this.content.projects.find((p) => p.slug === this.slug()));
+  /** The project after this one in the work list, the first after the last; none when the list has only this one. */
+  protected readonly next = computed(() => {
+    const { projects } = this.content;
+    const i = projects.findIndex((p) => p.slug === this.slug());
+    const n = projects[(i + 1) % projects.length];
+    return i < 0 || n.slug === this.slug() ? undefined : n;
+  });
   private readonly seo = inject(SeoService);
   private readonly locale = toLocale(inject(LOCALE_ID));
 

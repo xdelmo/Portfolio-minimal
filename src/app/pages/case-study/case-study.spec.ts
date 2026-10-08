@@ -33,6 +33,19 @@ describe('CaseStudy', () => {
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
   });
 
+  it('ends with the next project in the work list (#91)', async () => {
+    const [first, second] = CONTENT_EN.projects;
+    const el = await render(first.slug);
+    expect(el.querySelector('.next')?.getAttribute('href')).toBe(`/work/${second.slug}`);
+    expect(el.querySelector('.next-title')?.textContent).toBe(second.title);
+  });
+
+  it('leads from the last project back to the first', async () => {
+    const { projects } = CONTENT_EN;
+    const el = await render(projects[projects.length - 1].slug);
+    expect(el.querySelector('.next')?.getAttribute('href')).toBe(`/work/${projects[0].slug}`);
+  });
+
   it('labels each repository link', async () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());

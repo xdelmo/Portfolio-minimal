@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [v2, master, devel]
+  pull_request:
+    branches: [v2, master, devel]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: github.event_name == 'pull_request'
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: node scripts/branch-name.mjs "$BRANCH"
+      - run: npm ci
+      - run: npm run lint
+      - run: npx ng test --no-watch
+      - run: npm run test:scripts
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run e2e
+      - run: npm run lhci
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            playwright-report
+            test-results
+            .lighthouseci

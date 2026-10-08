@@ -1,0 +1,122 @@
+@use 'breakpoints' as bp;
+
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #e5e5e5;
+  --surface: #f2f2f2;
+  --fg: #1d1d1c;
+  --fg-muted: #555555;
+  --accent: #0066d4;
+  --on-accent: #ffffff;
+  --link: #005fc5;
+  --focus: #0066d4;
+  --rule: rgb(29 29 28 / 0.14);
+  /* pixel palette: decorative only, never for text */
+  --px-1: #0066d4;
+  --px-2: #7fb2ec;
+  --px-3: #b9d5f5;
+  --px-4: #c9b8f5;
+  --px-5: #dccff8;
+  --px-6: #ffc9a8;
+  --stone: #a3a39d;
+  --stone-dark: #85857f;
+  --stone-light: #bdbdb6;
+  --moai-eye-white: #f2f2f2;
+  /* intro panel: opaque, so nothing of the page shows through */
+  --intro-bg: #1d1d1c;
+  --intro-fg: #e5e5e5;
+  /* strength of the ambient orbs behind the page (layout/ambient.ts) */
+  --ambient-alpha: 0.12;
+  /* section bands (.band in _base.scss): pastel for About, lavender for the side quests, ink for the contact finale;
+     AA-checked */
+  /* the moai's bubble gum (voxel/moai-scene.ts), decoration only */
+  --gum: #f59ac1;
+  --band-pastel-bg: #b9d5f5;
+  --band-pastel-fg: #1d1d1c;
+  --band-pastel-muted: #2f4560;
+  --band-pastel-link: #0b4f96;
+  --band-lavender-bg: #dccff8;
+  --band-lavender-fg: #1d1d1c;
+  --band-lavender-muted: #4a3d6b;
+  --band-lavender-link: #0b4f96;
+  --band-ink-bg: #1d1d1c;
+  --band-ink-fg: #f2f2f2;
+  --band-ink-muted: #b8b8b2;
+  --band-ink-link: #9ccaff;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --fg: rgb(255 255 255 / 0.87);
+  --fg-muted: #aaaaaa;
+  --accent: #0066d4;
+  --on-accent: #ffffff;
+  --link: #4d9bf0;
+  --focus: #4d9bf0;
+  --rule: rgb(255 255 255 / 0.12);
+  --px-1: #0066d4;
+  --px-2: #2f86ea;
+  --px-3: #6aa9f2;
+  --px-4: #9d8cf0;
+  --px-5: #c2b4f5;
+  --px-6: #f0a982;
+  --stone: #7d7d78;
+  --stone-dark: #62625e;
+  --stone-light: #9a9a94;
+  --moai-eye-white: #d9d9d4;
+  --intro-bg: #e0e0e0;
+  --intro-fg: #121212;
+  --ambient-alpha: 0.18;
+  --gum: #ef86b6;
+  --band-pastel-bg: #14243b;
+  --band-pastel-fg: #e8f0fa;
+  --band-pastel-muted: #a9bdd6;
+  --band-pastel-link: #9ccaff;
+  --band-lavender-bg: #211a38;
+  --band-lavender-fg: #efeafc;
+  --band-lavender-muted: #bdb2dc;
+  --band-lavender-link: #9ccaff;
+  --band-ink-bg: #0b1f3d;
+  --band-ink-fg: #eef4fc;
+  --band-ink-muted: #a9bdd6;
+  --band-ink-link: #9ccaff;
+}
+
+:root {
+  /* 8px pixel grid */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-12: 96px;
+  --space-16: 128px;
+
+  /* modular scale 1.25 on 18px */
+  --step--1: 0.9rem;     /* 14.4px: rem counts from the root's 16px, not the body's 18px */
+  --step-0: 1.125rem;    /* 18px   */
+  --step-1: 1.406rem;    /* 22.5px */
+  --step-2: 1.758rem;    /* 28.1px */
+  --step-3: 2.197rem;    /* 35.2px */
+  --step-4: 2.747rem;    /* 44px   */
+  --step-5: 3.433rem;    /* 55px   */
+  --step-hero: clamp(2.747rem, 1.6rem + 5.2vw, 6rem); /* 44px → 96px */
+
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --measure: 68ch;
+  --container: 1200px;
+  --gutter: 16px;
+  /* the sticky header (site-header.ts); anchors and the experience pin start below it */
+  --header-h: 64px;
+}
+
+@include bp.up(md) {
+  :root {
+    --gutter: 32px;
+    --header-h: 96px;
+  }
+}

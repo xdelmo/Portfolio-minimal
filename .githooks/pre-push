@@ -1,0 +1,20 @@
+#!/bin/sh
+# Same gate as CI: a branch without a prefix saying what it does (feat/, fix/, …), or that fails
+# `npm run verify`, is not pushed. A push that only deletes branches carries no code, so it skips verify.
+export PATH="$HOME/.local/node/current/bin:$PATH"
+refs=$(cat)
+printf '%s\n' "$refs" | node scripts/branch-name.mjs --pre-push || exit 1
+printf '%s\n' "$refs" | awk '$2 != "" && $2 !~ /^0+$/ { code = 1 } END { exit !code }' || exit 0
+# verify tests the working tree: it vouches for a commit only when nothing is left uncommitted. Remember the commit
+# it passed on, so a push retried after a network or GitHub error does not run the same 20 minutes again
+head=$(git rev-parse HEAD)
+pushed=$(printf '%s\n' "$refs" | awk '$2 != "" && $2 !~ /^0+$/ { print $2 }' | sort -u)
+passed="$(git rev-parse --git-dir)/verify-passed"
+clean=$([ -z "$(git status --porcelain)" ] && echo yes)
+if [ "$clean" = yes ] && [ "$pushed" = "$head" ] && [ "$(cat "$passed" 2>/dev/null)" = "$head" ]; then
+  echo "pre-push: npm run verify already passed on $head, nothing changed since"
+  exit 0
+fi
+npm run verify || exit 1
+[ "$clean" = yes ] && [ -z "$(git status --porcelain)" ] && echo "$head" > "$passed"
+exit 0

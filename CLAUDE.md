@@ -4,30 +4,65 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- `npm install` (use `--legacy-peer-deps` if peer-dependency conflicts occur)
-- `npm run develop` — dev server at http://localhost:8000
-- `npm run build` — production build into `public/`
-- `npm run serve` — serve the production build
-- `npm run clean` — clear `.cache`/`public` (run this when content/GraphQL changes don't show up)
+- Node 24 (from `.nvmrc`; Angular 22 needs ≥ 24.15). On both machines Node 24 lives in `~/.local/node/current` (on the Mac the Homebrew Node is not usable, on the Linux PC the system one is Node 22): prefix commands with `export PATH="$HOME/.local/node/current/bin:$PATH";`
+- `npm start` — both dev servers: open http://localhost:4200 (English under `/en/`, Italian under `/it/` proxied from port 4201, so the language switch works); `npm run start:it` runs only the Italian one
+- `npm run verify` — the CI gate locally (lint, unit, scripts, build, e2e), stops at the first failure. Run it before saying a task is done and judge it by its exit code, never by grepping the output (a grep once hid 3 lint errors). WebKit runs through `npm run e2e:webkit` (below). The e2e (and so the `pre-push` hook) reuse any server already on port 4300, even one started by another worktree or session: check which folder it serves (`lsof -p $(lsof -ti :4300) | grep cwd`) before trusting a result
+- Two machines: a fanless MacBook Air and a 4-core Linux PC (ThinkCentre M710q). On both: while iterating run only the affected test (one spec file, `--project=chromium`), keep the full `npm run verify` for the end, and never run two suites or builds at once (check `pgrep -fl "playwright|ng build|vitest"` first)
+- `npm run build` — static prerender of both locales into `dist/portfolio/browser/{en,it}` + sitemap/robots; never `ng build --localize=en` for a quick check: it writes a layout without `en/` and the e2e server stops working
+- `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint, template a11y), zero warnings allowed
+- `npx ng test --no-watch` — unit tests (Vitest); one file: `npx ng test --no-watch --include src/app/core/theme/theme.spec.ts`
+- `npm run e2e` — Playwright against the built site (run `npm run build` first); one test: `npx playwright test e2e/theme.spec.ts --project=chromium`
+- `npm run lhci` — Lighthouse CI against the built site (mobile, performance ≥ 0.95, best of 3 runs). On the Linux PC `scripts/lhci.sh` runs it with Playwright's Chromium and no sandbox. It serves `dist` statically, so `lighthouserc.json` lists case studies with a trailing slash (the slash-less URL would cost a redirect Netlify does not make)
+- `npm run i18n:extract` — regenerate `src/locale/messages.xlf` (git-ignored, generated) after changing template strings, then add the units by hand to `messages.it.xlf` (the only tracked one)
+- `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
+- `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)
 
-There are no tests or linters. Node >= 18 (Netlify deploys on Node 20.x).
+## Git workflow
+
+- Every change gets its own branch off `v2`, named `<prefix>/<topic>` so the user can tell what a merge was from its name: `feat/` (new things), `fix/`, `docs/`, `chore/`, `ci/`, `test/`, `refactor/`, `perf/`, `style/`, `build/`; never a direct commit on `v2`. `scripts/branch-name.mjs` enforces it in the `pre-push` hook and in CI, so rename a branch before pushing (worktree tools name theirs `worktree-…`). New issues and pull requests are assigned, labelled and linked by `.github/workflows/triage.yml`.
+- Push the branch (the `pre-push` hook is the `npm run verify` run: do not run it by hand first, that doubles 20 minutes), open a PR into `v2` with `gh pr create`, then `gh pr checks --watch --fail-fast` and merge it yourself with `gh pr merge --squash --delete-branch` only if that exits 0 (the user does not review PRs). A red CI is fixed on the branch first, never merged; a docs-only PR waits for its CI too.
+- The `pre-push` hook in `.githooks/` (enabled by `npm install` through `prepare`) runs `npm run verify` and blocks the push when it fails. Never bypass it with `--no-verify`; deleting a remote branch needs no bypass, the hook skips verify for a push that only deletes.
+- WebKit and iPhone do not run natively on the Mac (macOS 14): `npm run e2e:webkit` (part of `verify`, so of the `pre-push` hook) runs them in CI's Linux Playwright image through OrbStack, about 5 minutes; extra arguments go to Playwright (`npm run e2e:webkit -- e2e/moai.spec.ts`). On the Linux PC (Ubuntu 26.04, which Playwright's WebKit does not support: it launches but canvas animations never advance) `npm run e2e:webkit` runs them in the same image through Docker, about 10 minutes. There git has no global identity: the repo's local `user.name`/`user.email` are set to the user's. Most red CI runs before it were WebKit/iPhone failures nobody had seen locally. For a CI failure anyway, `gh run download <run-id> -n reports` gets the failed run's `test-results`; a test with a `-retry1` folder failed twice, one without it passed on retry. Read the steps and their durations from `trace.zip` before changing anything, and fix the cause rather than rerunning until green.
+- A CI failure that says "The job was not acquired by Runner" is GitHub's runners, not the code: `gh run rerun <id>`; it still is not a green CI.
+- `v2` → `master` (going live) still needs the user's explicit yes.
+- `devel` (created from `master`, 2026-10-08) is the intermediate step before that final merge: `v2` goes into `devel` first through a pull request merged with a merge commit (not squash, to keep `v2`'s history), so the problems of going live show up there before they reach `master`. The branch-name check and CI know it like `v2` and `master`.
+- When several branches wait to be shipped, push first the ones that improve the automation (hooks, CI, scripts, guards), then features and content: every later push benefits from them (the user's rule, 2026-10-07).
+- The `pre-commit` hook runs ESLint on the staged files, so a lint error stops the commit, not the push.
+- Locally `verify` stops the e2e at the first failure (`--max-failures=1`), so a red test blocks the push in a minute, not after every browser; CI still runs them all for the full report.
+- The `pre-push` hook remembers the commit `verify` passed on (clean tree only): a push retried after a GitHub or network error on the same commit skips verify; any change runs it again.
+
+## Lessons from failures (read before writing tests or motion code)
+
+Every failure that reaches the `pre-push` hook or CI is closed in the same pull request with the fix of its cause **and** a guard that stops it coming back: a lint rule, a test, a check in a script or hook. Only when no automatic guard is possible, a line here. Already automatic: lint on commit (`pre-commit`), a foreign server on port 4300 stops the e2e (`scripts/e2e-port.sh`), the e2e specs a branch changes run 5 more times at the end of `verify` (`scripts/e2e-changed.sh`), branch names (`scripts/branch-name.mjs`).
+
+- A test about a time window (five taps within 2 s, an intro that lifts by a deadline) must not depend on how fast Playwright acts: `locator.click()` waits for stability, about 0.5 s each in WebKit on CI. Use `page.mouse.click` at a measured position (`verify` repeats the changed specs 5 times; for a timing fix, `npm run e2e:webkit -- <spec> --repeat-each=10` too).
+- Anything bounded by a deadline in CSS must be bounded the same way when GSAP takes over: GSAP's lag smoothing slows its clock on a busy main thread (`effects/intro.ts` sets a timer on the fallback's deadline).
+- A timing assertion counts from what the app's own bound counts from, plus the lag of WebKit's frames in CI: the intro test waits 6 s for a 3.6 s bound that starts at the first render, not at the end of `goto`.
+- Before pushing a template change, `grep -rn` the e2e for the attributes and texts you changed and run those specs on Chromium: seconds, against ten minutes of hook (adding `noopener` broke two tests that wanted `rel="me"` exactly).
+- A GSAP timeline is thenable: a callback that returns one trips `no-misused-promises`; give it a block body.
+- `gh pr edit` fails on this repo (retired Projects classic fields): edit pull requests through `gh api`.
 
 ## Architecture
 
-Personal portfolio built on the npm package `gatsby-theme-portfolio-minimal` (Gatsby 5, React 18). Almost all UI and logic live in the theme inside `node_modules`; this repo only supplies content, page composition and style overrides.
+Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "static"`, no Node server), deployed on Netlify. Spec: `docs/superpowers/specs/2026-10-03-portfolio-v2-design.md`; plans in `docs/superpowers/plans/` (each opens with its status); every change to the spec gets a row in its §17 (`.gitattributes` merges the spec with `union`, so rows appended by parallel branches never conflict on a local rebase; GitHub's server merge ignores it, so a PR that conflicts after another one merged gets `git rebase origin/v2` locally, then `git push --force-with-lease`, then its CI again). Manual launch steps, open questions for the user and the cleanup only they can do: `docs/launch/launch-kit.md`.
 
-- **`content/`** — the real "source" of the site, read by the theme via `contentDirectory` in `gatsby-config.js`:
-  - `settings.json` — site metadata (language, SEO, social links), navigation, CTA, feature toggles (dark mode, cookie bar).
-  - `sections/<name>/` — data for each section (`hero.json`, `projects.json`, `interests.json`, `contact.json`, `about.md`, `legal/*.md`). The section components in `src/pages/` load these by `sectionId`.
-  - `images/` — referenced with paths relative to the JSON file (e.g. `../../images/foo.png` from `sections/projects/`).
-  - `articles/` — blog posts (blog at `/blog`, configured in `gatsby-config.js`).
-- **`src/pages/`** — composes theme components (`HeroSection`, `ProjectsSection`, `LegalSection`, `Page`, `Seo`, …) imported from `gatsby-theme-portfolio-minimal`. Section headings are passed as props here, not in content.
-- **`src/gatsby-theme-portfolio-minimal/`** — Gatsby theme shadowing: files here replace the theme file at the same path. Currently only `globalStyles/theme.css` (CSS variables for `lightTheme`/`darkTheme`).
-
-To change component behavior beyond what props/content allow, shadow the corresponding file from `node_modules/gatsby-theme-portfolio-minimal/src/` under the same relative path in `src/gatsby-theme-portfolio-minimal/`.
+- Two locale builds via `@angular/localize`: English is the template source language, Italian lives in `src/locale/messages.it.xlf` (missing translations fail the build). UI strings use explicit `@@ids`; long content comes from `src/app/content/content.{en,it}.ts`, picked by `LOCALE_ID` through the `CONTENT` token.
+- Logic that can break lives in pure, unit-tested functions next to thin services: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts`.
+- Theme: an inline script in `src/index.html` sets `data-theme` before first paint; `ThemeService` takes over after hydration. All colors are CSS variables in `src/styles/_tokens.scss`.
+- Netlify (`netlify.toml`) does the language redirect on `/` (honouring the `nf_lang` cookie set by the language switch), the canonical-domain 301s, legacy Gatsby URLs and per-locale 404s. `scripts/postbuild.mjs` also writes `_redirects` (200 rewrites so case studies answer at their slash-less canonical URL). The Netlify UI must not have `@netlify/plugin-gatsby` installed: it fails every Angular deploy.
+- Motion: GSAP (ScrollTrigger, SplitText) loads as a lazy chunk through `MOTION_LOADER`; the `[appMotion]` directive (`src/app/motion/motion-host.ts`) runs the effects in `src/app/motion/effects/` inside `gsap.matchMedia`, and does nothing with reduced motion. Pins and pointer effects are desktop only (≥ 1024px with hover). Use `gsap.set` + `.to()` for scrubbed tweens (a scrubbed `.from()` is not redrawn in Firefox after a refresh). E2E skip the intro through `e2e/fixtures.ts`. `MotionPause` (`src/app/motion/pause.ts`) is the one pause switch: Angular code injects it, GSAP effects use `watchPause()`. Effects that move elements GSAP also transforms go through CSS `translate` variables. `PixelDissolve` (`src/app/pixel-dissolve/`) draws the band seams; `effects/dissolve.ts` scrubs its `--p` (seams form as they scroll in and crumble as they rise to the header), `effects/thread.ts` drives the home's pixel thread.
+- First paint: the LCP is the hero headline (text), and Lighthouse puts every request started before the first paint on its critical path. So `MOTION_LOADER` imports GSAP only `afterPaint()`, project images are never `priority` (the hero fills the first screen) and `index.preloadInitial` is off; Three.js (moai) and the player card are lazy chunks too.
+- Easter egg: `src/app/game/game-trigger.ts` (app shell) opens the lazy player card on the Konami code, five taps on the logo, or a click on any `[data-press-start]` (the footer key, rendered only after hydration).
+- `scripts/postbuild.mjs` builds `sitemap.xml` and `robots.txt` at the publish root from the prerendered pages' canonical/hreflang tags.
 
 ## Conventions
 
-- Site content and UI copy are in Italian.
-- Projects in `projects.json` have a `visible` flag to hide them without deleting.
-- Project images: screenshots at 1080x810, framed with Screely (Plain Window, Regular style, 100px vertical/horizontal padding).
+- Site content is bilingual (English source, Italian translation).
+- No green anywhere in the palette (the user's brand colours are greys, the `--accent` blue family, lavender and peach).
+- Styles are SCSS (`inlineStyleLanguage: scss`, `includePaths: [src]`); colors stay CSS custom properties because the theme switches them at runtime; use `@use 'styles/breakpoints' as bp;` and `@include bp.up(md)` for breakpoints.
+- The whole site must meet WCAG 2.2 AA (spec §11): axe runs with WCAG tags in both themes in the e2e suite.
+- Visual style directives live in the project skill `.claude/skills/edm-style/SKILL.md` (palette, type, 8px grid, stepped shapes, the living objects, motion rules): read it before any visual change. The original visual system is in plan 1, section "Sistema visivo".
+- The old Gatsby site lives on `master`; its images can be recovered with `git show master:content/images/<file>`.
+- Project images live in `public/images/work/` as JPEG: the original at full width plus a half-width copy named `<name>-<width/2>.jpg` (`workImageLoader` builds the `srcset` from them). Set `width`/`height` in both content files to the original size.
+- Open Graph images are committed in `public/og/`: run `npm run og:images` after changing a title, a summary or the project list (the build fails if a page points at a missing one). The build also writes `llms.txt` and a Markdown copy of every page from the content files.
+- Fonts: `src/styles/_fonts.scss` declares Instrument Sans from `@fontsource-variable` with `font-display: optional`, and `scripts/postbuild.mjs` injects a `<link rel="preload">` for the latin file into every page. Together they keep CLS at 0; do not switch back to the package CSS (it uses `swap`).

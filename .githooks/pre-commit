@@ -1,0 +1,8 @@
+#!/bin/sh
+# The quick half of the gate, at commit time: ESLint on the staged TypeScript and HTML, a few seconds instead of
+# finding the same error at the start of the pre-push verify. The full lint still runs there.
+export PATH="$HOME/.local/node/current/bin:$PATH"
+files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.ts' '*.html')
+[ -z "$files" ] && exit 0
+# shellcheck disable=SC2086
+exec npx eslint --max-warnings=0 $files

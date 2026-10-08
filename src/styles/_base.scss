@@ -1,0 +1,311 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* on the root, so it clips at the viewport: decorations flying in from the edges never add a horizontal scroll */
+  overflow-x: clip;
+  /* anchors and focused elements stop below the sticky header (WCAG 2.4.11) */
+  scroll-padding-top: var(--header-h);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-variation-settings: 'wdth' 100;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variation-settings: 'wdth' 85;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-hero);
+  line-height: 1.02;
+  font-variation-settings: 'wdth' 75;
+  letter-spacing: -0.01em;
+}
+
+/* section and item titles shrink on phones, so they stay well below the hero headline (44px there) */
+h2 {
+  font-size: clamp(2rem, 1.4rem + 2.5vw, var(--step-4)); /* 32px → 44px */
+}
+
+h3 {
+  font-size: clamp(var(--step-1), 1.1rem + 1.2vw, var(--step-2)); /* 22.5px → 28px */
+}
+
+p {
+  margin: 0;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--link);
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-2);
+  top: -100px;
+  z-index: 60;
+  padding: var(--space-1) var(--space-2);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--fg);
+  color: var(--fg);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* A link to a GitHub repository: the pixel mark and the label in a hard-edged tag that turns to ink on hover */
+.repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 40px;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--fg);
+  color: var(--fg);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+}
+.repo-link:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .repo-link {
+    transition: background-color 120ms steps(2), color 120ms steps(2);
+  }
+}
+
+.button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .button {
+    transition: transform 120ms steps(2), box-shadow 120ms steps(2);
+  }
+  .button--primary:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 4px 4px 0 var(--fg);
+  }
+}
+
+/* pressed: buttons and repository tags give way 2px under a finger or a click, like a key */
+.button:active,
+.repo-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport.
+   Named elements (the card → case study transition) join the root snapshot so the circle covers them too. */
+html.theme-switching * {
+  view-transition-name: none !important;
+}
+html.theme-switching::view-transition-old(root) {
+  animation: none;
+}
+html.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--reveal-x) var(--reveal-y));
+  }
+  to {
+    clip-path: circle(var(--reveal-r) at var(--reveal-x) var(--reveal-y));
+  }
+}
+
+/* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
+   (text, links, focus ring, rules) follows. --band-inset/--band-round let GSAP grow the band from a card. */
+.band {
+  position: relative;
+  isolation: isolate;
+  color: var(--fg);
+}
+.band::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -1;
+  background: var(--band-bg);
+  clip-path: inset(0 var(--band-inset, 0%) round var(--band-round, 0px));
+}
+.band--pastel {
+  --band-bg: var(--band-pastel-bg);
+  --fg: var(--band-pastel-fg);
+  --fg-muted: var(--band-pastel-muted);
+  --link: var(--band-pastel-link);
+  --focus: var(--band-pastel-link);
+  --rule: color-mix(in srgb, var(--band-pastel-fg) 20%, transparent);
+}
+.band--lavender {
+  --band-bg: var(--band-lavender-bg);
+  --fg: var(--band-lavender-fg);
+  --fg-muted: var(--band-lavender-muted);
+  --link: var(--band-lavender-link);
+  --focus: var(--band-lavender-link);
+  --rule: color-mix(in srgb, var(--band-lavender-fg) 20%, transparent);
+}
+.band--ink {
+  --band-bg: var(--band-ink-bg);
+  --fg: var(--band-ink-fg);
+  --fg-muted: var(--band-ink-muted);
+  --link: var(--band-ink-link);
+  --focus: var(--band-ink-link);
+  --rule: color-mix(in srgb, var(--band-ink-fg) 20%, transparent);
+}
+
+/* elements that lean towards the pointer (motion/effects/cursor.ts): transforms need a box; :where keeps
+   .button's inline-flex */
+:where([data-magnetic]) {
+  display: inline-block;
+  /* `translate` adds up with the `transform` of hover styles (the primary button's lift) */
+  translate: var(--mx, 0px) var(--my, 0px);
+}
+
+/* Language switch: a full-screen panel with the new language's name slides up over the old page (phase out,
+   LanguageSwitch), and the new page starts under it and sees it slide away upwards (phase in, inline script in
+   index.html). It moves with transform, which the compositor animates even while the new page hydrates; its top and
+   bottom edges are crumbling rows of 16px cells, the site's seams. */
+html[data-lang-swap]::after {
+  --fringe: var(--space-6);
+  content: attr(data-lang-swap);
+  position: fixed;
+  inset: calc(-1 * var(--fringe)) 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: clamp(2.5rem, 10vw, 7rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  pointer-events: none;
+  will-change: transform;
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM1 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1z'/%3E%3C/svg%3E") top left / calc(12 * 16px) var(--fringe) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--fringe)) no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1z'/%3E%3C/svg%3E") bottom left / calc(12 * 16px) var(--fringe) repeat-x;
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM1 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1z'/%3E%3C/svg%3E") top left / calc(12 * 16px) var(--fringe) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--fringe)) no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1z'/%3E%3C/svg%3E") bottom left / calc(12 * 16px) var(--fringe) repeat-x;
+}
+html[data-lang-phase='out']::after {
+  animation: lang-cover 0.5s cubic-bezier(0.7, 0, 0.3, 1) both;
+}
+html[data-lang-phase='in']::after {
+  animation: lang-lift 0.55s cubic-bezier(0.7, 0, 0.3, 1) 0.1s both;
+}
+@keyframes lang-cover {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes lang-lift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-lang-swap]::after {
+    display: none;
+  }
+}
+
+/* About statement (home.ts): SplitText wraps each word at runtime, outside Angular's style scope; --lit (0 → 1, from
+   motion/effects/about-words.ts) takes it from a faded ink (55% ink on the band colour, about 3.6:1: AA for large
+   text) to full ink. */
+#about .statement .word {
+  --faded: color-mix(in srgb, var(--fg) 55%, var(--band-bg, var(--bg)));
+  color: color-mix(in srgb, var(--fg) calc(var(--lit, 1) * 100%), var(--faded));
+}

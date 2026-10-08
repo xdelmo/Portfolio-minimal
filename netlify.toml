@@ -1,0 +1,90 @@
+[build]
+  command = "npm run build"
+  publish = "dist/portfolio/browser"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Canonical domain
+[[redirects]]
+  from = "https://emanueledelmonte.it/*"
+  to = "https://www.emanueledelmonte.it/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://emanueledelmonte.netlify.app/*"
+  to = "https://www.emanueledelmonte.it/:splat"
+  status = 301
+  force = true
+
+# Old Gatsby URLs (the old site was in Italian)
+[[redirects]]
+  from = "/privacy"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/imprint"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/it/"
+  status = 301
+
+[[redirects]]
+  from = "/my-first-article"
+  to = "/it/"
+  status = 301
+
+# Language redirect, only for the bare root. Netlify lets the nf_lang cookie
+# (set by the language switch) override the browser's Accept-Language.
+[[redirects]]
+  from = "/"
+  to = "/it/"
+  status = 302
+  conditions = { Language = ["it"] }
+
+[[redirects]]
+  from = "/"
+  to = "/en/"
+  status = 302
+
+# Per-locale 404 pages (only used when no file matches)
+[[redirects]]
+  from = "/it/*"
+  to = "/it/404/index.html"
+  status = 404
+
+[[redirects]]
+  from = "/en/*"
+  to = "/en/404/index.html"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/it/404/index.html"
+  status = 404
+  conditions = { Language = ["it"] }
+
+[[redirects]]
+  from = "/*"
+  to = "/en/404/index.html"
+  status = 404
+
+# Markdown versions of the pages (scripts/geo-files.mjs)
+[[headers]]
+  for = "/*.md"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+
+# The root redirect depends on the nf_lang cookie as well as Accept-Language:
+# without this the edge cache can answer a cookie request with the redirect
+# it stored for a request without it.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Netlify-Vary = "language,cookie=nf_lang"
+    Cache-Control = "no-store"

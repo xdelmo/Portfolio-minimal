@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" target-language="it" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="theme.toLight" datatype="html">
+        <source>Switch to light theme</source>
+        <target>Passa al tema chiaro</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/theme/theme-toggle.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="theme.toDark" datatype="html">
+        <source>Switch to dark theme</source>
+        <target>Passa al tema scuro</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/theme/theme-toggle.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a11y.skip" datatype="html">
+        <source>Skip to content</source>
+        <target>Vai al contenuto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="lang.label" datatype="html">
+        <source>Language:</source>
+        <target>Lingua:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/i18n/language-switch.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="motion.pause" datatype="html">
+        <source>Pause animations</source>
+        <target>Metti in pausa le animazioni</target>
+      </trans-unit>
+      <trans-unit id="nav.home" datatype="html">
+        <source>Emanuele Del Monte, home</source>
+        <target>Emanuele Del Monte, home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.label" datatype="html">
+        <source>Main</source>
+        <target>Principale</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.work" datatype="html">
+        <source>Work</source>
+        <target>Progetti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.about" datatype="html">
+        <source>About</source>
+        <target>Chi sono</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.contact" datatype="html">
+        <source>Contact</source>
+        <target>Contatti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.stack" datatype="html">
+        <source>Technologies</source>
+        <target>Tecnologie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">14,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.demo" datatype="html">
+        <source>Open the live demo</source>
+        <target>Apri la demo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.notFound" datatype="html">
+        <source>Project not found</source>
+        <target>Progetto non trovato</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.home" datatype="html">
+        <source>Go to the home page</source>
+        <target>Vai alla home</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">29,31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">12,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.cta.work" datatype="html">
+        <source>See my work</source>
+        <target>Guarda i progetti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.cta.contact" datatype="html">
+        <source>Contact me</source>
+        <target>Scrivimi</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">16,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.work.title" datatype="html">
+        <source>Selected work</source>
+        <target>Progetti selezionati</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.about.title" datatype="html">
+        <source>About</source>
+        <target>Chi sono</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">33,34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.contact.title" datatype="html">
+        <source>Get in touch</source>
+        <target>Contatti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">38,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.level" datatype="html">
+        <source>Lv. 4</source>
+        <target>Lv. 4</target>
+      </trans-unit>
+      <trans-unit id="notFound.hp" datatype="html">
+        <source>HP</source>
+        <target>PS</target>
+      </trans-unit>
+      <trans-unit id="notFound.menu" datatype="html">
+        <source>What to do</source>
+        <target>Cosa fare</target>
+      </trans-unit>
+      <trans-unit id="notFound.run" datatype="html">
+        <source>Run</source>
+        <target>Fuggi</target>
+      </trans-unit>
+      <trans-unit id="notFound.work" datatype="html">
+        <source>My work</source>
+        <target>Lavori</target>
+      </trans-unit>
+      <trans-unit id="notFound.contact" datatype="html">
+        <source>Contact</source>
+        <target>Contatti</target>
+      </trans-unit>
+      <trans-unit id="notFound.runLabel" datatype="html">
+        <source>Run: to the home page</source>
+        <target>Fuggi: alla home</target>
+      </trans-unit>
+      <trans-unit id="notFound.bag" datatype="html">
+        <source>Bag</source>
+        <target>Zaino</target>
+      </trans-unit>
+      <trans-unit id="notFound.bagLabel" datatype="html">
+        <source>Bag: the player card</source>
+        <target>Zaino: la scheda giocatore</target>
+      </trans-unit>
+      <trans-unit id="a11y.newTab" datatype="html">
+        <source>Opens in a new tab</source>
+        <target>Si apre in una nuova scheda</target>
+      </trans-unit>
+      <trans-unit id="notFound.title" datatype="html">
+        <source>A wild 404 appeared!</source>
+        <target>È apparso un 404 selvatico!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notFound.text" datatype="html">
+        <source>The link may be old or mistyped. What will you do?</source>
+        <target>Il link potrebbe essere vecchio o scritto male. Cosa vuoi fare?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="work.stack" datatype="html">
+        <source>Technologies</source>
+        <target>Tecnologie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/sections/work-list/work-list.ts</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.context" datatype="html">
+        <source>Context</source>
+        <target>Contesto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">37,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.architecture" datatype="html">
+        <source>How it is built</source>
+        <target>Come è costruito</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.decisions" datatype="html">
+        <source>Key decisions</source>
+        <target>Scelte chiave</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.outcome" datatype="html">
+        <source>Outcome</source>
+        <target>Risultato</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">59,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="case.back" datatype="html">
+        <source>See all projects</source>
+        <target>Tutti i progetti</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.sideQuests.title" datatype="html">
+        <source>Side quests</source>
+        <target>Side quest</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.sideQuests.lede" datatype="html">
+        <source>Things I build for fun, from crosswords to 3D-printed parts.</source>
+        <target>Cose che costruisco per divertimento, dai cruciverba ai pezzi stampati in 3D.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.experience.title" datatype="html">
+        <source>Experience</source>
+        <target>Esperienza</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="home.stack.title" datatype="html">
+        <source>Tools I use</source>
+        <target>Strumenti che uso</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nav.experience" datatype="html">
+        <source>Experience</source>
+        <target>Esperienza</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="game.cheat" datatype="html">
+        <source>Cheat activated</source>
+        <target>Trucco attivato</target>
+      </trans-unit>
+      <trans-unit id="game.title" datatype="html">
+        <source>Press start</source>
+        <target>Press start</target>
+      </trans-unit>
+      <trans-unit id="game.player" datatype="html">
+        <source>Player</source>
+        <target>Giocatore</target>
+      </trans-unit>
+      <trans-unit id="game.class" datatype="html">
+        <source>Class</source>
+        <target>Classe</target>
+      </trans-unit>
+      <trans-unit id="game.level" datatype="html">
+        <source>Level</source>
+        <target>Livello</target>
+      </trans-unit>
+      <trans-unit id="game.xp" datatype="html">
+        <source>Experience points to <x id="INTERPOLATION" equiv-text="{{ content.game.next }}"/></source>
+        <target>Punti esperienza verso <x id="INTERPOLATION" equiv-text="{{ content.game.next }}"/></target>
+      </trans-unit>
+      <trans-unit id="game.achievements" datatype="html">
+        <source>Achievements</source>
+        <target>Obiettivi</target>
+      </trans-unit>
+      <trans-unit id="game.continue" datatype="html">
+        <source>Continue</source>
+        <target>Continua</target>
+      </trans-unit>
+      <trans-unit id="sideQuests.repo" datatype="html">
+        <source>Code on GitHub</source>
+        <target>Codice su GitHub</target>
+      </trans-unit>
+      <trans-unit id="work.repos" datatype="html">
+        <source>Code</source>
+        <target>Codice</target>
+      </trans-unit>
+      <trans-unit id="footer.top" datatype="html">
+        <source>Back to top</source>
+        <target>Torna su</target>
+      </trans-unit>
+      <trans-unit id="footer.email" datatype="html">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="footer.start" datatype="html">
+        <source>Start</source>
+        <target>Start</target>
+      </trans-unit>
+      <trans-unit id="footer.pressStart" datatype="html">
+        <source>Press start</source>
+        <target>Press start</target>
+      </trans-unit>
+      <trans-unit id="home.contact.lede" datatype="html">
+        <source>Building something with Angular, or hiring for a frontend role? Write to me.</source>
+        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.</target>
+      </trans-unit>
+      <trans-unit id="home.stack.lede" datatype="html">
+        <source>Three levels: what I use every day, what runs in production, what I try in my side projects.</source>
+        <target>Tre livelli: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.</target>
+      </trans-unit>
+      <trans-unit id="home.experience.chapters" datatype="html">
+        <source>Career chapters</source>
+        <target>Capitoli della carriera</target>
+      </trans-unit>
+      <trans-unit id="home.experience.tools" datatype="html">
+        <source>Tools</source>
+        <target>Strumenti</target>
+      </trans-unit>
+      <trans-unit id="home.experience.studies" datatype="html">
+        <source>Studies and certificates</source>
+        <target>Studi e certificati</target>
+      </trans-unit>
+      <trans-unit id="footer.privacy" datatype="html">
+        <source>Privacy</source>
+        <target>Privacy</target>
+      </trans-unit>
+      <trans-unit id="work.caseStudy" datatype="html">
+        <source>Read the case study</source>
+        <target>Leggi il case study</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+      // the intro plays once per session, on desktop only, never with reduced motion (SiteIntro + motion/effects/intro.ts)
+      try {
+        if (matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (hover: hover)').matches && sessionStorage.getItem('intro') !== '1') {
+          document.documentElement.classList.add('intro-on');
+          sessionStorage.setItem('intro', '1');
+        }
+      } catch (e) {}
+      // a language switch covered the old page (LanguageSwitch): this one starts covered and lifts the curtain
+      try {
+        var swap = sessionStorage.getItem('lang-swap');
+        sessionStorage.removeItem('lang-swap');
+        if (swap && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+          var root = document.documentElement;
+          root.setAttribute('data-lang-swap', swap);
+          root.setAttribute('data-lang-phase', 'in');
+          setTimeout(function () {
+            root.removeAttribute('data-lang-swap');
+            root.removeAttribute('data-lang-phase');
+          }, 1000);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <title>Emanuele Del Monte</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>

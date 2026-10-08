@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run lint` — ESLint strict (typescript-eslint strictTypeChecked + angular-eslint, template a11y), zero warnings allowed
 - `npx ng test --no-watch` — unit tests (Vitest); one file: `npx ng test --no-watch --include src/app/core/theme/theme.spec.ts`
 - `npm run e2e` — Playwright against the built site (run `npm run build` first); one test: `npx playwright test e2e/theme.spec.ts --project=chromium`
-- `npm run lhci` — Lighthouse CI against the built site (mobile, performance ≥ 0.95, best of 3 runs). It serves `dist` statically, so `lighthouserc.json` lists case studies with a trailing slash (the slash-less URL would cost a redirect Netlify does not make)
+- `npm run lhci` — Lighthouse CI against the built site (mobile, performance ≥ 0.95, best of 3 runs). On the Linux PC `scripts/lhci.sh` runs it with Playwright's Chromium and no sandbox. It serves `dist` statically, so `lighthouserc.json` lists case studies with a trailing slash (the slash-less URL would cost a redirect Netlify does not make)
 - `npm run i18n:extract` — regenerate `src/locale/messages.xlf` (git-ignored, generated) after changing template strings, then add the units by hand to `messages.it.xlf` (the only tracked one)
 - `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
 - `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)

@@ -23,15 +23,17 @@ import { SeoService } from '../../core/seo/seo.service';
               <li>{{ tech }}</li>
             }
           </ul>
-          <p class="links">
-            <!-- the code first: not every project is online, every one is on GitHub -->
-            @for (repo of p.repos; track repo.url; let first = $first) {
-              <a class="button" [class.button--primary]="first" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a>
-            }
-            @if (p.demoUrl) {
-              <a class="button" [href]="p.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@case.demo">Open the live demo</a>
-            }
-          </p>
+          @if (p.repos.length || p.demoUrl) {
+            <p class="links">
+              <!-- the code first when it is public, then the demo -->
+              @for (repo of p.repos; track repo.url; let first = $first) {
+                <a class="button" [class.button--primary]="first" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a>
+              }
+              @if (p.demoUrl) {
+                <a class="button" [class.button--primary]="!p.repos.length" [href]="p.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@case.demo">Open the live demo</a>
+              }
+            </p>
+          }
         </header>
 
         @if (p.image; as image) {

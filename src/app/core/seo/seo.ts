@@ -93,7 +93,7 @@ export function caseStudyJsonLd(project: Project, person: Person, locale: Locale
         url,
         name: project.title,
         description: project.summary,
-        codeRepository: project.repos[0].url,
+        ...(project.repos.length ? { codeRepository: project.repos[0].url } : {}),
         programmingLanguage: project.stack,
         inLanguage: locale,
         author: { '@id': PERSON_ID },

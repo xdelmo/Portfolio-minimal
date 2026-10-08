@@ -23,3 +23,23 @@ for (const path of PAGES) {
     await expect(page.locator('#new-tab')).toHaveText(path.startsWith('/it/') ? 'Si apre in una nuova scheda' : 'Opens in a new tab');
   });
 }
+
+// A link to an element of this page stays on this page, even before hydration or without JavaScript:
+// under <base href="/en/"> a bare "#main" led every inner page's skip link and back to top to the home page.
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+  for (const path of PAGES) {
+    test(`links to this page's own sections stay on ${path}`, async ({ page }) => {
+      await page.goto(path);
+      const strays = await page.locator('a[href*="#"]').evaluateAll((links) => {
+        const here = location.pathname.replace(/\/$/, '');
+        return links
+          .map((a) => new URL((a as HTMLAnchorElement).href))
+          .filter((url) => url.origin === location.origin && document.getElementById(url.hash.slice(1)))
+          .filter((url) => url.pathname.replace(/\/$/, '') !== here)
+          .map((url) => url.pathname + url.hash);
+      });
+      expect(strays).toEqual([]);
+    });
+  }
+});

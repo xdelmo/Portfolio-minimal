@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { PauseToggle } from './pause-toggle';
@@ -9,7 +10,7 @@ import { PauseToggle } from './pause-toggle';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle],
   template: `
-    <a class="skip-link" href="#main" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
+    <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
         ><span class="mark">edm.</span><span class="name"><span>Emanuele</span><span>Del Monte</span></span></a
@@ -117,7 +118,11 @@ import { PauseToggle } from './pause-toggle';
   `,
 })
 export class SiteHeader {
-  // <base href="/en/"> would resolve "#main" to the home page, so move focus in place instead.
+  private readonly url = currentUrl();
+  protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
+
+  // with JavaScript, move the focus in place
+
   skipToMain(event: Event): void {
     event.preventDefault();
     document.getElementById('main')?.focus();

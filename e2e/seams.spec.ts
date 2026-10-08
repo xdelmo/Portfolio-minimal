@@ -67,3 +67,21 @@ test('project images show at once, with no pixel veil over them (removed on requ
   await expect(page.locator('#work .media')).not.toHaveCount(0);
   await expect(page.locator('#work app-pixel-dissolve')).toHaveCount(0);
 });
+
+// Every seam runs from one edge of the window to the other (issue #85): on desktop the hero's grid placed its seam in
+// the first column's area, which started it 16px in from the left and pushed it 16px past the right edge.
+for (const width of [390, 1024, 1280, 1600]) {
+  test(`every seam spans the whole window at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/en/');
+    const seams = await page.locator('app-pixel-dissolve.seam').evaluateAll((all) =>
+      all.map((s) => {
+        const r = s.getBoundingClientRect();
+        return { seam: s.getAttribute('class') ?? '', left: Math.round(r.left), right: Math.round(r.right) };
+      }),
+    );
+    expect(seams.length).toBeGreaterThan(0);
+    const edge = await page.evaluate(() => document.documentElement.clientWidth);
+    for (const s of seams) expect(s, s.seam).toMatchObject({ left: 0, right: edge });
+  });
+}

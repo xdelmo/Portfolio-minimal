@@ -146,6 +146,18 @@
           <context context-type="linenumber">33,34</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="home.contact.copy" datatype="html">
+        <source>Copy the email address</source>
+        <target>Copia l&apos;indirizzo email</target>
+      </trans-unit>
+      <trans-unit id="home.contact.copied" datatype="html">
+        <source>Copied</source>
+        <target>Copiato</target>
+      </trans-unit>
+      <trans-unit id="home.contact.copiedStatus" datatype="html">
+        <source>Email address copied</source>
+        <target>Indirizzo email copiato</target>
+      </trans-unit>
       <trans-unit id="home.contact.title" datatype="html">
         <source>Get in touch</source>
         <target>Contatti</target>

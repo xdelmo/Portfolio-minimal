@@ -76,13 +76,17 @@ test.describe('switching language', () => {
     expect(`${curtain?.easing ?? ''} ${curtain?.keyEasing ?? ''}`).not.toContain('steps');
   });
 
-  test('the new page starts under the curtain before the app boots', async ({ page }) => {
-    await page.addInitScript(() => {
-      sessionStorage.setItem('lang-swap', 'Italiano');
+  test.describe('before the app boots', () => {
+    // no JavaScript reaches the page, so its motion hosts never leave "pending": nothing to wait for
+    test.use({ motionReady: false });
+    test('the new page starts under the curtain', async ({ page }) => {
+      await page.addInitScript(() => {
+        sessionStorage.setItem('lang-swap', 'Italiano');
+      });
+      await page.route('**/*.js', (route) => route.abort());
+      await page.goto('/it/');
+      expect(await overlay(page)).toEqual({ name: 'Italiano', phase: 'in' });
     });
-    await page.route('**/*.js', (route) => route.abort());
-    await page.goto('/it/');
-    expect(await overlay(page)).toEqual({ name: 'Italiano', phase: 'in' });
   });
 
   test.describe('with reduced motion', () => {

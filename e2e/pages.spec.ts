@@ -266,3 +266,29 @@ for (const slug of ['mcp-server', 'telegram-bots']) {
     await expect(page.locator('.case-study img.shot')).toHaveCount(0);
   });
 }
+
+// A link to a home section from another page lands on that section. The home's motion effects start right after the
+// navigation, and ScrollTrigger's first measure (scroll to the top and back) used to stop the smooth scroll after a
+// few pixels, on desktop where the pins make it slow: the visitor stayed on the hero.
+for (const [from, name, link] of [
+  ['/en/404', 'My work', (page: Page) => page.locator('.move', { hasText: 'My work' })],
+  ['/en/404', 'Contact', (page: Page) => page.locator('.move', { hasText: 'Contact' })],
+  ['/en/work/apexflow', 'Experience', (page: Page) => page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Experience' })],
+] as const) {
+  test(`${from}: ${name} lands on its home section`, async ({ page }) => {
+    await page.goto(from);
+    const target = link(page);
+    const id = ((await target.getAttribute('href')) ?? '').split('#')[1];
+    await target.click();
+    await expect(page).toHaveURL(new RegExp(`/en/#${id}$`));
+    // where scrollIntoView puts it: under the sticky header plus its margin, or as far as the page goes
+    const landed = () =>
+      page.locator(`#${id}`).evaluate((s) => {
+        const top = s.getBoundingClientRect().top;
+        const stop = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + parseFloat(getComputedStyle(s).scrollMarginTop);
+        const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+        return Math.abs(top - stop) <= 2 || (bottom && top > 0 && top < stop + innerHeight);
+      });
+    await expect.poll(landed, { timeout: 5000 }).toBe(true);
+  });
+}

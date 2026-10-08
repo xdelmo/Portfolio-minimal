@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { currentUrl, inPageHref } from '../core/current-url';
 import { CONTENT } from '../content/content';
 
 /**
@@ -13,7 +14,7 @@ import { CONTENT } from '../content/content';
   template: `
     <footer class="site-footer container band band--ink">
       <p>© {{ year }} {{ content.person.name }}</p>
-      <a class="to-top" href="#main" (click)="toTop($event)"
+      <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
         ><span i18n="@@footer.top">Back to top</span
         ><svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
           <path d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h6v1h-6zM0 3h2v1h-2zM3 3h2v5h-2zM6 3h2v1h-2z" /></svg
@@ -145,7 +146,10 @@ export class SiteFooter {
     });
   }
 
-  // <base href="/en/"> would resolve "#main" to the home page: scroll in place and move the focus to the content
+  private readonly url = currentUrl();
+  protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
+
+  // with JavaScript, scroll in place and move the focus to the content
   protected toTop(event: Event): void {
     event.preventDefault();
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

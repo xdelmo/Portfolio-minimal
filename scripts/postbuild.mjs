@@ -4,6 +4,8 @@ import { URL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';
+import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
+import { onlyPublic } from '../src/app/content/public-repos.ts';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
@@ -41,7 +43,10 @@ pages.sort((a, b) => a.canonical.localeCompare(b.canonical));
 
 if (pages.length === 0) throw new Error('postbuild: no indexable pages found, is the build output where expected?');
 
-const geo = geoFiles({ en: CONTENT_EN, it: CONTENT_IT });
+const isPublic = (url) => PUBLIC_REPOS.includes(url);
+const geo = geoFiles({ en: onlyPublic(CONTENT_EN, isPublic), it: onlyPublic(CONTENT_IT, isPublic) });
+// the repositories this build links: .github/workflows/repos.yml compares them with GitHub's answer every day
+await writeFile(join(ROOT, 'repos.json'), `${JSON.stringify(PUBLIC_REPOS)}\n`);
 for (const file of geo) {
   await mkdir(dirname(join(ROOT, file.path)), { recursive: true });
   await writeFile(join(ROOT, file.path), file.body);

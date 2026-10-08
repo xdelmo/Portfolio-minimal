@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "prepare": "git config core.hooksPath .githooks",
-    "start": "ng serve -c development-it --port 4201 & ng serve --port 4200",
-    "build": "ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
+    "prepare": "git config core.hooksPath .githooks && node scripts/public-repos.mjs",
+    "start": "node scripts/public-repos.mjs && (ng serve -c development-it --port 4201 & ng serve --port 4200)",
+    "build": "node scripts/public-repos.mjs && ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "start:it": "ng serve -c development-it --port 4201",
+    "start:it": "node scripts/public-repos.mjs && ng serve -c development-it --port 4201",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
     "og:images": "node --import ./scripts/ts-resolve.mjs scripts/og-images.mjs",
     "verify:deploy": "node scripts/verify-deploy.mjs",
@@ -19,7 +19,7 @@
     "e2e:webkit": "bash scripts/e2e-webkit.sh",
     "lhci": "bash scripts/lhci.sh",
     "lint": "ng lint --max-warnings=0",
-    "verify": "npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e -- --max-failures=1 && npm run e2e:webkit -- --max-failures=1 && npm run e2e:changed"
+    "verify": "node scripts/public-repos.mjs && npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e -- --max-failures=1 && npm run e2e:webkit -- --max-failures=1 && npm run e2e:changed"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

@@ -1,36 +1,19 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from './fixtures';
 
-const github = /^https:\/\/github\.com\/xdelmo\/[\w.-]+$/;
+// The build links only the repositories GitHub shows to a visitor (scripts/public-repos.mjs, issue #81): every page,
+// whatever is public today, links nothing else and leaves no empty list or row of buttons behind.
+const PUBLIC = readFileSync('src/app/content/public-repos.generated.ts', 'utf8').match(/https:\/\/github\.com\/xdelmo\/[\w.-]+/g) ?? [];
 
-test('every project in the work list links to its code on GitHub', async ({ page }) => {
-  await page.goto('/en/');
-  const projects = page.locator('#work .project');
-  const count = await projects.count();
-  expect(count).toBeGreaterThan(0);
-  for (let i = 0; i < count; i++) {
-    const repos = projects.nth(i).locator('.repos a');
-    expect(await repos.count(), `project ${String(i)}`).toBeGreaterThan(0);
-    for (const href of await repos.evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).href))) expect(href).toMatch(github);
-  }
-});
-
-test('every side quest links to its repository', async ({ page }) => {
-  await page.goto('/it/');
-  const quests = page.locator('#side-quests li');
-  await expect(quests).toHaveCount(3);
-  for (const href of await page.locator('#side-quests li a').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).href))) {
-    expect(href).toMatch(github);
-  }
-  await expect(page.locator('#side-quests li a')).toHaveCount(3);
-});
-
-test('a case study leads with the code, the live demo comes after', async ({ page }) => {
-  await page.goto('/en/work/apexflow');
-  const first = page.locator('.links a').first();
-  await expect(first).toHaveAttribute('href', github);
-  await expect(first).toHaveClass(/button--primary/);
-  await expect(page.locator('.links a').last()).toHaveText('Open the live demo');
-});
+for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/ice-friends-breaker', '/en/work/telegram-bots', '/it/work/mcp-server']) {
+  test(`${path} links only public repositories, with no empty lists`, async ({ page }) => {
+    await page.goto(path);
+    const repos = await page.locator('a[href^="https://github.com/xdelmo/"]').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).href));
+    for (const href of repos) expect(PUBLIC, href).toContain(href);
+    for (const list of await page.locator('.repos').all()) await expect(list.locator('a')).not.toHaveCount(0);
+    for (const row of await page.locator('.links').all()) await expect(row.locator('a').first()).toHaveClass(/button--primary/);
+  });
+}
 
 test('every link to a repository carries the pixel GitHub mark, hidden from assistive tech', async ({ page }) => {
   for (const path of ['/en/', '/en/work/apexflow']) {
@@ -44,6 +27,4 @@ test('every link to a repository carries the pixel GitHub mark, hidden from assi
       await expect(link).toHaveAccessibleName((await link.innerText()).trim());
     }
   }
-  await page.goto('/en/');
-  await expect(page.locator('#side-quests .repo-link').first()).toHaveAccessibleName('Code on GitHub');
 });

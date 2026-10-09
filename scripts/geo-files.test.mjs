@@ -15,7 +15,7 @@ const content = {
   person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', availability: 'Open from March.', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada', summary: 'Ada builds Angular front ends.' },
   hero: { headline: 'Headline.', lede: 'Lede.' },
   aboutStatement: 'I care.',
-  about: 'About.',
+  about: ['About.'],
   glance: [{ label: 'Role', value: 'FE' }],
   projects: [project],
   experience: [

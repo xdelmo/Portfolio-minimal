@@ -315,8 +315,8 @@
         <target>Trucco attivato</target>
       </trans-unit>
       <trans-unit id="game.title" datatype="html">
-        <source>Press start</source>
-        <target>Press start</target>
+        <source>Pause</source>
+        <target>Pausa</target>
       </trans-unit>
       <trans-unit id="game.player" datatype="html">
         <source>Player</source>

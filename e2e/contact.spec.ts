@@ -58,7 +58,7 @@ test.describe('footer', () => {
     await expect(start.locator('svg[shape-rendering="crispEdges"]')).toHaveCount(1);
     await expect(start).toHaveText('Start');
     await start.click();
-    const card = page.getByRole('dialog', { name: 'Press start' });
+    const card = page.getByRole('dialog', { name: 'Pause' });
     await expect(card).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(card).toHaveCount(0);

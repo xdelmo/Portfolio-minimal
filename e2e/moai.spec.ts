@@ -121,7 +121,7 @@ test('a sideways swipe turns the moai on a phone', async ({ page, isMobile }) =>
   test.skip(!isMobile, 'touch');
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  // stop the automatic spin first, so only the finger moves it
+  // stop the glances first, so only the finger moves it
   await page.getByRole('button', { name: 'Pause animations' }).click();
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
@@ -192,8 +192,8 @@ test.describe('in dark theme with reduced motion', () => {
   });
 });
 
-test('breathes by itself while nobody scrolls, and the pause button stops it', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'phones already spin it');
+// phones too: they glance around instead of spinning (issue #110)
+test('breathes by itself while nobody scrolls, and the pause button stops it', async ({ page }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();

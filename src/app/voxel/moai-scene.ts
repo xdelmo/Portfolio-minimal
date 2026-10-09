@@ -26,10 +26,9 @@ import {
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_BLEED, MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, glance, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
-const SPIN_PER_MS = 0.0004;
 const SCLERA = '--moai-eye-white';
 const GUM = '--gum';
 /** Two taps or clicks closer than this, and closer than DOUBLE_TAP_PX, blow a bubble. */
@@ -77,14 +76,13 @@ export class MoaiScene {
   protected readonly gaze = signal<Gaze | null>(null);
   /** While a bubble of pink gum is out (a double click or double tap on the moai). */
   protected readonly gum = signal(false);
-  // phones: it spins by itself unless all motion is paused (one header button, WCAG 2.2.2)
+  // its idle life (breath, the phones' glances) stops with the one header pause button (WCAG 2.2.2)
   private readonly pause = inject(MotionPause);
 
   private readonly cleanups: (() => void)[] = [];
   private raf = 0;
   private visible = false;
   private drag = 0;
-  private spin = 0;
 
   constructor() {
     afterNextRender(() => {
@@ -232,7 +230,7 @@ export class MoaiScene {
     let last = performance.now();
     let pointerX: number | null = null;
     let firstDrawn = false;
-    // idle life: it breathes, and on desktop the head turns a little towards the pointer
+    // idle life: it breathes; on desktop the head turns a little towards the pointer, on phones it glances around
     let idle = 0;
     let look = 0;
     let lookTarget = 0;
@@ -241,16 +239,16 @@ export class MoaiScene {
         const dt = Math.min(100, Math.max(0, now - last));
         last = now;
         let scroll = 0;
-        if (this.desktop() && section) {
+        if (section) {
           const box = section.getBoundingClientRect();
           scroll = sectionProgress(box.top, box.height, innerHeight);
-        } else if (!this.pause.paused()) {
-          this.spin += dt * SPIN_PER_MS * Math.PI * 2;
         }
-        if (!this.pause.paused()) idle += dt;
-        look = follow(look, this.desktop() ? lookTarget : 0, dt);
+        const paused = this.pause.paused();
+        if (!paused) idle += dt;
+        // a glance is a slow turn of a stone head, slower than the reply to a pointer
+        look = this.desktop() ? follow(look, lookTarget, dt) : follow(look, paused ? 0 : glance(idle), dt, 700);
         pivot.rotation.x = breath(idle);
-        pivot.rotation.y = scrollYaw(scroll) + this.spin + this.drag + look;
+        pivot.rotation.y = scrollYaw(scroll) + this.drag + look;
         // no fly-in: the scene replaces a still image that is already on screen
         const size = gumStart === null ? null : bubble(now - gumStart);
         gumBall.visible = size !== null && size > 0;

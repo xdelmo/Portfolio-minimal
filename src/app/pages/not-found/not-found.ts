@@ -263,7 +263,7 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 export class NotFound {
   constructor() {
     const seo = inject(SeoService);
-    seo.update({ path: '/404', title: 'Emanuele Del Monte', description: '', noindex: true });
+    seo.update({ path: '/404', title: $localize`:@@notFound.pageTitle:Page not found — Emanuele Del Monte`, description: '', noindex: true });
     seo.setJsonLd('ld-page', null);
   }
 

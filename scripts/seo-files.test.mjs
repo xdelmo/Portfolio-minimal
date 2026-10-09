@@ -6,6 +6,7 @@ const html = `<head>
 <link rel="canonical" href="https://www.emanueledelmonte.it/en/work/apexflow" data-seo="">
 <link rel="alternate" href="https://www.emanueledelmonte.it/en/work/apexflow" hreflang="en" data-seo="">
 <link rel="alternate" href="https://www.emanueledelmonte.it/it/work/apexflow" hreflang="it" data-seo="">
+<link rel="alternate" href="https://www.emanueledelmonte.it/en/work/apexflow" hreflang="x-default" data-seo="">
 </head>`;
 
 test('extractSeoLinks reads canonical and alternates whatever the attribute order', () => {
@@ -14,6 +15,7 @@ test('extractSeoLinks reads canonical and alternates whatever the attribute orde
     alternates: [
       { hreflang: 'en', href: 'https://www.emanueledelmonte.it/en/work/apexflow' },
       { hreflang: 'it', href: 'https://www.emanueledelmonte.it/it/work/apexflow' },
+      { hreflang: 'x-default', href: 'https://www.emanueledelmonte.it/en/work/apexflow' },
     ],
   });
 });

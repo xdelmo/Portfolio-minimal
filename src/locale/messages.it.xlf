@@ -262,6 +262,10 @@
         <source>Next project</source>
         <target>Progetto successivo</target>
       </trans-unit>
+      <trans-unit id="notFound.pageTitle" datatype="html">
+        <source>Page not found — Emanuele Del Monte</source>
+        <target>Pagina non trovata — Emanuele Del Monte</target>
+      </trans-unit>
       <trans-unit id="case.back" datatype="html">
         <source>See all projects</source>
         <target>Tutti i progetti</target>

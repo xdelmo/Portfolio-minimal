@@ -2,6 +2,8 @@ import { Person, Project } from '../../content/content.model';
 import { Locale } from '../i18n/locale';
 
 export const SITE_URL = 'https://www.emanueledelmonte.it';
+/** og:site_name: what a shared link says it comes from. */
+export const SITE_NAME = 'Emanuele Del Monte';
 
 export interface HeadLink {
   rel: 'canonical' | 'alternate';

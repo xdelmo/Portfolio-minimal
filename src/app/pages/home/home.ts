@@ -27,12 +27,11 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { LinkedinMark } from '../../layout/linkedin-mark';
-import { EmailLine } from './email-line';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, EmailLine],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -100,7 +99,6 @@ import { EmailLine } from './email-line';
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
-        <app-email-line [email]="content.person.email" />
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>

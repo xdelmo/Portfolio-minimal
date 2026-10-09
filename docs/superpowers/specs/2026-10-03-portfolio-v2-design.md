@@ -357,3 +357,4 @@ Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle ling
 | 2026-10-09 | Ogni case study finisce con "Progetto successivo: <titolo>" (l'ultimo porta al primo) accanto a "Tutti i progetti" | controllo UI/UX, issue #91 |
 | 2026-10-09 | Case study da 1024px: indice delle quattro sezioni a sinistra, fisso sotto l'header, con la sezione che si sta leggendo segnata da una cella accesa come i nodi del filo; testo a destra | confronto con i tre siti di riferimento, issue #96 |
 | 2026-10-09 | Tolto il bottone "Copia l'indirizzo email" sotto Contatti (aggiunto in #99): il titolo resta l'unico modo per scrivere, senza indirizzo stampato | "Elimina il bottone copia indirizzo mail", issue #103 |
+| 2026-10-09 | La hero occupa il primo schermo sotto l'header anche su telefoni e tablet (`100svh`, contenuto centrato), così la cucitura di pixel sta sul bordo inferiore come su desktop | segnalazione da iPhone, issue #104 |

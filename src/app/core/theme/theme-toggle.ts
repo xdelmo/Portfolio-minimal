@@ -55,7 +55,10 @@ export class ThemeToggle {
       : $localize`:@@theme.toDark:Switch to dark theme`,
   );
 
-  /** The new theme grows as a circle from the toggle over the whole viewport (CSS in _base.scss). */
+  /**
+   * The new theme grows as a circle from the toggle over the whole viewport; from light to dark it is the other way
+   * round, the light page closes into the toggle (issue #116). CSS in _base.scss.
+   */
   protected switchTheme(event: MouseEvent): void {
     const view = this.doc.defaultView;
     if (!view || !('startViewTransition' in this.doc) || view.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -70,11 +73,12 @@ export class ThemeToggle {
     root.style.setProperty('--reveal-y', `${String(y)}px`);
     root.style.setProperty('--reveal-r', `${String(Math.hypot(Math.max(x, view.innerWidth - x), Math.max(y, view.innerHeight - y)))}px`);
     root.classList.add('theme-switching');
+    root.classList.toggle('theme-to-dark', this.themes.theme() === 'light');
     const transition = this.doc.startViewTransition(() => {
       this.themes.toggle();
     });
     void transition.finished.finally(() => {
-      root.classList.remove('theme-switching');
+      root.classList.remove('theme-switching', 'theme-to-dark');
     });
   }
 }

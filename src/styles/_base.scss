@@ -177,7 +177,8 @@ canvas {
   }
 }
 
-/* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport.
+/* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport (from light
+   to dark the light one closes into it instead, below).
    Named elements (the card → case study transition) join the root snapshot so the circle covers them too. */
 html.theme-switching * {
   view-transition-name: none !important;
@@ -195,6 +196,14 @@ html.theme-switching::view-transition-new(root) {
   to {
     clip-path: circle(var(--reveal-r) at var(--reveal-x) var(--reveal-y));
   }
+}
+/* From light to dark the other way round (issue #116): the light page, on top, closes into the toggle */
+html.theme-switching.theme-to-dark::view-transition-old(root) {
+  z-index: 1;
+  animation: theme-reveal 0.7s cubic-bezier(0.65, 0, 0.35, 1) reverse both;
+}
+html.theme-switching.theme-to-dark::view-transition-new(root) {
+  animation: none;
 }
 
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside

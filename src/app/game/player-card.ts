@@ -16,7 +16,8 @@ import { QuestSprite } from '../sections/side-quests/quest-sprite';
       @if (cheat()) {
         <h2 id="game-title" i18n="@@game.cheat">Cheat activated</h2>
       } @else {
-        <h2 id="game-title" i18n="@@game.title">Press start</h2>
+        <!-- the pause screen of a retro role-playing game (issue #111) -->
+        <h2 id="game-title" i18n="@@game.title">Pause</h2>
       }
       <dl class="stats">
         <div>

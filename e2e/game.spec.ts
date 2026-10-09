@@ -29,7 +29,7 @@ test('the code unlocks the cheat card, Press start the plain one', async ({ page
   await expect(card(page).locator('meter')).toHaveAttribute('value', '1');
   await page.keyboard.press('Escape');
   await page.locator('app-site-footer').getByRole('button', { name: 'Press start' }).click();
-  const plain = page.getByRole('dialog', { name: 'Press start' });
+  const plain = page.getByRole('dialog', { name: 'Pause' });
   await expect(plain).toBeVisible();
   await expect(plain).not.toContainText('Konami code');
   await expect(plain.locator('dd').nth(2)).toHaveText('3');

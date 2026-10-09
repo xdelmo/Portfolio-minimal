@@ -254,3 +254,14 @@ test('below the About text on a tablet, the moai stands in the middle', async ({
   });
   expect(Math.abs(centre.el - centre.parent)).toBeLessThanOrEqual(2);
 });
+
+// A project's actions sit on one row on wide screens and stack on phones (issue #94).
+test('a project keeps its case study and code buttons on one row on desktop, stacked on phones', async ({ page, isMobile }) => {
+  await page.goto('/en/');
+  const project = page.locator('#work .project', { hasText: 'ApexFlow' });
+  const read = await project.locator('.read').boundingBox();
+  const code = await project.locator('.repo-link').first().boundingBox();
+  if (!read || !code) throw new Error('missing buttons');
+  if (isMobile) expect(code.y).toBeGreaterThan(read.y + read.height - 1);
+  else expect(Math.abs(read.y + read.height / 2 - (code.y + code.height / 2))).toBeLessThanOrEqual(2);
+});

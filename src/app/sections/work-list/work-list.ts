@@ -21,16 +21,18 @@ import { QuestSprite } from '../side-quests/quest-sprite';
                 <li>{{ tech }}</li>
               }
             </ul>
-            <a class="button button--primary read" [routerLink]="['/work', project.slug]"
-              ><span i18n="@@work.caseStudy">Read the case study</span><span class="visually-hidden">: {{ project.title }}</span></a
-            >
-            @if (project.repos.length) {
-              <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
-                @for (repo of project.repos; track repo.url) {
-                  <li><a class="repo-link" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a></li>
-                }
-              </ul>
-            }
+            <div class="actions">
+              <a class="button button--primary read" [routerLink]="['/work', project.slug]"
+                ><span i18n="@@work.caseStudy">Read the case study</span><span class="visually-hidden">: {{ project.title }}</span></a
+              >
+              @if (project.repos.length) {
+                <ul class="repos" i18n-aria-label="@@work.repos" aria-label="Code">
+                  @for (repo of project.repos; track repo.url) {
+                    <li><a class="repo-link" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a></li>
+                  }
+                </ul>
+              }
+            </div>
           </div>
           <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
           <div class="media">
@@ -86,9 +88,18 @@ import { QuestSprite } from '../side-quests/quest-sprite';
       font-size: var(--step--1);
     }
     // the case study first, the code after it, smaller
-    .read {
-      justify-self: start;
+    // the project's actions: stacked on phones, one row from md (issue #94)
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
       margin-top: var(--space-1);
+      @include bp.up(md) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+      }
     }
     .repos {
       display: flex;

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { CONTENT_EN } from '../../content/content.en';
-import { CaseStudy } from './case-study';
+import { CaseStudy, sectionBeingRead } from './case-study';
 
 describe('CaseStudy', () => {
   async function render(slug: string) {
@@ -33,6 +33,25 @@ describe('CaseStudy', () => {
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
   });
 
+  it('ends with the next project in the work list (#91)', async () => {
+    const [first, second] = CONTENT_EN.projects;
+    const el = await render(first.slug);
+    expect(el.querySelector('.next')?.getAttribute('href')).toBe(`/work/${second.slug}`);
+    expect(el.querySelector('.next-title')?.textContent).toBe(second.title);
+  });
+
+  it('leads from the last project back to the first', async () => {
+    const { projects } = CONTENT_EN;
+    const el = await render(projects[projects.length - 1].slug);
+    expect(el.querySelector('.next')?.getAttribute('href')).toBe(`/work/${projects[0].slug}`);
+  });
+
+  it('lists the sections in an index (#96)', async () => {
+    const el = await render('apexflow');
+    const links = [...el.querySelectorAll('.toc a')];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/#context', '/#architecture', '/#decisions', '/#outcome']);
+  });
+
   it('labels each repository link', async () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());
@@ -57,5 +76,17 @@ describe('CaseStudy', () => {
     const el = await render('mcp-server');
     expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub']);
     expect(el.querySelector('img')).toBeNull();
+  });
+});
+
+describe('sectionBeingRead', () => {
+  it('is the last section whose top has passed the line', () => {
+    expect(sectionBeingRead([-900, -200, 150, 700], 250, false)).toBe(2);
+  });
+  it('is none above the first section', () => {
+    expect(sectionBeingRead([400, 900], 250, false)).toBe(-1);
+  });
+  it('is the last section at the end of the page, even if it never reached the line', () => {
+    expect(sectionBeingRead([-900, -200, 150, 500], 250, true)).toBe(3);
   });
 });

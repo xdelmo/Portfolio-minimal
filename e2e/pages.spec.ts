@@ -212,6 +212,32 @@ test('an unknown URL shows the not-found page and keeps the URL', async ({ page 
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 });
 
+test('a case study ends with the next one, which opens at its top (#91)', async ({ page }) => {
+  await page.goto('/it/work/apexflow');
+  const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
+  await next.scrollIntoViewIfNeeded();
+  await next.click();
+  await expect(page).toHaveURL(/\/it\/work\/ice-friends-breaker$/);
+  await expect(page.locator('h1')).toHaveText('Ice Friends Breaker');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+});
+
+test('on desktop a case study keeps an index of its sections beside the text, marking the one being read (#96)', async ({ page, isMobile }) => {
+  await page.goto('/en/work/apexflow');
+  const toc = page.getByRole('navigation', { name: 'On this page' });
+  if (isMobile || (page.viewportSize()?.width ?? 0) < 1024) {
+    await expect(toc).toBeHidden();
+    return;
+  }
+  await toc.getByRole('link', { name: 'Key decisions' }).click();
+  await expect(page).toHaveURL(/#decisions$/);
+  await expect(toc.locator('[aria-current="location"]')).toHaveText('Key decisions');
+  // it stays under the header while the page scrolls past it
+  const top = await toc.evaluate((el) => el.getBoundingClientRect().top);
+  expect(top).toBeGreaterThan(0);
+  expect(top).toBeLessThan(200);
+});
+
 test('a tall project image asks for the size it is shown at', async ({ page }) => {
   await page.goto('/en/work/ice-friends-breaker');
   await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');

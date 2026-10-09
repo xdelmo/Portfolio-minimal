@@ -5,16 +5,16 @@ describe('content', () => {
   it('opens the About with one statement in each language, not repeated in the paragraph', () => {
     for (const c of [CONTENT_EN, CONTENT_IT]) {
       expect(c.aboutStatement.length).toBeGreaterThan(20);
-      expect(c.about).not.toContain(c.aboutStatement.replace(/\.$/, ''));
+      expect(c.about.join(' ')).not.toContain(c.aboutStatement.replace(/\.$/, ''));
     }
     expect(CONTENT_IT.aboutStatement).not.toBe(CONTENT_EN.aboutStatement);
   });
 
   it('writes the About paragraph in the first person, like the rest of the site', () => {
-    expect(CONTENT_EN.about).toMatch(/^I'm Emanuele Del Monte/);
-    expect(CONTENT_EN.about).not.toMatch(/Emanuele Del Monte is /);
-    expect(CONTENT_IT.about).toMatch(/^Sono Emanuele Del Monte/);
-    expect(CONTENT_IT.about).not.toMatch(/Emanuele Del Monte è /);
+    expect(CONTENT_EN.about[0]).toMatch(/^I'm Emanuele Del Monte/);
+    expect(CONTENT_EN.about.join(' ')).not.toMatch(/Emanuele Del Monte is /);
+    expect(CONTENT_IT.about[0]).toMatch(/^Sono Emanuele Del Monte/);
+    expect(CONTENT_IT.about.join(' ')).not.toMatch(/Emanuele Del Monte è /);
   });
 
   it('has the same projects, in the same order, in both languages', () => {

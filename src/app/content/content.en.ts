@@ -24,8 +24,10 @@ export const CONTENT_EN: SiteContent = {
     lede: 'Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate.',
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
-  about:
-    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end. Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
+  about: [
+    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.",
+    "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
+  ],
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
@@ -33,7 +35,6 @@ export const CONTENT_EN: SiteContent = {
     { label: 'Main stack', value: 'Angular, Signals, RxJS, NgRx, TypeScript' },
     { label: 'Education', value: 'BSc in Computer Engineering, Università Mercatorum, 2026' },
     { label: 'Languages', value: 'Italian (native), English (professional)' },
-    { label: 'Availability', value: 'Remote roles' },
   ],
   projects: [
     {

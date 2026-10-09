@@ -27,11 +27,12 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { LinkedinMark } from '../../layout/linkedin-mark';
+import { EmailLine } from './email-line';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, EmailLine],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -58,7 +59,11 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
         <p class="statement">{{ content.aboutStatement }}</p>
-        <p>{{ content.about }}</p>
+        <div class="about-body">
+          @for (paragraph of content.about; track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
         <app-at-a-glance [items]="content.glance" />
       </div>
       <app-moai-figure class="about-moai" />
@@ -95,6 +100,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
+        <app-email-line [email]="content.person.email" />
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
@@ -229,6 +235,11 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     .about-text {
       display: grid;
       gap: var(--space-4);
+    }
+    // paragraphs of one text sit closer than the blocks of the section (issue #95)
+    .about-body {
+      display: grid;
+      gap: var(--space-2);
     }
     // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
     .statement {

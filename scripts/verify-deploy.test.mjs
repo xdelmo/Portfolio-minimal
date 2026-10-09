@@ -27,6 +27,14 @@ test('content checks read the body and the content type', async () => {
   assert.equal(md[0].ok, false);
 });
 
+test('header checks need every header to contain its part', async () => {
+  const check = [{ name: 'h', path: '/en/', status: 200, headerHas: { 'x-content-type-options': 'nosniff' } }];
+  const without = await runChecks(BASE, async () => response(200), check);
+  assert.equal(without[0].ok, false);
+  const withIt = await runChecks(BASE, async () => new globalThis.Response('', { status: 200, headers: { 'x-content-type-options': 'nosniff' } }), check);
+  assert.equal(withIt[0].ok, true);
+});
+
 test('a network error fails its row and the others still run', async () => {
   let calls = 0;
   const fetchImpl = async () => {
@@ -41,7 +49,7 @@ test('a network error fails its row and the others still run', async () => {
 
 test('the default table covers language, legacy, 404 and GEO rows', () => {
   const names = CHECKS.map((c) => c.name).join('\n');
-  for (const part of ['it-IT', 'it-CH', 'de-DE', 'nf_lang', '/privacy', '/it/work/apexflw', 'llms.txt', 'index.md', 'sitemap.xml', 'og image']) {
+  for (const part of ['it-IT', 'it-CH', 'de-DE', 'nf_lang', '/privacy', '/it/work/apexflw', 'llms.txt', 'index.md', 'sitemap.xml', 'og image', 'security headers']) {
     assert.ok(names.includes(part), part);
   }
 });

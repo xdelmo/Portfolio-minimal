@@ -262,6 +262,14 @@
           <context context-type="linenumber">59,60</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="case.more" datatype="html">
+        <source>More projects</source>
+        <target>Altri progetti</target>
+      </trans-unit>
+      <trans-unit id="case.next" datatype="html">
+        <source>Next project</source>
+        <target>Progetto successivo</target>
+      </trans-unit>
       <trans-unit id="case.back" datatype="html">
         <source>See all projects</source>
         <target>Tutti i progetti</target>

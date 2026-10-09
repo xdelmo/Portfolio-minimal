@@ -115,11 +115,15 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
       display: contents;
     }
 
+    // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport on every
+    // screen (issue #104: on phones it used to end with the text); svh: the screen with Safari's bars showing
     .hero {
       position: relative;
       display: grid;
+      align-content: center;
       gap: var(--space-3);
-      padding-block: var(--space-12) var(--space-16);
+      min-height: calc(100svh - var(--header-h));
+      padding-block: var(--space-8) var(--space-12);
     }
     .hero h1 {
       max-width: 16ch;
@@ -265,8 +269,6 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
         column-gap: var(--space-8);
         align-content: start;
-        // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport
-        min-height: calc(100svh - var(--header-h));
         padding-block: var(--space-8);
       }
       // not the seam: an absolute child placed in a column takes that column's area as its box, and its full-bleed

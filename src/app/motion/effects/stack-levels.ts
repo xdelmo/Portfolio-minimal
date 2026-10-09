@@ -10,11 +10,14 @@ export const stackLevelsEffect: Effect = (root, { gsap, desktop }) => {
   const levels = [...diagram.querySelectorAll<HTMLElement>('.level')];
   // the start state is set up front and the timeline only moves away from it (a scrubbed .from() is not redrawn by
   // Firefox after a refresh)
+  // every property in both versions (issue #109, see motion-host.ts)
   levels.forEach((level, i) => {
-    gsap.set(level, desktop ? { rotation: (i % 2 ? 1 : -1) * (30 + 20 * i), scale: 0.85 } : { x: 24 * (i + 1) });
+    gsap.set(level, desktop ? { rotation: (i % 2 ? 1 : -1) * (30 + 20 * i), scale: 0.85, x: 0 } : { x: 24 * (i + 1), rotation: 0, scale: 1 });
   });
   gsap.to(levels, {
-    ...(desktop ? { rotation: 0, scale: 1 } : { x: 0 }),
+    rotation: 0,
+    scale: 1,
+    x: 0,
     ease: 'power2.out',
     stagger: 0.08,
     scrollTrigger: { trigger: diagram, start: 'top bottom', end: desktop ? 'center center' : 'top 40%', scrub: 1 },

@@ -14,6 +14,8 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
 
   // phones stack the entries as sticky cards in CSS (experience-timeline.ts): the covered one shrinks away under the next
   if (!desktop) {
+    // the deck's steps back, if the window was a desktop one a moment ago (issue #109, see motion-host.ts)
+    gsap.set(items, { y: 0, yPercent: 0, scale: 1 });
     items.slice(0, -1).forEach((item, i) => {
       gsap.to(item, {
         scale: 0.94,
@@ -85,6 +87,8 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
     });
   };
   list.addEventListener('focusin', reveal);
+  // the phones' shrink, if the window was a phone one a moment ago (issue #109, see motion-host.ts)
+  gsap.set(items, { scale: 1 });
   items.forEach((item, i) => {
     if (i === 0) return;
     // the cards already on the deck step back as the new one arrives on top

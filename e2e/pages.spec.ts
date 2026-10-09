@@ -1,10 +1,10 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from './fixtures';
+import { CASE_STUDIES, PROJECTS } from './site';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
-const SLUGS = ['apexflow', 'ice-friends-breaker', 'mcp-server', 'telegram-bots'];
-const PAGES = ['/en/', '/it/', ...SLUGS.flatMap((s) => [`/en/work/${s}`, `/it/work/${s}`]), '/en/404', '/it/404', '/en/privacy/', '/it/privacy/'];
+const PAGES = ['/en/', '/it/', ...CASE_STUDIES, '/en/404', '/it/404', '/en/privacy/', '/it/privacy/'];
 
 for (const path of PAGES) {
   test.describe(path, () => {
@@ -283,12 +283,12 @@ for (const lang of ['en', 'it']) {
 }
 
 // a case study without a screenshot shows the project's pixel item, the same one as in the work list
-for (const slug of ['mcp-server', 'telegram-bots']) {
+for (const { slug, sprite } of PROJECTS.filter((p) => !p.image)) {
   test(`the ${slug} case study opens with its pixel item`, async ({ page }) => {
     await page.goto(`/en/work/${slug}`);
     const item = page.locator('.case-study .item app-quest-sprite');
     await expect(item).toBeVisible();
-    await expect(item).toHaveAttribute('data-sprite', slug === 'mcp-server' ? 'plug' : 'robot');
+    await expect(item).toHaveAttribute('data-sprite', sprite ?? '');
     await expect(page.locator('.case-study img.shot')).toHaveCount(0);
   });
 }

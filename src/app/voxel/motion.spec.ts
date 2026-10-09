@@ -1,4 +1,4 @@
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, SCROLL_SWING, breath, follow, gaze, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SCROLL_SWING, breath, follow, gaze, glance, scrollYaw, sectionProgress } from './motion';
 import { moaiCell } from './moai.model';
 
 describe('moai motion', () => {
@@ -22,6 +22,19 @@ describe('moai motion', () => {
     expect(Math.abs(breath(BREATH_MS / 4))).toBeGreaterThan(0.01);
     expect(Math.abs(breath(BREATH_MS / 4))).toBeLessThan(0.08);
     expect(breath(BREATH_MS)).toBeCloseTo(0);
+  });
+
+  // issue #110: on phones it looks around instead of spinning on itself
+  it('glances around on phones: small turns with pauses, a full cycle and again, never a spin', () => {
+    const cycle = Array.from({ length: 12 }, (_, i) => glance(i * GLANCE_MS + 1));
+    for (const yaw of cycle) expect(Math.abs(yaw)).toBeLessThanOrEqual(0.3);
+    expect(new Set(cycle).size).toBeGreaterThan(2);
+    expect(cycle.some((yaw, i) => i > 0 && yaw === cycle[i - 1])).toBe(true);
+    expect(glance(12 * GLANCE_MS + 1)).toBe(cycle[0]);
+  });
+
+  it('follows more slowly with a longer time constant', () => {
+    expect(follow(0, 1, 100, 700)).toBeLessThan(follow(0, 1, 100));
   });
 
   it('follows a target smoothly, whatever the frame time', () => {

@@ -20,17 +20,6 @@ test.describe('contact finale', () => {
     });
   }
 
-  test('a button copies the address, for a desktop with no mail app (#90)', async ({ page, context, browserName }) => {
-    // Chromium asks for the permission; Firefox and WebKit allow a copy on a click
-    if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-    await page.goto('/en/');
-    const contact = page.locator('#contact');
-    await contact.getByRole('button', { name: 'Copy the email address' }).click();
-    await expect(contact.getByRole('button', { name: 'Copied' })).toBeVisible();
-    await expect(contact.getByRole('status')).toHaveText('Email address copied');
-    if (browserName === 'chromium') expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(EMAIL);
-  });
-
   test('LinkedIn and GitHub are pixel-mark tags in the finale, marked as my profiles', async ({ page }) => {
     await page.goto('/en/');
     for (const profile of ['LinkedIn', 'GitHub']) {

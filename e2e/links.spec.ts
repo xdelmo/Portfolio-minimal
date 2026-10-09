@@ -1,9 +1,9 @@
 import { expect, test } from './fixtures';
+import { CASE_STUDIES } from './site';
 
 // Every link to another site opens in a new tab, without handing it this window, and screen readers hear so
 // (issue #57): a link added without the attributes fails here, on every page.
-const SLUGS = ['apexflow', 'ice-friends-breaker', 'mcp-server', 'telegram-bots'];
-const PAGES = ['/en/', '/it/', ...SLUGS.flatMap((s) => [`/en/work/${s}`, `/it/work/${s}`]), '/en/privacy/', '/it/privacy/'];
+const PAGES = ['/en/', '/it/', ...CASE_STUDIES, '/en/privacy/', '/it/privacy/'];
 
 for (const path of PAGES) {
   test(`links to other sites open in a new tab on ${path}`, async ({ page }) => {

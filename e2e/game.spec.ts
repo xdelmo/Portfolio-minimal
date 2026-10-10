@@ -20,6 +20,45 @@ test('the Konami code opens the player card, Escape closes it', async ({ page })
   await expect(card(page)).toBeHidden();
 });
 
+// issue #124: the cheat card levels up from the real level to 99 (counted by what the page shows, not by timing)
+test('the cheat card levels up: from the real level to 99, through the steps in between', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the code needs a keyboard');
+  await page.goto('/en/');
+  await page.evaluate(() => {
+    const seen: string[] = [];
+    (window as unknown as { levels: string[] }).levels = seen;
+    new MutationObserver(() => {
+      const level = document.querySelector('app-player-card .level')?.textContent.trim();
+      if (level && seen.at(-1) !== level) seen.push(level);
+    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+  });
+  await typeCode(page);
+  await expect(card(page).locator('.level')).toHaveText('99');
+  await expect(card(page).locator('meter')).toHaveAttribute('value', '1');
+  await expect(card(page).getByText('Konami code')).toBeVisible();
+  const levels = await page.evaluate(() => (window as unknown as { levels: string[] }).levels);
+  expect(levels[0]).toBe('3');
+  expect(levels.at(-1)).toBe('99');
+  expect(levels.length).toBeGreaterThan(3);
+  // the jumping pixels are gone once it is over
+  await expect(page.locator('app-player-card .burst')).toHaveCount(0);
+});
+
+test('the combo row lights a cell for each right key from the third, and goes on a wrong one', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the code needs a keyboard');
+  await page.goto('/en/');
+  const combo = page.locator('app-game-trigger .combo');
+  await typeCode(page, CODE.slice(0, 2));
+  // ↑ ↑ alone is someone scrolling
+  await expect(combo).toHaveCount(0);
+  await page.keyboard.press(CODE[2]);
+  await expect(combo.locator('.on')).toHaveCount(3);
+  await page.keyboard.press(CODE[3]);
+  await expect(combo.locator('.on')).toHaveCount(4);
+  await page.keyboard.press('x');
+  await expect(combo).toHaveCount(0);
+});
+
 test('the code unlocks the cheat card, Press start the plain one', async ({ page, isMobile }) => {
   test.skip(isMobile, 'the code needs a keyboard');
   await page.goto('/en/');
@@ -120,5 +159,14 @@ test.describe('with reduced motion', () => {
     await typeCode(page);
     await expect(card(page)).toBeVisible();
     expect(await leadIn(page)).toBe(false);
+  });
+
+  test('the cheat card opens maxed out, with no level up', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'the code needs a keyboard');
+    await page.goto('/en/');
+    await typeCode(page);
+    // at once: read as soon as the card is there, not waited for
+    expect(await card(page).locator('.level').textContent()).toBe('99');
+    await expect(page.locator('app-player-card .burst')).toHaveCount(0);
   });
 });

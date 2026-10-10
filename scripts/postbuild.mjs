@@ -9,6 +9,7 @@ import { onlyPublic } from '../src/app/content/public-repos.ts';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
+import { contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const ROOT = 'dist/portfolio/browser';
@@ -22,6 +23,7 @@ async function htmlFiles(dir) {
 }
 
 const pages = [];
+const htmls = [];
 for (const locale of ['en', 'it']) {
   // the latin subset covers every glyph of both languages
   const font = (await readdir(join(ROOT, locale, 'media'))).find((name) => /^instrument-sans-latin-wdth-normal-.*\.woff2$/.test(name));
@@ -29,6 +31,7 @@ for (const locale of ['en', 'it']) {
   for (const file of await htmlFiles(join(ROOT, locale))) {
     const html = withFontPreload(await readFile(file, 'utf8'), `media/${font}`);
     await writeFile(file, html);
+    htmls.push(html);
     const og = extractOgImage(html);
     if (og) {
       await readFile(join(ROOT, new URL(og).pathname)).catch(() => {
@@ -56,7 +59,9 @@ console.log(`postbuild: ${String(geo.length)} Markdown and llms files`);
 await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));
 await writeFile(join(ROOT, '_redirects'), redirectsFile(pages));
-console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects`);
+const hashes = inlineScriptHashes(htmls);
+await writeFile(join(ROOT, '_headers'), headersFile(contentSecurityPolicy(hashes)));
+console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects, _headers (${hashes.length} inline script hashes)`);
 
 const homeHtml = await readFile(join(ROOT, 'en', 'index.html'), 'utf8');
 let initialBytes = 0;

@@ -135,6 +135,16 @@ canvas {
   font-weight: 600;
   text-decoration: none;
 }
+/* Touch screens (issue #130): 44px targets. A tag grows to 44px; a link set as a line of text (.touch-line: a project
+   title, a case study link) gets vertical padding, which on an inline element widens the target without moving the line */
+@media (pointer: coarse) {
+  .repo-link {
+    min-height: 44px;
+  }
+  .touch-line {
+    padding-block: max(0px, calc((44px - 1lh) / 2));
+  }
+}
 .repo-link:hover {
   background: var(--fg);
   color: var(--bg);

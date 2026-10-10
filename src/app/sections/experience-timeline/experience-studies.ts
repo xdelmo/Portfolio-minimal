@@ -23,7 +23,7 @@ import { QuestSprite } from '../side-quests/quest-sprite';
             <p class="meta">{{ study.org }}, {{ study.period }}</p>
             <p>{{ study.summary }}</p>
             @if (study.caseStudy; as cs) {
-              <a [routerLink]="['/work', cs.slug]">{{ cs.label }}</a>
+              <a class="touch-line" [routerLink]="['/work', cs.slug]">{{ cs.label }}</a>
             }
           </div>
         </li>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, inp
 import { CONTENT } from '../content/content';
 import { MOTION_LOADER } from '../motion/motion-host';
 import { QuestSprite } from '../sections/side-quests/quest-sprite';
+import { readExplored } from './explorer';
 
 /** The cheat card's level up: the level climbs to this, the experience bar fills, the new achievement steps in. */
 export const MAX_LEVEL = 99;
@@ -49,6 +50,18 @@ export const MAX_LEVEL = 99;
             <span><strong>{{ achievement.title }}</strong> {{ achievement.detail }}</span>
           </li>
         }
+        <!-- earned by reading every case study in this browser (issue #133) -->
+        <li [class.locked]="explored < total">
+          <app-quest-sprite class="sprite" name="map" />
+          <span>
+            <strong i18n="@@game.explorer">Explorer</strong>
+            @if (explored < total) {
+              <ng-container i18n="@@game.explorerProgress">{{ explored }} of {{ total }} case studies read</ng-container>
+            } @else {
+              <ng-container i18n="@@game.explorerDone">Read every case study</ng-container>
+            }
+          </span>
+        </li>
         @if (cheat()) {
           <li class="unlocked" #unlocked>
             <app-quest-sprite class="sprite" [name]="content.game.cheat.sprite" />
@@ -151,6 +164,10 @@ export const MAX_LEVEL = 99;
       width: 48px;
       height: 48px;
     }
+    // not earned yet: the drawing waits faded, the text keeps its contrast
+    .locked .sprite {
+      opacity: 0.35;
+    }
     @media (prefers-reduced-motion: no-preference) {
       .card[open] {
         animation: press-start 320ms steps(4);
@@ -172,6 +189,8 @@ export const MAX_LEVEL = 99;
 })
 export class PlayerCard {
   protected readonly content = inject(CONTENT);
+  protected readonly total = this.content.projects.length;
+  protected readonly explored = readExplored(this.content.projects.map((p) => p.slug)).length;
   private readonly loadMotion = inject(MOTION_LOADER);
   /** Opened by the Konami code (or its taps on phones): the cheat version, maxed out, with one more achievement. */
   readonly cheat = input(false);

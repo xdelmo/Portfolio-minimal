@@ -346,6 +346,22 @@
         <source>Achievements</source>
         <target>Obiettivi</target>
       </trans-unit>
+      <trans-unit id="game.explorer" datatype="html">
+        <source>Explorer</source>
+        <target>Esploratore</target>
+      </trans-unit>
+      <trans-unit id="game.explorerProgress" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ explored }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ total }}"/> case studies read</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ explored }}"/> case study letti su <x id="INTERPOLATION_1" equiv-text="{{ total }}"/></target>
+      </trans-unit>
+      <trans-unit id="game.explorerDone" datatype="html">
+        <source>Read every case study</source>
+        <target>Hai letto tutti i case study</target>
+      </trans-unit>
+      <trans-unit id="case.explorerUnlocked" datatype="html">
+        <source>Achievement unlocked: Explorer</source>
+        <target>Obiettivo sbloccato: Esploratore</target>
+      </trans-unit>
       <trans-unit id="game.continue" datatype="html">
         <source>Continue</source>
         <target>Continua</target>

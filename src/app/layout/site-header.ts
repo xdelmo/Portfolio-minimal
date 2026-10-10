@@ -52,6 +52,10 @@ import { PauseToggle } from './pause-toggle';
       align-items: center;
       gap: var(--space-1);
       margin-right: auto;
+      // touch screens: a 44px target (issue #130)
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
       color: var(--fg);
       text-decoration: none;
     }

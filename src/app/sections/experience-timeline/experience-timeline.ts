@@ -40,7 +40,7 @@ import { ExperienceItem } from '../../content/content.model';
               }
             </ul>
             @if (item.caseStudy; as study) {
-              <a class="case-study" [routerLink]="['/work', study.slug]">{{ study.label }}</a>
+              <a class="case-study touch-line" [routerLink]="['/work', study.slug]">{{ study.label }}</a>
             }
           </div>
         </li>

@@ -110,6 +110,10 @@ const COVER_MS = 500;
       align-items: center;
       min-height: 40px;
       padding-inline: var(--space-4) var(--space-2);
+      // touch screens: a 44px target (issue #130)
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
       color: var(--fg);
       white-space: nowrap;
     }

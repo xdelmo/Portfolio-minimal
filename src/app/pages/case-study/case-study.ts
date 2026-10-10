@@ -96,7 +96,7 @@ export function sectionBeingRead(tops: readonly number[], line: number, atEnd: b
               <span class="next-title">{{ n.title }}</span>
             </a>
           }
-          <a routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>
+          <a class="touch-line" routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>
         </nav>
       } @else {
         <h1 i18n="@@case.notFound">Project not found</h1>

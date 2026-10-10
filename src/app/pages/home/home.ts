@@ -127,6 +127,8 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
     }
     .hero h1 {
       max-width: 16ch;
+      // the hero effect widens it as the hero scrolls away (desktop, issue #131)
+      font-variation-settings: 'wdth' var(--hero-wdth, 75);
     }
     // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
     .lede {

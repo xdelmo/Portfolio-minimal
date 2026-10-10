@@ -304,7 +304,7 @@ export class CaseStudy {
       this.seo.update(
         p
           ? { path: `/work/${p.slug}`, title: caseStudyTitle(p, this.content.person), description: p.summary, ogImage: p.slug }
-          : { path: `/work/${this.slug()}`, title: 'Emanuele Del Monte', description: '', noindex: true },
+          : { path: `/work/${this.slug()}`, title: $localize`:@@notFound.pageTitle:Page not found — Emanuele Del Monte`, description: '', noindex: true },
       );
     });
   }

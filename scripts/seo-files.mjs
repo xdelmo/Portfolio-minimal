@@ -22,7 +22,8 @@ export function extractSeoLinks(html) {
   for (const tag of tags) {
     const rel = attr(tag, 'rel');
     if (rel === 'canonical') canonical = attr(tag, 'href');
-    if (rel === 'alternate' && attr(tag, 'hreflang') && attr(tag, 'hreflang') !== 'x-default') {
+    // x-default too: the sitemap repeats the page's own hreflang set (issue #114)
+    if (rel === 'alternate' && attr(tag, 'hreflang')) {
       alternates.push({ hreflang: attr(tag, 'hreflang'), href: attr(tag, 'href') });
     }
   }

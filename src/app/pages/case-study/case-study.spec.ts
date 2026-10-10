@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { CONTENT_EN } from '../../content/content.en';
@@ -23,6 +24,9 @@ describe('CaseStudy', () => {
   it('shows a not-found message with a link home for an unknown slug', async () => {
     const el = await render('apexflw');
     expect(el.querySelector('h1')?.textContent).toContain('not found');
+    // the tab and the history say so too, and no empty description is left in the head (issue #114)
+    expect(TestBed.inject(Title).getTitle()).toBe('Page not found — Emanuele Del Monte');
+    expect(document.head.querySelector('meta[name="description"]')).toBeNull();
     expect(el.querySelector('a[href="/"]')).not.toBeNull();
   });
 

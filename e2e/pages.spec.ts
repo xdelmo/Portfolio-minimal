@@ -238,6 +238,20 @@ test('on desktop a case study keeps an index of its sections beside the text, ma
   expect(top).toBeLessThan(200);
 });
 
+// issue #114: a shared link names the site; the 404 says what it is and has no empty description; the sitemap repeats
+// each page's x-default
+test('pages name the site, the 404 says what it is without empty descriptions, the sitemap has x-default', async ({ page, request }) => {
+  await page.goto('/en/');
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Emanuele Del Monte');
+  for (const [path, title] of [['/en/404', 'Page not found — Emanuele Del Monte'], ['/it/404', 'Pagina non trovata — Emanuele Del Monte']]) {
+    await page.goto(path);
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[name="description"], meta[property="og:description"]')).toHaveCount(0);
+  }
+  const sitemap = await (await request.get('/sitemap.xml')).text();
+  expect(sitemap).toContain('hreflang="x-default" href="https://www.emanueledelmonte.it/en/work/apexflow"');
+});
+
 test('a tall project image asks for the size it is shown at', async ({ page }) => {
   await page.goto('/en/work/ice-friends-breaker');
   await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');

@@ -1,7 +1,7 @@
 import { DOCUMENT, Injectable, LOCALE_ID, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { toLocale } from '../i18n/locale';
-import { SITE_URL, headLinks, markdownPath, ogImageUrl, pageUrl } from './seo';
+import { SITE_NAME, SITE_URL, headLinks, markdownPath, ogImageUrl, pageUrl } from './seo';
 
 export interface PageSeo {
   path: string;
@@ -22,12 +22,16 @@ export class SeoService {
   update(page: PageSeo): void {
     const url = pageUrl(page.path, this.locale);
     this.title.setTitle(page.title);
-    this.meta.updateTag({ name: 'description', content: page.description });
+    // no empty description: a page without one (the 404) says nothing rather than an empty string (issue #114)
+    for (const [attr, name] of [['name', 'description'], ['property', 'og:description']] as const) {
+      if (page.description) this.meta.updateTag({ [attr]: name, content: page.description });
+      else this.meta.removeTag(`${attr}='${name}'`);
+    }
     this.meta.updateTag({ name: 'robots', content: page.noindex ? 'noindex' : 'index,follow' });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ property: 'og:title', content: page.title });
-    this.meta.updateTag({ property: 'og:description', content: page.description });
     this.meta.updateTag({ property: 'og:url', content: url });
+    this.meta.updateTag({ property: 'og:site_name', content: SITE_NAME });
     this.meta.updateTag({ property: 'og:locale', content: this.locale === 'it' ? 'it_IT' : 'en_US' });
     this.meta.updateTag({ property: 'og:locale:alternate', content: this.locale === 'it' ? 'en_US' : 'it_IT' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });

@@ -37,6 +37,9 @@ export class ThemeService {
   private apply(theme: Theme): void {
     this.current.set(theme);
     this.doc.documentElement.dataset['theme'] = theme;
+    // the browser bar matches the page (issue #134)
+    const bg = this.win?.getComputedStyle(this.doc.documentElement).getPropertyValue('--bg').trim();
+    if (bg) this.doc.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg);
   }
 
   private storage(): Storage | undefined {

@@ -23,7 +23,7 @@ import { StackGroup } from '../../content/content.model';
           </h3>
           <ul>
             @for (item of group.items; track item; let j = $index) {
-              <li [style.--k]="j + 1">{{ item }}</li>
+              <li [style.--k]="j + 1" translate="no">{{ item }}</li>
             }
           </ul>
         </section>

@@ -34,7 +34,7 @@ import { ExperienceItem } from '../../content/content.model';
                 <li>{{ line }}</li>
               }
             </ul>
-            <ul class="tags" aria-label="Tools" i18n-aria-label="@@home.experience.tools">
+            <ul class="tags" translate="no" aria-label="Tools" i18n-aria-label="@@home.experience.tools">
               @for (tag of item.tags; track tag) {
                 <li>{{ tag }}</li>
               }

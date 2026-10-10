@@ -16,7 +16,7 @@ import { QuestSprite } from './quest-sprite';
           <div class="text">
             <h3>{{ quest.title }}</h3>
             <p>{{ quest.summary }}</p>
-            <p class="tags">{{ quest.tags.join(', ') }}</p>
+            <p class="tags" translate="no">{{ quest.tags.join(', ') }}</p>
             @if (quest.repo) {
               <a class="repo-link" [href]="quest.repo" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark /><span i18n="@@sideQuests.repo">Code on GitHub</span></a>
             }

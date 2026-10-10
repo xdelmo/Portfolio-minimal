@@ -269,7 +269,7 @@ test('a project keeps its case study and code buttons on one row on desktop, sta
 // Browser translation leaves names and tools alone: "Del Monte" is no mountain, "Signals" no traffic lights (issue #136).
 test('names and tools are kept out of automatic translation', async ({ page }) => {
   await page.goto('/it/');
-  for (const selector of ['.logo .mark', '.logo .name', '#work .stack li[style*="--k"]', '#experience .tags', '#side-quests .tags']) {
+  for (const selector of ['.logo .mark', '.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
     await expect(page.locator(selector).first(), selector).toHaveAttribute('translate', 'no');
   }
 });

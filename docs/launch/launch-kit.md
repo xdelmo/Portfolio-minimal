@@ -31,7 +31,7 @@ Un iPhone e un Android:
 
 ## 4. Lancio
 
-- [ ] **Link a GitHub automatici (issue #81)**: il sito linka solo le repo che GitHub mostra ai visitatori, decise a ogni build da `scripts/public-repos.mjs`. Perché un link compaia da solo quando rendi pubblica una repo (o sparisca quando torna privata), serve un deploy: lo lancia ogni giorno `.github/workflows/repos.yml` (attivo dopo il merge su `master`). Due passi tuoi:
+- [x] **Link a GitHub automatici (issue #81)** — fatto il 2026-10-10: build hook creato e salvato come secret `NETLIFY_BUILD_HOOK`; il workflow parte da solo dopo il merge su `master`: il sito linka solo le repo che GitHub mostra ai visitatori, decise a ogni build da `scripts/public-repos.mjs`. Perché un link compaia da solo quando rendi pubblica una repo (o sparisca quando torna privata), serve un deploy: lo lancia ogni giorno `.github/workflows/repos.yml` (attivo dopo il merge su `master`). Due passi tuoi:
   1. Netlify → Site configuration → Build & deploy → Build hooks → *Add build hook*, nome `public-repos`, branch `master`; copia l'URL.
   2. GitHub → repo → Settings → Secrets and variables → Actions → *New repository secret*: nome `NETLIFY_BUILD_HOOK`, valore l'URL del passo 1.
   Senza il secret il workflow fallisce (e GitHub ti avvisa) il giorno in cui le repo pubbliche cambiano.

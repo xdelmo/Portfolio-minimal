@@ -47,8 +47,15 @@ export const SECURITY_HEADERS = {
   'Cross-Origin-Opener-Policy': 'same-origin',
 };
 
-/** Netlify's `_headers` file: every path gets the CSP and the headers above. */
-export function headersFile(csp) {
+/** Build files whose name carries a content hash: a new content gets a new name, so they never need revalidating. */
+export const HASHED_FILE = /^(en|it)\/((main|polyfills|chunk|styles)-[\w-]{8}\.(js|css)|media\/[^/]+)$/;
+
+/**
+ * Netlify's `_headers` file: every path gets the CSP and the headers above; each hashed file (paths relative to the
+ * publish root) is cached for a year instead of revalidated at every visit (issue #153).
+ */
+export function headersFile(csp, hashed = []) {
   const lines = ['/*', `  Content-Security-Policy: ${csp}`, ...Object.entries(SECURITY_HEADERS).map(([k, v]) => `  ${k}: ${v}`)];
+  for (const path of hashed) lines.push(`/${path}`, '  Cache-Control: public, max-age=31536000, immutable');
   return `${lines.join('\n')}\n`;
 }

@@ -30,7 +30,9 @@ test.describe('the phone menu', () => {
     await expect(header.getByRole('navigation', { name: 'Principale' })).toBeHidden();
     await expect(button).toBeFocused();
     await button.click();
-    await page.locator('main h1').click();
+    // a tap on the page below the open menu (the menu itself covers the top of the hero on short phones)
+    const { width, height } = page.viewportSize() ?? { width: 390, height: 664 };
+    await page.mouse.click(width / 2, height - 24);
     await expect(header.getByRole('navigation', { name: 'Principale' })).toBeHidden();
   });
 

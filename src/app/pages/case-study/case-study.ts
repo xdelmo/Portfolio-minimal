@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, LOCALE_ID, afterNextRender, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, LOCALE_ID, afterNextRender, afterRenderEffect, computed, effect, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
@@ -7,6 +7,7 @@ import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
+import { recordVisit } from '../../game/explorer';
 
 /**
  * Which section the index marks: the last one whose top has passed `line` (a third down the window), or the last of all
@@ -15,6 +16,9 @@ import { SeoService } from '../../core/seo/seo.service';
 export function sectionBeingRead(tops: readonly number[], line: number, atEnd: boolean): number {
   return atEnd ? tops.length - 1 : tops.reduce((found, top, i) => (top <= line ? i : found), -1);
 }
+
+/** How long the Explorer notice stays: under the 5 s after which automatic motion needs the pause button. */
+const UNLOCK_NOTICE_MS = 4000;
 
 @Component({
   selector: 'app-case-study',
@@ -96,16 +100,53 @@ export function sectionBeingRead(tops: readonly number[], line: number, atEnd: b
               <span class="next-title">{{ n.title }}</span>
             </a>
           }
-          <a routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>
+          <a class="touch-line" routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>
         </nav>
       } @else {
         <h1 i18n="@@case.notFound">Project not found</h1>
         <p><a routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
       }
     </article>
+    <!-- the Explorer achievement (issue #133): announced on the visit that reads the last case study -->
+    <p class="unlock band--ink" role="status">
+      @if (unlocked()) {
+        <app-quest-sprite name="map" />
+        <span i18n="@@case.explorerUnlocked">Achievement unlocked: Explorer</span>
+      }
+    </p>
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
+
+    .unlock {
+      position: fixed;
+      inset: auto auto var(--space-2) var(--gutter);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin: 0;
+      color: var(--fg);
+      background: var(--band-bg);
+      &:not(:empty) {
+        padding: var(--space-1) var(--space-2);
+        border: 4px solid var(--fg);
+      }
+      app-quest-sprite {
+        width: 32px;
+        height: 32px;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        &:not(:empty) {
+          animation: unlock 320ms steps(4);
+        }
+      }
+    }
+    @keyframes unlock {
+      from {
+        clip-path: inset(50% 0);
+      }
+    }
 
     .case-study {
       display: grid;
@@ -274,6 +315,8 @@ export class CaseStudy {
 
   /** The section being read, for the index (#96). */
   private readonly reading = signal<string | null>(null);
+  /** The Explorer achievement was just earned: its notice shows for a few seconds. */
+  protected readonly unlocked = signal(false);
   protected current(id: string): 'location' | null {
     return this.reading() === id ? 'location' : null;
   }
@@ -296,6 +339,17 @@ export class CaseStudy {
       window.addEventListener('scroll', update, { passive: true });
       destroyRef.onDestroy(() => {
         window.removeEventListener('scroll', update);
+      });
+    });
+    // the case study counts as read in this browser; a client-side "Next project" reuses the page with a new slug
+    afterRenderEffect(() => {
+      if (!this.project() || !recordVisit(this.slug(), this.content.projects.map((p) => p.slug))) return;
+      this.unlocked.set(true);
+      const timer = setTimeout(() => {
+        this.unlocked.set(false);
+      }, UNLOCK_NOTICE_MS);
+      destroyRef.onDestroy(() => {
+        clearTimeout(timer);
       });
     });
     effect(() => {

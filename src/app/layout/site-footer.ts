@@ -108,6 +108,17 @@ import { CONTENT } from '../content/content';
       font: inherit;
       cursor: pointer;
     }
+    // touch screens (after the Start key's own rule, which it overrides): 44px targets (issue #130), centred on the same line
+    @media (pointer: coarse) {
+      a,
+      .press-start {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+      }
+    }
     .key {
       display: block;
       flex: none;

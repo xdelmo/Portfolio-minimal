@@ -4,16 +4,17 @@ import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { PauseToggle } from './pause-toggle';
+import { SiteMenu } from './site-menu';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle],
+  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
-        ><span class="mark">edm.</span><span class="name"><span>Emanuele</span><span>Del Monte</span></span></a
+        ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
@@ -25,6 +26,7 @@ import { PauseToggle } from './pause-toggle';
         <app-language-switch />
         <app-pause-toggle />
         <app-theme-toggle />
+        <app-site-menu class="menu" />
       </div>
     </header>
   `,
@@ -52,6 +54,10 @@ import { PauseToggle } from './pause-toggle';
       align-items: center;
       gap: var(--space-1);
       margin-right: auto;
+      // touch screens: a 44px target (issue #130)
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
       color: var(--fg);
       text-decoration: none;
     }
@@ -70,14 +76,17 @@ import { PauseToggle } from './pause-toggle';
       text-transform: uppercase;
       white-space: nowrap;
     }
-    // small phones get a smaller name, the narrowest keep the mark alone: the controls need the room
-    @media (max-width: 389px) {
+    // phones get a smaller name, the small ones keep the mark alone: the controls and the menu button need the room
+    @media (max-width: 429px) {
+      .site-header {
+        gap: var(--space-1);
+      }
       .name {
         font-size: 0.625rem;
         letter-spacing: 0.02em;
       }
     }
-    @media (max-width: 359px) {
+    @media (max-width: 389px) {
       .name {
         display: none;
       }
@@ -102,6 +111,10 @@ import { PauseToggle } from './pause-toggle';
     @include bp.up(md) {
       nav {
         display: flex;
+      }
+      // the links are in the header itself from here
+      .menu {
+        display: none;
       }
       // room to breathe once the header is wide
       .logo {

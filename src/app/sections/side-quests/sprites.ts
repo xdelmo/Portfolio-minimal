@@ -120,6 +120,28 @@ export const SPRITES = {
       '................',
     ],
   },
+  // the Explorer achievement (issue #133): a folded map, a dotted path, an X
+  map: {
+    palette: { ...INK, p: '--px-6', l: '--px-4', a: '--accent' },
+    rows: [
+      '................',
+      '.kkkkkkkkkkkkkk.',
+      '.kppppllllppppk.',
+      '.kpaapllllppppk.',
+      '.kpppallllppppk.',
+      '.kppppllllppppk.',
+      '.kpppplallppppk.',
+      '.kppppllllppppk.',
+      '.kpppplllappppk.',
+      '.kppppllllppppk.',
+      '.kppppllllkpkpk.',
+      '.kppppllllpkppk.',
+      '.kppppllllkpkpk.',
+      '.kppppllllppppk.',
+      '.kkkkkkkkkkkkkk.',
+      '................',
+    ],
+  },
   phone: {
     palette: { ...INK, w: '--surface', a: '--accent', b: '--px-3', l: '--px-4' },
     rows: [

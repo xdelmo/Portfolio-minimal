@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="theme-color" content="#e5e5e5">
   <script>
     (function () {
       var t = null;
@@ -10,6 +11,8 @@
         t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
       document.documentElement.setAttribute('data-theme', t);
+      // the browser bar takes the page's --bg (_tokens.scss) before the styles load; ThemeService follows it after (issue #134)
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#121212' : '#e5e5e5');
       // the intro plays once per session, on desktop only, never with reduced motion (SiteIntro + motion/effects/intro.ts)
       try {
         if (matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 1024px) and (hover: hover)').matches && sessionStorage.getItem('intro') !== '1') {

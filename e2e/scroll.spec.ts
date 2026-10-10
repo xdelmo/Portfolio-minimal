@@ -2,7 +2,7 @@ import { expect, test, type Page } from './fixtures';
 
 const experienceTop = (page: Page) => page.evaluate(() => document.querySelector('#experience')?.getBoundingClientRect().top ?? NaN);
 // the header nav is a desktop thing; phones reach the sections by scrolling
-const navLink = (page: Page) => page.locator('.site-header nav a', { hasText: 'Experience' });
+const navLink = (page: Page) => page.locator('.site-header > nav a', { hasText: 'Experience' });
 
 /** Clicks the header link and returns every scroll position the page went through on its way to the section. */
 async function travel(page: Page): Promise<number[]> {

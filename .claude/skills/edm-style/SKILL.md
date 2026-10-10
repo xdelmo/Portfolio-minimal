@@ -34,7 +34,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 ## Type
 
 - One family: **Instrument Sans Variable** (`wght` 400–700, `wdth` 75–100), self-hosted with `font-display: optional` (keeps CLS 0; do not switch to the package CSS).
-- Headings weight 600: `h1` at `wdth` 75 (condensed, the hero's graphic element), `h2`/`h3` at `wdth` 85; body at `wdth` 100, 18px, line-height 1.55, max 68ch.
+- Headings weight 600: `h1` at `wdth` 75 (condensed, the hero's graphic element; on desktop the hero effect widens it to 85 as the hero scrolls away), `h2`/`h3` at `wdth` 85; body at `wdth` 100, 18px, line-height 1.55, max 68ch.
 - Modular scale 1.25 on 18px: `--step--1` … `--step-5`, `--step-hero` fluid 44→96px. Contact title is the one oversized exception (up to 9rem).
 - Sentence case everywhere (one exception the user asked for: the full name in the header, tracked capitals on two lines beside the `edm.` mark, like a letterhead). **No** all-caps labels, eyebrow labels, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline.
 
@@ -57,7 +57,7 @@ Spend boldness here, keep everything else calm:
 4. **Ambient orbs** behind every page, tinted per section, never lowering text contrast.
 5. **The pixel thread** (home): an accent line down the left margin, a node per section lit as the scroll reaches it; **seams** of crumbling pixels where a band meets the page, and at the foot of the hero: they form as they scroll in and crumble away as they rise towards the header. Both are `PixelDissolve` (stepped SVG layers driven by one `--p`) or the thread effect; reuse them before inventing a new transition.
 6. **Side quest sprites**: each side quest is an item in a game inventory, a 16 × 16 pixel drawing (`sections/side-quests/sprites.ts`) in a hard square slot; it builds itself from the bottom as it scrolls in and hops in steps on hover, focus or tap.
-7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites; a hidden reward, never in the way; the Konami code shows a combo row of 8px cells from its third key and its card levels up (level climbing to 99 in steps, the bar filling, a few pastel pixels jumping out).
+7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites (Explorer is earned by reading every case study: a stepped notice on the last one); a hidden reward, never in the way. the Konami code shows a combo row of 8px cells from its third key and its card levels up (level climbing to 99 in steps, the bar filling, a few pastel pixels jumping out).
 8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets. Near a section `h2` the pixel cursor becomes a pixel arrow pointing at the title's words (`motion/arrow.ts`): drawn as lines on 8px cells, in eight directions only, because in between it smudges; never over the words themselves.
 
 Projects without a screenshot show their pixel sprite in the same 3:2 frame as the screenshots (`Project.sprite`).

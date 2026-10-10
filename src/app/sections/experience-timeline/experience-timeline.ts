@@ -34,13 +34,13 @@ import { ExperienceItem } from '../../content/content.model';
                 <li>{{ line }}</li>
               }
             </ul>
-            <ul class="tags" aria-label="Tools" i18n-aria-label="@@home.experience.tools">
+            <ul class="tags" translate="no" aria-label="Tools" i18n-aria-label="@@home.experience.tools">
               @for (tag of item.tags; track tag) {
                 <li>{{ tag }}</li>
               }
             </ul>
             @if (item.caseStudy; as study) {
-              <a class="case-study" [routerLink]="['/work', study.slug]">{{ study.label }}</a>
+              <a class="case-study touch-line" [routerLink]="['/work', study.slug]">{{ study.label }}</a>
             }
           </div>
         </li>

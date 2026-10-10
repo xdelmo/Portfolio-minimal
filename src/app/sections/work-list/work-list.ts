@@ -14,7 +14,7 @@ import { QuestSprite } from '../side-quests/quest-sprite';
       @for (project of projects(); track project.slug) {
         <li class="project" [class.project--tall]="project.image && project.image.height > project.image.width">
           <div class="text">
-            <h3 [style.view-transition-name]="'title-' + project.slug"><a [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
+            <h3 [style.view-transition-name]="'title-' + project.slug"><a class="touch-line" [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
             <p>{{ project.summary }}</p>
             <ul class="stack" i18n-aria-label="@@work.stack" aria-label="Technologies">
               @for (tech of project.stack; track tech) {

@@ -26,7 +26,7 @@ export const MAX_LEVEL = 99;
       <dl class="stats">
         <div>
           <dt i18n="@@game.player">Player</dt>
-          <dd>{{ content.game.player }}</dd>
+          <dd translate="no">{{ content.game.player }}</dd>
         </div>
         <div>
           <dt i18n="@@game.class">Class</dt>

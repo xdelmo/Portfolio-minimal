@@ -13,7 +13,7 @@ import { PauseToggle } from './pause-toggle';
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
-        ><span class="mark">edm.</span><span class="name"><span>Emanuele</span><span>Del Monte</span></span></a
+        ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>

@@ -14,7 +14,7 @@ export const workHoverEffect: Effect = (root, { gsap, desktop }) => {
       const title = project.querySelector<HTMLElement>('h3');
       if (!media || !title) continue;
       const scrollTrigger = { trigger: project, start: 'top bottom', end: 'top 40%', scrub: true };
-      gsap.set(media, { transformPerspective: 900, rotationX: 14, transformOrigin: '50% 100%' });
+      gsap.set(media, { transformPerspective: 900, rotationX: 14, rotationY: 0, transformOrigin: '50% 100%' });
       gsap.to(media, { rotationX: 0, ease: 'none', scrollTrigger });
       gsap.set(title, { x: -24 });
       gsap.to(title, { x: 0, ease: 'none', scrollTrigger });
@@ -26,7 +26,9 @@ export const workHoverEffect: Effect = (root, { gsap, desktop }) => {
     const media = project.querySelector<HTMLElement>('.media');
     const title = project.querySelector<HTMLElement>('h3');
     if (!media || !title) continue;
-    gsap.set(media, { transformPerspective: 900 });
+    // the phones' tilt and slide, if the window was a phone one a moment ago (issue #109, see motion-host.ts)
+    gsap.set(media, { transformPerspective: 900, rotationX: 0, rotationY: 0 });
+    gsap.set(title, { x: 0 });
     const tiltX = gsap.quickTo(media, 'rotationX', { duration: 0.6, ease: 'power3.out' });
     const tiltY = gsap.quickTo(media, 'rotationY', { duration: 0.6, ease: 'power3.out' });
     const move = (event: PointerEvent): void => {

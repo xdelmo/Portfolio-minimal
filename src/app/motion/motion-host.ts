@@ -81,7 +81,10 @@ export class MotionHost {
           revert = () => {
             mm.revert();
           };
-          // matchMedia re-runs (and reverts) an effect when a condition flips, e.g. resizing across 1024px.
+          // matchMedia re-runs (and reverts) an effect when a condition flips, e.g. resizing across 1024px. The revert
+          // gives the elements their inline style back but GSAP keeps its cached transform: so each version of an
+          // effect sets every transform property the other version moves, or the next one inherits it (issue #109:
+          // the phones' x stayed on the tool rings). Clearing the cache here instead breaks the new version's tweens.
           // One task per effect, in page order: all at once they held the main thread for one long task at load
           // (Lighthouse's Total Blocking Time on the home).
           for (const effect of this.appMotion()) {

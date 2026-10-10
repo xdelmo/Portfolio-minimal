@@ -19,10 +19,24 @@ export function breath(t: number): number {
   return Math.sin((t / BREATH_MS) * Math.PI * 2) * 0.035;
 }
 
-/** Frame-rate independent easing towards `target`; `dt` in milliseconds. */
-export function follow(current: number, target: number, dt: number): number {
-  const next = target + (current - target) * Math.exp(-dt / 250);
+/** Frame-rate independent easing towards `target`; `dt` and the time constant `tau` in milliseconds. */
+export function follow(current: number, target: number, dt: number, tau = 250): number {
+  const next = target + (current - target) * Math.exp(-dt / tau);
   return Math.abs(next - target) < 1e-4 ? target : next;
+}
+
+/** How long the phones' moai holds each glance, in milliseconds. */
+export const GLANCE_MS = 2400;
+// radians: where it looks in turn; a repeated value is a pause, so it never sways like a metronome. Mostly towards
+// the viewer: the camera sits at 45°, and a wide turn the other way would show its profile (see scrollYaw)
+const GLANCES = [0, 0, 0.3, 0.3, -0.12, 0, 0, 0.18, 0.18, -0.1, 0, 0] as const;
+
+/**
+ * The yaw the phones' moai looks towards at idle time `t` (issue #110): it glances to one side, holds, comes back,
+ * looks the other way, instead of spinning on itself. Eased by `follow`, so each turn starts and ends slowly.
+ */
+export function glance(t: number): number {
+  return GLANCES[Math.floor(t / GLANCE_MS) % GLANCES.length];
 }
 
 export type Gaze = 'left-up' | 'left-down' | 'right-up' | 'right-down';

@@ -27,6 +27,30 @@ test.describe('tools by level', () => {
     });
   }
 
+  // issue #109: the phones' version left its x on the rings when the window went below 1024px and back
+  test('after a resize to a phone width and back, the rings come to rest straight and centred', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'a desktop window being resized');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/');
+    await ready(page);
+    for (const width of [900, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await toMiddle(page);
+      await page.waitForTimeout(300);
+    }
+    // scrolled again inside the poll: after a resize ScrollTrigger refreshes the pins a moment later, and the page
+    // above the rings changes height (in WebKit on CI after the first scroll)
+    await expect
+      .poll(
+        async () => {
+          await toMiddle(page);
+          return page.locator('#stack .level').evaluateAll((els) => els.map((el) => getComputedStyle(el).transform));
+        },
+        { timeout: 8000 },
+      )
+      .toEqual(['matrix(1, 0, 0, 1, 0, 0)', 'matrix(1, 0, 0, 1, 0, 0)', 'matrix(1, 0, 0, 1, 0, 0)']);
+  });
+
   for (const lang of ['en', 'it']) {
     for (const [width, height] of [[1024, 900], [1440, 720]]) {
       test(`${lang} at ${String(width)}×${String(height)}: the tools sit on concentric rings, none overlapping`, async ({ page, isMobile }) => {

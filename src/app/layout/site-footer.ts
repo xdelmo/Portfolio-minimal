@@ -94,7 +94,7 @@ import { CONTENT } from '../content/content';
       min-height: 24px;
     }
     // the console's start key, drawn in pixels: a small outline pointing right, "Start" beside it, on the line of the
-    // links (the button is named "Press start", like the card it opens; only the shape is borrowed: no logos, no
+    // links (the button is named "Press start" and opens the "Pause" screen; only the shape is borrowed: no logos, no
     // face-button symbols). An easter egg should be found, not shout: it fills only under the pointer or when pressed
     .press-start {
       display: inline-flex;

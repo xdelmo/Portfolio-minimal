@@ -1,4 +1,4 @@
-// Checks a Netlify deploy against the redirect, 404 and SEO/GEO rules (spec §8, §9, §14).
+// Checks a Netlify deploy against the redirect, 404, SEO/GEO and security header rules (spec §8, §9, §14).
 // Usage: npm run verify:deploy -- https://v2--<site>.netlify.app
 import { argv, exit } from 'node:process';
 import { URL } from 'node:url';
@@ -23,6 +23,18 @@ export const CHECKS = [
   { name: 'llms.txt', path: '/llms.txt', status: 200, contains: '# Emanuele Del Monte' },
   { name: 'index.md is served as Markdown', path: '/en/index.md', status: 200, contentType: 'text/markdown', contains: '# Emanuele Del Monte' },
   { name: 'og image for the Italian home', path: '/it/og/it-home.png', status: 200, contentType: 'image/png' },
+  // issue #113: the _headers file postbuild writes
+  {
+    name: 'security headers on a page',
+    path: '/en/',
+    status: 200,
+    headerHas: {
+      'content-security-policy': "script-src 'self' 'sha256-",
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'DENY',
+      'referrer-policy': 'strict-origin-when-cross-origin',
+    },
+  },
 ];
 
 async function check(base, fetchImpl, c) {
@@ -35,6 +47,9 @@ async function check(base, fetchImpl, c) {
       if (!got || new URL(got, base).href !== new URL(c.location, base).href) problems.push(`location ${String(got)}, expected ${c.location}`);
     }
     if (c.contentType && !(res.headers.get('content-type') ?? '').startsWith(c.contentType)) problems.push(`content-type ${String(res.headers.get('content-type'))}`);
+    for (const [header, part] of Object.entries(c.headerHas ?? {})) {
+      if (!(res.headers.get(header) ?? '').includes(part)) problems.push(`${header} lacks "${part}"`);
+    }
     if (c.contains && !(await res.text()).includes(c.contains)) problems.push(`body lacks "${c.contains}"`);
     return { name: c.name, ok: problems.length === 0, detail: problems.join('; ') };
   } catch (error) {

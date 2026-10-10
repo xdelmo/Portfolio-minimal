@@ -80,3 +80,18 @@ test('with reduced motion the theme switches at once, without the reveal', async
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => (window as unknown as { transitions: number }).transitions)).toBe(0);
 });
+
+// issue #134: the browser bar (theme-color) is the page background, from the first paint and after every switch
+test('the browser bar takes the page background in both themes', async ({ page }) => {
+  const bar = () => page.evaluate(() => document.querySelector('meta[name="theme-color"]')?.getAttribute('content'));
+  const bg = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bg').trim());
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+  expect(await bar()).toBe('#121212');
+  await page.goto('/en/');
+  expect(await bar()).toBe(await bg());
+  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect.poll(bar).toBe(await bg());
+  expect(await bar()).toBe('#e5e5e5');
+});

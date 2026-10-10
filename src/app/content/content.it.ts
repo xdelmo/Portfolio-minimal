@@ -232,7 +232,7 @@ export const CONTENT_IT: SiteContent = {
     },
   ],
   privacy: {
-    updated: 'Ultimo aggiornamento: 6 ottobre 2026',
+    updated: 'Ultimo aggiornamento: 10 ottobre 2026',
     intro:
       'Questo sito è il mio portfolio personale. Non ha statistiche, pubblicità, tracciamento né script di terze parti: tiene nel tuo browser solo quello che serve a ricordare le tue scelte.',
     sections: [
@@ -244,7 +244,7 @@ export const CONTENT_IT: SiteContent = {
         heading: 'Cosa tiene il sito nel tuo browser',
         paragraphs: [
           'Il cookie nf_lang ricorda la lingua che hai scelto con il selettore, così la home si apre in quella lingua la volta successiva. Dura un anno e arriva al server solo per scegliere la lingua.',
-          'La voce theme nel local storage ricorda se hai scelto il tema chiaro o quello scuro.',
+          "Due voci nel local storage: theme ricorda se hai scelto il tema chiaro o quello scuro, explored quali case study hai letto, per un traguardo nel gioco nascosto del sito.",
           "Tre voci nel session storage (intro, pausa delle animazioni e tenda della lingua) ricordano, finché non chiudi la scheda, se l'intro iniziale è già stata mostrata, se hai messo in pausa le animazioni e verso quale lingua stai passando.",
           'Sono preferenze tecniche: non identificano nessuno, non vengono condivise e non richiedono consenso. Puoi cancellarle quando vuoi dalle impostazioni del browser.',
         ],

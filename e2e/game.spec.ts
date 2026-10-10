@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from './fixtures';
+import { SLUGS } from './site';
 
 const CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 // the code (and its taps on phones) unlocks the cheat version of the card; Press start opens the plain one
@@ -14,7 +15,7 @@ test('the Konami code opens the player card, Escape closes it', async ({ page })
   await page.goto('/en/');
   await typeCode(page);
   await expect(card(page)).toBeVisible();
-  await expect(card(page).getByRole('listitem')).toHaveCount(5);
+  await expect(card(page).getByRole('listitem')).toHaveCount(6);
   await expect(card(page).getByRole('meter')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(card(page)).toBeHidden();
@@ -72,6 +73,24 @@ test('the code unlocks the cheat card, Press start the plain one', async ({ page
   await expect(plain).toBeVisible();
   await expect(plain).not.toContainText('Konami code');
   await expect(plain.locator('dd').nth(2)).toHaveText('3');
+});
+
+// issue #133: reading every case study earns the Explorer achievement, kept in local storage
+test('reading every case study unlocks Explorer, with a notice on the last one', async ({ page }) => {
+  const pause = page.getByRole('dialog', { name: 'Pause' });
+  const pressStart = page.locator('app-site-footer').getByRole('button', { name: 'Press start' });
+  await page.goto('/en/');
+  await pressStart.click();
+  await expect(pause).toContainText(`0 of ${String(SLUGS.length)} case studies read`);
+  for (const slug of SLUGS.slice(0, -1)) {
+    await page.goto(`/en/work/${slug}/`);
+    await expect(page.getByRole('status').filter({ hasText: 'Explorer' })).toHaveCount(0);
+  }
+  await page.goto(`/en/work/${SLUGS.at(-1) ?? ''}/`);
+  await expect(page.getByRole('status')).toHaveText('Achievement unlocked: Explorer');
+  await expect(page.getByRole('status')).toBeEmpty({ timeout: 8000 });
+  await pressStart.click();
+  await expect(pause).toContainText('Read every case study');
 });
 
 test('a wrong sequence opens nothing', async ({ page }) => {

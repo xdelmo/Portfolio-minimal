@@ -6,7 +6,7 @@ test.describe('the phone menu', () => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
-    await header.getByText('Menu').click();
+    await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
     await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Contact']);
     await menu.getByRole('link', { name: 'Contact' }).click();
@@ -38,7 +38,7 @@ test.describe('the phone menu', () => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
-    await header.getByText('Menu').click();
+    await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
     await menu.getByRole('link', { name: 'Contact' }).focus();
     await page.getByRole('link', { name: 'See my work' }).focus();

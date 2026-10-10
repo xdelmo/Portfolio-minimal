@@ -76,14 +76,17 @@ import { SiteMenu } from './site-menu';
       text-transform: uppercase;
       white-space: nowrap;
     }
-    // small phones get a smaller name, the narrowest keep the mark alone: the controls need the room
-    @media (max-width: 389px) {
+    // phones get a smaller name, the small ones keep the mark alone: the controls and the menu button need the room
+    @media (max-width: 429px) {
+      .site-header {
+        gap: var(--space-1);
+      }
       .name {
         font-size: 0.625rem;
         letter-spacing: 0.02em;
       }
     }
-    @media (max-width: 359px) {
+    @media (max-width: 389px) {
       .name {
         display: none;
       }

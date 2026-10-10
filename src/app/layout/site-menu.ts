@@ -39,7 +39,7 @@ import { RouterLink } from '@angular/router';
     summary {
       display: grid;
       place-items: center;
-      width: 48px;
+      width: 44px;
       height: 48px;
       color: var(--fg);
       list-style: none;

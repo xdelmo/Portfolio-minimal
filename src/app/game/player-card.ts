@@ -65,6 +65,8 @@ export const MAX_LEVEL = 99;
     .card {
       width: min(100% - 2 * var(--gutter), 32rem);
       max-height: calc(100svh - 2 * var(--space-2));
+      // scrolled to its end, the card does not hand the scroll to the page behind (issue #135)
+      overscroll-behavior: contain;
       padding: var(--space-4);
       border: 4px solid var(--fg);
       outline: 4px solid var(--band-ink-bg);
@@ -127,6 +129,10 @@ export const MAX_LEVEL = 99;
     }
     meter::-moz-meter-bar {
       background: var(--accent);
+    }
+    // every digit the same width, so the climbing level does not jitter (issue #135)
+    .level {
+      font-variant-numeric: tabular-nums;
     }
     .achievements {
       display: grid;

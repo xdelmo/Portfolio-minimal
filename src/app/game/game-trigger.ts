@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, DestroyRef, ViewContainerRef, afterNextRender, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, DestroyRef, ViewContainerRef, afterNextRender, inject, signal } from '@angular/core';
 import { LEAD_IN_MS, announceGameStart } from './game-start';
 import { KONAMI, konamiStep } from './konami';
 import type { PlayerCard } from './player-card';
 
 const TAPS = 5;
+/** The combo shows from the third right key: ↑ ↑ alone is someone scrolling, ↑ ↑ ↓ is someone playing. */
+export const COMBO_FROM = 3;
+/** The combo goes away when the keys stop. */
+export const COMBO_IDLE_MS = 1500;
 const TAP_WINDOW_MS = 2000;
 
 /**
@@ -13,20 +17,63 @@ const TAP_WINDOW_MS = 2000;
 @Component({
   selector: 'app-game-trigger',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: '',
+  // issue #124: a row of 8px cells in a corner, one lit for each right key of the code, gone on a wrong key or a pause;
+  // decoration for a game the keys already play, so hidden from screen readers
+  template: `
+    @if (combo() >= COMBO_FROM) {
+      <div class="combo" aria-hidden="true">
+        @for (cell of cells; track cell) {
+          <span [class.on]="cell < combo()"></span>
+        }
+      </div>
+    }
+  `,
+  styles: `
+    .combo {
+      position: fixed;
+      right: var(--space-2);
+      bottom: var(--space-2);
+      z-index: 50;
+      display: flex;
+      gap: 2px;
+      padding: var(--space-1);
+      border: 2px solid var(--fg);
+      background: var(--surface);
+      pointer-events: none;
+    }
+    span {
+      width: 8px;
+      height: 8px;
+      box-shadow: inset 0 0 0 2px var(--fg-muted);
+    }
+    .on {
+      background: var(--accent);
+      box-shadow: none;
+    }
+  `,
 })
 export class GameTrigger {
   private readonly container = inject(ViewContainerRef);
   private card?: ComponentRef<PlayerCard>;
   private opening = false;
+  protected readonly COMBO_FROM = COMBO_FROM;
+  protected readonly cells = KONAMI.map((_, i) => i);
+  /** How much of the code has been typed, for the combo row. */
+  protected readonly combo = signal(0);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
     let progress = 0;
     let taps: number[] = [];
+    let idle = 0;
     const onKey = (event: KeyboardEvent): void => {
       if (event.ctrlKey || event.metaKey || event.altKey || isEditable(event.target)) return;
       progress = konamiStep(progress, event.key);
+      this.combo.set(progress);
+      clearTimeout(idle);
+      idle = window.setTimeout(() => {
+        this.combo.set(0);
+      }, COMBO_IDLE_MS);
       if (progress === KONAMI.length) {
         progress = 0;
         void this.open(true);
@@ -53,6 +100,7 @@ export class GameTrigger {
       destroyRef.onDestroy(() => {
         document.removeEventListener('keydown', onKey);
         document.removeEventListener('click', onClick);
+        clearTimeout(idle);
       });
     });
   }

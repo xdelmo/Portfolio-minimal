@@ -62,6 +62,14 @@ a {
   text-underline-offset: 0.2em;
 }
 
+/* a tap acts at once: no double-tap zoom waiting on controls (issue #135); pinch zoom still works */
+a,
+button,
+summary,
+label {
+  touch-action: manipulation;
+}
+
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;

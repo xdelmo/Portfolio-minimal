@@ -170,3 +170,14 @@ test.describe('with reduced motion', () => {
     await expect(page.locator('app-player-card .burst')).toHaveCount(0);
   });
 });
+
+// issue #135: the card keeps its scroll to itself, the level climbs on fixed-width digits, controls answer a tap at once
+test('the card contains its scroll and counts on tabular digits; links and buttons skip the double-tap wait', async ({ page }) => {
+  await page.goto('/en/');
+  expect(await page.locator('a').first().evaluate((el) => getComputedStyle(el).touchAction)).toBe('manipulation');
+  await page.locator('app-site-footer').getByRole('button', { name: 'Press start' }).click();
+  const pause = page.getByRole('dialog', { name: 'Pause' });
+  await expect(pause).toBeVisible();
+  expect(await pause.evaluate((el) => getComputedStyle(el).overscrollBehaviorY)).toBe('contain');
+  expect(await pause.locator('.level').evaluate((el) => getComputedStyle(el).fontVariantNumeric)).toBe('tabular-nums');
+});

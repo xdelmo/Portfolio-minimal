@@ -6,6 +6,7 @@ import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
 import { onlyPublic } from '../src/app/content/public-repos.ts';
+import { withScriptsAfterPaint } from './after-paint.mjs';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
@@ -24,12 +25,16 @@ async function htmlFiles(dir) {
 
 const pages = [];
 const htmls = [];
+// the initial JavaScript is measured on the home as Angular wrote it, before its scripts wait for the first paint
+let homeHtml = '';
 for (const locale of ['en', 'it']) {
   // the latin subset covers every glyph of both languages
   const font = (await readdir(join(ROOT, locale, 'media'))).find((name) => /^instrument-sans-latin-wdth-normal-.*\.woff2$/.test(name));
   if (!font) throw new Error(`postbuild: latin font not found in ${locale}/media`);
   for (const file of await htmlFiles(join(ROOT, locale))) {
-    const html = withFontPreload(await readFile(file, 'utf8'), `media/${font}`);
+    const built = await readFile(file, 'utf8');
+    if (file === join(ROOT, 'en', 'index.html')) homeHtml = built;
+    const html = withScriptsAfterPaint(withFontPreload(built, `media/${font}`));
     await writeFile(file, html);
     htmls.push(html);
     const og = extractOgImage(html);
@@ -63,7 +68,6 @@ const hashes = inlineScriptHashes(htmls);
 await writeFile(join(ROOT, '_headers'), headersFile(contentSecurityPolicy(hashes)));
 console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects, _headers (${hashes.length} inline script hashes)`);
 
-const homeHtml = await readFile(join(ROOT, 'en', 'index.html'), 'utf8');
 let initialBytes = 0;
 for (const file of initialScripts(homeHtml)) initialBytes += gzipSync(await readFile(join(ROOT, 'en', file))).length;
 console.log(`postbuild: initial JavaScript ${(initialBytes / 1024).toFixed(1)} KB gzip (budget ${String(INITIAL_JS_BUDGET / 1024)} KB)`);

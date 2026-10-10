@@ -54,6 +54,10 @@
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="nav.menu" datatype="html">
+        <source>Menu</source>
+        <target>Menu</target>
+      </trans-unit>
       <trans-unit id="nav.work" datatype="html">
         <source>Work</source>
         <target>Progetti</target>

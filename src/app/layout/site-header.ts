@@ -4,11 +4,12 @@ import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { PauseToggle } from './pause-toggle';
+import { SiteMenu } from './site-menu';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle],
+  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
@@ -25,6 +26,7 @@ import { PauseToggle } from './pause-toggle';
         <app-language-switch />
         <app-pause-toggle />
         <app-theme-toggle />
+        <app-site-menu class="menu" />
       </div>
     </header>
   `,
@@ -106,6 +108,10 @@ import { PauseToggle } from './pause-toggle';
     @include bp.up(md) {
       nav {
         display: flex;
+      }
+      // the links are in the header itself from here
+      .menu {
+        display: none;
       }
       // room to breathe once the header is wide
       .logo {

@@ -60,9 +60,13 @@ test.describe('hero', () => {
     await page.goto('/en/');
     await ready(page);
     const wdth = () => page.locator('h1').evaluate((el) => getComputedStyle(el).fontVariationSettings);
+    const heroHeight = () => page.locator('.hero').evaluate((el) => Math.round(el.getBoundingClientRect().height));
     expect(await wdth()).toBe('"wdth" 75');
+    const height = await heroHeight();
     await page.evaluate(() => { window.scrollTo(0, 400); });
     await expect.poll(async () => Number(/[\d.]+$/.exec(await wdth())?.[0])).toBeGreaterThan(75);
+    // the wider headline breaks its lines where it did: the hero keeps its height and the page below stays put
+    expect(await heroHeight()).toBe(height);
     await page.evaluate(() => { window.scrollTo(0, 0); });
     await expect.poll(wdth).toBe('"wdth" 75');
   });

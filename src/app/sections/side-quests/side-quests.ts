@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, viewChild } from '@angular/core';
 import { SideQuest } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from './quest-sprite';
@@ -9,7 +9,8 @@ import { QuestSprite } from './quest-sprite';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [GithubMark, QuestSprite],
   template: `
-    <ul class="quests">
+    <!-- on phones the list scrolls sideways: focusable so arrow keys scroll it too, and labelled by the section title -->
+    <ul #list class="quests" tabindex="0" aria-labelledby="side-quests-title">
       @for (quest of items(); track quest.title) {
         <li>
           <div class="slot"><app-quest-sprite class="sprite" [name]="quest.sprite" /></div>
@@ -83,6 +84,37 @@ import { QuestSprite } from './quest-sprite';
         translate: 0 -12px;
       }
     }
+    // phones: an inventory bar, swiped sideways and snapping each item to the middle, the next one peeking in;
+    // the item in the middle is the selected one (framed in the accent, its sprite hops)
+    @media (max-width: 767.98px) {
+      .quests {
+        display: flex;
+        margin-inline: calc(-1 * var(--gutter));
+        padding: var(--space-1) var(--gutter);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--gutter);
+        overscroll-behavior-x: contain;
+        touch-action: pan-x pan-y;
+        scrollbar-width: none;
+      }
+      li {
+        flex: 0 0 80%;
+        grid-template-columns: minmax(0, 1fr);
+        scroll-snap-align: center;
+      }
+      .slot {
+        justify-self: start;
+      }
+      li.current .slot {
+        border-color: var(--accent);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        li.current .sprite {
+          animation: hop 480ms steps(4);
+        }
+      }
+    }
     @include bp.up(md) {
       .quests {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -98,4 +130,21 @@ import { QuestSprite } from './quest-sprite';
 })
 export class SideQuests {
   readonly items = input.required<readonly SideQuest[]>();
+  private readonly list = viewChild.required<ElementRef<HTMLElement>>('list');
+
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const list = this.list().nativeElement;
+      // a thin strip down the middle of the bar: the item crossing it is the selected one (styled on phones only)
+      const middle = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) entry.target.classList.toggle('current', entry.isIntersecting);
+        },
+        { root: list, rootMargin: '0px -49% 0px -49%' },
+      );
+      for (const item of list.children) middle.observe(item);
+      destroyRef.onDestroy(() => { middle.disconnect(); });
+    });
+  }
 }

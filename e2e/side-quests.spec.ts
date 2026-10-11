@@ -58,3 +58,40 @@ test('the stack section passes under the side quests band, and the pixel thread 
   expect(order.band).toBeGreaterThan(order.stack);
   expect(order.thread).toBeGreaterThan(order.band);
 });
+
+test.describe('on a phone', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+  const list = (page: Page) => page.locator('#side-quests .quests');
+  const current = (page: Page) => page.locator('#side-quests li.current h3');
+
+  test('the side quests are an inventory bar: it scrolls sideways, the page does not, the item in the middle is selected', async ({ page }) => {
+    await page.goto('/en/');
+    await list(page).scrollIntoViewIfNeeded();
+    const titles = await page.locator('#side-quests h3').allTextContents();
+    expect(await list(page).evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    await expect(current(page)).toHaveText([titles[0] ?? '']);
+    await list(page).evaluate((el) => { el.scrollLeft = el.scrollWidth; });
+    await expect(current(page)).toHaveText([titles.at(-1) ?? '']);
+    // the selected item is framed in the accent, the others in ink
+    const borders = await page.locator('#side-quests .slot').evaluateAll((els) => els.map((el) => getComputedStyle(el).borderTopColor));
+    expect(new Set(borders).size).toBe(2);
+  });
+
+  test('the keyboard reaches the bar and its arrow keys scroll it', async ({ page }) => {
+    await page.goto('/en/');
+    await list(page).focus();
+    await expect(list(page)).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(() => list(page).evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  });
+});
+
+test('on desktop the side quests stay a grid of three columns that never scrolls', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const list = page.locator('#side-quests .quests');
+  expect(await list.evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);
+  expect(await list.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+});

@@ -1,4 +1,4 @@
-import { ARROW_CELLS, arrowCells, pointing } from '../arrow';
+import { ARROW_CELLS, ARROW_RINGS, arrowCells, arrowGrowth, pointing } from '../arrow';
 import type { Effect } from '../motion-host';
 
 const INTERACTIVE = 'a, button, summary, [role="button"]';
@@ -8,6 +8,8 @@ const TITLES = 'main h2:not(#contact-title)';
 const CELL = 8;
 // the eight directions a line stays clean on a 7-cell grid (in between, the arrow smudges into a blob)
 const STEPS = 8;
+// the square grows into the arrow ring by ring, and shrinks back into the square (issue #171)
+const GROW_S = 0.16;
 
 /**
  * Desktop: a pixel trails the pointer and opens into a frame over links and buttons; elements marked
@@ -23,20 +25,43 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   const toX = gsap.quickTo([dot, arrow], 'x', { duration: 0.15, ease: 'power3.out' });
   const toY = gsap.quickTo([dot, arrow], 'y', { duration: 0.15, ease: 'power3.out' });
   let drawn = '';
-  // the step and the colour (the theme can change between two moves) decide whether to redraw
-  const point = (angle: number | null): void => {
-    arrow.style.display = angle === null ? 'none' : 'block';
-    dot.style.visibility = angle === null ? '' : 'hidden';
-    if (angle === null) return;
-    const step = Math.round((angle / (Math.PI * 2)) * STEPS);
+  let step: number | null = null; // the direction the arrow points in
+  let pointed = false;
+  const grow = { ring: 0 };
+  // the step, the ring and the colour (the theme can change between two moves) decide whether to redraw
+  const draw = (): void => {
+    if (step === null) return;
+    const ring = Math.round(grow.ring);
     const color = getComputedStyle(dot).backgroundColor; // the pixel's --accent, never framed while the arrow shows
-    const key = `${String(step)} ${color}`;
+    const key = `${String(step)} ${String(ring)} ${color}`;
     if (key === drawn) return;
     drawn = key;
     pen.clearRect(0, 0, ARROW_CELLS * CELL, ARROW_CELLS * CELL);
     pen.fillStyle = color;
-    for (const [c, r] of arrowCells((step / STEPS) * Math.PI * 2)) pen.fillRect(c * CELL, r * CELL, CELL, CELL);
+    for (const [c, r] of arrowGrowth(arrowCells((step / STEPS) * Math.PI * 2), ring)) pen.fillRect(c * CELL, r * CELL, CELL, CELL);
     arrow.dataset['angle'] = String(Math.round((step / STEPS) * 360)); // degrees, for the e2e
+  };
+  const point = (angle: number | null): void => {
+    if (angle === null) {
+      if (!pointed) return;
+      pointed = false;
+      gsap.to(grow, {
+        ring: 0, duration: GROW_S, ease: 'none', overwrite: true, onUpdate: draw,
+        onComplete: () => {
+          arrow.style.display = 'none';
+          dot.style.visibility = '';
+        },
+      });
+      return;
+    }
+    step = Math.round((angle / (Math.PI * 2)) * STEPS);
+    if (!pointed) {
+      pointed = true;
+      arrow.style.display = 'block';
+      dot.style.visibility = 'hidden';
+      gsap.to(grow, { ring: ARROW_RINGS, duration: GROW_S, ease: 'none', overwrite: true, onUpdate: draw });
+    }
+    draw();
   };
   // titles (and the lines SplitText wraps them in) are full-width blocks: the arrow aims at the words themselves
   const range = document.createRange();
@@ -90,13 +115,18 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     }
   };
   const onLeave = (): void => {
+    gsap.killTweensOf(grow);
     gsap.set([dot, arrow], { display: 'none' });
+    dot.style.visibility = '';
+    grow.ring = 0;
+    pointed = false;
     shown = false;
   };
   addEventListener('pointermove', onMove, { passive: true });
   document.documentElement.addEventListener('pointerleave', onLeave);
 
   return () => {
+    gsap.killTweensOf(grow);
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
     gsap.set([dot, arrow], { clearProps: 'all' });

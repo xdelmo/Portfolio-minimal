@@ -3,9 +3,10 @@ import { expect, test } from './fixtures';
 // WCAG 1.4.12: text must survive these spacings without being cut off
 const TEXT_SPACING = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
 
-for (const path of ['/en/', '/it/work/apexflow']) {
+// at 320 px, the width WCAG 1.4.10 asks content to reflow to (the 404's menu left the page there, issue #155)
+for (const path of ['/en/', '/it/work/apexflow', '/en/privacy', '/en/404']) {
   test(`${path} survives WCAG text spacing without clipping`, async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 800 });
+    await page.setViewportSize({ width: 320, height: 800 });
     await page.goto(path);
     await page.addStyleTag({ content: TEXT_SPACING });
     const clipped = await page.evaluate(() =>

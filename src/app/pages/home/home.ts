@@ -16,6 +16,7 @@ import { WorkList } from '../../sections/work-list/work-list';
 import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
 import { stickyEffect } from '../../motion/effects/sticky';
+import { parallaxEffect } from '../../motion/effects/parallax';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
@@ -330,7 +331,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

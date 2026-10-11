@@ -80,6 +80,44 @@ test.describe('smooth scroll on desktop', () => {
   });
 });
 
+test.describe('parallax under smooth scroll (issue #160)', () => {
+  test.use({ smoothScroll: true });
+  test.skip(({ isMobile }) => isMobile, 'touch keeps the native scroll');
+
+  const lift = (page: Page) =>
+    page.locator('#work .media').first().evaluate((m) => new DOMMatrix(getComputedStyle(m).transform).m42);
+
+  test('a project picture scrolls slower than its text, and sits in place when centred', async ({ page }) => {
+    await page.goto('/en/');
+    const media = page.locator('#work .media').first();
+    const atRest = async () => Math.abs((await contentY(page)) + (await page.evaluate(() => window.scrollY))) < 2;
+    // the picture near the top of the screen: moved off its place
+    await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
+    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
+    // speed 0.9: off its place by a tenth of how far its centre is from the screen's (as laid out, before the lift)
+    const expected = await media.evaluate((m) => {
+      const box = m.getBoundingClientRect();
+      const y = new DOMMatrix(getComputedStyle(m).transform).m42;
+      return 0.1 * Math.abs(innerHeight / 2 - (box.top - y + box.height / 2));
+    });
+    expect(expected).toBeGreaterThan(3);
+    expect(Math.abs(Math.abs(await lift(page)) - expected)).toBeLessThan(2);
+    // centred in the screen: where the layout puts it
+    await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - (innerHeight - m.offsetHeight) / 2); });
+    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
+    await expect.poll(async () => Math.abs(await lift(page)), { timeout: REST_MS }).toBeLessThan(3);
+  });
+});
+
+test('without smooth scroll the pictures do not move', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop layout');
+  await page.goto('/en/');
+  const media = page.locator('#work .media').first();
+  await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
+  await page.waitForTimeout(300);
+  expect(await media.evaluate((m) => new DOMMatrix(getComputedStyle(m).transform).m42)).toBe(0);
+});
+
 test.describe('with reduced motion', () => {
   test.use({ smoothScroll: true, reducedMotion: 'reduce' });
 

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { DRAWS_MS, countFieldDraws, fieldDraws } from './field-draws';
 
 const canvas = (page: Page) => page.locator('app-pixel-field canvas');
 const snapshot = (page: Page) => canvas(page).evaluate((c) => (c as HTMLCanvasElement).toDataURL());
@@ -12,13 +13,15 @@ const isPainted = (page: Page) =>
   });
 
 test('draws the field and keeps it moving', async ({ page }) => {
+  await countFieldDraws(page);
   await page.goto('/en/');
   // on short phones the field starts below the fold, where it rightly stops drawing
   await canvas(page).scrollIntoViewIfNeeded();
   await expect(canvas(page)).toBeVisible();
   await expect.poll(() => isPainted(page)).toBe(true);
-  const before = await snapshot(page);
-  await expect.poll(() => snapshot(page)).not.toBe(before);
+  // its loop keeps drawing, counted in frames (issue #53: WebKit in CI draws about 4 a second)
+  const before = await fieldDraws(page);
+  await expect.poll(() => fieldDraws(page), { timeout: DRAWS_MS }).toBeGreaterThan(before + 2);
 });
 
 test('repaints with the new colours when the theme changes while paused', async ({ page }) => {

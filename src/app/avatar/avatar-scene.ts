@@ -8,6 +8,12 @@ import { type AvatarBody, voxelBody } from './body';
 import { type Gait, MOVES } from './poses';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
+/**
+ * It draws like a sprite, 12 frames a second (issue #184): always in view, at every animation frame it kept the main
+ * thread busy where WebGL has no GPU (CI, headless Chromium, weak phones). Its way along the page stays smooth: the
+ * layer is moved by walker.ts in CSS.
+ */
+const AVATAR_FRAME_MS = 1000 / 12;
 /** A press that moves less than this is a tap: it plays a move. */
 const TAP_PX = 12;
 /** Where it faces, as a turn from the still image's pose: towards the viewer walking down, its back walking up. */
@@ -124,6 +130,9 @@ export class AvatarScene {
     let drawn = false;
     const frame = (now: number): void => {
       try {
+        this.raf = requestAnimationFrame(frame);
+        // a millisecond of slack: frames come every 16.7 ms, and five of them make 83.3 only give or take
+        if (drawn && now - last < AVATAR_FRAME_MS - 1) return;
         const dt = Math.min(100, Math.max(0, now - last));
         last = now;
         const goal = FACING[layer['facing'] ?? 'front'] ?? 0;
@@ -138,7 +147,6 @@ export class AvatarScene {
           drawn = true;
           this.layer?.setAttribute('data-drawn', '');
         }
-        this.raf = requestAnimationFrame(frame);
       } catch {
         this.stop();
       }

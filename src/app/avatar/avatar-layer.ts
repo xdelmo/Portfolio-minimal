@@ -5,21 +5,11 @@ import { AvatarScene } from './avatar-scene';
 const WAKE_EVENTS = ['scroll', 'pointermove', 'pointerdown', 'touchstart', 'keydown'] as const;
 /** Or this long after the page is ready, for a visitor who only looks. */
 const WAKE_MS = 5000;
-/** sessionStorage key: 'still' keeps the still image (the e2e set it, the avatar's own tests remove it; issue #184). */
-const AVATAR_STILL_KEY = 'avatar';
 
 /**
  * One layer over the home page that motion/effects/walker.ts moves from the hero down the pixel thread; the 3D avatar
  * draws inside it. Hidden until it is both placed by the effect and drawn by the scene.
  */
-function stillOnly(): boolean {
-  try {
-    return sessionStorage.getItem(AVATAR_STILL_KEY) === 'still';
-  } catch {
-    return false;
-  }
-}
-
 @Component({
   selector: 'app-avatar-layer',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,7 +54,7 @@ export class AvatarLayer {
   constructor() {
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches || stillOnly()) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const stop = (): void => {
         clearTimeout(timer);
         for (const type of WAKE_EVENTS) removeEventListener(type, wake);

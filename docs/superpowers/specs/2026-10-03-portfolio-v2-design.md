@@ -377,3 +377,4 @@ Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle ling
 | 2026-10-11 | Il nodo del filo resta sul titolo di Esperienza anche mentre lo scroll morbido scorre il mazzo fissato: lo scorrimento del pin si legge dallo scroll di ScrollTrigger nello stesso tick (issue #172). |
 | 2026-10-11 | La banda dei contatti si allarga da un blocco rientrato con bordi duri, senza angoli arrotondati (`--band-round` tolto; issue #173). |
 | 2026-10-11 | Vicino al titolo di una sezione il quadrato del cursore cresce nella freccia ad anelli di celle (1, 3, 9, 11 celle in 0,16 s) e al ritorno si ritira nel quadrato (issue #171). |
+| 2026-10-11 | Tolto l'avatar voxel 3D che camminava lungo il filo (#175, #185): all'utente non piace; l'hero torna com'era (issue #186). |

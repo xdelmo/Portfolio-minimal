@@ -102,6 +102,7 @@ test('it walks into the contact band at the end of the page', async ({ page }) =
 });
 
 test('a tap plays a move, and the pause button stops its idle life', async ({ page }) => {
+  test.slow();
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await wake(page);
@@ -111,13 +112,17 @@ test('a tap plays a move, and the pause button stops its idle life', async ({ pa
     window.scrollTo(0, 0);
   });
   await expect(layer(page)).toHaveAttribute('data-place', 'hero');
-  // paused, it comes to rest once its head has turned back from the pointer: two frames 600 ms apart are the same
+  // paused, it comes to rest once its head has turned back from the pointer (about 2 s): two frames 600 ms apart are
+  // the same. 15 s: reading a 2560px canvas back takes most of a second on WebKit in CI
   await expect
-    .poll(async () => {
-      const first = await snapshot(page);
-      await page.waitForTimeout(600);
-      return first === (await snapshot(page));
-    })
+    .poll(
+      async () => {
+        const first = await snapshot(page);
+        await page.waitForTimeout(600);
+        return first === (await snapshot(page));
+      },
+      { timeout: 15_000 },
+    )
     .toBe(true);
   const before = await snapshot(page);
 
@@ -125,7 +130,7 @@ test('a tap plays a move, and the pause button stops its idle life', async ({ pa
   const canvas = page.locator('app-avatar-scene canvas');
   await canvas.dispatchEvent('pointerdown', { pointerId: 3, isPrimary: true, clientX: 10, clientY: 10, bubbles: true });
   await canvas.dispatchEvent('pointerup', { pointerId: 3, isPrimary: true, clientX: 10, clientY: 10, bubbles: true });
-  await expect.poll(() => snapshot(page)).not.toBe(before);
+  await expect.poll(() => snapshot(page), { timeout: 15_000 }).not.toBe(before);
 });
 
 // fetched right after hydration, Three.js landed on Lighthouse's critical path (home 0.98 → 0.92)

@@ -33,6 +33,10 @@ const WAKE_MS = 5000;
       scale: var(--avatar-scale, 1);
       transform-origin: 0 0;
       visibility: hidden;
+      // until walker.ts sizes it: without a size the canvas would take its height from its own pixel buffer, and the
+      // scene's ResizeObserver resizing that buffer looped (WebKit reports it as an error)
+      width: 0;
+      height: 0;
     }
     :host([data-place][data-drawn]) {
       visibility: visible;

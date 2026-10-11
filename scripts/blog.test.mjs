@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildBlog, minutes, moduleSource, parseArticle } from './blog.mjs';
+import { articleParts, buildBlog, minutes, moduleSource, parseArticle } from './blog.mjs';
 
 const md = (fields, body = 'Some words.') => `---\n${Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join('\n')}\n---\n${body}\n`;
 const fields = { title: 'A title: with a colon', description: 'What it is about', date: '2026-10-11', project: 'apexflow' };
@@ -32,9 +32,10 @@ test('articles come newest first, with the date in words in their language', () 
   assert.equal(blog.it[1].dateLabel, '2 gennaio 2026');
 });
 
-test('code blocks are escaped and reachable with the keyboard', () => {
-  const [article] = buildBlog({ a: both(fields, fields, '```ts\nconst a = 1 < 2;\n```') }, ['apexflow']).en;
-  assert.match(article.html, /<pre tabindex="0"><code class="language-ts">const a = 1 &lt; 2;<\/code><\/pre>/);
+test('code blocks are parts of their own, with their raw text, between runs of HTML (issue #191)', () => {
+  const [article] = buildBlog({ a: both(fields, fields, 'Before.\n\n```ts\nconst a = 1 < 2;\n```\n\nAfter.') }, ['apexflow']).en;
+  assert.deepEqual(article.parts, [{ html: '<p>Before.</p>\n' }, { code: 'const a = 1 < 2;', lang: 'ts' }, { html: '<p>After.</p>\n' }]);
+  assert.deepEqual(articleParts('```\nplain\n```'), [{ code: 'plain' }]);
 });
 
 test('reading time rounds up, at least one minute', () => {

@@ -5,14 +5,18 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { articleJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
+import { CodeBlock } from './code-block';
 
-/** A blog post (issue #1). Its HTML is written at build time by scripts/blog.mjs from the repository's Markdown. */
+/**
+ * A blog post (issue #1). Its HTML is written at build time by scripts/blog.mjs from the repository's Markdown; its code
+ * blocks come apart from it and are drawn by CodeBlock, with their copy button (issue #191).
+ */
 @Component({
   selector: 'app-article',
   changeDetection: ChangeDetectionStrategy.OnPush,
   // unscoped: the post's elements come from [innerHTML], outside Angular's templates; every rule starts at app-article
   encapsulation: ViewEncapsulation.None,
-  imports: [RouterLink],
+  imports: [RouterLink, CodeBlock],
   template: `
     <article class="container post">
       @if (article(); as a) {
@@ -20,7 +24,15 @@ import { SeoService } from '../../core/seo/seo.service';
           <h1>{{ a.title }}</h1>
           <p class="meta"><time [attr.datetime]="a.date">{{ a.dateLabel }}</time>, <span i18n="@@blog.minutes">{{ a.minutes }} min read</span></p>
         </header>
-        <div class="prose" [innerHTML]="a.html"></div>
+        <div class="prose">
+          @for (part of a.parts; track $index) {
+            @if (part.code !== undefined) {
+              <app-code-block [code]="part.code" [lang]="part.lang" />
+            } @else {
+              <div class="run" [innerHTML]="part.html"></div>
+            }
+          }
+        </div>
         <nav class="more" i18n-aria-label="@@blog.more" aria-label="More">
           @if (project(); as p) {
             <a class="next" [routerLink]="['/work', p.slug]">
@@ -59,7 +71,12 @@ import { SeoService } from '../../core/seo/seo.service';
       gap: var(--space-3);
       min-width: 0;
     }
-    app-article .prose > * {
+    // the runs of HTML lay their paragraphs out in the prose's grid, beside the code blocks
+    app-article .prose > .run {
+      display: contents;
+    }
+    app-article .prose > .run > *,
+    app-article .prose > app-code-block {
       max-width: var(--measure);
       margin: 0;
     }
@@ -77,27 +94,12 @@ import { SeoService } from '../../core/seo/seo.service';
       gap: var(--space-1);
       padding-left: var(--space-3);
     }
-    app-article .prose code {
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-      font-size: 0.875em;
-    }
     // inline code: a quiet tint, no rounded pill
-    app-article .prose :not(pre) > code {
+    app-article .prose .run code {
       padding: 0 0.25em;
       background: var(--surface);
-    }
-    // code blocks: ink on paper in a hard frame, scrolling sideways inside themselves
-    app-article .prose pre {
-      max-width: 100%;
-      overflow-x: auto;
-      padding: var(--space-2);
-      border: 2px solid var(--fg);
-      background: var(--surface);
-      line-height: 1.5;
-      tab-size: 2;
-    }
-    app-article .prose pre code {
-      font-size: var(--step--1);
+      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-size: 0.875em;
     }
     app-article .prose blockquote {
       padding-left: var(--space-2);

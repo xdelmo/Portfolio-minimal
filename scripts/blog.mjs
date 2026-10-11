@@ -36,15 +36,30 @@ export function parseArticle(text, where) {
   return { meta, body: match[2].trim() };
 }
 
+// a code block becomes its own part, drawn by the site's code block component with its copy button (issue #191); the
+// marker below stands in for it in the HTML between
+const CODE = /<!--code:(\d+)-->\n?/;
+let blocks = [];
 const marked = new Marked({
   renderer: {
-    // code blocks scroll sideways: focusable, so the keyboard can scroll them too
     code({ text, lang }) {
-      const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return `<pre tabindex="0"><code${lang ? ` class="language-${lang}"` : ''}>${escaped}</code></pre>\n`;
+      blocks.push({ code: text, ...(lang ? { lang } : {}) });
+      return `<!--code:${String(blocks.length - 1)}-->\n`;
     },
   },
 });
+
+/** The article as parts: runs of HTML, and code blocks with their raw text. */
+export function articleParts(body) {
+  blocks = [];
+  const pieces = marked.parse(body).split(CODE);
+  const parts = [];
+  pieces.forEach((piece, i) => {
+    if (i % 2) parts.push(blocks[Number(piece)]);
+    else if (piece.trim()) parts.push({ html: piece });
+  });
+  return parts;
+}
 
 export const minutes = (body) => Math.max(1, Math.ceil(body.split(/\s+/).filter(Boolean).length / WORDS_PER_MINUTE));
 
@@ -75,7 +90,7 @@ export function buildBlog(sources, projectSlugs) {
         ...(project ? { project } : {}),
         ...(meta.linkedin ? { linkedin: meta.linkedin } : {}),
         minutes: minutes(body),
-        html: marked.parse(body),
+        parts: articleParts(body),
         markdown: body,
       });
     }

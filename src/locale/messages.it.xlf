@@ -442,6 +442,18 @@
         <source>All posts</source>
         <target>Tutti gli articoli</target>
       </trans-unit>
+      <trans-unit id="blog.copy" datatype="html">
+        <source>Copy code</source>
+        <target>Copia il codice</target>
+      </trans-unit>
+      <trans-unit id="blog.copied" datatype="html">
+        <source>Copied</source>
+        <target>Copiato</target>
+      </trans-unit>
+      <trans-unit id="blog.copiedStatus" datatype="html">
+        <source>Code copied</source>
+        <target>Codice copiato</target>
+      </trans-unit>
       <trans-unit id="blog.notFound" datatype="html">
         <source>Post not found</source>
         <target>Articolo non trovato</target>

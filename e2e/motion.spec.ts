@@ -272,6 +272,8 @@ test.describe('bands and finale', () => {
     await ready(page);
     const inset = () => page.locator('#contact').evaluate((el) => getComputedStyle(el).getPropertyValue('--band-inset').trim());
     expect(await inset()).not.toMatch(/^0(%|px)?$/);
+    // hard edges while it widens, like every block of the design (issue #173)
+    expect(await page.locator('#contact').evaluate((el) => getComputedStyle(el, '::before').clipPath)).not.toContain('round');
     await expect
       .poll(async () => {
         await page.evaluate(() => {

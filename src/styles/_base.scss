@@ -238,7 +238,8 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
 }
 
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
-   (text, links, focus ring, rules) follows. --band-inset/--band-round let GSAP grow the band from a card. */
+   (text, links, focus ring, rules) follows. --band-inset lets GSAP grow the band from an inset block, hard-edged
+   like everything else (rounded corners were off the design, issue #173). */
 .band {
   position: relative;
   isolation: isolate;
@@ -250,7 +251,7 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
   inset: 0 calc(50% - 50vw);
   z-index: -1;
   background: var(--band-bg);
-  clip-path: inset(0 var(--band-inset, 0%) round var(--band-round, 0px));
+  clip-path: inset(0 var(--band-inset, 0%));
 }
 .band--pastel {
   --band-bg: var(--band-pastel-bg);

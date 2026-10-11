@@ -1,5 +1,5 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import { URL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
@@ -10,7 +10,7 @@ import { withScriptsAfterPaint } from './after-paint.mjs';
 import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
 import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
-import { contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
+import { HASHED_FILE, contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
 const ROOT = 'dist/portfolio/browser';
@@ -65,8 +65,9 @@ await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));
 await writeFile(join(ROOT, '_redirects'), redirectsFile(pages));
 const hashes = inlineScriptHashes(htmls);
-await writeFile(join(ROOT, '_headers'), headersFile(contentSecurityPolicy(hashes)));
-console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects, _headers (${hashes.length} inline script hashes)`);
+const hashed = (await readdir(ROOT, { recursive: true })).map((path) => path.split(sep).join('/')).filter((path) => HASHED_FILE.test(path)).sort();
+await writeFile(join(ROOT, '_headers'), headersFile(contentSecurityPolicy(hashes), hashed));
+console.log(`postbuild: sitemap.xml with ${pages.length} pages, robots.txt, _redirects, _headers (${hashes.length} inline script hashes, ${hashed.length} hashed files cached)`);
 
 let initialBytes = 0;
 for (const file of initialScripts(homeHtml)) initialBytes += gzipSync(await readFile(join(ROOT, 'en', file))).length;

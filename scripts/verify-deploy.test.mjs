@@ -53,3 +53,18 @@ test('the default table covers language, legacy, 404 and GEO rows', () => {
     assert.ok(names.includes(part), part);
   }
 });
+
+test('a check can read its path from a page, resolved against it (issue #153)', async () => {
+  const asked = [];
+  const fetchImpl = async (url) => {
+    asked.push(String(url));
+    if (String(url).endsWith('/en/')) return response(200, { body: '<script>["polyfills-AAAAAAAA.js","main-K4PR4QRI.js"]</script>' });
+    return new globalThis.Response('', { status: 200, headers: { 'cache-control': 'public, max-age=31536000, immutable' } });
+  };
+  const check = CHECKS.filter((c) => c.pathFrom);
+  const [row] = await runChecks(BASE, fetchImpl, check);
+  assert.equal(row.ok, true, row.detail);
+  assert.equal(asked[1], `${BASE}/en/main-K4PR4QRI.js`);
+  const missing = await runChecks(BASE, async () => response(200, { body: 'no scripts' }), check);
+  assert.match(missing[0].detail, /has no/);
+});

@@ -29,6 +29,27 @@ for (const path of ['/en/', '/en/work/apexflow']) {
   });
 }
 
+test('after the router opens another page the focus is on its main content, not lost on the body (issue #181)', async ({ page }) => {
+  await page.goto('/en/');
+  const project = page.locator('main a[href$="/work/apexflow"]').first();
+  await project.focus();
+  await project.press('Enter');
+  await expect(page).toHaveURL(/\/en\/work\/apexflow$/);
+  await expect(page.locator('h1')).toHaveText('ApexFlow');
+  await expect(page.locator('main')).toBeFocused();
+});
+
+test('a link to a spot on the same page keeps the focus where it is (issue #181)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the index of a case study is desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/work/apexflow');
+  const outcome = page.locator('.toc a', { hasText: 'Outcome' });
+  await outcome.focus();
+  await outcome.press('Enter');
+  await expect(page).toHaveURL(/#outcome$/);
+  await expect(outcome).toBeFocused();
+});
+
 test('the header stays at the top while the page scrolls', async ({ page }) => {
   await page.goto('/en/');
   await page.evaluate(() => {

@@ -9,6 +9,7 @@ import {
 } from '@angular/router';
 import { routes } from './app.routes';
 import { workImageLoader } from './content/image-loader';
+import { smoother } from './motion/smoother';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,11 +27,23 @@ export const appConfig: ApplicationConfig = {
     // scrollIntoView honours scroll-padding and scroll-margin, and glides unless the visitor asked for reduced motion.
     provideEnvironmentInitializer(() => {
       if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
-      inject(ViewportScroller).scrollToAnchor = (anchor) => {
+      const scroller = inject(ViewportScroller);
+      // a new page starts at its top at once: with smooth scroll it would glide there from where the last page was
+      const toPosition = scroller.scrollToPosition.bind(scroller);
+      scroller.scrollToPosition = (position, options) => {
+        const smooth = smoother();
+        if (smooth) smooth.scrollTop(position[1]);
+        else toPosition(position, options);
+      };
+      scroller.scrollToAnchor = (anchor) => {
         const target = document.getElementById(anchor);
         if (!target) return;
         const go = (): void => {
-          target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+          // smooth scroll (issue #159): the page jumps there and the content glides after it by itself; a tweened
+          // scrollTo was killed by a ScrollTrigger refresh (images loading) and left the page where it was
+          const smooth = smoother();
+          if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).scrollPaddingTop}`);
+          else target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
           target.focus({ preventScroll: true });
         };
         // Coming from another page, the anchor's motion effects are still starting: their first measure (ScrollTrigger

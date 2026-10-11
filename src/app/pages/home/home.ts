@@ -15,6 +15,7 @@ import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
+import { stickyEffect } from '../../motion/effects/sticky';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
@@ -66,7 +67,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         </div>
         <app-at-a-glance [items]="content.glance" />
       </div>
-      <app-moai-figure class="about-moai" />
+      <app-moai-figure class="about-moai" data-sticky />
     </section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title">
@@ -329,7 +330,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

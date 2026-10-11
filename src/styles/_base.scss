@@ -101,6 +101,12 @@ canvas {
   border: 0;
 }
 
+/* the skip link and every page change put the focus on <main> (issue #181): a starting point for the next Tab and for a
+   screen reader, not a control, so no ring around the whole page */
+#main:focus {
+  outline: none;
+}
+
 .skip-link {
   position: absolute;
   left: var(--space-2);

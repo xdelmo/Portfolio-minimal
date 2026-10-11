@@ -19,3 +19,9 @@ export function currentUrl(): Signal<string> {
 export function inPageHref(url: string, fragment: string): string {
   return `${url.split('#')[0].slice(1)}#${fragment}`;
 }
+
+/** Whether a navigation from `from` to `to` opens another page, not just another spot (fragment) of the same one. */
+export function isNewPage(from: string, to: string): boolean {
+  const path = (url: string) => url.split(/[?#]/)[0];
+  return path(from) !== path(to);
+}

@@ -28,7 +28,10 @@ test.describe('smooth scroll on desktop', () => {
 
   test('a link to a section lands it right under the header', async ({ page }) => {
     await page.goto('/en/');
-    await page.locator('.hero a[href$="#work"]').click();
+    // the header's link: fixed, so Playwright never scrolls to reach it. The hero's button sits across the fold of a
+    // 1280 × 720 window: Playwright scrolled to it, the content was still gliding there, and on a busy machine the click
+    // landed where the button had been (pre-push run, 448 px instead of under the header)
+    await page.locator('.site-header > nav a[href$="#work"]').click();
     const header = await page.locator('app-site-header').evaluate((h) => h.getBoundingClientRect().height);
     await expect.poll(() => page.locator('#work').evaluate((s) => Math.round(s.getBoundingClientRect().top)), { timeout: REST_MS }).toBeLessThanOrEqual(Math.ceil(header) + 2);
     await expect.poll(() => page.locator('#work').evaluate((s) => Math.round(s.getBoundingClientRect().top))).toBeGreaterThanOrEqual(Math.floor(header) - 2);

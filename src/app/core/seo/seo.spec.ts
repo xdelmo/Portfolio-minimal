@@ -102,7 +102,7 @@ describe('caseStudyJsonLd', () => {
 describe('blog JSON-LD', () => {
   const article = {
     slug: 'signals', title: 'Signals', description: 'About signals', date: '2026-10-11', dateLabel: '11 October 2026',
-    minutes: 4, html: '', markdown: '',
+    minutes: 4, parts: [], markdown: '',
   };
 
   it('lists the posts of the index with their localized URLs', () => {

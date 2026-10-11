@@ -57,6 +57,31 @@ test('the 3D avatar takes the still image’s place in the hero', async ({ page 
   expect(errors).toEqual([]);
 });
 
+// issue #184: at every animation frame it kept the main thread busy where WebGL has no GPU (a Tab took 400 ms)
+test('it draws like a sprite, at most 12 frames a second, yet keeps moving', async ({ page }) => {
+  await page.addInitScript(() => {
+    const proto = WebGL2RenderingContext.prototype;
+    const w = window as unknown as { avatarDraws: number };
+    w.avatarDraws = 0;
+    const original = Object.getOwnPropertyDescriptor(proto, 'clear')?.value as (this: WebGL2RenderingContext, mask: number) => void;
+    proto.clear = function (this: WebGL2RenderingContext, mask: number) {
+      if (this.canvas instanceof HTMLCanvasElement && this.canvas.closest('app-avatar-scene')) w.avatarDraws++;
+      original.call(this, mask);
+    };
+  });
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await wake(page);
+  const draws = await page.evaluate(async () => {
+    const w = window as unknown as { avatarDraws: number };
+    const from = w.avatarDraws;
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    return w.avatarDraws - from;
+  });
+  expect(draws).toBeLessThanOrEqual(26);
+  expect(draws).toBeGreaterThan(4);
+});
+
 test('scrolling, it shrinks onto the thread and walks down it with the lit line, then stands looking at the section', async ({ page, isMobile }) => {
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');

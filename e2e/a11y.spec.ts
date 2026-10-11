@@ -26,6 +26,9 @@ for (const path of ['/en/', '/it/work/apexflow', '/en/privacy', '/en/404']) {
 // WCAG 2.4.7 and 2.4.11: every stop has a visible ring and is scrolled into view
 test('keyboard focus is always visible and on screen', async ({ page, isMobile }) => {
   test.skip(isMobile, 'no Tab key on touch screens');
+  // sixty Tabs in a row while the 3D avatar draws: where WebGL has no GPU (CI, headless) and other workers share the CPU,
+  // each frame of it makes a key press wait up to 0.5 s even at 12 frames a second (issue #184); a real GPU does not
+  test.slow();
   await page.goto('/en/');
   // start once the motion chunk is in: its experience pin lengthens the page and would move the footer away from a
   // focus WebKit has just scrolled to

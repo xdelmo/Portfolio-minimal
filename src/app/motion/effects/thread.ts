@@ -22,7 +22,10 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
   // `pin` is set at runtime on pinning triggers but missing from GSAP's types
   type Pin = Trigger & { pin?: Element };
   const pinsIn = (): Pin[] => (ScrollTrigger.getAll() as Pin[]).filter((t) => t.pin && trail.contains(t.pin));
-  const used = (pin: Pin): number => Math.min(Math.max(scrollY - pin.start, 0), pin.end - pin.start);
+  // measured from the scroll ScrollTrigger is at in this tick, not scrollY nor the pin's progress: under smooth scroll
+  // the content trails the native scroll, and the thread updates before the pin, so the pin's progress is a frame old
+  // (hundreds of pixels in the first frames of a glide: the node ran away from its title, issue #172)
+  const used = (pin: Pin): number => Math.min(Math.max(pin.scroll() - pin.start, 0), pin.end - pin.start);
 
   let tops: number[] = [];
   let pinOf: (Pin | undefined)[] = [];

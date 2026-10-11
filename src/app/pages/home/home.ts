@@ -22,9 +22,6 @@ import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { stackLevelsEffect } from '../../motion/effects/stack-levels';
 import { threadEffect } from '../../motion/effects/thread';
-import { walkerEffect } from '../../motion/effects/walker';
-import { AvatarLayer } from '../../avatar/avatar-layer';
-import { AvatarStill } from '../../avatar/avatar-still';
 import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
@@ -37,11 +34,10 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, AvatarStill, AvatarLayer, GithubMark, LinkedinMark, PixelArrow, Depixelate],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
-      <app-avatar-still class="avatar-slot" />
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
       <p class="availability">{{ content.person.availability }}</p>
@@ -113,17 +109,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       </div>
       <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
-    <app-avatar-layer />
     </div>
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
 
-    // the avatar layer is placed in the page's coordinates
-    :host {
-      position: relative;
-      display: block;
-    }
     .motion {
       display: contents;
     }
@@ -288,7 +278,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       }
       // not the seam: an absolute child placed in a column takes that column's area as its box, and its full-bleed
       // inset (50% - 50vw) then starts 16px in from the left edge (issue #85)
-      .hero > :not(.field, .seam, .avatar-slot) {
+      .hero > :not(.field, .seam) {
         grid-column: 1;
       }
       // desktop: faint under the text column so the words keep their contrast, alive towards the right
@@ -341,7 +331,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, walkerEffect, aboutWordsEffect, stickyEffect, parallaxEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

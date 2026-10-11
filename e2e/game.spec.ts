@@ -81,7 +81,8 @@ test('reading every case study unlocks Explorer, with a notice on the last one',
   const pressStart = page.locator('app-site-footer').getByRole('button', { name: 'Press start' });
   await page.goto('/en/');
   await pressStart.click();
-  await expect(pause).toContainText(`0 of ${String(SLUGS.length)} case studies read`);
+  // the name and the count apart, like the other achievements (issue #192)
+  await expect(pause).toContainText(`Explorer 0 of ${String(SLUGS.length)} case studies read`);
   for (const slug of SLUGS.slice(0, -1)) {
     await page.goto(`/en/work/${slug}/`);
     await expect(page.getByRole('status').filter({ hasText: 'Explorer' })).toHaveCount(0);
@@ -90,7 +91,7 @@ test('reading every case study unlocks Explorer, with a notice on the last one',
   await expect(page.getByRole('status')).toHaveText('Achievement unlocked: Explorer');
   await expect(page.getByRole('status')).toBeEmpty({ timeout: 8000 });
   await pressStart.click();
-  await expect(pause).toContainText('Read every case study');
+  await expect(pause).toContainText('Explorer Read every case study');
 });
 
 test('a wrong sequence opens nothing', async ({ page }) => {

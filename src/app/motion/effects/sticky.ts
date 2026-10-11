@@ -30,9 +30,13 @@ export const stickyEffect: Effect = (root, { ScrollTrigger, desktop }) => {
     // only where the layout makes it sticky (each element has its own breakpoint)
     if (!parent || getComputedStyle(el).position !== 'sticky') continue;
     const top = parseFloat(getComputedStyle(el).top) || 0;
+    // static and without its sticky top: the pin moves it, and a top left in force added 160 px to the moai, which then
+    // ran past the end of the About section by as much (issue #169)
     el.style.position = 'static';
+    el.style.top = 'auto';
     restore.push(() => {
       el.style.position = '';
+      el.style.top = '';
     });
     sizes.observe(el);
     sizes.observe(parent);

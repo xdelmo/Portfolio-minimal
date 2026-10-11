@@ -10,14 +10,25 @@ const wake = async (page: Page) => {
 };
 const still = (page: Page) => page.locator('.avatar-slot img').filter({ visible: true });
 const snapshot = (page: Page) => page.locator('app-avatar-scene canvas').evaluate((c) => (c as HTMLCanvasElement).toDataURL());
-/** Scrolls, then reads the layer two frames later: the walk only lasts while the scroll moves. */
-const scrollAndRead = (page: Page, to: string, offset = 0) =>
+/**
+ * Scrolls and returns every state the layer went through on the way, recorded as it changes: reading it a frame or two
+ * later misses the walk on WebKit in CI, where two frames outlast the 200 ms the walk lingers after the last scroll.
+ */
+const scrollAndRecord = (page: Page, to: string, offset = 0) =>
   page.evaluate(
     async ([selector, by]) => {
+      const layer = document.querySelector<HTMLElement>('.avatar');
+      const seen: Record<string, string>[] = [];
+      const record = (): void => {
+        seen.push(Object.fromEntries(Object.entries(layer?.dataset ?? {})));
+      };
+      const watcher = new MutationObserver(record);
+      if (layer) watcher.observe(layer, { attributes: true, attributeFilter: ['data-gait', 'data-facing', 'data-place'] });
       const target = document.querySelector(selector);
       if (target) window.scrollTo(0, target.getBoundingClientRect().top + scrollY + by);
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      return Object.fromEntries(Object.entries(document.querySelector<HTMLElement>('.avatar')?.dataset ?? {}));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      watcher.disconnect();
+      return seen;
     },
     [to, offset] as const,
   );
@@ -51,8 +62,8 @@ test('scrolling, it shrinks onto the thread and walks down it with the lit line,
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await wake(page);
 
-  const walking = await scrollAndRead(page, '#about', -200);
-  expect(walking).toMatchObject({ place: 'thread', gait: 'walk', facing: 'down' });
+  const going = await scrollAndRecord(page, '#about', -200);
+  expect(going).toContainEqual(expect.objectContaining({ place: 'thread', gait: 'walk', facing: 'down' }));
   await expect(layer(page)).toHaveAttribute('data-gait', 'idle');
   await expect(layer(page)).toHaveAttribute('data-facing', 'right');
 
@@ -67,8 +78,8 @@ test('scrolling, it shrinks onto the thread and walks down it with the lit line,
   expect(Math.abs(feet.y - tip.y)).toBeLessThan(4);
   expect(Math.abs(feet.x - tip.x)).toBeLessThan(isMobile ? 12 : 2);
 
-  const back = await scrollAndRead(page, '#about', -600);
-  expect(back).toMatchObject({ gait: 'walk', facing: 'up' });
+  const back = await scrollAndRecord(page, '#about', -600);
+  expect(back).toContainEqual(expect.objectContaining({ gait: 'walk', facing: 'up' }));
 });
 
 test('it walks into the contact band at the end of the page', async ({ page }) => {

@@ -102,12 +102,13 @@ test.describe('the phone menu', () => {
     expect(await closingTime(page)).toBeLessThan(60);
   });
 
-  // issue #193: on phones the bar keeps the signature and the menu button; the controls are in the panel
-  test('on phones the bar shows only the name and the menu; the panel holds the languages, pause and theme', async ({ page, isMobile }) => {
+  // issue #193: on phones the bar keeps the mark and the menu button; the controls are in the panel
+  test('on phones the bar shows only the mark and the menu; the panel holds the languages, pause and theme', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
-    await expect(header.locator('.logo .name')).toBeVisible();
+    await expect(header.locator('.logo .mark')).toBeVisible();
+    await expect(header.locator('.logo .name')).toBeHidden();
     await expect(header.locator('.controls').getByRole('button', { name: 'Pause animations' })).toHaveCount(0);
     await header.locator('.site-menu summary').click();
     const settings = header.locator('.site-menu .settings');

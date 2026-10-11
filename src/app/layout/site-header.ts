@@ -66,8 +66,9 @@ import { SiteMenu } from './site-menu';
       font-size: var(--step-1);
       font-weight: 700;
     }
+    // phones: the mark alone, as asked (issue #193); the full name signs the bar from 768px
     .name {
-      display: grid;
+      display: none;
       padding-left: var(--space-1);
       border-left: 1px solid var(--rule);
       font-size: 0.75rem;
@@ -117,6 +118,7 @@ import { SiteMenu } from './site-menu';
         gap: var(--space-3);
       }
       .name {
+        display: grid;
         padding-left: var(--space-2);
         letter-spacing: 0.12em;
       }

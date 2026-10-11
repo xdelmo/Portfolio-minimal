@@ -194,8 +194,8 @@ for (const width of [1280, 390]) {
   });
 }
 
-// the header signs the site: the edm. mark, a rule, then the full name on two lines
-for (const width of [1280, 390]) {
+// the header signs the site: the edm. mark, a rule, then the full name on two lines (phones: the mark alone)
+for (const width of [1280, 768]) {
   test(`the header shows the full name beside the mark, on two lines, at ${String(width)}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/en/');
@@ -211,13 +211,16 @@ for (const width of [1280, 390]) {
   });
 }
 
-test('on the narrowest phones the header keeps the whole signature, and still fits (issue #193)', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 640 });
-  await page.goto('/en/');
-  await expect(page.locator('app-site-header .logo .name')).toBeVisible();
-  const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
-  expect(right).toBeLessThanOrEqual(320);
-});
+for (const width of [390, 320]) {
+  test(`on phones the header keeps the mark alone, and still fits, at ${String(width)}px (issue #193)`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 640 });
+    await page.goto('/en/');
+    await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
+    await expect(page.locator('app-site-header .logo .name')).toBeHidden();
+    const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
+    expect(right).toBeLessThanOrEqual(width);
+  });
+}
 
 test('back to top sits in the middle of the footer, with an arrow pointing up', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });

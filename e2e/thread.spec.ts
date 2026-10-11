@@ -110,4 +110,28 @@ test.describe('with smooth scroll', () => {
     await page.waitForTimeout(1500);
     for (const into of [0.5, 0.95]) expect(await glide(pinTop - header + pinLength * into)).toBeLessThan(8);
   });
+
+  test('the lit thread stays on the 60% line all the way down (issue #189)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'smooth scroll is desktop only');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/');
+    await expect(page.locator('#experience ol.is-stacked')).toHaveCount(1);
+    for (const at of [0.2, 0.5, 0.8]) {
+      await page.evaluate((f) => {
+        const trail = document.querySelector<HTMLElement>('.trail');
+        if (trail) scrollTo(0, trail.getBoundingClientRect().top + scrollY - innerHeight * 0.6 + f * trail.offsetHeight);
+      }, at);
+      // how far the lit part ends from the line it is drawn to, once the glide has settled
+      await expect
+        .poll(
+          () =>
+            page.locator('app-thread .thread').evaluate((thread: HTMLElement) => {
+              const lit = parseFloat(thread.style.getPropertyValue('--thread'));
+              return Math.abs(Math.round(thread.getBoundingClientRect().top + lit * thread.offsetHeight - innerHeight * 0.6));
+            }),
+          { message: `at ${String(at)} of the trail` },
+        )
+        .toBeLessThanOrEqual(8);
+    }
+  });
 });

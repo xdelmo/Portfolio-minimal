@@ -27,11 +27,12 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { LinkedinMark } from '../../layout/linkedin-mark';
+import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -104,7 +105,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
         </ul>
       </div>
-      <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
+      <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
     </div>
   `,

@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../side-quests/quest-sprite';
+import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug) {
@@ -38,6 +39,7 @@ import { QuestSprite } from '../side-quests/quest-sprite';
           <div class="media">
             @if (project.image; as image) {
               <img
+                appDepixelate
                 class="shot"
                 [ngSrc]="image.src"
                 [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"

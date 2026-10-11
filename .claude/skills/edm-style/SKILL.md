@@ -60,6 +60,8 @@ Spend boldness here, keep everything else calm:
 7. **Press start** (`src/app/game/`): the Konami code, five taps on the logo or the small "Press start" key in the footer open a player card in the ink band's colours, with pixel achievements drawn like the side quest sprites (Explorer is earned by reading every case study: a stepped notice on the last one); a hidden reward, never in the way. the Konami code shows a combo row of 8px cells from its third key and its card levels up (level climbing to 99 in steps, the bar filling, a few pastel pixels jumping out).
 8. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble, pixel cursor and magnetic targets. Near a section `h2` the pixel cursor becomes a pixel arrow pointing at the title's words (`motion/arrow.ts`): drawn as lines on 8px cells, in eight directions only, because in between it smudges; never over the words themselves.
 
+Photos load depixelating (`src/app/depixelate/`, as on locomotive.ca): a canvas draws them in ever finer blocks as they scroll in, then the photo shows; put `appDepixelate` on any new photo.
+
 Projects without a screenshot show their pixel sprite in the same 3:2 frame as the screenshots (`Project.sprite`).
 
 A new section gets **one** idea in this family, not a new visual language.

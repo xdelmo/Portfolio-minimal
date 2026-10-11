@@ -8,6 +8,7 @@ import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
 import { recordVisit } from '../../game/explorer';
+import { Depixelate } from '../../depixelate/depixelate.directive';
 
 /**
  * Which section the index marks: the last one whose top has passed `line` (a third down the window), or the last of all
@@ -23,7 +24,7 @@ const UNLOCK_NOTICE_MS = 4000;
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate],
   template: `
     <article class="container case-study">
       @if (project(); as p) {
@@ -49,7 +50,7 @@ const UNLOCK_NOTICE_MS = 4000;
         </header>
 
         @if (p.image; as image) {
-          <img class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
+          <img appDepixelate class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
         } @else if (p.sprite; as sprite) {
           <!-- no screenshot: the project's pixel item, as in the work list -->
           <div class="item"><app-quest-sprite [name]="sprite" /></div>

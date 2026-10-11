@@ -59,6 +59,10 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
   thread.classList.add('is-on');
   const trigger = ScrollTrigger.create({
     trigger: trail,
+    // measured after the pins inside the trail: under smooth scroll ScrollTrigger sorts its triggers by start, the
+    // thread's came before the experience deck's, and its end missed the deck's pin spacer; the lit line then ran ahead
+    // of the scroll, 1,000 px below the 60% line by the end of the page (issue #189)
+    refreshPriority: -1,
     start: 'top 60%',
     // drawn to the end once the last stop reaches the same line, just as the contact band arrives
     end: 'bottom 60%',

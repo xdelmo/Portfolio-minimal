@@ -19,6 +19,10 @@ export async function retryWebkitInternalError<T>(navigate: () => Promise<T>, on
  * Every test starts as a returning visitor, so the intro overlay (shown once per session) does not cover the page.
  * Tests about the intro opt back in with `test.use({ intro: true })`.
  *
+ * Smooth scroll (GSAP ScrollSmoother on desktop, issue #159) is off too: it moves the content after the scroll, and
+ * tests that scroll and measure at once would read where it was gliding from. Tests about it opt in with
+ * `test.use({ smoothScroll: true })`.
+ *
  * Every `page.goto` also waits until the motion effects have started (no `[data-motion="pending"]` left): they start
  * one task at a time after the first paint, and the pins they create make the page taller, so a test that scrolled
  * before them found its target pushed out of view (issue #86). Without JavaScript the hosts stay pending and nothing is
@@ -28,10 +32,16 @@ export async function retryWebkitInternalError<T>(navigate: () => Promise<T>, on
  * process died under the memory of the Mac's OrbStack VM, never in CI nor on the Linux PC, even with four workers. Any
  * other error fails as before, and every retry leaves a `webkit-internal-error` annotation in the report.
  */
-export const test = base.extend<{ intro: boolean; motionReady: boolean }>({
+export const test = base.extend<{ intro: boolean; motionReady: boolean; smoothScroll: boolean }>({
   intro: [false, { option: true }],
+  smoothScroll: [false, { option: true }],
   motionReady: [true, { option: true }],
-  page: async ({ page, intro, motionReady, javaScriptEnabled }, use, testInfo) => {
+  page: async ({ page, intro, motionReady, smoothScroll, javaScriptEnabled }, use, testInfo) => {
+    if (!smoothScroll) {
+      await page.addInitScript(() => {
+        sessionStorage.setItem('smooth-scroll', 'off');
+      });
+    }
     if (!intro) {
       await page.addInitScript(() => {
         sessionStorage.setItem('intro', '1');

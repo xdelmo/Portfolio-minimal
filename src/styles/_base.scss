@@ -336,3 +336,13 @@ html[data-lang-phase='in']::after {
   --faded: color-mix(in srgb, var(--fg) 55%, var(--band-bg, var(--bg)));
   color: color-mix(in srgb, var(--fg) calc(var(--lit, 1) * 100%), var(--faded));
 }
+
+/* Smooth scroll (GSAP ScrollSmoother, issue #159, desktop only): the content moves inside a fixed wrapper, so the header
+   leaves the flow and stays on top, and the content starts below it as it did. */
+html.smooth app-site-header {
+  position: fixed;
+  inset: 0 0 auto;
+}
+html.smooth #smooth-content {
+  padding-top: var(--header-h);
+}

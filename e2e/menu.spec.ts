@@ -8,7 +8,7 @@ test.describe('the phone menu', () => {
     const header = page.locator('app-site-header');
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
-    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Contact']);
+    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Contact', 'Blog']);
     await menu.getByRole('link', { name: 'Contact' }).click();
     await expect(page).toHaveURL(/#contact$/);
     await expect(menu).toBeHidden();

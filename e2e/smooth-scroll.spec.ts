@@ -8,6 +8,29 @@ const REST_MS = 15_000;
 const contentY = (page: Page) =>
   page.evaluate(() => new DOMMatrix(getComputedStyle(document.getElementById('smooth-content') ?? document.body).transform).m42);
 
+/**
+ * The top of `selector` once the page has settled: the content at rest and the element in the same place in two reads
+ * 300 ms apart. A ScrollTrigger refresh (the moai's canvas arriving) nudges the content again after it first comes to
+ * rest, and a position read in between was 110 px off in WebKit.
+ */
+async function settledTop(page: Page, selector: string): Promise<number> {
+  let last = Number.NaN;
+  let top = Number.NaN;
+  await expect
+    .poll(
+      async () => {
+        const [y, m] = await Promise.all([page.evaluate(() => window.scrollY), contentY(page)]);
+        top = await page.locator(selector).evaluate((el) => el.getBoundingClientRect().top);
+        const still = Math.abs(y + m) < 2 && Math.abs(top - last) < 1;
+        last = top;
+        return still;
+      },
+      { timeout: REST_MS, intervals: [300] },
+    )
+    .toBe(true);
+  return top;
+}
+
 test.describe('smooth scroll on desktop', () => {
   test.use({ smoothScroll: true });
   test.skip(({ isMobile }) => isMobile, 'touch keeps the native scroll');
@@ -39,14 +62,21 @@ test.describe('smooth scroll on desktop', () => {
 
   test('the moai stays in view while the About text scrolls, as sticky did', async ({ page }) => {
     await page.goto('/en/');
-    const moai = page.locator('.about-moai');
-    const atRest = async () => Math.abs((await contentY(page)) + (await page.evaluate(() => window.scrollY))) < 2;
     await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
-    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
-    const before = await moai.evaluate((m) => m.getBoundingClientRect().top);
+    const before = await settledTop(page, '.about-moai');
     await page.evaluate(() => { window.scrollBy(0, 200); });
-    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
-    await expect.poll(async () => Math.abs((await moai.evaluate((m) => m.getBoundingClientRect().top)) - before)).toBeLessThan(4);
+    expect(Math.abs((await settledTop(page, '.about-moai')) - before)).toBeLessThan(4);
+  });
+
+  test('the moai keeps sticking when the About section grows after the page has loaded', async ({ page }) => {
+    await page.goto('/en/');
+    // 300 px more text: the pin measured its end on the shorter section (the WebKit failure of a pre-push run)
+    await page.locator('#about .about-text').evaluate((t) => { t.insertAdjacentHTML('beforeend', '<div style="height: 300px"></div>'); });
+    await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
+    const before = await settledTop(page, '.about-moai');
+    // past where the shorter section ended its pin
+    await page.evaluate(() => { window.scrollBy(0, 450); });
+    expect(Math.abs((await settledTop(page, '.about-moai')) - before)).toBeLessThan(4);
   });
 });
 

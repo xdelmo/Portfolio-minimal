@@ -5,11 +5,11 @@
 
 export type VoxelColor = 'stone' | 'stoneDark' | 'stoneLight' | 'eye' | 'pukao' | 'moss';
 
-export interface Voxel {
+export interface Voxel<C extends string = VoxelColor> {
   x: number;
   y: number;
   z: number;
-  color: VoxelColor;
+  color: C;
 }
 
 /** Room around the moai, as a multiple of its size, so it stays in frame at any angle. */

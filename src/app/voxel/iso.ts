@@ -2,9 +2,9 @@ import type { Voxel, VoxelColor } from './moai.model';
 
 export const COS30 = Math.cos(Math.PI / 6);
 
-export interface IsoFace {
+export interface IsoFace<C extends string = VoxelColor> {
   points: readonly (readonly [number, number])[];
-  color: VoxelColor;
+  color: C;
   shade: number;
 }
 
@@ -21,10 +21,10 @@ export function project(x: number, y: number, z: number): [number, number] {
 }
 
 /** Exposed front (+z), right (+x) and top (+y) faces, ordered from the farthest cube to the nearest. */
-export function isoFaces(voxels: readonly Voxel[]): IsoFace[] {
+export function isoFaces<C extends string>(voxels: readonly Voxel<C>[]): IsoFace<C>[] {
   const key = (x: number, y: number, z: number): string => `${String(x)},${String(y)},${String(z)}`;
   const filled = new Set(voxels.map((v) => key(v.x, v.y, v.z)));
-  const faces: IsoFace[] = [];
+  const faces: IsoFace<C>[] = [];
   const farFirst = [...voxels].sort((a, b) => a.x + a.y + a.z - (b.x + b.y + b.z));
   for (const { x, y, z, color } of farFirst) {
     if (!filled.has(key(x, y, z + 1))) {
@@ -40,7 +40,7 @@ export function isoFaces(voxels: readonly Voxel[]): IsoFace[] {
   return faces;
 }
 
-export function isoBounds(faces: readonly IsoFace[]): IsoBounds {
+export function isoBounds(faces: readonly IsoFace<string>[]): IsoBounds {
   const xs = faces.flatMap((f) => f.points.map((p) => p[0]));
   const ys = faces.flatMap((f) => f.points.map((p) => p[1]));
   const minX = Math.min(...xs);
@@ -54,7 +54,7 @@ export function shadeHex(hex: string, k: number): string {
 }
 
 /** `frame` > 1 adds transparent room around the drawing, keeping it centred. */
-export function isoSvg(voxels: readonly Voxel[], palette: Readonly<Record<VoxelColor, string>>, unit: number, frame = 1): string {
+export function isoSvg<C extends string>(voxels: readonly Voxel<C>[], palette: Readonly<Record<C, string>>, unit: number, frame = 1): string {
   const faces = isoFaces(voxels);
   const b = isoBounds(faces);
   const num = (n: number): string => String(Math.round(n * 10) / 10);

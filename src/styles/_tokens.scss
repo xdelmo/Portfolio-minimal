@@ -23,6 +23,19 @@
   --stone-dark: #85857f;
   --stone-light: #bdbdb6;
   --moai-eye-white: #f2f2f2;
+  /* my voxel portrait (avatar/), decoration only: skin and lips on the peach family, jeans on the blue one */
+  --avatar-skin: #e0a987;
+  --avatar-lips: #c47a68;
+  --avatar-beard: #3b2f2a;
+  --avatar-frames: #2b211c;
+  --avatar-lens: #f2f2f2;
+  --avatar-eye: #1d1d1c;
+  --avatar-metal: #c9c9c9;
+  --avatar-top: #2e2e2e;
+  /* a shade off the body, so the arms read apart from it */
+  --avatar-sleeve: #3b3b3b;
+  --avatar-pants: #34507a;
+  --avatar-shoes: #f2f2f2;
   /* intro panel: opaque, so nothing of the page shows through */
   --intro-bg: #1d1d1c;
   --intro-fg: #e5e5e5;
@@ -67,6 +80,18 @@
   --stone-dark: #62625e;
   --stone-light: #9a9a94;
   --moai-eye-white: #d9d9d4;
+  --avatar-skin: #c79274;
+  --avatar-lips: #a8685a;
+  --avatar-beard: #4a3c35;
+  --avatar-frames: #3a2e28;
+  --avatar-lens: #d9d9d4;
+  --avatar-eye: #121212;
+  --avatar-metal: #a8a8a8;
+  /* lighter than the light theme's, or the sweater would sink into the night page */
+  --avatar-top: #4a4a4a;
+  --avatar-sleeve: #575757;
+  --avatar-pants: #3f5f8f;
+  --avatar-shoes: #cfcfcf;
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
   --ambient-alpha: 0.18;

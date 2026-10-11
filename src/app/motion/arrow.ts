@@ -31,6 +31,14 @@ export function arrowCells(angle: number): [number, number][] {
   return [...lit.values()];
 }
 
+/** Rings of cells (Chebyshev, from the middle) the arrow spans: it grows out of the middle pixel, the cursor's square. */
+export const ARROW_RINGS = (ARROW_CELLS - 1) / 2;
+
+/** The arrow's cells out to `ring` cells from the middle: 0 is the lone middle pixel, ARROW_RINGS the whole arrow. */
+export function arrowGrowth(cells: readonly [number, number][], ring: number): [number, number][] {
+  return cells.filter(([c, r]) => Math.max(Math.abs(c - ARROW_RINGS), Math.abs(r - ARROW_RINGS)) <= ring);
+}
+
 interface Box {
   left: number;
   top: number;

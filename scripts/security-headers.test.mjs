@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
-import { contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
+import { HASHED_FILE, contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 
 const sha = (s) => `'sha256-${createHash('sha256').update(s).digest('base64')}'`;
 
@@ -25,4 +25,15 @@ test('the _headers file applies to every path', () => {
   assert.match(file, /^\/\*\n/);
   assert.match(file, /X-Content-Type-Options: nosniff/);
   assert.match(file, /^ {2}Content-Security-Policy: default-src x$/m);
+});
+
+test('hashed build files are cached for a year, and only they (issue #153)', () => {
+  const hashed = ['en/main-K4PR4QRI.js', 'en/chunk-g-uCFtW6.js', 'it/styles-D4LTOVL6.css', 'en/media/font-NDB4KJ7D.woff2'];
+  for (const path of hashed) assert.match(path, HASHED_FILE);
+  for (const path of ['en/index.html', 'en/favicon.svg', 'en/images/work/apexflow.jpg', 'en/og/en-home.png', 'en/main.js']) {
+    assert.doesNotMatch(path, HASHED_FILE);
+  }
+  const file = headersFile('default-src x', ['en/main-K4PR4QRI.js']);
+  assert.match(file, /^\/en\/main-K4PR4QRI\.js\n {2}Cache-Control: public, max-age=31536000, immutable$/m);
+  assert.doesNotMatch(headersFile('default-src x'), /immutable/);
 });

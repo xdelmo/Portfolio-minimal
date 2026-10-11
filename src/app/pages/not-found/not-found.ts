@@ -184,7 +184,8 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
     // two by two, as in the game: the moves on top, the bag and the way out below
     ul {
       display: grid;
-      grid-template-columns: repeat(2, max-content);
+      // columns that can shrink: with wider text spacing (WCAG 1.4.12) a word wraps instead of leaving the page (issue #155)
+      grid-template-columns: repeat(2, minmax(0, max-content));
       gap: var(--space-1) var(--space-4);
       margin: 0;
       padding: 0;

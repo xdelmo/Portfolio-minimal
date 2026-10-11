@@ -94,6 +94,37 @@ test('project title and case-study heading share a view-transition name', async 
   await expect(page.locator('h1')).toHaveCSS('view-transition-name', name);
 });
 
+test('a project screenshot grows into its case study in steps (issue #161)', async ({ page, browserName }) => {
+  await page.goto('/en/');
+  const shot = page.locator('#work .shot').first();
+  const name = await shot.evaluate((el) => getComputedStyle(el).viewTransitionName);
+  expect(name).toMatch(/^shot-/);
+  test.skip(browserName !== 'chromium', 'reads the transition through Chromium\'s view transition API');
+  // note the transition's groups once it is ready, whatever the speed of the test
+  await page.evaluate(() => {
+    const start = document.startViewTransition.bind(document);
+    const w = window as unknown as { groups: { name: string; easing: string }[] };
+    w.groups = [];
+    document.startViewTransition = (update) => {
+      const t = start(update);
+      void t.ready.then(() => {
+        for (const a of document.getAnimations()) {
+          const { pseudoElement } = (a.effect ?? {}) as KeyframeEffect;
+          if (pseudoElement?.startsWith('::view-transition-group(')) {
+            w.groups.push({ name: pseudoElement, easing: getComputedStyle(document.documentElement, pseudoElement).animationTimingFunction });
+          }
+        }
+      });
+      return t;
+    };
+  });
+  await page.locator('#work h3 a').first().click();
+  await expect(page.locator('.case-study .shot')).toHaveCSS('view-transition-name', name);
+  const groups = await page.evaluate(() => (window as unknown as { groups: { name: string; easing: string }[] }).groups);
+  const group = groups.find((g) => g.name === `::view-transition-group(${name})`);
+  expect(group?.easing).toMatch(/^steps\(6/);
+});
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
@@ -241,6 +272,8 @@ test.describe('bands and finale', () => {
     await ready(page);
     const inset = () => page.locator('#contact').evaluate((el) => getComputedStyle(el).getPropertyValue('--band-inset').trim());
     expect(await inset()).not.toMatch(/^0(%|px)?$/);
+    // hard edges while it widens, like every block of the design (issue #173)
+    expect(await page.locator('#contact').evaluate((el) => getComputedStyle(el, '::before').clipPath)).not.toContain('round');
     await expect
       .poll(async () => {
         await page.evaluate(() => {

@@ -1,4 +1,4 @@
-import { COMPOSE_MS, layout } from './field';
+import { COMPOSE_MS, DOT, hash, layout, twinkle, vignette } from './field';
 import { FrameState, Palette, drawFrame, readPalette } from './render';
 
 interface Rect { x: number; y: number; size: number; alpha: number; color: string }
@@ -37,6 +37,22 @@ describe('drawFrame', () => {
     drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, pointer });
     const near = rects.filter((r) => Math.hypot(r.x - pointer.x, r.y - pointer.y) < 24);
     expect(near.some((r) => palette.lit.includes(r.color))).toBe(true);
+  });
+
+  it('draws every cell as the formulas say, from the values it keeps per cell (issue #150)', () => {
+    const { ctx, rects } = fakeContext();
+    const t = COMPOSE_MS * 3;
+    drawFrame(ctx, grid, palette, { ...still, animate: true, t });
+    drawFrame(ctx, grid, palette, { ...still, animate: true, t: t + 16 }); // the second frame reads the cache
+    const second = rects.slice(grid.cols * grid.rows);
+    second.forEach((r, i) => {
+      const e = 0.6 * twinkle(i, t + 16) ** 10;
+      const col = i % grid.cols;
+      const row = Math.floor(i / grid.cols);
+      expect(r.size).toBeCloseTo(DOT * (0.25 + 0.75 * e), 9);
+      expect(r.alpha).toBeCloseTo((0.18 + 0.82 * e) * vignette(col, row, grid.cols, grid.rows), 9);
+      expect(r.color).toBe(e > 0.05 ? palette.lit[Math.floor(hash(i + 3) * palette.lit.length)] : palette.dot);
+    });
   });
 
   it('ignores the pointer when the field is still', () => {

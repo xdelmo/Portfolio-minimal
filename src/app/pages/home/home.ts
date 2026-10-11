@@ -15,6 +15,8 @@ import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
+import { stickyEffect } from '../../motion/effects/sticky';
+import { parallaxEffect } from '../../motion/effects/parallax';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
@@ -27,11 +29,12 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { LinkedinMark } from '../../layout/linkedin-mark';
+import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -65,7 +68,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
         </div>
         <app-at-a-glance [items]="content.glance" />
       </div>
-      <app-moai-figure class="about-moai" />
+      <app-moai-figure class="about-moai" data-sticky />
     </section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title">
@@ -104,7 +107,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
         </ul>
       </div>
-      <img class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
+      <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
     </div>
   `,
@@ -328,7 +331,7 @@ import { LinkedinMark } from '../../layout/linkedin-mark';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

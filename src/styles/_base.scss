@@ -195,6 +195,19 @@ canvas {
   }
 }
 
+/* A project's picture grows from the work list into its case study, and back, in steps like the site's other
+   transitions (issue #161): the two share the name `shot-<slug>` and the class `shot` (work-list.ts, case-study.ts). */
+::view-transition-group(.shot) {
+  animation-duration: 0.48s;
+  animation-timing-function: steps(6, end);
+}
+::view-transition-old(.shot),
+::view-transition-new(.shot) {
+  height: 100%;
+  object-fit: cover;
+  animation-timing-function: steps(6, end);
+}
+
 /* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport (from light
    to dark the light one closes into it instead, below).
    Named elements (the card → case study transition) join the root snapshot so the circle covers them too. */
@@ -225,7 +238,8 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
 }
 
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
-   (text, links, focus ring, rules) follows. --band-inset/--band-round let GSAP grow the band from a card. */
+   (text, links, focus ring, rules) follows. --band-inset lets GSAP grow the band from an inset block, hard-edged
+   like everything else (rounded corners were off the design, issue #173). */
 .band {
   position: relative;
   isolation: isolate;
@@ -237,7 +251,7 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
   inset: 0 calc(50% - 50vw);
   z-index: -1;
   background: var(--band-bg);
-  clip-path: inset(0 var(--band-inset, 0%) round var(--band-round, 0px));
+  clip-path: inset(0 var(--band-inset, 0%));
 }
 .band--pastel {
   --band-bg: var(--band-pastel-bg);
@@ -335,4 +349,14 @@ html[data-lang-phase='in']::after {
 #about .statement .word {
   --faded: color-mix(in srgb, var(--fg) 55%, var(--band-bg, var(--bg)));
   color: color-mix(in srgb, var(--fg) calc(var(--lit, 1) * 100%), var(--faded));
+}
+
+/* Smooth scroll (GSAP ScrollSmoother, issue #159, desktop only): the content moves inside a fixed wrapper, so the header
+   leaves the flow and stays on top, and the content starts below it as it did. */
+html.smooth app-site-header {
+  position: fixed;
+  inset: 0 0 auto;
+}
+html.smooth #smooth-content {
+  padding-top: var(--header-h);
 }

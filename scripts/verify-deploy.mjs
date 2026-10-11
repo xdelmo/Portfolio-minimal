@@ -35,11 +35,27 @@ export const CHECKS = [
       'referrer-policy': 'strict-origin-when-cross-origin',
     },
   },
+  // issue #153: hashed build files are cached for a year; the name of main changes with every build, so read it from the page
+  {
+    name: 'a hashed script is cached for a year',
+    pathFrom: { page: '/en/', pattern: /"(main-[\w-]{8}\.js)"/ },
+    status: 200,
+    headerHas: { 'cache-control': 'immutable' },
+  },
 ];
+
+/** The path a check asks for: its own, or one read from a page (`pathFrom`), resolved against that page. */
+async function pathOf(base, fetchImpl, c) {
+  if (!c.pathFrom) return new URL(c.path, base);
+  const page = new URL(c.pathFrom.page, base);
+  const found = (await (await fetchImpl(page)).text()).match(c.pathFrom.pattern);
+  if (!found) throw new Error(`${c.pathFrom.page} has no ${String(c.pathFrom.pattern)}`);
+  return new URL(found[1], page);
+}
 
 async function check(base, fetchImpl, c) {
   try {
-    const res = await fetchImpl(new URL(c.path, base), { redirect: 'manual', headers: c.headers ?? {} });
+    const res = await fetchImpl(await pathOf(base, fetchImpl, c), { redirect: 'manual', headers: c.headers ?? {} });
     const problems = [];
     if (res.status !== c.status) problems.push(`status ${String(res.status)}, expected ${String(c.status)}`);
     if (c.location) {

@@ -72,3 +72,42 @@ test('while the experience deck is pinned the thread stands still with it, and i
   await page.evaluate((y) => { scrollTo(0, y); }, pinTop + pinLength - header + 200);
   await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
 });
+
+test.describe('with smooth scroll', () => {
+  test.use({ smoothScroll: true });
+
+  test('the experience node stays on its title while the content glides through the pinned deck (issue #172)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'smooth scroll and the pinned deck are desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/en/');
+    await expect(page.locator('#experience ol.is-stacked')).toHaveCount(1);
+    const pinTop = await page.locator('#experience .deck').evaluate((el) => (el.parentElement?.getBoundingClientRect().top ?? 0) + scrollY);
+    const pinLength = await page.locator('#experience .deck').evaluate((el) => (el.parentElement?.offsetHeight ?? 0) - el.offsetHeight);
+    // the largest gap between the node and its title over every frame of a glide
+    const glide = (y: number) =>
+      page.evaluate(
+        (to) =>
+          new Promise<number>((resolve) => {
+            const nodes = [...document.querySelectorAll<HTMLElement>('app-thread .node')];
+            const titles = [...document.querySelectorAll<HTMLElement>('.trail section[id] h2')];
+            const i = titles.findIndex((t) => t.closest('#experience'));
+            let worst = 0;
+            const end = performance.now() + 1500;
+            const frame = () => {
+              const node = nodes[i].getBoundingClientRect();
+              const title = titles[i].getBoundingClientRect();
+              worst = Math.max(worst, Math.abs(node.top + node.height / 2 - (title.top + title.height / 2)));
+              if (performance.now() < end) requestAnimationFrame(frame);
+              else resolve(worst);
+            };
+            scrollTo(0, to);
+            requestAnimationFrame(frame);
+          }),
+        y,
+      );
+    const header = 96;
+    await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header);
+    await page.waitForTimeout(1500);
+    for (const into of [0.5, 0.95]) expect(await glide(pinTop - header + pinLength * into)).toBeLessThan(8);
+  });
+});

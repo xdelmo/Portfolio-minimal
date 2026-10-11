@@ -1,4 +1,4 @@
-import { ARROW_CELLS, arrowCells, pointing } from './arrow';
+import { ARROW_CELLS, ARROW_RINGS, arrowCells, arrowGrowth, pointing } from './arrow';
 
 const has = (cells: readonly (readonly [number, number])[], c: number, r: number) => cells.some(([x, y]) => x === c && y === r);
 
@@ -19,6 +19,15 @@ describe('pixel arrow', () => {
     // diagonally the tip is one cell in from the corner, the shaft ending one cell in from the opposite one
     const upLeft = arrowCells((-3 * Math.PI) / 4);
     expect(has(upLeft, 1, 1) && has(upLeft, ARROW_CELLS - 2, ARROW_CELLS - 2)).toBe(true);
+  });
+
+  it('grows out of the middle pixel, the square the cursor was, in every direction it can point', () => {
+    for (let step = 0; step < 8; step++) {
+      const cells = arrowCells((step / 8) * Math.PI * 2);
+      expect(arrowGrowth(cells, 0)).toEqual([[mid, mid]]);
+      expect(arrowGrowth(cells, 1).length).toBeGreaterThan(1);
+      expect(arrowGrowth(cells, ARROW_RINGS)).toEqual(cells);
+    }
   });
 
   it('is mirror-symmetric about its axis and stays inside the grid', () => {

@@ -149,3 +149,22 @@ export interface PrivacyContent {
   intro: string;
   sections: readonly { heading: string; paragraphs: readonly string[] }[];
 }
+
+/** A blog post (issue #1), built from src/app/content/blog/<slug>/<locale>.md by scripts/blog.mjs. */
+export interface Article {
+  slug: string;
+  title: string;
+  description: string;
+  /** YYYY-MM-DD, first published on this site */
+  date: string;
+  /** the date in words, in the article's language */
+  dateLabel: string;
+  updated?: string;
+  /** the slug of the case study it is about */
+  project?: string;
+  /** the LinkedIn post it grew from */
+  linkedin?: string;
+  minutes: number;
+  html: string;
+  markdown: string;
+}

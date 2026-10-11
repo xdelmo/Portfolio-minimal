@@ -1,4 +1,4 @@
-import { Person, Project } from '../../content/content.model';
+import { Article, Person, Project } from '../../content/content.model';
 import { Locale } from '../i18n/locale';
 
 export const SITE_URL = 'https://www.emanueledelmonte.it';
@@ -99,6 +99,52 @@ export function caseStudyJsonLd(project: Project, person: Person, locale: Locale
         programmingLanguage: project.stack,
         inLanguage: locale,
         author: { '@id': PERSON_ID },
+      },
+      personNode(person, locale),
+    ],
+  };
+}
+
+/** The blog index (issue #1): the list of posts, by the person. */
+export function blogJsonLd(articles: readonly Article[], person: Person, locale: Locale): Record<string, unknown> {
+  const url = pageUrl('/blog', locale);
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': `${url}#blog`,
+    url,
+    name: `Blog — ${person.name}`,
+    inLanguage: locale,
+    author: { '@id': PERSON_ID },
+    blogPost: articles.map((a) => ({ '@type': 'BlogPosting', headline: a.title, url: pageUrl(`/blog/${a.slug}`, locale), datePublished: a.date })),
+  };
+}
+
+export function articleJsonLd(article: Article, person: Person, locale: Locale): Record<string, unknown> {
+  const url = pageUrl(`/blog/${article.slug}`, locale);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: person.name, item: pageUrl('/', locale) },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: pageUrl('/blog', locale) },
+          { '@type': 'ListItem', position: 3, name: article.title, item: url },
+        ],
+      },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${url}#post`,
+        url,
+        mainEntityOfPage: url,
+        headline: article.title,
+        description: article.description,
+        datePublished: article.date,
+        dateModified: article.updated ?? article.date,
+        inLanguage: locale,
+        author: { '@id': PERSON_ID },
+        image: ogImageUrl(`blog-${article.slug}`, locale),
       },
       personNode(person, locale),
     ],

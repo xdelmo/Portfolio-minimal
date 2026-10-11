@@ -4,7 +4,7 @@ import { CASE_STUDIES, PROJECTS } from './site';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
-const PAGES = ['/en/', '/it/', ...CASE_STUDIES, '/en/404', '/it/404', '/en/privacy/', '/it/privacy/'];
+const PAGES = ['/en/', '/it/', ...CASE_STUDIES, '/en/404', '/it/404', '/en/privacy/', '/it/privacy/', '/en/blog', '/it/blog/signals-in-production'];
 
 for (const path of PAGES) {
   test.describe(path, () => {

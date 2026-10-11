@@ -21,6 +21,7 @@ import { SiteMenu } from './site-menu';
         <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
         <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
+        <a data-magnetic routerLink="/blog" i18n="@@nav.blog">Blog</a>
       </nav>
       <div class="controls">
         <app-language-switch />

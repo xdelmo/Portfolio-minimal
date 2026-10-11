@@ -32,6 +32,7 @@ import { RouterLink } from '@angular/router';
         <a routerLink="/" fragment="about" (click)="close(false)" i18n="@@nav.about">About</a>
         <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
         <a routerLink="/" fragment="contact" (click)="close(false)" i18n="@@nav.contact">Contact</a>
+        <a routerLink="/blog" (click)="close(false)" i18n="@@nav.blog">Blog</a>
       </nav>
     </details>
   `,

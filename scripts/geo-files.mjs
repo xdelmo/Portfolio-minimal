@@ -53,7 +53,22 @@ export function projectMarkdown(p, c, locale) {
   ].join('\n\n')}\n`;
 }
 
-export function llmsTxt(contents) {
+/** A blog post (issue #1): its Markdown is the source the page was built from. */
+export function articleMarkdown(a, c, locale) {
+  const project = c.projects.find((p) => p.slug === a.project);
+  return `${[
+    `# ${a.title}`,
+    `${a.date} — ${c.person.name}, ${c.person.role}`,
+    a.markdown,
+    ...(project ? [`[${project.title}](${url(locale, `work/${project.slug}`)})`] : []),
+  ].join('\n\n')}\n`;
+}
+
+export function blogMarkdown(articles, c, locale) {
+  return `${[`# Blog — ${c.person.name}`, list(articles, (a) => `- ${a.date} [${a.title}](${url(locale, `blog/${a.slug}`)}): ${a.description}`)].join('\n\n')}\n`;
+}
+
+export function llmsTxt(contents, blog = {}) {
   const { en } = contents;
   const sections = Object.entries(contents).map(([locale, c]) =>
     [
@@ -61,15 +76,19 @@ export function llmsTxt(contents) {
       '',
       `- [${c.person.name} — ${c.person.role}](${url(locale, 'index.md')}): ${c.hero.headline}`,
       ...c.projects.map((p) => `- [${p.title}](${url(locale, `work/${p.slug}.md`)}): ${p.summary}`),
+      ...(blog[locale] ?? []).map((a) => `- [${a.title}](${url(locale, `blog/${a.slug}.md`)}): ${a.description}`),
     ].join('\n'),
   );
   return `${[`# ${en.person.name}`, `> ${en.person.summary} ${en.person.availability}`, ...sections].join('\n\n')}\n`;
 }
 
-export function geoFiles(contents) {
+export function geoFiles(contents, blog = {}) {
   const pages = Object.entries(contents).flatMap(([locale, c]) => [
     { path: `${locale}/index.md`, body: homeMarkdown(c, locale) },
     ...c.projects.map((p) => ({ path: `${locale}/work/${p.slug}.md`, body: projectMarkdown(p, c, locale) })),
+    ...(blog[locale]?.length
+      ? [{ path: `${locale}/blog.md`, body: blogMarkdown(blog[locale], c, locale) }, ...blog[locale].map((a) => ({ path: `${locale}/blog/${a.slug}.md`, body: articleMarkdown(a, c, locale) }))]
+      : []),
   ]);
-  return [...pages, { path: 'llms.txt', body: llmsTxt(contents) }, { path: 'llms-full.txt', body: pages.map((p) => p.body).join('\n---\n\n') }];
+  return [...pages, { path: 'llms.txt', body: llmsTxt(contents, blog) }, { path: 'llms-full.txt', body: pages.map((p) => p.body).join('\n---\n\n') }];
 }

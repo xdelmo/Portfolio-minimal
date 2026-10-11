@@ -4,7 +4,7 @@ import { expect, test } from './fixtures';
 const TEXT_SPACING = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
 
 // at 320 px, the width WCAG 1.4.10 asks content to reflow to (the 404's menu left the page there, issue #155)
-for (const path of ['/en/', '/it/work/apexflow', '/en/privacy', '/en/404']) {
+for (const path of ['/en/', '/it/work/apexflow', '/en/privacy', '/en/404', '/en/blog/server-side-tables']) {
   test(`${path} survives WCAG text spacing without clipping`, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 800 });
     await page.goto(path);

@@ -8,7 +8,7 @@ test.describe('the phone menu', () => {
     const header = page.locator('app-site-header');
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
-    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Contact', 'Blog']);
+    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Blog', 'Contact']);
     await menu.getByRole('link', { name: 'Contact' }).click();
     await expect(page).toHaveURL(/#contact$/);
     await expect(menu).toBeHidden();
@@ -87,7 +87,7 @@ test.describe('the phone menu', () => {
       await new Promise((resolve) => setTimeout(resolve, 40));
       summary?.click();
       await new Promise((resolve) => setTimeout(resolve, 400));
-      const nav = details.querySelector('nav');
+      const nav = details.querySelector('.panel');
       return { open: details.open, clip: nav ? getComputedStyle(nav).clipPath : '' };
     });
     expect(open).toEqual({ open: true, clip: 'none' });
@@ -100,6 +100,26 @@ test.describe('the phone menu', () => {
     await page.locator('.site-menu summary').click();
     await page.waitForTimeout(500);
     expect(await closingTime(page)).toBeLessThan(60);
+  });
+
+  // issue #193: on phones the bar keeps the signature and the menu button; the controls are in the panel
+  test('on phones the bar shows only the name and the menu; the panel holds the languages, pause and theme', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.goto('/en/');
+    const header = page.locator('app-site-header');
+    await expect(header.locator('.logo .name')).toBeVisible();
+    await expect(header.locator('.controls').getByRole('button', { name: 'Pause animations' })).toHaveCount(0);
+    await header.locator('.site-menu summary').click();
+    const settings = header.locator('.site-menu .settings');
+    await expect(settings.locator('[aria-current="true"]')).toHaveText('English');
+    await expect(settings.getByRole('link', { name: 'Italiano' })).toHaveAttribute('href', '/it/');
+    const pause = settings.getByRole('button', { name: 'Pause animations' });
+    await pause.click();
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    await settings.getByRole('button', { name: 'Switch to dark theme' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    // the menu stays open for the next setting
+    await expect(settings).toBeVisible();
   });
 
   test('on desktop the links are in the header and there is no menu button', async ({ page, isMobile }) => {

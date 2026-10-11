@@ -20,8 +20,8 @@ import { SiteMenu } from './site-menu';
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
         <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
-        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
         <a data-magnetic routerLink="/blog" i18n="@@nav.blog">Blog</a>
+        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
       </nav>
       <div class="controls">
         <app-language-switch />
@@ -77,21 +77,6 @@ import { SiteMenu } from './site-menu';
       text-transform: uppercase;
       white-space: nowrap;
     }
-    // phones get a smaller name, the small ones keep the mark alone: the controls and the menu button need the room
-    @media (max-width: 429px) {
-      .site-header {
-        gap: var(--space-1);
-      }
-      .name {
-        font-size: 0.625rem;
-        letter-spacing: 0.02em;
-      }
-    }
-    @media (max-width: 389px) {
-      .name {
-        display: none;
-      }
-    }
     nav {
       display: none;
       gap: var(--space-3);
@@ -109,13 +94,20 @@ import { SiteMenu } from './site-menu';
       display: flex;
       align-items: center;
     }
+    // phones: the bar keeps the signature and the menu button; language, pause and theme are in the menu (issue #193)
+    .controls > :not(.menu) {
+      display: none;
+    }
     @include bp.up(md) {
       nav {
         display: flex;
       }
-      // the links are in the header itself from here
+      // the links and the controls are in the header itself from here
       .menu {
         display: none;
+      }
+      .controls > :not(.menu) {
+        display: block;
       }
       // room to breathe once the header is wide
       .logo {

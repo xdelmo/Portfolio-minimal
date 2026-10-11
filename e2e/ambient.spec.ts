@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 
 const orbs = (page: Page) => page.locator('app-ambient .orb');
 const visibleOrbs = (page: Page) => orbs(page).evaluateAll((els) => els.filter((el) => getComputedStyle(el).display !== 'none').length);
@@ -17,7 +18,7 @@ test('pastel orbs drift behind the page by themselves', async ({ page, isMobile 
 test('the pause button stops the orbs', async ({ page }) => {
   await page.goto('/en/');
   await ready(page);
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await page.waitForTimeout(200);
   const still = await transforms(page);
   await page.waitForTimeout(800);

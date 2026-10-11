@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 
 const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
 const scene = (page: Page) => page.locator('app-moai-scene canvas');
@@ -37,10 +38,10 @@ test('repaints with the new colours when the theme changes', async ({ page }) =>
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await page.waitForTimeout(1200);
   const before = await snapshot(page);
-  await page.getByRole('button', { name: /Switch to (light|dark) theme/ }).click();
+  await press(page, /Switch to (light|dark) theme/);
   // the header button scrolls the page up; the scene only draws while it is in view
   await scene(page).scrollIntoViewIfNeeded();
   await expect.poll(() => snapshot(page)).not.toBe(before);
@@ -122,7 +123,7 @@ test('a sideways swipe turns the moai on a phone', async ({ page, isMobile }) =>
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   // stop the glances first, so only the finger moves it
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
   await page.waitForTimeout(600);
@@ -201,7 +202,7 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   await page.waitForTimeout(1200);
   const before = await snapshot(page);
   await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   // the head still follows the pointer that just clicked the button (a reply to the user): it settles, then stays
   // still. Polled rather than timed, because a slow machine draws few frames and the easing settles later

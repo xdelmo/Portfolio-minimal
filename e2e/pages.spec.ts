@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from './fixtures';
-import { CASE_STUDIES, PROJECTS } from './site';
+import { CASE_STUDIES, PROJECTS, press } from './site';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -99,7 +99,7 @@ const idle = (page: Page) =>
 test('the wild 404 bobs while it waits, and the pause button stops it', async ({ page }) => {
   await page.goto('/en/404');
   await expect.poll(() => idle(page)).toEqual(['idle:running']);
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await expect.poll(() => idle(page)).toEqual(['idle:paused']);
 });
 

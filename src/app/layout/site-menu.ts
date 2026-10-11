@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LanguageSwitch } from '../core/i18n/language-switch';
+import { ThemeToggle } from '../core/theme/theme-toggle';
 import { MOTION_LOADER, type MotionLib } from '../motion/motion-host';
+import { PauseToggle } from './pause-toggle';
 
 type Gsap = MotionLib['gsap'];
 /** Four pixel steps, like the language curtain; closing is a little quicker than opening. */
@@ -13,12 +16,13 @@ const SHOWN = 'inset(0 0 0% 0)';
  * The sections, behind a button, on phones (issue #128): below 768px the header has no room for its links, and the
  * home page is about 11,000px tall. A <details>, like the language menu: it opens before the app boots too. Escape,
  * a tap outside or a link close it. GSAP opens and closes it in pixel steps and turns the bars into the cross and back
- * (issue #183); before GSAP is in, or with reduced motion, it simply appears and disappears.
+ * (issue #183); before GSAP is in, or with reduced motion, it simply appears and disappears. On phones the header's
+ * controls live here too, below the links (issue #193): the bar keeps only the signature and this button.
  */
 @Component({
   selector: 'app-site-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, LanguageSwitch, PauseToggle, ThemeToggle],
   host: {
     '(document:click)': 'closeOutside($event)',
     '(keydown.escape)': 'close(true)',
@@ -36,13 +40,20 @@ const SHOWN = 'inset(0 0 0% 0)';
           <path fill="currentColor" d="M0 0h2v1H0zM6 0h2v1H6zM1 1h2v1H1zM5 1h2v1H5zM2 2h2v1H2zM4 2h2v1H4zM3 3h2v2H3zM2 5h2v1H2zM4 5h2v1H4zM1 6h2v1H1zM5 6h2v1H5zM0 7h2v1H0zM6 7h2v1H6z" />
         </svg>
       </summary>
-      <nav i18n-aria-label="@@nav.label" aria-label="Main">
-        <a routerLink="/" fragment="work" (click)="close(false)" i18n="@@nav.work">Work</a>
-        <a routerLink="/" fragment="about" (click)="close(false)" i18n="@@nav.about">About</a>
-        <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
-        <a routerLink="/" fragment="contact" (click)="close(false)" i18n="@@nav.contact">Contact</a>
-        <a routerLink="/blog" (click)="close(false)" i18n="@@nav.blog">Blog</a>
-      </nav>
+      <div class="panel">
+        <nav i18n-aria-label="@@nav.label" aria-label="Main">
+          <a routerLink="/" fragment="work" (click)="close(false)" i18n="@@nav.work">Work</a>
+          <a routerLink="/" fragment="about" (click)="close(false)" i18n="@@nav.about">About</a>
+          <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
+          <a routerLink="/blog" (click)="close(false)" i18n="@@nav.blog">Blog</a>
+          <a routerLink="/" fragment="contact" (click)="close(false)" i18n="@@nav.contact">Contact</a>
+        </nav>
+        <div class="settings">
+          <app-language-switch [inline]="true" />
+          <app-pause-toggle />
+          <app-theme-toggle />
+        </div>
+      </div>
     </details>
   `,
   styles: `
@@ -70,14 +81,27 @@ const SHOWN = 'inset(0 0 0% 0)';
       display: block;
     }
     // under the sticky header, across the screen; the links are big rows, easy to hit with a thumb
-    nav {
+    .panel {
       position: fixed;
       top: var(--header-h);
       inset-inline: 0;
-      display: grid;
       padding: var(--space-1) var(--gutter) var(--space-2);
       background: var(--bg);
       box-shadow: 0 1px 0 var(--rule);
+    }
+    nav {
+      display: grid;
+    }
+    // the header's controls, in a row under the links: the languages on the left, pause and theme on the right
+    .settings {
+      display: flex;
+      align-items: center;
+      margin-top: var(--space-1);
+      padding-top: var(--space-1);
+      border-top: 1px solid var(--rule);
+    }
+    .settings app-language-switch {
+      margin-right: auto;
     }
     nav a {
       display: flex;
@@ -117,7 +141,7 @@ export class SiteMenu {
   }
 
   private parts(menu: HTMLDetailsElement): { nav: HTMLElement | null; bars: SVGElement | null; cross: SVGElement | null } {
-    return { nav: menu.querySelector('nav'), bars: menu.querySelector('.bars'), cross: menu.querySelector('.cross') };
+    return { nav: menu.querySelector('.panel'), bars: menu.querySelector('.bars'), cross: menu.querySelector('.cross') };
   }
 
   /** Opened: the panel unrolls downwards and the cross turns in. */

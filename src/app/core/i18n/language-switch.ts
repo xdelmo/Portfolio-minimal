@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, DOCUMENT, ElementRef, LOCALE_ID, computed, inject } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DOCUMENT, ElementRef, LOCALE_ID, computed, inject, input } from '@angular/core';
 import { currentUrl } from '../current-url';
 import { Locale, localizedUrl, toLocale } from './locale';
 
@@ -8,25 +9,15 @@ const COVER_MS = 500;
 @Component({
   selector: 'app-language-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgTemplateOutlet],
   host: {
     '(document:click)': 'closeOutside($event)',
     '(keydown.escape)': 'close()',
     '(window:pageshow)': 'uncover($event)',
   },
   template: `
-    <details class="language-menu">
-      <summary>
-        <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-          <path fill="currentColor" d="M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2zM3 1h2v6H3zM1 3h6v2H1z" />
-        </svg>
-        <!-- phones show the code, to leave the header room for the name; the full name is still read out -->
-        <span class="lang-name"><span class="visually-hidden" i18n="@@lang.label">Language:</span> {{ names[current] }}</span>
-        <span class="lang-code" aria-hidden="true">{{ current.toUpperCase() }}</span>
-        <svg class="chevron" viewBox="0 0 8 8" width="12" height="12" shape-rendering="crispEdges" aria-hidden="true">
-          <path fill="currentColor" d="M1 2h2v1H1zM5 2h2v1H5zM2 3h2v1H2zM4 3h2v1H4zM3 4h2v1H3z" />
-        </svg>
-      </summary>
-      <ul>
+    <ng-template #list>
+      <ul [class.languages]="inline()">
         @for (locale of locales; track locale) {
           <li>
             @if (locale === current) {
@@ -37,7 +28,26 @@ const COVER_MS = 500;
           </li>
         }
       </ul>
-    </details>
+    </ng-template>
+    <!-- inline: both languages side by side, in the phone menu's panel (issue #193) -->
+    @if (inline()) {
+      <ng-container [ngTemplateOutlet]="list" />
+    } @else {
+      <details class="language-menu">
+        <summary>
+          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2zM3 1h2v6H3zM1 3h6v2H1z" />
+          </svg>
+          <!-- phones show the code, to leave the header room for the name; the full name is still read out -->
+          <span class="lang-name"><span class="visually-hidden" i18n="@@lang.label">Language:</span> {{ names[current] }}</span>
+          <span class="lang-code" aria-hidden="true">{{ current.toUpperCase() }}</span>
+          <svg class="chevron" viewBox="0 0 8 8" width="12" height="12" shape-rendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M1 2h2v1H1zM5 2h2v1H5zM2 3h2v1H2zM4 3h2v1H4zM3 4h2v1H3z" />
+          </svg>
+        </summary>
+        <ng-container [ngTemplateOutlet]="list" />
+      </details>
+    }
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
@@ -127,6 +137,17 @@ const COVER_MS = 500;
     [aria-current] {
       font-weight: 600;
     }
+    // in the phone menu: a row, no dropdown box
+    ul.languages {
+      position: static;
+      display: flex;
+      min-width: 0;
+      background: none;
+      box-shadow: none;
+    }
+    ul.languages li > * {
+      min-height: 48px;
+    }
     [aria-current]::before {
       content: '';
       position: absolute;
@@ -144,6 +165,8 @@ const COVER_MS = 500;
 })
 export class LanguageSwitch {
   private readonly doc = inject(DOCUMENT);
+  /** Both languages as a row instead of a dropdown (the phone menu's panel, issue #193). */
+  readonly inline = input(false);
 
   protected readonly locales: readonly Locale[] = ['en', 'it'];
   protected readonly names: Record<Locale, string> = { en: 'English', it: 'Italiano' };

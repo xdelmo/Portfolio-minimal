@@ -211,10 +211,10 @@ for (const width of [1280, 390]) {
   });
 }
 
-test('on the narrowest phones the header keeps the mark alone, and still fits', async ({ page }) => {
+test('on the narrowest phones the header keeps the whole signature, and still fits (issue #193)', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   await page.goto('/en/');
-  await expect(page.locator('app-site-header .logo .name')).toBeHidden();
+  await expect(page.locator('app-site-header .logo .name')).toBeVisible();
   const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
   expect(right).toBeLessThanOrEqual(320);
 });

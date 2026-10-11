@@ -418,6 +418,50 @@
         <source>Read the case study</source>
         <target>Leggi il case study</target>
       </trans-unit>
+      <trans-unit id="nav.blog" datatype="html">
+        <source>Blog</source>
+        <target>Blog</target>
+      </trans-unit>
+      <trans-unit id="blog.minutes" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ post.minutes }}"/> min read</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ post.minutes }}"/> min di lettura</target>
+      </trans-unit>
+      <trans-unit id="blog.more" datatype="html">
+        <source>More</source>
+        <target>Altro</target>
+      </trans-unit>
+      <trans-unit id="blog.project" datatype="html">
+        <source>The project behind it</source>
+        <target>Il progetto dietro</target>
+      </trans-unit>
+      <trans-unit id="blog.linkedin" datatype="html">
+        <source>First posted on LinkedIn</source>
+        <target>Pubblicato prima su LinkedIn</target>
+      </trans-unit>
+      <trans-unit id="blog.all" datatype="html">
+        <source>All posts</source>
+        <target>Tutti gli articoli</target>
+      </trans-unit>
+      <trans-unit id="blog.notFound" datatype="html">
+        <source>Post not found</source>
+        <target>Articolo non trovato</target>
+      </trans-unit>
+      <trans-unit id="blog.title" datatype="html">
+        <source>Blog</source>
+        <target>Blog</target>
+      </trans-unit>
+      <trans-unit id="blog.lede" datatype="html">
+        <source>Notes from building enterprise front ends: what I tried, what broke, what I would do again.</source>
+        <target>Appunti dal costruire front end enterprise: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
+      </trans-unit>
+      <trans-unit id="blog.description" datatype="html">
+        <source>Notes on Angular, Signals, RxJS and enterprise front ends by <x id="name" equiv-text="person.name"/>.</source>
+        <target>Appunti su Angular, Signals, RxJS e front end enterprise di <x id="name" equiv-text="person.name"/>.</target>
+      </trans-unit>
+      <trans-unit id="case.posts" datatype="html">
+        <source>I wrote about it</source>
+        <target>Ne ho scritto</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

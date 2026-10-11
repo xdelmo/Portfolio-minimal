@@ -2,9 +2,10 @@
 // Run after changing a title, a summary or the list of projects: npm run og:images
 import { readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
+import { BLOG } from '../src/app/content/blog.generated.ts';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';
-import { glyph, hash } from '../src/app/pixel-field/field.ts';
+import { hash } from '../src/app/pixel-field/field.ts';
 
 // light theme colours, from src/styles/_tokens.scss
 const BG = '#e5e5e5';
@@ -13,6 +14,26 @@ const MUTED = '#555555';
 const PIXELS = ['#0066d4', '#7fb2ec', '#b9d5f5', '#c9b8f5', '#dccff8', '#ffc9a8'];
 const FONT = readFileSync('node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2').toString('base64');
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+// 5×7 bitmap font for "edm." (the hero field drew it once; it lives here since the field went abstract)
+const LETTERS = new Map([
+  ['e', ['.....', '.....', '.###.', '#...#', '#####', '#....', '.####']],
+  ['d', ['....#', '....#', '.####', '#...#', '#...#', '#...#', '.####']],
+  ['m', ['.....', '.....', '####.', '#.#.#', '#.#.#', '#.#.#', '#.#.#']],
+  ['.', ['.', '.', '.', '.', '.', '.', '#']],
+]);
+function glyph(text) {
+  const cells = [];
+  let x = 0;
+  for (const char of text) {
+    const rows = LETTERS.get(char);
+    rows.forEach((row, y) => {
+      for (let dx = 0; dx < row.length; dx++) if (row.charAt(dx) === '#') cells.push([x + dx, y]);
+    });
+    x += Math.max(...rows.map((row) => row.length)) + 1;
+  }
+  return { width: x - 1, height: 7, cells };
+}
 
 // "edm." in pastel pixels, like the hero field, over a faint dot grid
 const COLS = 21, ROWS = 28, CELL = 22, DOT = 16;
@@ -33,7 +54,12 @@ const field = `<svg width="${String(COLS * CELL)}" height="${String(ROWS * CELL)
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 for (const [locale, c] of [['en', CONTENT_EN], ['it', CONTENT_IT]]) {
-  const cards = [['home', c.person.name, c.hero.headline], ...c.projects.map((p) => [p.slug, p.title, p.summary])];
+  const cards = [
+    ['home', c.person.name, c.hero.headline],
+    ...c.projects.map((p) => [p.slug, p.title, p.summary]),
+    ['blog', 'Blog', locale === 'it' ? 'Appunti su Angular, Signals, RxJS e front end enterprise.' : 'Notes on Angular, Signals, RxJS and enterprise front ends.'],
+    ...BLOG[locale].map((a) => [`blog-${a.slug}`, a.title, a.description]),
+  ];
   for (const [key, title, line] of cards) {
     await page.setContent(`<style>
       @font-face { font-family: 'Instrument Sans'; src: url(data:font/woff2;base64,${FONT}) format('woff2'); font-weight: 400 700; }

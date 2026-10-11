@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, LOCALE_ID, afterNextRender, afterRenderEffect, computed, effect, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { BLOG } from '../../content/blog';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
@@ -95,6 +96,18 @@ const UNLOCK_NOTICE_MS = 4000;
           <h2 id="outcome-title" i18n="@@case.outcome">Outcome</h2>
           <p>{{ p.caseStudy.outcome }}</p>
         </section>
+
+        <!-- the blog posts about this project (issue #1) -->
+        @if (posts().length) {
+          <section aria-labelledby="posts-title">
+            <h2 id="posts-title" i18n="@@case.posts">I wrote about it</h2>
+            <ul class="bullets">
+              @for (post of posts(); track post.slug) {
+                <li><a [routerLink]="['/blog', post.slug]">{{ post.title }}</a></li>
+              }
+            </ul>
+          </section>
+        }
 
         <!-- the next project, so a reader goes on without going back to the home (issue #91) -->
         <nav class="more" i18n-aria-label="@@case.more" aria-label="More projects">
@@ -313,6 +326,8 @@ export class CaseStudy {
   private readonly content = inject(CONTENT);
   readonly slug = input.required<string>();
   protected readonly project = computed(() => this.content.projects.find((p) => p.slug === this.slug()));
+  private readonly articles = inject(BLOG);
+  protected readonly posts = computed(() => this.articles.filter((a) => a.project === this.slug()));
   /** The project after this one in the work list, the first after the last; none when the list has only this one. */
   protected readonly next = computed(() => {
     const { projects } = this.content;

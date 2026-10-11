@@ -18,6 +18,7 @@ export const CHECKS = [
   { name: 'wrong slug /en/work/apexflw is a 404', path: '/en/work/apexflw', status: 404, contains: 'A wild 404 appeared' },
   { name: 'wrong slug /it/work/apexflw is an Italian 404', path: '/it/work/apexflw', status: 404, contains: 'È apparso un 404 selvatico' },
   { name: 'unknown root URL with it-IT is an Italian 404', path: '/nope', headers: it, status: 404, contains: 'È apparso un 404 selvatico' },
+  { name: "Angular's client-side shell is not published", path: '/en/index.csr.html', status: 404 },
   { name: 'sitemap.xml', path: '/sitemap.xml', status: 200, contains: '<urlset' },
   { name: 'robots.txt allows AI crawlers', path: '/robots.txt', status: 200, contains: 'ClaudeBot' },
   { name: 'llms.txt', path: '/llms.txt', status: 200, contains: '# Emanuele Del Monte' },

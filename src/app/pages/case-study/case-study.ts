@@ -53,10 +53,10 @@ const UNLOCK_NOTICE_MS = 4000;
         </header>
 
         @if (p.image; as image) {
-          <img appDepixelate class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
+          <img appDepixelate class="shot" [style.view-transition-name]="'shot-' + p.slug" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
         } @else if (p.sprite; as sprite) {
           <!-- no screenshot: the project's pixel item, as in the work list -->
-          <div class="item"><app-quest-sprite [name]="sprite" /></div>
+          <div class="item" [style.view-transition-name]="'shot-' + p.slug"><app-quest-sprite [name]="sprite" /></div>
         }
 
         <!-- desktop: the sections beside the text, the one being read lit like a node of the home's thread (issue #96) -->
@@ -121,6 +121,12 @@ const UNLOCK_NOTICE_MS = 4000;
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
+
+    // the picture grows into the case study in steps (issue #161, src/styles/_base.scss)
+    .shot,
+    .item {
+      view-transition-class: shot;
+    }
 
     .unlock {
       position: fixed;

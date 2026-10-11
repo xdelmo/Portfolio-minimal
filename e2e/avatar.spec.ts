@@ -1,5 +1,7 @@
 import { expect, test, type Page } from './fixtures';
 
+test.use({ avatar: true });
+
 const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2')));
 const layer = (page: Page) => page.locator('.avatar');
 const drawn = (page: Page) => page.locator('.avatar[data-place][data-drawn]');

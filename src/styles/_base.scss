@@ -13,6 +13,12 @@ html {
   text-size-adjust: 100%;
 }
 
+/* the header is sticky, always in view: focusing one of its controls (the menu button, the language menu) must not
+   scroll the page by the padding above, which jumped half a screen on phones (issue #203) */
+app-site-header * {
+  scroll-margin-top: calc(-1 * var(--header-h));
+}
+
 body {
   margin: 0;
   min-height: 100svh;

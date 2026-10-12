@@ -123,6 +123,35 @@ test.describe('the phone menu', () => {
     await expect(settings).toBeVisible();
   });
 
+  // issue #203: the root's scroll-padding scrolled the page by half a screen whenever the menu button took the focus
+  test('opening and closing the menu halfway down the page leaves the page where it was', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.goto('/en/');
+    await page.evaluate(() => {
+      scrollTo(0, 4000);
+    });
+    const y = () => page.evaluate(() => Math.round(scrollY));
+    const before = await y();
+    await page.locator('.site-menu summary').click();
+    await expect(page.locator('.site-menu .panel')).toBeVisible();
+    expect(await y()).toBe(before);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.site-menu .panel')).toBeHidden();
+    expect(await y()).toBe(before);
+  });
+
+  test('opening the language menu halfway down the page leaves the page where it was', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'the language dropdown is desktop only');
+    await page.goto('/en/');
+    await page.evaluate(() => {
+      scrollTo(0, 3000);
+    });
+    const before = await page.evaluate(() => Math.round(scrollY));
+    await page.locator('.language-menu summary').click();
+    await page.keyboard.press('Escape');
+    expect(await page.evaluate(() => Math.round(scrollY))).toBe(before);
+  });
+
   test('on desktop the links are in the header and there is no menu button', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop');
     await page.goto('/en/');

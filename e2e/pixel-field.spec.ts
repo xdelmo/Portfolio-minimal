@@ -26,11 +26,13 @@ test('draws the field and keeps it moving', async ({ page }) => {
 });
 
 // issue #207: in canvas 2D the field was some 9000 fillRects a frame, and the page dropped frames while it scrolled
-test('draws with WebGL, every dot in one call', async ({ page }) => {
+test('draws with WebGL wherever the browser offers it, every dot in one call', async ({ page }) => {
   await page.goto('/en/');
   await expect.poll(() => isPainted(page)).toBe(true);
+  // Firefox without a GPU (CI) offers no WebGL: there the canvas 2D field draws, as it should
+  const offered = await page.evaluate(() => document.createElement('canvas').getContext('webgl') !== null);
   // a canvas has one kind of context: a WebGL one answers no 2D context
-  expect(await canvas(page).evaluate((c) => (c as HTMLCanvasElement).getContext('2d') === null)).toBe(true);
+  expect(await canvas(page).evaluate((c) => (c as HTMLCanvasElement).getContext('2d') === null)).toBe(offered);
 });
 
 test('repaints with the new colours when the theme changes while paused', async ({ page }) => {

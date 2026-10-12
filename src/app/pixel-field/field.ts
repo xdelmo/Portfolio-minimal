@@ -9,8 +9,8 @@ export const RIPPLE_MS = 1600;
 /** A guard against an autoclicker: a person tapping fast leaves about ten ripples alive at once. */
 export const MAX_RIPPLES = 16;
 
-const RIPPLE_SPEED = 0.45; // px per ms
-const RIPPLE_WIDTH = 36;
+export const RIPPLE_SPEED = 0.45; // px per ms
+export const RIPPLE_WIDTH = 36;
 
 export interface FieldLayout {
   cols: number;

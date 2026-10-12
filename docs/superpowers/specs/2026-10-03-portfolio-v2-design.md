@@ -119,7 +119,7 @@ src/app/
   core/seo/       title/meta/canonical/hreflang/JSON-LD per pagina
   content/        dati tipizzati per lingua: projects.it.ts / projects.en.ts, experience, about…
   motion/         direttiva [appMotion] (MotionHost) che carica GSAP in differita ed esegue gli effetti di motion/effects/ in gsap.matchMedia
-  pixel-field/    componente Canvas 2D
+  pixel-field/    componente WebGL (Canvas 2D dove manca)
   voxel/          componente Three.js caricato con @defer (on viewport)
   sections/       hero, about, work, side-quests, experience, stack, contact
   pages/          home, case-study
@@ -391,3 +391,4 @@ Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle ling
 | 2026-10-11 | Su telefono la barra tiene solo la firma (nome intero anche a 320 px) e il bottone del menu; lingua (le due lingue per esteso, quella attuale segnata), pausa e tema stanno in una riga sotto le voci del pannello; voci in ordine Lavori, Chi sono, Esperienza, Blog, Contatti anche su desktop (issue #193, proposta approvata). |
 | 2026-10-11 | Su telefono la barra tiene solo il marchio `edm.` (su richiesta; anche su tablet, dove nome, cinque voci e controlli sforavano di 96 px a 768 px: il nome intero dal 1024 px in su) e il bottone del menu; lingua (le due lingue per esteso, quella attuale segnata), pausa e tema stanno in una riga sotto le voci del pannello; voci in ordine Lavori, Chi sono, Esperienza, Blog, Contatti anche su desktop (issue #193, proposta approvata). |
 | 2026-10-12 | Il focus su un controllo dell'header (bottone del menu, menu della lingua) non fa più scorrere la pagina: lo `scroll-padding-top` della radice la spostava di mezzo schermo su telefono; i discendenti dell'header hanno uno `scroll-margin-top` negativo uguale. Il moai riporta la testa a riposo sul tempo reale trascorso, non sul passo limitato a 100 ms che sotto carico rallentava il ritorno oltre 10 s (issue #203). |
+| 2026-10-12 | Il campo di pixel della hero disegna in WebGL, tutti i puntini in una chiamata (issue #207): in Canvas 2D erano circa 9000 `fillRect` a frame, che durante lo scroll su desktop facevano saltare 22-25 frame su 100 (5-9 ora, come senza campo). Stesso aspetto; Canvas 2D resta dove il WebGL manca. Le foto si depixelano da una bitmap decodificata fuori dal main thread (#208). |

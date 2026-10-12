@@ -211,7 +211,7 @@ export class LanguageSwitch {
     const menu = this.host.nativeElement.querySelector('details');
     if (!menu?.open) return;
     menu.open = false;
-    menu.querySelector('summary')?.focus();
+    menu.querySelector('summary')?.focus({ preventScroll: true });
   }
 
   protected closeOutside(event: Event): void {

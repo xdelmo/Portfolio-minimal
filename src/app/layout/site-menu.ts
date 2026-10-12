@@ -173,7 +173,7 @@ export class SiteMenu {
   protected close(refocus: boolean): void {
     const menu = this.host.querySelector('details');
     if (!menu?.open || this.closing) return;
-    if (refocus) menu.querySelector('summary')?.focus();
+    if (refocus) menu.querySelector('summary')?.focus({ preventScroll: true });
     const gsap = this.motion();
     if (!gsap) {
       menu.open = false;

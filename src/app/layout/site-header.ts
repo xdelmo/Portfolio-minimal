@@ -96,9 +96,12 @@ import { SiteMenu } from './site-menu';
       display: flex;
       align-items: center;
     }
-    // phones: the bar keeps the signature and the menu button; language, pause and theme are in the menu (issue #193)
-    .controls > :not(.menu) {
-      display: none;
+    // phones: the bar keeps the mark and the menu button; language, pause and theme are in the menu (issue #193). Only
+    // hidden below 768px, never shown by force above it: the pause button hides itself with reduced motion
+    @media (max-width: 767.98px) {
+      .controls > :not(.menu) {
+        display: none;
+      }
     }
     @include bp.up(md) {
       nav {
@@ -107,9 +110,6 @@ import { SiteMenu } from './site-menu';
       // the links and the controls are in the header itself from here
       .menu {
         display: none;
-      }
-      .controls > :not(.menu) {
-        display: block;
       }
       // room to breathe once the header is wide
       .logo {

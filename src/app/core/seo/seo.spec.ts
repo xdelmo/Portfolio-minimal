@@ -1,6 +1,6 @@
 import { CONTENT_EN } from '../../content/content.en';
 import { CONTENT_IT } from '../../content/content.it';
-import { PERSON_ID, caseStudyJsonLd, caseStudyTitle, headLinks, homeJsonLd, markdownPath, ogImageUrl, pageUrl } from './seo';
+import { PERSON_ID, articleJsonLd, blogJsonLd, caseStudyJsonLd, caseStudyTitle, headLinks, homeJsonLd, markdownPath, ogImageUrl, pageUrl } from './seo';
 
 describe('pageUrl', () => {
   it('keeps the trailing slash on the home page only', () => {
@@ -96,5 +96,26 @@ describe('caseStudyJsonLd', () => {
     expect(code['author']).toEqual({ '@id': PERSON_ID });
     expect(code['inLanguage']).toBe('it');
     expect(nodeOf(ld, 'Person')['@id']).toBe(PERSON_ID);
+  });
+});
+
+describe('blog JSON-LD', () => {
+  const article = {
+    slug: 'signals', title: 'Signals', description: 'About signals', date: '2026-10-11', dateLabel: '11 October 2026',
+    minutes: 4, parts: [], markdown: '',
+  };
+
+  it('lists the posts of the index with their localized URLs', () => {
+    const ld = blogJsonLd([article], CONTENT_IT.person, 'it');
+    expect(ld['@type']).toBe('Blog');
+    expect(ld['blogPost']).toEqual([{ '@type': 'BlogPosting', headline: 'Signals', url: 'https://www.emanueledelmonte.it/it/blog/signals', datePublished: '2026-10-11' }]);
+  });
+
+  it('describes a post with its dates, its author and a three-step breadcrumb', () => {
+    const graph = articleJsonLd({ ...article, updated: '2026-10-20' }, CONTENT_IT.person, 'it')['@graph'] as Record<string, unknown>[];
+    const post = graph.find((n) => n['@type'] === 'BlogPosting');
+    expect(post).toMatchObject({ datePublished: '2026-10-11', dateModified: '2026-10-20', inLanguage: 'it', author: { '@id': PERSON_ID } });
+    const crumbs = graph.find((n) => n['@type'] === 'BreadcrumbList')?.['itemListElement'] as unknown[];
+    expect(crumbs).toHaveLength(3);
   });
 });

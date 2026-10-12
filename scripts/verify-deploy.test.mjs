@@ -49,7 +49,7 @@ test('a network error fails its row and the others still run', async () => {
 
 test('the default table covers language, legacy, 404 and GEO rows', () => {
   const names = CHECKS.map((c) => c.name).join('\n');
-  for (const part of ['it-IT', 'it-CH', 'de-DE', 'nf_lang', '/privacy', '/it/work/apexflw', 'llms.txt', 'index.md', 'sitemap.xml', 'og image', 'security headers']) {
+  for (const part of ['it-IT', 'it-CH', 'de-DE', 'nf_lang', '/privacy', '/it/work/apexflw', 'llms.txt', 'index.md', 'sitemap.xml', 'og image', 'security headers', 'client-side shell']) {
     assert.ok(names.includes(part), part);
   }
 });

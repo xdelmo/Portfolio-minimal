@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, test, type Page } from './fixtures';
 
 // issue #128: on phones the header's links sit behind a menu button
 test.describe('the phone menu', () => {
@@ -8,7 +8,7 @@ test.describe('the phone menu', () => {
     const header = page.locator('app-site-header');
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
-    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Contact']);
+    await expect(menu.getByRole('link')).toHaveText(['Work', 'About', 'Experience', 'Blog', 'Contact']);
     await menu.getByRole('link', { name: 'Contact' }).click();
     await expect(page).toHaveURL(/#contact$/);
     await expect(menu).toBeHidden();
@@ -45,6 +45,111 @@ test.describe('the phone menu', () => {
     await menu.getByRole('link', { name: 'Contact' }).focus();
     await page.getByRole('link', { name: 'See my work' }).focus();
     await expect(menu).toBeHidden();
+  });
+
+  // issue #183: GSAP rolls it up in pixel steps before it closes; measured in the page, not by how fast Playwright acts
+  const closingTime = (page: Page) =>
+    page.locator('details.site-menu').evaluate(
+      (menu: HTMLDetailsElement) =>
+        new Promise<number>((resolve) => {
+          const from = performance.now();
+          menu.addEventListener(
+            'toggle',
+            () => {
+              resolve(performance.now() - from);
+            },
+            { once: true },
+          );
+          menu.querySelector('summary')?.click();
+        }),
+    );
+
+  test('the open menu rolls up before it closes, and opens again if pressed meanwhile', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.goto('/en/');
+    const summary = page.locator('.site-menu summary');
+    const menu = page.locator('app-site-header').getByRole('navigation', { name: 'Main' });
+    // GSAP comes after the first paint: once it is in, closing takes its steps
+    await expect
+      .poll(async () => {
+        await summary.click();
+        await expect(menu).toBeVisible();
+        return closingTime(page);
+      })
+      .toBeGreaterThanOrEqual(100);
+    await expect(menu).toBeHidden();
+    // pressed again while it rolls up, it stays open, whole
+    await summary.click();
+    await expect(menu).toBeVisible();
+    const open = await page.locator('details.site-menu').evaluate(async (details: HTMLDetailsElement) => {
+      const summary = details.querySelector('summary');
+      summary?.click();
+      await new Promise((resolve) => setTimeout(resolve, 40));
+      summary?.click();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const nav = details.querySelector('.panel');
+      return { open: details.open, clip: nav ? getComputedStyle(nav).clipPath : '' };
+    });
+    expect(open).toEqual({ open: true, clip: 'none' });
+  });
+
+  test('with reduced motion it closes at once', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/en/');
+    await page.locator('.site-menu summary').click();
+    await page.waitForTimeout(500);
+    expect(await closingTime(page)).toBeLessThan(60);
+  });
+
+  // issue #193: on phones the bar keeps the mark and the menu button; the controls are in the panel
+  test('on phones the bar shows only the mark and the menu; the panel holds the languages, pause and theme', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.goto('/en/');
+    const header = page.locator('app-site-header');
+    await expect(header.locator('.logo .mark')).toBeVisible();
+    await expect(header.locator('.logo .name')).toBeHidden();
+    await expect(header.locator('.controls').getByRole('button', { name: 'Pause animations' })).toHaveCount(0);
+    await header.locator('.site-menu summary').click();
+    const settings = header.locator('.site-menu .settings');
+    await expect(settings.locator('[aria-current="true"]')).toHaveText('English');
+    await expect(settings.getByRole('link', { name: 'Italiano' })).toHaveAttribute('href', '/it/');
+    const pause = settings.getByRole('button', { name: 'Pause animations' });
+    await pause.click();
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    await settings.getByRole('button', { name: 'Switch to dark theme' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    // the menu stays open for the next setting
+    await expect(settings).toBeVisible();
+  });
+
+  // issue #203: the root's scroll-padding scrolled the page by half a screen whenever the menu button took the focus
+  test('opening and closing the menu halfway down the page leaves the page where it was', async ({ page, isMobile }) => {
+    test.skip(!isMobile, 'phones');
+    await page.goto('/en/');
+    await page.evaluate(() => {
+      scrollTo(0, 4000);
+    });
+    const y = () => page.evaluate(() => Math.round(scrollY));
+    const before = await y();
+    await page.locator('.site-menu summary').click();
+    await expect(page.locator('.site-menu .panel')).toBeVisible();
+    expect(await y()).toBe(before);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.site-menu .panel')).toBeHidden();
+    expect(await y()).toBe(before);
+  });
+
+  test('opening the language menu halfway down the page leaves the page where it was', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'the language dropdown is desktop only');
+    await page.goto('/en/');
+    await page.evaluate(() => {
+      scrollTo(0, 3000);
+    });
+    const before = await page.evaluate(() => Math.round(scrollY));
+    await page.locator('.language-menu summary').click();
+    await page.keyboard.press('Escape');
+    expect(await page.evaluate(() => Math.round(scrollY))).toBe(before);
   });
 
   test('on desktop the links are in the header and there is no menu button', async ({ page, isMobile }) => {

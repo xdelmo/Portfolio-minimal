@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from './fixtures';
+import { openLanguages } from './site';
 
 const other = (page: import('@playwright/test').Page, lang: 'en' | 'it') => page.locator(`.language-menu a[hreflang="${lang}"]`);
 
@@ -10,7 +11,8 @@ test('the language menu points to the same page in the other language', async ({
   await expect(other(page, 'en')).toHaveAttribute('href', '/en/');
 });
 
-test('the language menu is a dropdown that says what it does', async ({ page }) => {
+test('the language menu is a dropdown that says what it does', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the languages are a row in the menu panel (menu.spec)');
   await page.goto('/en/');
   // the summary is named "Language: English" everywhere; phones show only "EN", so it is opened by the summary
   await expect(page.getByText('Language: English')).toBeAttached();
@@ -26,8 +28,7 @@ test('the language menu is a dropdown that says what it does', async ({ page }) 
 
 test('choosing a language remembers it for Netlify', async ({ page, context }) => {
   await page.goto('/en/');
-  await page.locator('.language-menu summary').click();
-  await page.getByRole('link', { name: 'Italiano' }).click();
+  await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
   await expect(page).toHaveURL(/\/it\/$/);
   const cookies = await context.cookies();
   expect(cookies.find((c) => c.name === 'nf_lang')?.value).toBe('it');
@@ -51,8 +52,7 @@ test.describe('switching language', () => {
 
   test('a full-screen curtain covers the page with the new language, then lifts on arrival', async ({ page }) => {
     await page.goto('/en/');
-    await page.locator('.language-menu summary').click();
-    await page.getByRole('link', { name: 'Italiano' }).click();
+    await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
     // the old page is covered before it leaves
     await expect.poll(() => overlay(page)).toEqual({ name: 'Italiano', phase: 'out' });
     await page.waitForURL('**/it/');
@@ -63,8 +63,7 @@ test.describe('switching language', () => {
 
   test('the curtain slides on the compositor, with a smooth ease (not stepped clip-path)', async ({ page }) => {
     await page.goto('/en/');
-    await page.locator('.language-menu summary').click();
-    await page.getByRole('link', { name: 'Italiano' }).click();
+    await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
     const curtain = await page.evaluate(() => {
       const anim = document.getAnimations().find((a) => (a.effect as KeyframeEffect | null)?.pseudoElement === '::after');
       const effect = anim?.effect as KeyframeEffect | undefined;
@@ -93,8 +92,7 @@ test.describe('switching language', () => {
     test.use({ reducedMotion: 'reduce' });
     test('the language changes at once, without the curtain', async ({ page }) => {
       await page.goto('/en/');
-      await page.locator('.language-menu summary').click();
-      await page.getByRole('link', { name: 'Italiano' }).click();
+      await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
       await page.waitForURL('**/it/');
       expect(await overlay(page)).toEqual({ name: null, phase: null });
     });
@@ -105,11 +103,11 @@ for (const colorScheme of ['light', 'dark'] as const) {
   test(`the open language menu meets WCAG 2.2 AA, ${colorScheme} theme (axe)`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
     await page.goto('/en/');
-    await page.locator('.language-menu summary').click();
-    await expect(page.getByRole('link', { name: 'Italiano' })).toBeVisible();
+    const languages = await openLanguages(page);
+    await expect(languages.getByRole('link', { name: 'Italiano' })).toBeVisible();
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-      .include('app-language-switch')
+      .include('app-site-header')
       .analyze();
     expect(results.violations).toEqual([]);
   });
@@ -126,7 +124,8 @@ test('a page load runs no view transition of its own: the curtain is the only th
   expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual([]);
 });
 
-test('the open language list has no padding: its items reach its edges', async ({ page }) => {
+test('the open language list has no padding: its items reach its edges', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the dropdown is desktop only');
   await page.goto('/en/');
   await page.locator('.language-menu summary').click();
   await expect(page.locator('.language-menu ul')).toHaveCSS('padding', '0px');

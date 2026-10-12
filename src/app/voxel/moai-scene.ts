@@ -236,7 +236,8 @@ export class MoaiScene {
     let lookTarget = 0;
     const frame = (now: number): void => {
       try {
-        const dt = Math.min(100, Math.max(0, now - last));
+        const elapsed = Math.max(0, now - last);
+        const dt = Math.min(100, elapsed);
         last = now;
         let scroll = 0;
         if (section) {
@@ -245,8 +246,10 @@ export class MoaiScene {
         }
         const paused = this.pause.paused();
         if (!paused) idle += dt;
-        // a glance is a slow turn of a stone head, slower than the reply to a pointer
-        look = this.desktop() ? follow(look, lookTarget, dt) : follow(look, paused ? 0 : glance(idle), dt, 700);
+        // a glance is a slow turn of a stone head, slower than the reply to a pointer. Eased over the real time that went
+        // by (follow is exact for any step): on a busy phone drawing few frames, the capped dt slowed the head's way
+        // back to rest after a pause past ten seconds (issue #203)
+        look = this.desktop() ? follow(look, lookTarget, elapsed) : follow(look, paused ? 0 : glance(idle), elapsed, 700);
         pivot.rotation.x = breath(idle);
         pivot.rotation.y = scrollYaw(scroll) + this.drag + look;
         // no fly-in: the scene replaces a still image that is already on screen

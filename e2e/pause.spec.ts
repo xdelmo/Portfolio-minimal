@@ -7,7 +7,8 @@ const snapshot = (page: Page) => field(page).evaluate((c) => (c as HTMLCanvasEle
 // the canvas has its real size and first frame once the field has started (slower in WebKit)
 const painted = (page: Page) => expect.poll(() => field(page).evaluate((c) => (c as HTMLCanvasElement).width !== 300)).toBe(true);
 
-test('one header button pauses all automatic motion, from the keyboard too', async ({ page }) => {
+test('one header button pauses all automatic motion, from the keyboard too', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await countFieldDraws(page);
   await page.goto('/en/');
   await expect(page.getByRole('button', { name: 'Pause the pixel animation' })).toHaveCount(0);
@@ -29,7 +30,8 @@ test('one header button pauses all automatic motion, from the keyboard too', asy
   await expect.poll(() => fieldDraws(page), { timeout: DRAWS_MS }).toBeGreaterThan(resumed + 2);
 });
 
-test('the pause lasts across pages for the whole visit', async ({ page }) => {
+test('the pause lasts across pages for the whole visit', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.goto('/en/');
   await pause(page).click();
   await page.goto('/en/work/apexflow');

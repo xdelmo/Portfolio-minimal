@@ -33,8 +33,14 @@ describe('CaseStudy', () => {
   it('renders the case study sections in order', async () => {
     const el = await render('apexflow');
     const headings = [...el.querySelectorAll('h2')].map((h) => h.textContent.trim());
-    expect(headings).toEqual(['Context', 'How it is built', 'Key decisions', 'Outcome']);
+    // ApexFlow has blog posts (issue #1): they close the case study
+    expect(headings).toEqual(['Context', 'How it is built', 'Key decisions', 'Outcome', 'I wrote about it']);
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
+  });
+
+  it('has no posts section for a project nobody wrote about (#1)', async () => {
+    const el = await render('mcp-server');
+    expect([...el.querySelectorAll('h2')].map((h) => h.textContent.trim())).not.toContain('I wrote about it');
   });
 
   it('ends with the next project in the work list (#91)', async () => {

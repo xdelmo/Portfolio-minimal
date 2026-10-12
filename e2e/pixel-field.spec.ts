@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 import { DRAWS_MS, countFieldDraws, fieldDraws } from './field-draws';
 
 const canvas = (page: Page) => page.locator('app-pixel-field canvas');
@@ -24,11 +25,21 @@ test('draws the field and keeps it moving', async ({ page }) => {
   await expect.poll(() => fieldDraws(page), { timeout: DRAWS_MS }).toBeGreaterThan(before + 2);
 });
 
+// issue #207: in canvas 2D the field was some 9000 fillRects a frame, and the page dropped frames while it scrolled
+test('draws with WebGL wherever the browser offers it, every dot in one call', async ({ page }) => {
+  await page.goto('/en/');
+  await expect.poll(() => isPainted(page)).toBe(true);
+  // Firefox without a GPU (CI) offers no WebGL: there the canvas 2D field draws, as it should
+  const offered = await page.evaluate(() => document.createElement('canvas').getContext('webgl') !== null);
+  // a canvas has one kind of context: a WebGL one answers no 2D context
+  expect(await canvas(page).evaluate((c) => (c as HTMLCanvasElement).getContext('2d') === null)).toBe(offered);
+});
+
 test('repaints with the new colours when the theme changes while paused', async ({ page }) => {
   await page.goto('/en/');
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   const before = await snapshot(page);
-  await page.getByRole('button', { name: /Switch to (light|dark) theme/ }).click();
+  await press(page, /Switch to (light|dark) theme/);
   await expect.poll(() => snapshot(page)).not.toBe(before);
 });
 

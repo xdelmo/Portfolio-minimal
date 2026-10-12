@@ -19,7 +19,7 @@ describe('PixelField', () => {
     expect(el.querySelector('canvas')?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('stays quiet and offers no pause button without a 2D canvas', async () => {
+  it('stays quiet and offers no pause button without a canvas context', async () => {
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
     const { el, handleError } = await render();
     expect(el.querySelector('button')).toBeNull();

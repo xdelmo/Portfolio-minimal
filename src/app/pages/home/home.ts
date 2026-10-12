@@ -315,7 +315,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .deck {
       display: grid;
       gap: var(--space-4);
-      scroll-margin-top: var(--space-2);
+      scroll-margin-top: calc(var(--header-h) + var(--space-2));
     }
     .section {
       padding-block: var(--space-8);

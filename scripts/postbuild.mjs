@@ -1,7 +1,8 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, sep } from 'node:path';
 import { URL } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { BLOG } from '../src/app/content/blog.generated.ts';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
@@ -47,12 +48,15 @@ for (const locale of ['en', 'it']) {
     if (links) pages.push(links);
   }
 }
+// Angular's client-side shell is only for a server that renders on demand: published, it is a page with no title,
+// canonical or h1 that a crawler could index (issue #180)
+for (const locale of ['en', 'it']) await rm(join(ROOT, locale, 'index.csr.html'), { force: true });
 pages.sort((a, b) => a.canonical.localeCompare(b.canonical));
 
 if (pages.length === 0) throw new Error('postbuild: no indexable pages found, is the build output where expected?');
 
 const isPublic = (url) => PUBLIC_REPOS.includes(url);
-const geo = geoFiles({ en: onlyPublic(CONTENT_EN, isPublic), it: onlyPublic(CONTENT_IT, isPublic) });
+const geo = geoFiles({ en: onlyPublic(CONTENT_EN, isPublic), it: onlyPublic(CONTENT_IT, isPublic) }, BLOG);
 // the repositories this build links: .github/workflows/repos.yml compares them with GitHub's answer every day
 await writeFile(join(ROOT, 'repos.json'), `${JSON.stringify(PUBLIC_REPOS)}\n`);
 for (const file of geo) {

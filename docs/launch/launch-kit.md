@@ -72,6 +72,7 @@ Un iPhone e un Android:
 - [x] **Issue #3** (Privacy): chiusa il 2026-10-07, la pagina `/privacy` copre tutto e l'imprint non serve per un sito personale. Se aggiungi statistiche, dimmelo: la pagina va aggiornata prima di attivarle.
 - [x] **Esperienza**: allineata a LinkedIn il 2026-10-06 (agenzia 2022 – 2024, punti e tag di ogni lavoro, certificati). "BIP" accanto a Joinrs tolto (non è su LinkedIn); la vittoria del quiz Agile confermata dall'utente.
 - [x] **Bot Telegram**: controllato il 2026-10-07, nei `.env.example` di `auto-scadenze-bot`, `hoenn-binder` e `presenz-lazy-bot` (e nella loro history) ci sono solo segnaposto: gli id sono `123456789`, token e password non hanno la forma di quelli veri.
+- [ ] **Blog (issue #1)**: i tre articoli in `src/app/content/blog/` sono bozze scritte da Claude dai tuoi post LinkedIn e dal codice di ApexFlow, in prima persona: rileggili (en e it) prima di `devel` → `master`. La `date` è il giorno di pubblicazione sul sito (2026-10-11); se vuoi la data dei post originali, o il link al post (`linkedin:` nel frontmatter mostra "Pubblicato prima su LinkedIn"), aggiungili lì.
 
 ## 8. Pulizia che richiede te
 

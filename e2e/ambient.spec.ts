@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 
 const orbs = (page: Page) => page.locator('app-ambient .orb');
 const visibleOrbs = (page: Page) => orbs(page).evaluateAll((els) => els.filter((el) => getComputedStyle(el).display !== 'none').length);
@@ -17,7 +18,7 @@ test('pastel orbs drift behind the page by themselves', async ({ page, isMobile 
 test('the pause button stops the orbs', async ({ page }) => {
   await page.goto('/en/');
   await ready(page);
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await page.waitForTimeout(200);
   const still = await transforms(page);
   await page.waitForTimeout(800);
@@ -51,4 +52,12 @@ test('at the end of the page the orbs still reach the bottom of the screen, with
     const clips = getComputedStyle(el).overflow !== 'visible';
     return !clips || (top <= 0 && bottom >= innerHeight);
   })).toBe(true);
+});
+
+// issue #194: repainting the screen-sized gradients at every frame took 60% of a desktop scroll's raster time
+test('the orbs and their layer move on the compositor, never repainted as they drift', async ({ page }) => {
+  await page.goto('/en/');
+  const layers = await page.locator('.ambient, .ambient .orb').evaluateAll((els) => els.map((el) => getComputedStyle(el).willChange));
+  expect(layers.length).toBeGreaterThan(1);
+  for (const value of layers) expect(value).toBe('transform');
 });

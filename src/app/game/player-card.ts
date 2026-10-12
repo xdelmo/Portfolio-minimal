@@ -54,8 +54,8 @@ export const MAX_LEVEL = 99;
         <li [class.locked]="explored < total">
           <app-quest-sprite class="sprite" name="map" />
           <span>
-            <strong i18n="@@game.explorer">Explorer</strong>
-            @if (explored < total) {
+            <!-- &ngsp; keeps the space Angular drops before a control flow block (issue #192) -->
+            <strong i18n="@@game.explorer">Explorer</strong>&ngsp;@if (explored < total) {
               <ng-container i18n="@@game.explorerProgress">{{ explored }} of {{ total }} case studies read</ng-container>
             } @else {
               <ng-container i18n="@@game.explorerDone">Read every case study</ng-container>

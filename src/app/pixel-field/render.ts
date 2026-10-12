@@ -22,8 +22,8 @@ export interface FrameState {
   ripples: readonly Ripple[];
 }
 
-const PUSH = 10; // px a pixel moves away from the pointer
-const REST_ALPHA = 0.18;
+export const PUSH = 10; // px a pixel moves away from the pointer
+export const REST_ALPHA = 0.18;
 
 export function readPalette(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>): Palette {
   const read = (name: string): string => style.getPropertyValue(name).trim();
@@ -45,7 +45,7 @@ interface Cells {
 
 const cache = new WeakMap<FieldLayout, Cells>();
 
-function cellsOf(l: FieldLayout): Cells {
+export function cellsOf(l: FieldLayout): Cells {
   let cells = cache.get(l);
   if (cells) return cells;
   const n = l.cols * l.rows;

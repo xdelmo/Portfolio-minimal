@@ -13,6 +13,7 @@ import {
 import { FieldLayout, RIPPLE_MS, addRipple, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
 import { MotionPause } from '../motion/pause';
+import { Paint, glPaint } from './gl';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
 const MAX_STEP_MS = 100; // a long pause between frames must not jump the animation
@@ -44,7 +45,7 @@ export class PixelField {
   private readonly animated = signal(false);
   private readonly pause = inject(MotionPause);
 
-  private ctx: CanvasRenderingContext2D | null = null;
+  private paint: Paint | null = null;
   private grid: FieldLayout | null = null;
   private palette: Palette = { dot: '', lit: [] };
   private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [] };
@@ -75,17 +76,20 @@ export class PixelField {
 
   private start(): void {
     const canvas = this.canvas().nativeElement;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
     const win = window;
+    const dpr = (): number => Math.min(win.devicePixelRatio || 1, 2);
+    // WebGL draws every dot in one call (issue #207); canvas 2D, a fillRect per dot, where WebGL is missing
+    const gl = glPaint(canvas, dpr);
+    const ctx = gl ? null : canvas.getContext('2d');
+    const paint: Paint | null = gl ?? (ctx && ((l, p, f) => { drawFrame(ctx, l, p, f); }));
+    if (!paint) return;
     const root = document.documentElement;
     const motion = win.matchMedia('(prefers-reduced-motion: reduce)');
 
     const resize = (): void => {
-      const dpr = Math.min(win.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(canvas.clientWidth * dpr);
-      canvas.height = Math.round(canvas.clientHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.width = Math.round(canvas.clientWidth * dpr());
+      canvas.height = Math.round(canvas.clientHeight * dpr());
+      ctx?.setTransform(dpr(), 0, 0, dpr(), 0, 0);
       this.grid = layout(canvas.clientWidth, canvas.clientHeight);
       this.render();
     };
@@ -158,7 +162,7 @@ export class PixelField {
       canvas.removeEventListener('pointerdown', onDown);
     });
 
-    this.ctx = ctx;
+    this.paint = paint;
     this.palette = readPalette(win.getComputedStyle(root));
     resize();
     onMotion();
@@ -195,6 +199,6 @@ export class PixelField {
   };
 
   private render(): void {
-    if (this.ctx && this.grid) drawFrame(this.ctx, this.grid, this.palette, this.frame);
+    if (this.paint && this.grid) this.paint(this.grid, this.palette, this.frame);
   }
 }

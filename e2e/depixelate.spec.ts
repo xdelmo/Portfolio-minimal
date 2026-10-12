@@ -22,6 +22,30 @@ test('a project screenshot depixelates as it scrolls in, then shows sharp', asyn
   expect(canvases[0]).toBe(8);
 });
 
+// issue #207: drawing the <img> itself decoded the whole JPEG on the main thread at every step, 16 ms each, right as the
+// first photo scrolled in under the hero; the steps draw from one bitmap decoded off the main thread
+test('the steps draw from a decoded bitmap, never from the photo itself', async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { sources: string[] };
+    w.sources = [];
+    const proto = CanvasRenderingContext2D.prototype;
+    const draw = Reflect.get(proto, 'drawImage');
+    proto.drawImage = new Proxy(draw, {
+      apply(target, self: CanvasRenderingContext2D, args: Parameters<typeof draw>) {
+        w.sources.push(args[0].constructor.name);
+        Reflect.apply(target, self, args);
+      },
+    });
+  });
+  await page.goto('/en/');
+  const sources = () => page.evaluate(() => (window as unknown as { sources: string[] }).sources);
+  await page.locator('#work .shot').first().evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+  // the canvas comes once the file is decoded: wait for its steps, then for their end
+  await expect.poll(async () => (await sources()).length, { timeout: 5000 }).toBeGreaterThan(0);
+  await expect(page.locator('#work .media canvas')).toHaveCount(0, { timeout: 5000 });
+  expect(new Set(await sources())).toEqual(new Set(['ImageBitmap']));
+});
+
 test('the contact photo keeps its pixel circle while it depixelates', async ({ page }) => {
   await page.goto('/en/');
   const photo = page.locator('.contact-photo');

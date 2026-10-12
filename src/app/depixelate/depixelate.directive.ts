@@ -44,8 +44,12 @@ export class Depixelate {
 function depixelate(img: HTMLImageElement): () => void {
   const canvas = document.createElement('canvas');
   let timer = 0;
+  let bitmap: ImageBitmap | undefined;
+  let stopped = false;
   const done = (): void => {
+    stopped = true;
     clearTimeout(timer);
+    bitmap?.close();
     canvas.remove();
     img.style.opacity = '';
   };
@@ -59,7 +63,7 @@ function depixelate(img: HTMLImageElement): () => void {
   Object.assign(canvas.style, { position: 'absolute', imageRendering: 'pixelated', pointerEvents: 'none' });
   canvas.setAttribute('aria-hidden', 'true');
 
-  const step = (i: number): void => {
+  const step = (from: ImageBitmap, i: number): void => {
     if (i === STEPS.length) {
       done();
       return;
@@ -73,9 +77,9 @@ function depixelate(img: HTMLImageElement): () => void {
     canvas.height = rows;
     const r = fit(style.objectFit, bw, bh, img.naturalWidth, img.naturalHeight);
     const s = cols / bw;
-    ctx.drawImage(img, r.x * s, r.y * s, r.w * s, r.h * s);
+    ctx.drawImage(from, r.x * s, r.y * s, r.w * s, r.h * s);
     timer = window.setTimeout(() => {
-      step(i + 1);
+      step(from, i + 1);
     }, STEP_MS);
   };
   const start = (): void => {
@@ -83,8 +87,24 @@ function depixelate(img: HTMLImageElement): () => void {
       done();
       return;
     }
-    img.after(canvas);
-    step(0);
+    // drawing the <img> itself decoded the whole JPEG on the main thread at every step, 16 ms each, and a bitmap made
+    // from the <img> decodes it there too (issue #207): only a bitmap made from the file decodes off the main thread.
+    // The file is the one the photo loaded, from the HTTP cache; small, since the finest step is 128 blocks across
+    fetch(img.currentSrc)
+      .then((response) => response.blob())
+      .then((file) => createImageBitmap(file, { resizeWidth: Math.min(img.naturalWidth, 512), resizeQuality: 'medium' }))
+      .then(
+        (decoded) => {
+          if (stopped) {
+            decoded.close();
+            return;
+          }
+          bitmap = decoded;
+          img.after(canvas);
+          step(decoded, 0);
+        },
+        done,
+      );
   };
   if (img.complete) start();
   else {

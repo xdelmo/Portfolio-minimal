@@ -13,7 +13,7 @@ export const SHOW_AFTER_SCREENS = 1.5;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (shown()) {
-      <button type="button" class="back-to-top" i18n-aria-label="@@footer.top" aria-label="Back to top" (click)="toTop()">
+      <button type="button" class="back-to-top" animate.enter="is-entering" animate.leave="is-leaving" i18n-aria-label="@@footer.top" aria-label="Back to top" (click)="toTop()">
         <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
           <path d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h6v1h-6zM0 3h2v1h-2zM3 3h2v5h-2zM6 3h2v1h-2z" />
         </svg>
@@ -42,14 +42,26 @@ export const SHOW_AFTER_SCREENS = 1.5;
         display: none;
       }
     }
+    // in and out in pixel steps (issue #197): it rises into the corner as it is revealed, and sinks away as it is wiped
+    // out; Angular keeps it on the page until the way out has played. Reduced motion: it simply appears and goes.
     @media (prefers-reduced-motion: no-preference) {
-      .back-to-top {
-        animation: back-in 160ms steps(4);
+      .is-entering {
+        animation: back-in 200ms steps(4);
+      }
+      .is-leaving {
+        animation: back-out 160ms steps(3) forwards;
       }
     }
     @keyframes back-in {
       from {
         clip-path: inset(100% 0 0 0);
+        translate: 0 var(--space-2);
+      }
+    }
+    @keyframes back-out {
+      to {
+        clip-path: inset(100% 0 0 0);
+        translate: 0 var(--space-2);
       }
     }
   `,

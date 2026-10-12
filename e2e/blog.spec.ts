@@ -41,3 +41,26 @@ test('the Italian post sits at the same slug, with its alternates and Markdown t
   expect(await markdown.text()).toContain('# Gestire 10 record');
   expect(await (await page.request.get('/llms.txt')).text()).toContain(`/en/blog/${POST}.md`);
 });
+
+// issue #191: every code block of a post has a copy button
+test('every code block copies its code to the clipboard and says so', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'reading the clipboard back needs the permissions only Chromium grants');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto(`/en/blog/${POST}`);
+  const blocks = page.locator('app-code-block');
+  await expect(blocks.first()).toBeVisible();
+  await expect(blocks.locator('button')).toHaveCount(await blocks.count());
+  const first = blocks.first();
+  const button = first.getByRole('button', { name: 'Copy code' });
+  await button.click();
+  await expect(first.getByRole('button', { name: 'Copied' })).toBeVisible();
+  await expect(first.getByRole('status')).toHaveText('Code copied');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(await first.locator('pre code').textContent());
+  // after a moment it offers to copy again
+  await expect(first.getByRole('button', { name: 'Copy code' })).toBeVisible({ timeout: 4000 });
+});
+
+test('the Italian copy button speaks Italian', async ({ page }) => {
+  await page.goto(`/it/blog/${POST}`);
+  await expect(page.locator('app-code-block').first().getByRole('button', { name: 'Copia il codice' })).toBeVisible();
+});

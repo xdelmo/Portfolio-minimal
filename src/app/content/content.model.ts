@@ -165,6 +165,14 @@ export interface Article {
   /** the LinkedIn post it grew from */
   linkedin?: string;
   minutes: number;
-  html: string;
+  /** runs of HTML written at build time, and code blocks drawn with their copy button (issue #191) */
+  parts: readonly ArticlePart[];
   markdown: string;
+}
+
+/** A run of HTML (`html`), or a code block (`code`, with its language when the Markdown names one). */
+export interface ArticlePart {
+  html?: string;
+  code?: string;
+  lang?: string;
 }

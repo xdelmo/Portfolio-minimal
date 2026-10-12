@@ -28,8 +28,12 @@ import { MotionHost } from '../motion/motion-host';
       // hard line above the fold; the gradients fade out by themselves, html clips sideways, and a fixed box never
       // makes the page longer
       pointer-events: none;
+      // the layer and the orbs move at every frame (drift, scroll, pointer): on layers of their own the compositor moves
+      // them, otherwise these screen-sized gradients were painted again at every frame of a scroll (issue #194)
+      will-change: transform;
     }
     .orb {
+      will-change: transform;
       position: absolute;
       width: 46vmax;
       aspect-ratio: 1;

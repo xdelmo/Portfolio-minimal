@@ -52,3 +52,11 @@ test('at the end of the page the orbs still reach the bottom of the screen, with
     return !clips || (top <= 0 && bottom >= innerHeight);
   })).toBe(true);
 });
+
+// issue #194: repainting the screen-sized gradients at every frame took 60% of a desktop scroll's raster time
+test('the orbs and their layer move on the compositor, never repainted as they drift', async ({ page }) => {
+  await page.goto('/en/');
+  const layers = await page.locator('.ambient, .ambient .orb').evaluateAll((els) => els.map((el) => getComputedStyle(el).willChange));
+  expect(layers.length).toBeGreaterThan(1);
+  for (const value of layers) expect(value).toBe('transform');
+});

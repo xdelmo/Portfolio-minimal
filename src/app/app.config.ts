@@ -42,7 +42,7 @@ export const appConfig: ApplicationConfig = {
           // smooth scroll (issue #159): the page jumps there and the content glides after it by itself; a tweened
           // scrollTo was killed by a ScrollTrigger refresh (images loading) and left the page where it was
           const smooth = smoother();
-          if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).scrollPaddingTop}`);
+          if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).getPropertyValue('--header-h')}`);
           else target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
           target.focus({ preventScroll: true });
         };

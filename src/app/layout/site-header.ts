@@ -66,7 +66,8 @@ import { SiteMenu } from './site-menu';
       font-size: var(--step-1);
       font-weight: 700;
     }
-    // phones: the mark alone, as asked (issue #193); the full name signs the bar from 768px
+    // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
+    // ran 96px past the edge); the full name signs the bar from 1024px
     .name {
       display: none;
       padding-left: var(--space-1);
@@ -118,9 +119,13 @@ import { SiteMenu } from './site-menu';
         gap: var(--space-3);
       }
       .name {
-        display: grid;
         padding-left: var(--space-2);
         letter-spacing: 0.12em;
+      }
+    }
+    @include bp.up(lg) {
+      .name {
+        display: grid;
       }
     }
   `,

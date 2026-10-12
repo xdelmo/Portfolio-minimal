@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 
 // The Content-Security-Policy that postbuild writes for Netlify (issue #113), served here with every page the test
 // server returns: a script, style, image or font the policy would block on the real site fails this test.
@@ -42,7 +43,7 @@ test('the home, the moai, the theme switch and the player card run under the Con
   await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await page.waitForTimeout(800);
-  await page.locator('app-theme-toggle button').click();
+  await press(page, /Switch to (light|dark) theme/);
   await page.locator('app-site-footer [data-press-start]').click();
   await expect(page.getByRole('dialog')).toBeVisible();
   expect(violations).toEqual([]);

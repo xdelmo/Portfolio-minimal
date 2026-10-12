@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { press } from './site';
 
 test('follows the system theme on first visit, before the app boots', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -6,7 +7,8 @@ test('follows the system theme on first visit, before the app boots', async ({ p
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('the toggle switches theme and the choice survives a reload', async ({ page }) => {
+test('the toggle switches theme and the choice survives a reload', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/en/');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
@@ -16,7 +18,8 @@ test('the toggle switches theme and the choice survives a reload', async ({ page
   await expect(page.getByRole('button', { name: 'Switch to light theme' })).toBeVisible();
 });
 
-test('the toggle label is translated', async ({ page }) => {
+test('the toggle label is translated', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/it/');
   await expect(page.getByRole('button', { name: 'Passa al tema scuro' })).toBeVisible();
@@ -33,7 +36,8 @@ const countTransitions = () => {
   };
 };
 
-test('switching theme sweeps a reveal across the whole viewport', async ({ page }) => {
+test('switching theme sweeps a reveal across the whole viewport', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/en/');
   test.skip(!(await page.evaluate(() => 'startViewTransition' in document)), 'no View Transitions in this browser');
@@ -48,7 +52,8 @@ for (const [from, to, expected] of [
   ['light', 'dark', '::view-transition-old(root) reverse'],
   ['dark', 'light', '::view-transition-new(root) normal'],
 ] as const) {
-  test(`from ${from} to ${to} the reveal runs on ${expected}`, async ({ page }) => {
+  test(`from ${from} to ${to} the reveal runs on ${expected}`, async ({ page, isMobile }) => {
+    test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
     await page.emulateMedia({ colorScheme: from });
     await page.goto('/en/');
     test.skip(!(await page.evaluate(() => 'startViewTransition' in document)), 'no View Transitions in this browser');
@@ -71,7 +76,8 @@ for (const [from, to, expected] of [
   });
 }
 
-test('with reduced motion the theme switches at once, without the reveal', async ({ page }) => {
+test('with reduced motion the theme switches at once, without the reveal', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
   await page.goto('/en/');
   test.skip(!(await page.evaluate(() => 'startViewTransition' in document)), 'no View Transitions in this browser');
@@ -90,7 +96,7 @@ test('the browser bar takes the page background in both themes', async ({ page }
   expect(await bar()).toBe('#121212');
   await page.goto('/en/');
   expect(await bar()).toBe(await bg());
-  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await press(page, 'Switch to light theme');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect.poll(bar).toBe(await bg());
   expect(await bar()).toBe('#e5e5e5');

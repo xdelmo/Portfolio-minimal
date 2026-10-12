@@ -20,8 +20,8 @@ import { SiteMenu } from './site-menu';
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
         <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
-        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
         <a data-magnetic routerLink="/blog" i18n="@@nav.blog">Blog</a>
+        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
       </nav>
       <div class="controls">
         <app-language-switch />
@@ -66,8 +66,10 @@ import { SiteMenu } from './site-menu';
       font-size: var(--step-1);
       font-weight: 700;
     }
+    // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
+    // ran 96px past the edge); the full name signs the bar from 1024px
     .name {
-      display: grid;
+      display: none;
       padding-left: var(--space-1);
       border-left: 1px solid var(--rule);
       font-size: 0.75rem;
@@ -76,21 +78,6 @@ import { SiteMenu } from './site-menu';
       letter-spacing: 0.06em;
       text-transform: uppercase;
       white-space: nowrap;
-    }
-    // phones get a smaller name, the small ones keep the mark alone: the controls and the menu button need the room
-    @media (max-width: 429px) {
-      .site-header {
-        gap: var(--space-1);
-      }
-      .name {
-        font-size: 0.625rem;
-        letter-spacing: 0.02em;
-      }
-    }
-    @media (max-width: 389px) {
-      .name {
-        display: none;
-      }
     }
     nav {
       display: none;
@@ -109,11 +96,18 @@ import { SiteMenu } from './site-menu';
       display: flex;
       align-items: center;
     }
+    // phones: the bar keeps the mark and the menu button; language, pause and theme are in the menu (issue #193). Only
+    // hidden below 768px, never shown by force above it: the pause button hides itself with reduced motion
+    @media (max-width: 767.98px) {
+      .controls > :not(.menu) {
+        display: none;
+      }
+    }
     @include bp.up(md) {
       nav {
         display: flex;
       }
-      // the links are in the header itself from here
+      // the links and the controls are in the header itself from here
       .menu {
         display: none;
       }
@@ -127,6 +121,11 @@ import { SiteMenu } from './site-menu';
       .name {
         padding-left: var(--space-2);
         letter-spacing: 0.12em;
+      }
+    }
+    @include bp.up(lg) {
+      .name {
+        display: grid;
       }
     }
   `,

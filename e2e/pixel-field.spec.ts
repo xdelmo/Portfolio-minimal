@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { press } from './site';
 import { DRAWS_MS, countFieldDraws, fieldDraws } from './field-draws';
 
 const canvas = (page: Page) => page.locator('app-pixel-field canvas');
@@ -26,9 +27,9 @@ test('draws the field and keeps it moving', async ({ page }) => {
 
 test('repaints with the new colours when the theme changes while paused', async ({ page }) => {
   await page.goto('/en/');
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   const before = await snapshot(page);
-  await page.getByRole('button', { name: /Switch to (light|dark) theme/ }).click();
+  await press(page, /Switch to (light|dark) theme/);
   await expect.poll(() => snapshot(page)).not.toBe(before);
 });
 

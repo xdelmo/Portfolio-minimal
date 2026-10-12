@@ -23,8 +23,8 @@ export const appConfig: ApplicationConfig = {
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),
     { provide: IMAGE_LOADER, useValue: workImageLoader },
-    // The router reaches an anchor with window.scrollTo: an instant jump that ignores the sticky header's scroll-padding.
-    // scrollIntoView honours scroll-padding and scroll-margin, and glides unless the visitor asked for reduced motion.
+    // The router reaches an anchor with window.scrollTo: an instant jump that ignores the sticky header's scroll-margin.
+    // scrollIntoView honours scroll-margin, and glides unless the visitor asked for reduced motion.
     provideEnvironmentInitializer(() => {
       if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
       const scroller = inject(ViewportScroller);
@@ -42,7 +42,7 @@ export const appConfig: ApplicationConfig = {
           // smooth scroll (issue #159): the page jumps there and the content glides after it by itself; a tweened
           // scrollTo was killed by a ScrollTrigger refresh (images loading) and left the page where it was
           const smooth = smoother();
-          if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).scrollPaddingTop}`);
+          if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).getPropertyValue('--header-h')}`);
           else target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
           target.focus({ preventScroll: true });
         };

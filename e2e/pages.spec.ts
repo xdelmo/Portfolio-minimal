@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from './fixtures';
-import { CASE_STUDIES, PROJECTS } from './site';
+import { CASE_STUDIES, PROJECTS, press } from './site';
 
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -99,7 +99,7 @@ const idle = (page: Page) =>
 test('the wild 404 bobs while it waits, and the pause button stops it', async ({ page }) => {
   await page.goto('/en/404');
   await expect.poll(() => idle(page)).toEqual(['idle:running']);
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await press(page, 'Pause animations');
   await expect.poll(() => idle(page)).toEqual(['idle:paused']);
 });
 
@@ -322,11 +322,11 @@ for (const [from, name, link] of [
     const id = ((await target.getAttribute('href')) ?? '').split('#')[1];
     await target.click();
     await expect(page).toHaveURL(new RegExp(`/en/#${id}$`));
-    // where scrollIntoView puts it: under the sticky header plus its margin, or as far as the page goes
+    // where scrollIntoView puts it: at its scroll-margin (the sticky header plus 16px), or as far as the page goes
     const landed = () =>
       page.locator(`#${id}`).evaluate((s) => {
         const top = s.getBoundingClientRect().top;
-        const stop = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + parseFloat(getComputedStyle(s).scrollMarginTop);
+        const stop = parseFloat(getComputedStyle(s).scrollMarginTop);
         const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
         return Math.abs(top - stop) <= 2 || (bottom && top > 0 && top < stop + innerHeight);
       });

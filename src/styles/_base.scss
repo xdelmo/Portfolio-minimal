@@ -7,10 +7,16 @@
 html {
   /* on the root, so it clips at the viewport: decorations flying in from the edges never add a horizontal scroll */
   overflow-x: clip;
-  /* anchors and focused elements stop below the sticky header (WCAG 2.4.11) */
-  scroll-padding-top: var(--header-h);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+/* anchors and focused elements stop below the sticky header (WCAG 2.4.11). On the content, not as the root's
+   scroll-padding: that one also applies to the header's own controls, and WebKit scrolled the page by it whenever a
+   click focused the menu button (issue #203) */
+main *,
+app-site-footer * {
+  scroll-margin-top: var(--header-h);
 }
 
 body {

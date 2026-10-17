@@ -39,7 +39,7 @@ import { GlanceItem } from '../../content/content.model';
       margin: 0;
       font-size: clamp(var(--step-0), 1rem + 0.6vw, var(--step-1));
       font-weight: 600;
-      line-height: 1.25;
+      line-height: 1.3;
       font-variation-settings: 'wdth' 85;
     }
     @include bp.up(md) {

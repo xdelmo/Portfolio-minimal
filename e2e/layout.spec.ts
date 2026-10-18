@@ -34,8 +34,7 @@ test('after the router opens another page the focus is on its main content, not 
   const project = page.locator('main a[href$="/work/apexflow"]').first();
   await project.focus();
   await project.press('Enter');
-  // the test is about the focus, not the speed: WebKit in the Linux image took over 4 s for this view transition (#213)
-  await expect(page).toHaveURL(/\/en\/work\/apexflow$/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/en\/work\/apexflow$/);
   await expect(page.locator('h1')).toHaveText('ApexFlow');
   await expect(page.locator('main')).toBeFocused();
 });

@@ -30,8 +30,7 @@ test.describe('intro', () => {
   test('never blocks a click', async ({ page }) => {
     await page.goto('/en/');
     await page.getByRole('link', { name: 'See my work' }).click();
-    // a click before hydration is replayed once the app wakes, over 5 s later on a busy WebKit (#213)
-    await expect(page).toHaveURL(/#work$/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/#work$/);
   });
 
   test('is shown once per session', async ({ page }) => {
@@ -46,7 +45,7 @@ test.describe('intro', () => {
     await page.goto('/en/');
     await expect(page.locator('.site-intro')).toBeVisible();
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('.site-intro')).toBeHidden();
   });
 
   // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding

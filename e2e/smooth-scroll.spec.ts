@@ -1,9 +1,6 @@
-import { expect, test, type Page } from './fixtures';
+import { REST_MS, expect, test, type Page } from './fixtures';
 
 // issue #159: smooth scroll with GSAP ScrollSmoother, on desktop with a mouse only
-// GSAP's lag smoothing advances its clock by at most ~33 ms a frame: on a busy machine (200 ms frames) the one-second
-// glide takes about six, so waiting for the content to rest allows 15 s
-const REST_MS = 15_000;
 
 const contentY = (page: Page) =>
   page.evaluate(() => new DOMMatrix(getComputedStyle(document.getElementById('smooth-content') ?? document.body).transform).m42);

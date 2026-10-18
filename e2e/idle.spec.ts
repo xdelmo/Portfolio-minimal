@@ -5,8 +5,14 @@ test('menu links scramble their letters on hover, but keep their real name', asy
   await page.goto('/en/');
   await expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
   const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Experience' });
+  // record every text the link shows instead of sampling it: on a slow WebKit the scramble ended between two polls (#213)
+  await link.evaluate((el) => {
+    const seen: string[] = [];
+    Object.assign(window, { seen });
+    new MutationObserver(() => seen.push(el.textContent)).observe(el, { subtree: true, childList: true, characterData: true });
+  });
   await link.hover();
-  await expect.poll(() => link.textContent(), { timeout: 1000, intervals: [20] }).not.toBe('Experience');
+  await expect.poll(() => page.evaluate(() => (window as unknown as { seen: string[] }).seen.some((text) => text !== 'Experience'))).toBe(true);
   await expect(link).toHaveAccessibleName('Experience');
   await expect(link).toHaveText('Experience');
 });

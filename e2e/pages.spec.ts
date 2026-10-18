@@ -330,6 +330,6 @@ for (const [from, name, link] of [
         const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
         return Math.abs(top - stop) <= 2 || (bottom && top > 0 && top < stop + innerHeight);
       });
-    await expect.poll(landed, { timeout: 5000 }).toBe(true);
+    await expect.poll(landed).toBe(true);
   });
 }

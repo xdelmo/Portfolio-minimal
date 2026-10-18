@@ -201,7 +201,7 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   await expect(scene(page)).toBeVisible();
   await page.waitForTimeout(1200);
   const before = await snapshot(page);
-  await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
+  await expect.poll(() => snapshot(page)).not.toBe(before);
   await press(page, 'Pause animations');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   // the head still follows the pointer that just clicked the button (a reply to the user): it settles, then stays
@@ -268,7 +268,7 @@ test('a double click (or double tap) blows a pink bubble of gum, which pops by i
   await expect(host).toHaveAttribute('data-gum', '');
   await page.waitForTimeout(700);
   expect(await snapshot(page)).not.toBe(before);
-  await expect(host).not.toHaveAttribute('data-gum', '', { timeout: 4000 });
+  await expect(host).not.toHaveAttribute('data-gum', '');
 });
 
 test('the bubble ends on time even when the moai stops drawing (scrolled away mid-bubble)', async ({ page }) => {

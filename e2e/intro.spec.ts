@@ -2,6 +2,9 @@ import { expect, test } from './fixtures';
 
 test.describe('intro', () => {
   test.use({ intro: true });
+  // every test here is about the intro's own seconds: waiting for the motion effects took WebKit past its 3.6 s bound,
+  // so a test read the lift, or the empty page after it, instead of the intro (#213)
+  test.use({ motionReady: false });
 
   test('covers the first view, then lifts away by itself', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
@@ -42,7 +45,7 @@ test.describe('intro', () => {
     await page.goto('/en/');
     await expect(page.locator('.site-intro')).toBeVisible();
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('.site-intro')).toBeHidden();
   });
 
   // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding

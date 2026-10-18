@@ -12,7 +12,7 @@ async function travel(page: Page): Promise<number[]> {
     addEventListener('scroll', () => w.positions.push(window.scrollY));
   });
   await navLink(page).click();
-  await expect.poll(() => experienceTop(page), { timeout: 4000 }).toBeLessThanOrEqual(113);
+  await expect.poll(() => experienceTop(page)).toBeLessThanOrEqual(113);
   await page.waitForTimeout(200);
   expect(await experienceTop(page)).toBeGreaterThanOrEqual(111); // under the 96px header, plus the section's 16px scroll-margin
   return page.evaluate(() => (window as unknown as { positions: number[] }).positions);

@@ -57,7 +57,7 @@ test('every code block copies its code to the clipboard and says so', async ({ p
   await expect(first.getByRole('status')).toHaveText('Code copied');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(await first.locator('pre code').textContent());
   // after a moment it offers to copy again
-  await expect(first.getByRole('button', { name: 'Copy code' })).toBeVisible({ timeout: 4000 });
+  await expect(first.getByRole('button', { name: 'Copy code' })).toBeVisible();
 });
 
 test('the Italian copy button speaks Italian', async ({ page }) => {

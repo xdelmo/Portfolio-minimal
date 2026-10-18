@@ -15,9 +15,9 @@ test('a project screenshot depixelates as it scrolls in, then shows sharp', asyn
     }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['width'] });
   });
   await shot.evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
-  await expect.poll(() => canvases.length, { timeout: 5000 }).toBeGreaterThan(0);
+  await expect.poll(() => canvases.length).toBeGreaterThan(0);
   // the canvas goes and the photo itself shows
-  await expect(page.locator('#work .media canvas')).toHaveCount(0, { timeout: 5000 });
+  await expect(page.locator('#work .media canvas')).toHaveCount(0);
   await expect(shot).toHaveCSS('opacity', '1');
   expect(canvases[0]).toBe(8);
 });
@@ -41,8 +41,8 @@ test('the steps draw from a decoded bitmap, never from the photo itself', async 
   const sources = () => page.evaluate(() => (window as unknown as { sources: string[] }).sources);
   await page.locator('#work .shot').first().evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
   // the canvas comes once the file is decoded: wait for its steps, then for their end
-  await expect.poll(async () => (await sources()).length, { timeout: 5000 }).toBeGreaterThan(0);
-  await expect(page.locator('#work .media canvas')).toHaveCount(0, { timeout: 5000 });
+  await expect.poll(async () => (await sources()).length).toBeGreaterThan(0);
+  await expect(page.locator('#work .media canvas')).toHaveCount(0);
   expect(new Set(await sources())).toEqual(new Set(['ImageBitmap']));
 });
 
@@ -59,9 +59,9 @@ test('the contact photo keeps its pixel circle while it depixelates', async ({ p
     }).observe(document.body, { childList: true, subtree: true });
   });
   await photo.evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
-  await expect.poll(() => page.evaluate(() => (window as unknown as { masks: string[] }).masks.length), { timeout: 5000 }).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { masks: string[] }).masks.length)).toBeGreaterThan(0);
   expect(await page.evaluate(() => (window as unknown as { masks: string[] }).masks[0])).toContain('svg');
-  await expect(page.locator('.contact canvas')).toHaveCount(0, { timeout: 5000 });
+  await expect(page.locator('.contact canvas')).toHaveCount(0);
   await expect(photo).toHaveCSS('opacity', '1');
 });
 

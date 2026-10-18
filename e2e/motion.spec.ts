@@ -12,7 +12,7 @@ test.describe('section titles', () => {
     await expect.poll(() => isPlainText(title)).toBe(false);
     await expect(title).toHaveAccessibleName('Experience');
     await title.scrollIntoViewIfNeeded();
-    await expect.poll(() => isPlainText(title), { timeout: 4000 }).toBe(true);
+    await expect.poll(() => isPlainText(title)).toBe(true);
     await expect(title).toHaveText('Experience');
   });
 
@@ -79,7 +79,7 @@ test.describe('hero', () => {
       // its deadline); counted from the end of goto, and with WebKit in CI delivering frames late under load (a run
       // took the CSS path and ended past 4 s), 6 s is that bound plus the frames' lag
       await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
-      await expect.poll(() => isPlainText(page.locator('h1')), { timeout: 4000 }).toBe(true);
+      await expect.poll(() => isPlainText(page.locator('h1'))).toBe(true);
       await expect(page.locator('h1')).toBeInViewport();
     });
   });
@@ -247,9 +247,9 @@ test.describe('experience', () => {
     await expect.poll(() => chapters.last().evaluate((a) => getComputedStyle(a).getPropertyValue('--fill'))).toBe('0');
     // a click on the current job's chapter scrolls the pin to where its card is on top
     await chapters.last().click();
-    await expect(chapters.last()).toHaveAttribute('aria-current', 'step', { timeout: 5000 });
+    await expect(chapters.last()).toHaveAttribute('aria-current', 'step');
     await expect(page.locator('#exp-2')).toBeFocused();
-    await expect.poll(() => page.locator('#exp-2').evaluate((li) => Math.round(new DOMMatrix(getComputedStyle(li).transform).m42)), { timeout: 5000 }).toBe(0);
+    await expect.poll(() => page.locator('#exp-2').evaluate((li) => Math.round(new DOMMatrix(getComputedStyle(li).transform).m42))).toBe(0);
   });
 
   test('is not sticky on desktop', async ({ page, isMobile }) => {

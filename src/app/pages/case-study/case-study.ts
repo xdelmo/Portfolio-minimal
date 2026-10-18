@@ -205,6 +205,10 @@ const UNLOCK_NOTICE_MS = 4000;
       margin-top: var(--space-2);
       font-size: var(--step-1);
     }
+    // prose keeps the body measure (issue #213: up to 99 characters a line on desktop)
+    section > p {
+      max-width: var(--measure);
+    }
     .bullets {
       display: grid;
       gap: var(--space-2);

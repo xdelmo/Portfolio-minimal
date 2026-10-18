@@ -2,6 +2,9 @@ import { expect, test } from './fixtures';
 
 test.describe('intro', () => {
   test.use({ intro: true });
+  // every test here is about the intro's own seconds: waiting for the motion effects took WebKit past its 3.6 s bound,
+  // so a test read the lift, or the empty page after it, instead of the intro (#213)
+  test.use({ motionReady: false });
 
   test('covers the first view, then lifts away by itself', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
@@ -27,7 +30,8 @@ test.describe('intro', () => {
   test('never blocks a click', async ({ page }) => {
     await page.goto('/en/');
     await page.getByRole('link', { name: 'See my work' }).click();
-    await expect(page).toHaveURL(/#work$/);
+    // a click before hydration is replayed once the app wakes, over 5 s later on a busy WebKit (#213)
+    await expect(page).toHaveURL(/#work$/, { timeout: 15_000 });
   });
 
   test('is shown once per session', async ({ page }) => {

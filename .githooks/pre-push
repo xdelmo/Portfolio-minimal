@@ -15,6 +15,8 @@ if [ "$clean" = yes ] && [ "$pushed" = "$head" ] && [ "$(cat "$passed" 2>/dev/nu
   echo "pre-push: npm run verify already passed on $head, nothing changed since"
   exit 0
 fi
-npm run verify || exit 1
+# a fanless Mac left alone sleeps half way through the e2e, and a 30 s test then lasts 15 minutes (issue #214):
+# caffeinate keeps it awake while verify runs (closing the lid on battery still sleeps)
+if command -v caffeinate >/dev/null 2>&1; then caffeinate -is npm run verify || exit 1; else npm run verify || exit 1; fi
 [ "$clean" = yes ] && [ -z "$(git status --porcelain)" ] && echo "$head" > "$passed"
 exit 0

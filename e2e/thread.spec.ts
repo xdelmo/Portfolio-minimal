@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './fixtures';
+import { REST_MS, expect, test, type Page } from './fixtures';
 
 const thread = (page: Page) => page.locator('app-thread .thread');
 const lit = (page: Page) => page.locator('app-thread .node.is-lit');
@@ -129,7 +129,8 @@ test.describe('with smooth scroll', () => {
               const lit = parseFloat(thread.style.getPropertyValue('--thread'));
               return Math.abs(Math.round(thread.getBoundingClientRect().top + lit * thread.offsetHeight - innerHeight * 0.6));
             }),
-          { message: `at ${String(at)} of the trail` },
+          // the glide under lag smoothing: 173 px short after 5 s in Firefox during a full local run (#213)
+          { message: `at ${String(at)} of the trail`, timeout: REST_MS },
         )
         .toBeLessThanOrEqual(8);
     }

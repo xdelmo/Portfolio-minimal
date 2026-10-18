@@ -32,6 +32,10 @@ export async function retryWebkitInternalError<T>(navigate: () => Promise<T>, on
  * process died under the memory of the Mac's OrbStack VM, never in CI nor on the Linux PC, even with four workers. Any
  * other error fails as before, and every retry leaves a `webkit-internal-error` annotation in the report.
  */
+// GSAP's lag smoothing advances its clock by at most ~33 ms a frame: on a busy machine (200 ms frames) the one-second
+// glide takes about six, so a test waiting for smooth-scrolled content to rest allows 15 s
+export const REST_MS = 15_000;
+
 export const test = base.extend<{ intro: boolean; motionReady: boolean; smoothScroll: boolean }>({
   intro: [false, { option: true }],
   smoothScroll: [false, { option: true }],

@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # e2e:changed compares the branch with its base
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -26,6 +29,8 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run e2e
+      - if: github.event_name == 'pull_request'
+        run: npm run e2e:changed
       - run: npm run lhci
       - if: failure()
         uses: actions/upload-artifact@v4

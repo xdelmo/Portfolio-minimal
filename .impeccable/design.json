@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-19T00:00:00Z",
+  "title": "Design System: edm.",
+  "extensions": {
+    "colorMeta": {
+      "signal-blue": { "role": "primary", "displayName": "Signal Blue", "canonical": "#0066d4", "tonalRamp": ["#0a1f3d", "#0b3a73", "#0b4f96", "#0066d4", "#2f86ea", "#7fb2ec", "#b9d5f5", "#e3effc"] },
+      "link-blue": { "role": "primary", "displayName": "Link Blue", "canonical": "#005fc5" },
+      "concrete": { "role": "neutral", "displayName": "Concrete", "canonical": "#e5e5e5", "tonalRamp": ["#121212", "#1c1c1c", "#1d1d1c", "#555555", "#aaaaaa", "#d0d0d0", "#e5e5e5", "#f2f2f2"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f2f2f2" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1d1d1c" },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#555555" },
+      "night": { "role": "neutral", "displayName": "Night", "canonical": "#121212" },
+      "slate": { "role": "neutral", "displayName": "Slate", "canonical": "#1c1c1c" },
+      "pixel-lavender": { "role": "tertiary", "displayName": "Pixel Lavender", "canonical": "#c9b8f5" },
+      "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffc9a8" },
+      "band-pastel": { "role": "secondary", "displayName": "Pastel Band", "canonical": "#b9d5f5" },
+      "band-lavender": { "role": "secondary", "displayName": "Lavender Band", "canonical": "#dccff8" },
+      "band-ink": { "role": "secondary", "displayName": "Ink Band", "canonical": "#1d1d1c" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The hero headline only, condensed (wdth 75)." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles (h2), wdth 85." },
+      "title": { "displayName": "Title", "purpose": "Project names, card titles, case study subsections (h3)." },
+      "body": { "displayName": "Body", "purpose": "Running text, 68ch max." },
+      "label": { "displayName": "Label", "purpose": "Repository tags and small meta." }
+    },
+    "shadows": [
+      { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "The primary button on hover, with translate(-4px, -4px). The only shadow in the system." }
+    ],
+    "motion": [
+      { "name": "step-state", "value": "120ms steps(2)", "purpose": "Buttons and repository tags: hover lift, inversion." },
+      { "name": "step-view", "value": "0.48s steps(6, end)", "purpose": "View transitions between pages." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action of a section; lifts onto a hard ink shadow on hover.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#work\">See my work</a>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; cursor: pointer; transition: transform 120ms steps(2), box-shadow 120ms steps(2); } .ds-btn-primary { border-color: var(--accent, #0066d4); background: var(--accent, #0066d4); color: var(--on-accent, #ffffff); } .ds-btn-primary:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0 var(--fg, #1d1d1c); } .ds-btn:active { transform: translate(2px, 2px); box-shadow: none; } .ds-btn:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A second action next to the primary one: ink outline, no fill.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#contact\">Contact me</a>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; } .ds-btn-secondary:active { transform: translate(2px, 2px); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Repository Tag",
+      "kind": "chip",
+      "refersTo": "repo-tag",
+      "description": "A link to a GitHub repository: pixel mark and name in a hard-edged tag that inverts on hover.",
+      "html": "<a class=\"ds-repo-tag\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" shape-rendering=\"crispEdges\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M5 1h6v1h2v2h1v6h-1v2h-2v1h-1v2H6v-2H5v-1H3v-2H2V4h1V2h2z\"/></svg>dashboard-tesi</a>",
+      "css": ".ds-repo-tag { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background-color 120ms steps(2), color 120ms steps(2); } .ds-repo-tag:hover { background: var(--fg, #1d1d1c); color: var(--bg, #e5e5e5); } .ds-repo-tag:active { transform: translate(2px, 2px); } .ds-repo-tag:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+    },
+    {
+      "name": "Ink Band",
+      "kind": "card",
+      "refersTo": "band-ink",
+      "description": "A full-bleed section band that re-points the text, link and focus colours for its content.",
+      "html": "<section class=\"ds-band-ink\"><h2>Let's talk</h2><p>Email, LinkedIn or GitHub. <a href=\"#\">Email</a></p></section>",
+      "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 68ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Arcade",
+    "overview": "A sober page, a game inside. What a recruiter meets first is plain and calm: a concrete grey page, ink text in one sans family, one Signal Blue, everything snapped to an 8px grid. Under that surface the site plays: a field of pastel pixels in the hero, a voxel moai that breathes and blows gum, side quests kept like items in an inventory, a player card behind the Konami code. The calm is what makes the play read as craft rather than noise.\n\nDensity is low and text-first. Sections alternate with full-bleed bands (pastel, lavender, ink) that change the mood without changing the type. Edges are hard and stepped, never soft: no rounded cards, no blur, no decorative gradients. Boldness is spent on a few named living objects; everything else stays out of their way.",
+    "keyCharacteristics": [
+      "One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body).",
+      "One accent, Signal Blue, for actions, focus and pixels; pastels only in decoration.",
+      "8px grid for every space, icon, cell and image size.",
+      "Stepped shapes and `steps()` transitions instead of curves.",
+      "A light and a dark theme, equal in care, both WCAG 2.2 AA."
+    ],
+    "rules": [
+      { "name": "The No Green Rule", "body": "No green anywhere: not for success, not in syntax colours, not as a pastel. The brand is greys, the blue family, lavender and peach.", "section": "colors" },
+      { "name": "The Silent Pastel Rule", "body": "The `pixel-*` colours never carry text or a control's state; text on a pastel band uses that band's own ink tokens.", "section": "colors" },
+      { "name": "The Two Themes Rule", "body": "Every new colour ships with a light and a dark value, both checked for AA; a token that is light in one theme can turn black in the other.", "section": "colors" },
+      { "name": "The Sentence Case Rule", "body": "Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. The one exception: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px.", "section": "typography" },
+      { "name": "The Width Not Weight Rule", "body": "Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights or a second family for emphasis.", "section": "typography" },
+      { "name": "The Eight Rule", "body": "Every space, icon, cell and image dimension is a multiple of 8px.", "section": "layout" },
+      { "name": "The Hard Shadow Rule", "body": "No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.", "section": "elevation" },
+      { "name": "The Stepped Edge Rule", "body": "If a shape would be smooth, draw it in pixels instead.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do read colours through the CSS custom properties (`--bg`, `--fg`, `--accent`, `--link`, band tokens); never hard-code a hex in a component.",
+      "Do keep every space and size on the 8px scale.",
+      "Do use `steps()` for state transitions on buttons, tags and the language curtain.",
+      "Do reuse `PixelDissolve`, the seams and the thread before inventing a new transition.",
+      "Do put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.",
+      "Do check every change at 1280px and 390px, in both themes."
+    ],
+    "donts": [
+      "Don't use green, anywhere.",
+      "Don't use rounded cards, soft drop shadows, blur or gradients as decoration.",
+      "Don't set text in a `pixel-*` colour.",
+      "Don't use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.",
+      "Don't add a second typeface or extra weights for emphasis.",
+      "Don't add hover-only behaviour on phones, or block vertical scrolling on anything swipeable."
+    ]
+  }
+}

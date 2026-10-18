@@ -1,22 +1,11 @@
 #!/bin/sh
-# Same gate as CI: a branch without a prefix saying what it does (feat/, fix/, …), or that fails
-# `npm run verify`, is not pushed. A push that only deletes branches carries no code, so it skips verify.
+# The quick half of CI's gate: a branch without a prefix saying what it does (feat/, fix/, …), or that fails
+# `npm run verify:quick` (lint, unit tests, script tests: a couple of minutes), is not pushed. Build and e2e run on the
+# pull request's CI, which a PR passes before it is merged: the full verify here doubled 20 minutes per push, and two
+# sessions running it at once on the same machine skewed each other's results (the user's choice, 2026-10-18).
+# A push that only deletes branches carries no code, so it skips the checks.
 export PATH="$HOME/.local/node/current/bin:$PATH"
 refs=$(cat)
 printf '%s\n' "$refs" | node scripts/branch-name.mjs --pre-push || exit 1
 printf '%s\n' "$refs" | awk '$2 != "" && $2 !~ /^0+$/ { code = 1 } END { exit !code }' || exit 0
-# verify tests the working tree: it vouches for a commit only when nothing is left uncommitted. Remember the commit
-# it passed on, so a push retried after a network or GitHub error does not run the same 20 minutes again
-head=$(git rev-parse HEAD)
-pushed=$(printf '%s\n' "$refs" | awk '$2 != "" && $2 !~ /^0+$/ { print $2 }' | sort -u)
-passed="$(git rev-parse --git-dir)/verify-passed"
-clean=$([ -z "$(git status --porcelain)" ] && echo yes)
-if [ "$clean" = yes ] && [ "$pushed" = "$head" ] && [ "$(cat "$passed" 2>/dev/null)" = "$head" ]; then
-  echo "pre-push: npm run verify already passed on $head, nothing changed since"
-  exit 0
-fi
-# a fanless Mac left alone sleeps half way through the e2e, and a 30 s test then lasts 15 minutes (issue #214):
-# caffeinate keeps it awake while verify runs (closing the lid on battery still sleeps)
-if command -v caffeinate >/dev/null 2>&1; then caffeinate -is npm run verify || exit 1; else npm run verify || exit 1; fi
-[ "$clean" = yes ] && [ -z "$(git status --porcelain)" ] && echo "$head" > "$passed"
-exit 0
+npm run verify:quick

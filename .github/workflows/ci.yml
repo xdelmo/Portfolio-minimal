@@ -26,6 +26,15 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run e2e
+      # every e2e spec the pull request adds or changes runs 5 more times, no retries: a test that fails one time in
+      # ten fails here, before the merge (it ran at the end of the local pre-push verify until 2026-10-18)
+      - if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "$GITHUB_BASE_REF"
+          specs=$(git diff --name-only --diff-filter=AM FETCH_HEAD HEAD -- 'e2e/*.spec.ts')
+          if [ -z "$specs" ]; then echo "no e2e spec changed"; exit 0; fi
+          echo "repeating: $specs"
+          npx playwright test $specs --repeat-each=5 --retries=0
       - run: npm run lhci
       - if: failure()
         uses: actions/upload-artifact@v4

@@ -15,7 +15,7 @@ describe('WorkList', () => {
   it('renders one item per project with a link to its case study', async () => {
     const el = await render();
     const links = [...el.querySelectorAll('h3 a')].map((a) => a.getAttribute('href'));
-    expect(links).toEqual(['/work/apexflow', '/work/ice-friends-breaker', '/work/mcp-server', '/work/telegram-bots']);
+    expect(links).toEqual(['/work/apexflow', '/work/pokeverba', '/work/ice-friends-breaker']);
   });
 
   it('shows an image with alt text only for projects that have one', async () => {
@@ -23,7 +23,7 @@ describe('WorkList', () => {
     const imgs = [...el.querySelectorAll('img.shot')];
     expect(imgs.map((i) => i.getAttribute('alt'))).toEqual([
       CONTENT_EN.projects[0].image?.alt,
-      CONTENT_EN.projects[1].image?.alt,
+      CONTENT_EN.projects[2].image?.alt,
     ]);
   });
 

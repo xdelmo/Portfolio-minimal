@@ -57,7 +57,7 @@ for (const [locale, c] of [['en', CONTENT_EN], ['it', CONTENT_IT]]) {
   const cards = [
     ['home', c.person.name, c.hero.headline],
     ...c.projects.map((p) => [p.slug, p.title, p.summary]),
-    ['blog', 'Blog', locale === 'it' ? 'Appunti su Angular, Signals, RxJS e front end enterprise.' : 'Notes on Angular, Signals, RxJS and enterprise front ends.'],
+    ['blog', 'Blog', locale === 'it' ? 'Appunti su Angular, Signals, RxJS e Spring Boot.' : 'Notes on Angular, Signals, RxJS and Spring Boot.'],
     ...BLOG[locale].map((a) => [`blog-${a.slug}`, a.title, a.description]),
   ];
   for (const [key, title, line] of cards) {

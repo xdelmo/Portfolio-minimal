@@ -16,14 +16,7 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
   host: { '(keydown)': 'move($event)' },
   template: `
     <section class="container battle" aria-labelledby="not-found-title">
-      <div class="box status">
-        <p class="name"><strong>404</strong> <span i18n="@@notFound.level">Lv. 4</span></p>
-        <p class="hp">
-          <label for="not-found-hp" i18n="@@notFound.hp">HP</label>
-          <meter id="not-found-hp" min="0" max="1" value="1">100%</meter>
-        </p>
-      </div>
-      <app-quest-sprite class="foe" name="wild404" />
+      <!-- the title first for a screen reader; the grid areas put the status box above it (issue #229) -->
       <div class="box frame text">
         @for (corner of corners; track corner) {
           <svg class="corner" [class]="corner" viewBox="0 0 8 8" aria-hidden="true" shape-rendering="crispEdges">
@@ -34,6 +27,14 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
         <h1 id="not-found-title" i18n="@@notFound.title">A wild 404 appeared!</h1>
         <p i18n="@@notFound.text">The link may be old or mistyped. What will you do?</p>
       </div>
+      <div class="box status">
+        <p class="name"><strong>404</strong> <span i18n="@@notFound.level">Lv. 4</span></p>
+        <p class="hp">
+          <label for="not-found-hp" i18n="@@notFound.hp">HP</label>
+          <meter id="not-found-hp" min="0" max="1" value="1">100%</meter>
+        </p>
+      </div>
+      <app-quest-sprite class="foe" name="wild404" />
       <nav class="box frame menu" i18n-aria-label="@@notFound.menu" aria-label="What to do">
         @for (corner of corners; track corner) {
           <svg class="corner" [class]="corner" viewBox="0 0 8 8" aria-hidden="true" shape-rendering="crispEdges">

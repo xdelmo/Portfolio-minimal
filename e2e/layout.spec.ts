@@ -6,7 +6,7 @@ for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/telegram-bots', '/it/work/mcp-server']) {
+    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba', '/it/work/ice-friends-breaker']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} at ${String(width)}px`).toBeLessThanOrEqual(0);
@@ -300,3 +300,18 @@ test('names and tools are kept out of automatic translation', async ({ page }) =
     await expect(page.locator(selector).first(), selector).toHaveAttribute('translate', 'no');
   }
 });
+
+// a phone screenshot stands whole in the work list's 3:2 frame: with an auto grid row it kept its own height and the
+// frame cut it (issue #229)
+for (const width of [1280, 390]) {
+  test(`every project picture fits inside its frame at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    for (const media of await page.locator('#work .media').all()) {
+      const [frame, shot] = await media.evaluate((m) => [m.getBoundingClientRect(), m.firstElementChild?.getBoundingClientRect()].map((r) => r && { top: r.top, bottom: r.bottom }));
+      if (!frame || !shot) continue;
+      expect(shot.top).toBeGreaterThanOrEqual(frame.top - 1);
+      expect(shot.bottom).toBeLessThanOrEqual(frame.bottom + 1);
+    }
+  });
+}

@@ -22,7 +22,7 @@
       "display": { "displayName": "Display", "purpose": "The hero headline only, condensed (wdth 75)." },
       "headline": { "displayName": "Headline", "purpose": "Section titles (h2), wdth 85." },
       "title": { "displayName": "Title", "purpose": "Project names, card titles, case study subsections (h3)." },
-      "body": { "displayName": "Body", "purpose": "Running text, 68ch max." },
+      "body": { "displayName": "Body", "purpose": "Running text, 58ch max (about 75 characters)." },
       "label": { "displayName": "Label", "purpose": "Repository tags and small meta." }
     },
     "shadows": [
@@ -68,7 +68,7 @@
       "refersTo": "band-ink",
       "description": "A full-bleed section band that re-points the text, link and focus colours for its content.",
       "html": "<section class=\"ds-band-ink\"><h2>Let's talk</h2><p>Email, LinkedIn or GitHub. <a href=\"#\">Email</a></p></section>",
-      "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 68ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+      "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 58ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
     }
   ],
   "narrative": {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { MOTION_LOADER, type MotionLib } from '../motion/motion-host';
@@ -22,7 +22,7 @@ const SHOWN = 'inset(0 0 0% 0)';
 @Component({
   selector: 'app-site-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LanguageSwitch, PauseToggle, ThemeToggle],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, PauseToggle, ThemeToggle],
   host: {
     '(document:click)': 'closeOutside($event)',
     '(keydown.escape)': 'close(true)',
@@ -45,7 +45,7 @@ const SHOWN = 'inset(0 0 0% 0)';
           <a routerLink="/" fragment="work" (click)="close(false)" i18n="@@nav.work">Work</a>
           <a routerLink="/" fragment="about" (click)="close(false)" i18n="@@nav.about">About</a>
           <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
-          <a routerLink="/blog" (click)="close(false)" i18n="@@nav.blog">Blog</a>
+          <a routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" (click)="close(false)" i18n="@@nav.blog">Blog</a>
           <a routerLink="/" fragment="contact" (click)="close(false)" i18n="@@nav.contact">Contact</a>
         </nav>
         <div class="settings">
@@ -115,6 +115,11 @@ const SHOWN = 'inset(0 0 0% 0)';
     }
     nav a + a {
       border-top: 1px solid var(--rule);
+    }
+    nav a[aria-current] {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.2em;
     }
   `,
 })

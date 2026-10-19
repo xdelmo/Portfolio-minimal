@@ -41,6 +41,8 @@ import { QuestSprite } from './quest-sprite';
       grid-template-columns: auto minmax(0, 1fr);
       gap: var(--space-3);
       align-items: start;
+      // in a row of items the tallest sets the height: the others keep their text right under the slot (issue #229)
+      align-content: start;
     }
     // an inventory slot: a hard square frame, the item drawn at 6px a cell
     .slot {
@@ -115,15 +117,21 @@ import { QuestSprite } from './quest-sprite';
         }
       }
     }
+    // four items: two by two on tablets, one row from 1024px (issue #229)
     @include bp.up(md) {
       .quests {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       li {
         grid-template-columns: minmax(0, 1fr);
       }
       .slot {
         justify-self: start;
+      }
+    }
+    @include bp.up(lg) {
+      .quests {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
   `,

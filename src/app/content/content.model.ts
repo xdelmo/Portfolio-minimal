@@ -41,6 +41,8 @@ export interface CaseStudyBody {
 export interface Project {
   slug: string;
   title: string;
+  /** Whose project it is and in what context, said up front as a plain sentence: a thesis, a side project, with whom. */
+  role: string;
   summary: string;
   stack: readonly string[];
   /** Every repository, private ones too: the build links only the public ones (content/public-repos.ts). */

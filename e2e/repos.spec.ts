@@ -5,7 +5,7 @@ import { expect, test } from './fixtures';
 // whatever is public today, links nothing else and leaves no empty list or row of buttons behind.
 const PUBLIC = readFileSync('src/app/content/public-repos.generated.ts', 'utf8').match(/https:\/\/github\.com\/xdelmo\/[\w.-]+/g) ?? [];
 
-for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/ice-friends-breaker', '/en/work/telegram-bots', '/it/work/mcp-server']) {
+for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/ice-friends-breaker', '/en/work/pokeverba', '/it/work/pokeverba']) {
   test(`${path} links only public repositories, with no empty lists`, async ({ page }) => {
     await page.goto(path);
     const repos = await page.locator('a[href^="https://github.com/xdelmo/"]').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).href));

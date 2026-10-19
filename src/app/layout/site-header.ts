@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
@@ -9,7 +9,7 @@ import { SiteMenu } from './site-menu';
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
@@ -20,7 +20,7 @@ import { SiteMenu } from './site-menu';
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
         <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
-        <a data-magnetic routerLink="/blog" i18n="@@nav.blog">Blog</a>
+        <a data-magnetic routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" i18n="@@nav.blog">Blog</a>
         <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
       </nav>
       <div class="controls">
@@ -91,6 +91,12 @@ import { SiteMenu } from './site-menu';
     }
     nav a:hover {
       text-decoration: underline;
+    }
+    // the section you are in (issue #229): the other items lead back to the home
+    nav a[aria-current] {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.3em;
     }
     .controls {
       display: flex;

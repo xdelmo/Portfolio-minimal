@@ -40,6 +40,7 @@ export const CONTENT_EN: SiteContent = {
     {
       slug: 'apexflow',
       title: 'ApexFlow',
+      role: 'My Computer Engineering thesis, built during my internship at IPS S.p.A. in 2026.',
       summary:
         'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the front end, Spring Boot 3 and PostgreSQL on the back end.',
       stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
@@ -83,8 +84,44 @@ export const CONTENT_EN: SiteContent = {
       },
     },
     {
+      slug: 'pokeverba',
+      sprite: 'crossword',
+      title: 'PokèVerba',
+      role: 'A side project with Matteo Terenzi, who writes the content; I build and run the site. 2026.',
+      summary: 'A daily Pokémon crossword with a collection of the Pokémon you catch and a blog, in Italian and English.',
+      stack: ['WordPress', 'PHP', 'React', 'Vite'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
+      demoUrl: 'https://sbustiamobro.it',
+      caseStudy: {
+        context:
+          'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so it is a commercial use: no official text or image may appear anywhere, and every clue has to be our own.',
+        architecture: [
+          'A classic WordPress theme for the whole site (home, blog, pages) and a plugin with its own tables, a REST API and WP-CLI commands.',
+          'A React app built with Vite, embedded through a shortcode: the grid, the Collection of caught Pokémon, achievements and coins.',
+          'A server-side generator lays out 10 to 15 words in a grid of up to 15 × 15, seeded by the date, with no Pokémon repeated within 30 days.',
+          'Italian and English without a multilingual plugin; progress lives in the browser, in local storage.',
+        ],
+        decisions: [
+          {
+            title: 'The answers never reach the browser',
+            body: 'The app only knows how long each word is. Checking goes through the API, which judges whole words only, so the Check button never gives letters away one at a time.',
+          },
+          {
+            title: 'Original clues composed from facts',
+            body: 'Clues are composed from facts such as type, generation, height and weight, imported from PokéAPI, and any clue that names the answer is rejected. No official text is ever copied.',
+          },
+          {
+            title: 'One puzzle a day, cached until midnight',
+            body: "Today's puzzle is cached until midnight in Rome, when the next one is generated, so the server does the work once a day.",
+          },
+        ],
+        outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',
+      },
+    },
+    {
       slug: 'ice-friends-breaker',
       title: 'Ice Friends Breaker',
+      role: 'A personal project I built and run on my own.',
       summary: 'A social card game to break the ice, installable on phones as a PWA and native app.',
       stack: ['Next.js', 'Supabase', 'Tailwind CSS', 'Capacitor'],
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
@@ -114,66 +151,6 @@ export const CONTENT_EN: SiteContent = {
           },
         ],
         outcome: 'Live on Vercel, with streaks, multiple game modes and a role-based admin panel to manage questions and categories.',
-      },
-    },
-    {
-      slug: 'mcp-server',
-      sprite: 'plug',
-      title: 'MCP Server',
-      summary:
-        'A Model Context Protocol server and client that lets an LLM read and edit documents through custom tools.',
-      stack: ['Python', 'MCP'],
-      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/mcp-server' }],
-      caseStudy: {
-        context:
-          'I built this to learn how language models connect to real tools and data with the Model Context Protocol, following the two MCP courses of the Anthropic Academy.',
-        architecture: [
-          'A Python MCP server that exposes tools (read, edit, summarize, research, list roots, read directory), resources and a prompt template.',
-          'A Python client that talks to the server over standard input and output and handles sampling, progress, logging and roots.',
-        ],
-        decisions: [
-          {
-            title: 'Access limited to approved folders',
-            body: 'The directory tool only reads inside the roots the client exposes, so the model cannot wander around the file system.',
-          },
-          {
-            title: 'Keeping deprecated features, on purpose',
-            body: 'Sampling, roots and logging were deprecated in the MCP specification in July 2026. The advanced example keeps them for learning, while the basic example shows the current approach.',
-          },
-        ],
-        outcome: 'A working reference for building MCP integrations, public on GitHub.',
-      },
-    },
-    {
-      slug: 'telegram-bots',
-      sprite: 'robot',
-      title: 'Telegram bots',
-      summary: 'Three bots I use every day: car deadlines, my Pokémon TCG binder and attendance timesheets.',
-      stack: ['TypeScript', 'Python', 'grammY', 'SQLite', 'Docker'],
-      repos: [
-        { label: 'Car deadlines bot', url: 'https://github.com/xdelmo/auto-scadenze-bot' },
-        { label: 'Pokémon binder bot', url: 'https://github.com/xdelmo/hoenn-binder' },
-        { label: 'Timesheet bot', url: 'https://github.com/xdelmo/presenz-lazy-bot' },
-      ],
-      caseStudy: {
-        context:
-          'Small personal tools that remove a chore from my week. Each one answers only to me, runs in Docker and keeps its data in SQLite or Excel.',
-        architecture: [
-          'Car deadlines: TypeScript run natively on Node 24 with grammY and node:sqlite; reminders by date and by mileage, expense history and monthly backups.',
-          'Pokémon binder: TypeScript, grammY, SQLite with Drizzle ORM and Vitest; tracks 135 cards and computes page, row and column in the physical binder.',
-          'Timesheet: Python with a weekday schedule that fills an Excel sheet and, once a month, emails it after asking for confirmation.',
-        ],
-        decisions: [
-          {
-            title: 'No chat clutter',
-            body: 'The binder bot edits the same message through inline keyboards instead of sending new ones, so the chat stays readable.',
-          },
-          {
-            title: 'Estimate, then remind',
-            body: 'The car bot learns how many kilometres I drive per month and estimates when I will reach the next service, so reminders arrive before the deadline, not after.',
-          },
-        ],
-        outcome: 'All three run every day on my home server.',
       },
     },
   ],
@@ -285,11 +262,17 @@ export const CONTENT_EN: SiteContent = {
   },
   sideQuests: [
     {
-      title: 'PokèVerba',
-      summary: 'A daily Pokémon crossword and a personal Pokédex: a WordPress plugin with a React app inside, styled like a Game Boy.',
-      tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
-      repo: 'https://github.com/xdelmo/pokeverba-site',
-      sprite: 'crossword',
+      title: 'MCP Server',
+      summary: 'A Model Context Protocol server and client that let a language model read and edit documents through custom tools, built after the Anthropic Academy courses.',
+      tags: ['Python', 'MCP'],
+      repo: 'https://github.com/xdelmo/mcp-server',
+      sprite: 'plug',
+    },
+    {
+      title: 'Telegram bots',
+      summary: 'Three bots I use every day, each answering only to me: car deadlines, my Pokémon card binder and attendance timesheets.',
+      tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],
+      sprite: 'robot',
     },
     {
       title: 'MagSafe card holder',

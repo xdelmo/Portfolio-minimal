@@ -83,7 +83,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="side-quests" class="section container band band--lavender" aria-labelledby="side-quests-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="sideQuestsSeam" grow="up" />
       <h2 id="side-quests-title" i18n="@@home.sideQuests.title">Side quests</h2>
-      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from crosswords to 3D-printed parts.</p>
+      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from Telegram bots to 3D-printed parts.</p>
       <app-side-quests [items]="content.sideQuests" />
     </section>
 

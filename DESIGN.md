@@ -55,6 +55,8 @@ typography:
     fontSize: "0.9rem"
     fontWeight: 600
     lineHeight: 1.55
+  code:
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
 rounded:
   none: "0px"
 spacing:
@@ -143,6 +145,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 
 **Display Font:** Instrument Sans Variable (with ui-sans-serif, system-ui)
 **Body Font:** Instrument Sans Variable
+**Code Font:** the system monospace (ui-monospace, SFMono-Regular, Menlo, Consolas), only inside code in blog posts
 
 **Character:** One variable family carries the whole system; its width axis does the work a second typeface would. Headings are condensed and weighty, the body is open and even, so the page reads as one voice at different volumes.
 
@@ -150,7 +153,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Display** (600, 44 → 96px fluid, 1.02, `wdth` 75): the hero headline only, the page's main graphic element; on desktop it widens to `wdth` 85 as the hero scrolls away.
 - **Headline** (600, 32 → 44px, 1.1, `wdth` 85): section titles (`h2`).
 - **Title** (600, 22.5 → 28px, 1.1, `wdth` 85): project names, card titles, case study subsections (`h3`).
-- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 68ch.
+- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 58ch (about 75 characters a line).
 - **Label** (600, 14.4px): repository tags, small meta.
 
 The scale is modular, 1.25 on 18px (`--step--1` … `--step-5`). The contact title is the one oversized exception (up to 9rem).

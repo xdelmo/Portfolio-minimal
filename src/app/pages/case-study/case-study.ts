@@ -5,6 +5,7 @@ import { BLOG } from '../../content/blog';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
+import { ContactPrompt } from '../../layout/contact-prompt';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
@@ -28,13 +29,15 @@ const UNLOCK_NOTICE_MS = 4000;
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate, MotionHost],
+  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, QuestSprite, Depixelate, MotionHost],
   template: `
     <article class="container case-study" [appMotion]="effects">
       @if (project(); as p) {
         <header class="intro">
           <h1 [style.view-transition-name]="'title-' + p.slug">{{ p.title }}</h1>
           <p class="summary">{{ p.summary }}</p>
+          <!-- whose project and in what context, before the details (issue #229) -->
+          <p class="role">{{ p.role }}</p>
           <ul class="stack" i18n-aria-label="@@case.stack" aria-label="Technologies">
             @for (tech of p.stack; track tech) {
               <li>{{ tech }}</li>
@@ -111,6 +114,7 @@ const UNLOCK_NOTICE_MS = 4000;
 
         <!-- the next project, so a reader goes on without going back to the home (issue #91) -->
         <nav class="more" i18n-aria-label="@@case.more" aria-label="More projects">
+          <app-contact-prompt />
           @if (next(); as n) {
             <a class="next" [routerLink]="['/work', n.slug]">
               <span class="next-label" i18n="@@case.next">Next project</span>
@@ -183,6 +187,9 @@ const UNLOCK_NOTICE_MS = 4000;
     }
     .summary {
       font-size: var(--step-1);
+    }
+    .role {
+      color: var(--fg-muted);
     }
     .stack {
       display: flex;

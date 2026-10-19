@@ -40,6 +40,7 @@ export const CONTENT_IT: SiteContent = {
   projects: [
     {
       ...en('apexflow'),
+      role: 'La mia tesi in Ingegneria Informatica, costruita durante il tirocinio in IPS S.p.A. nel 2026.',
       summary:
         'Una dashboard CRM e di analytics: Angular 19 con Signals e RxJS nel frontend, Spring Boot 3 e PostgreSQL nel backend.',
       repos: [
@@ -81,7 +82,39 @@ export const CONTENT_IT: SiteContent = {
       },
     },
     {
+      ...en('pokeverba'),
+      role: 'Un progetto con Matteo Terenzi, che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
+      summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
+      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
+      caseStudy: {
+        context:
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi è un uso commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
+        architecture: [
+          'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
+          "Un'app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
+          'Un generatore lato server dispone da 10 a 15 parole in una griglia fino a 15 × 15, con il seme dato dalla data e nessun Pokémon ripetuto entro 30 giorni.',
+          'Italiano e inglese senza plugin multilingua; i progressi restano nel browser, nel local storage.',
+        ],
+        decisions: [
+          {
+            title: 'Le risposte non arrivano mai al browser',
+            body: "L'app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
+          },
+          {
+            title: 'Indizi originali composti da fatti',
+            body: "Gli indizi sono composti da fatti come tipo, generazione, altezza e peso, importati da PokéAPI, e ogni indizio che nomina la risposta viene scartato. Nessun testo ufficiale viene copiato.",
+          },
+          {
+            title: 'Un cruciverba al giorno, in cache fino a mezzanotte',
+            body: 'Il cruciverba di oggi resta in cache fino alla mezzanotte di Roma, quando si genera il successivo, così il server lavora una volta al giorno.',
+          },
+        ],
+        outcome: 'Online su sbustiamobro.it e alla versione 1.18 a ottobre 2026, con un cruciverba regionale, gettoni e traguardi.',
+      },
+    },
+    {
       ...en('ice-friends-breaker'),
+      role: 'Un progetto personale che ho costruito e gestisco da solo.',
       summary: 'Un gioco di carte per rompere il ghiaccio, installabile sul telefono come PWA e come app nativa.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
       image: {
@@ -109,61 +142,6 @@ export const CONTENT_IT: SiteContent = {
           },
         ],
         outcome: 'Online su Vercel, con serie di giorni consecutivi, più modalità di gioco e un pannello admin per ruolo per gestire domande e categorie.',
-      },
-    },
-    {
-      ...en('mcp-server'),
-      summary:
-        'Un server e un client Model Context Protocol che permettono a un LLM di leggere e modificare documenti tramite tool personalizzati.',
-      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/mcp-server' }],
-      caseStudy: {
-        context:
-          "L'ho costruito per capire come i modelli linguistici si collegano a strumenti e dati reali con il Model Context Protocol, seguendo i due corsi MCP dell'Anthropic Academy.",
-        architecture: [
-          'Un server MCP in Python che espone tool (lettura, modifica, riassunto, ricerca, elenco delle cartelle consentite, lettura di una cartella), risorse e un template di prompt.',
-          'Un client Python che parla con il server tramite input e output standard e gestisce sampling, avanzamento, log e cartelle consentite.',
-        ],
-        decisions: [
-          {
-            title: 'Accesso solo alle cartelle approvate',
-            body: 'Il tool che legge le cartelle lavora solo dentro le radici esposte dal client, così il modello non può girare liberamente nel file system.',
-          },
-          {
-            title: 'Funzioni deprecate tenute apposta',
-            body: "Sampling, roots e logging sono stati deprecati nella specifica MCP a luglio 2026. L'esempio avanzato li mantiene a scopo didattico, mentre quello base mostra l'approccio attuale.",
-          },
-        ],
-        outcome: 'Un riferimento funzionante per costruire integrazioni MCP, pubblico su GitHub.',
-      },
-    },
-    {
-      ...en('telegram-bots'),
-      title: 'Bot Telegram',
-      summary: "Tre bot che uso ogni giorno: scadenze dell'auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
-      repos: [
-        { label: "Bot delle scadenze dell'auto", url: 'https://github.com/xdelmo/auto-scadenze-bot' },
-        { label: 'Bot del raccoglitore Pokémon', url: 'https://github.com/xdelmo/hoenn-binder' },
-        { label: 'Bot delle presenze', url: 'https://github.com/xdelmo/presenz-lazy-bot' },
-      ],
-      caseStudy: {
-        context:
-          'Piccoli strumenti personali che mi tolgono una seccatura dalla settimana. Ognuno risponde solo a me, gira in Docker e tiene i dati in SQLite o in Excel.',
-        architecture: [
-          "Scadenze dell'auto: TypeScript eseguito nativamente su Node 24 con grammY e node:sqlite; promemoria per data e per chilometri, storico delle spese e backup mensili.",
-          'Raccoglitore Pokémon: TypeScript, grammY, SQLite con Drizzle ORM e Vitest; tiene traccia di 135 carte e calcola pagina, riga e colonna nel raccoglitore fisico.',
-          'Presenze: Python con una pianificazione nei giorni feriali che compila un foglio Excel e, una volta al mese, lo invia per email dopo aver chiesto conferma.',
-        ],
-        decisions: [
-          {
-            title: 'Niente chat intasate',
-            body: 'Il bot del raccoglitore modifica lo stesso messaggio con le tastiere inline invece di mandarne di nuovi, così la chat resta leggibile.',
-          },
-          {
-            title: 'Prima stima, poi ricorda',
-            body: "Il bot dell'auto impara quanti chilometri faccio al mese e stima quando arriverò al prossimo tagliando, così i promemoria arrivano prima della scadenza, non dopo.",
-          },
-        ],
-        outcome: 'Tutti e tre girano ogni giorno sul mio server di casa.',
       },
     },
   ],
@@ -275,11 +253,17 @@ export const CONTENT_IT: SiteContent = {
   },
   sideQuests: [
     {
-      title: 'PokèVerba',
-      summary: 'Un cruciverba Pokémon quotidiano e un Pokédex personale: un plugin WordPress con dentro un\'app React, in stile Game Boy.',
-      tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
-      repo: 'https://github.com/xdelmo/pokeverba-site',
-      sprite: 'crossword',
+      title: 'MCP Server',
+      summary: "Un server e un client Model Context Protocol che permettono a un modello linguistico di leggere e modificare documenti con tool personalizzati, costruiti dopo i corsi dell'Anthropic Academy.",
+      tags: ['Python', 'MCP'],
+      repo: 'https://github.com/xdelmo/mcp-server',
+      sprite: 'plug',
+    },
+    {
+      title: 'Bot Telegram',
+      summary: "Tre bot che uso ogni giorno, ognuno risponde solo a me: scadenze dell'auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
+      tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],
+      sprite: 'robot',
     },
     {
       title: 'Porta-carte MagSafe',

@@ -5,6 +5,7 @@ import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { articleJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
+import { ContactPrompt } from '../../layout/contact-prompt';
 import { CodeBlock } from './code-block';
 
 /**
@@ -16,7 +17,7 @@ import { CodeBlock } from './code-block';
   changeDetection: ChangeDetectionStrategy.OnPush,
   // unscoped: the post's elements come from [innerHTML], outside Angular's templates; every rule starts at app-article
   encapsulation: ViewEncapsulation.None,
-  imports: [RouterLink, CodeBlock],
+  imports: [RouterLink, CodeBlock, ContactPrompt],
   template: `
     <article class="container post">
       @if (article(); as a) {
@@ -33,7 +34,8 @@ import { CodeBlock } from './code-block';
             }
           }
         </div>
-        <nav class="more" i18n-aria-label="@@blog.more" aria-label="More">
+        <nav class="more" i18n-aria-label="@@blog.more" aria-label="After this post">
+          <app-contact-prompt />
           @if (project(); as p) {
             <a class="next" [routerLink]="['/work', p.slug]">
               <span class="next-label" i18n="@@blog.project">The project behind it</span>

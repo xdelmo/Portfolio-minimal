@@ -38,8 +38,16 @@ describe('CaseStudy', () => {
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
   });
 
+  it('says whose project it is before the details, and ends with a way to get in touch (#229)', async () => {
+    const el = await render('apexflow');
+    expect(el.querySelector('.intro .role')?.textContent).toBe(CONTENT_EN.projects[0].role);
+    const contact = el.querySelector('.more app-contact-prompt a');
+    expect(contact?.getAttribute('href')).toBe(`mailto:${CONTENT_EN.person.email}`);
+    expect(contact?.classList).toContain('button--primary');
+  });
+
   it('has no posts section for a project nobody wrote about (#1)', async () => {
-    const el = await render('mcp-server');
+    const el = await render('pokeverba');
     expect([...el.querySelectorAll('h2')].map((h) => h.textContent.trim())).not.toContain('I wrote about it');
   });
 
@@ -70,22 +78,27 @@ describe('CaseStudy', () => {
 
   it('leads with the demo when no code is public, and drops the row when there is neither', async () => {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [] })) } }],
+      providers: [
+        provideRouter([]),
+        // no public code anywhere, and PokèVerba without its demo either
+        { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [], demoUrl: p.slug === 'pokeverba' ? undefined : p.demoUrl })) } },
+      ],
     });
     const fixture = TestBed.createComponent(CaseStudy);
     fixture.componentRef.setInput('slug', 'ice-friends-breaker');
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     expect([...el.querySelectorAll('.links a')].map((a) => [a.textContent.trim(), a.classList.contains('button--primary')])).toEqual([['Open the live demo', true]]);
-    fixture.componentRef.setInput('slug', 'telegram-bots');
+    fixture.componentRef.setInput('slug', 'pokeverba');
     await fixture.whenStable();
     expect(el.querySelector('.links')).toBeNull();
   });
 
-  it('shows no demo button for a project without a demo', async () => {
-    const el = await render('mcp-server');
-    expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub']);
+  it('shows the pixel item for a project without a screenshot', async () => {
+    const el = await render('pokeverba');
+    expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub', 'Open the live demo']);
     expect(el.querySelector('img')).toBeNull();
+    expect(el.querySelector('.item app-quest-sprite')).not.toBeNull();
   });
 });
 

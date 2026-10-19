@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { SeoService } from '../../core/seo/seo.service';
 
@@ -6,6 +7,7 @@ import { SeoService } from '../../core/seo/seo.service';
 @Component({
   selector: 'app-privacy',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <article class="container privacy">
       <h1>Privacy</h1>
@@ -19,6 +21,8 @@ import { SeoService } from '../../core/seo/seo.service';
           }
         </section>
       }
+      <!-- a way on, as at the end of the other pages to read (issue #229) -->
+      <p class="more"><a class="touch-line" routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
     </article>
   `,
   styles: `
@@ -35,8 +39,12 @@ import { SeoService } from '../../core/seo/seo.service';
       font-size: var(--step-2);
     }
     p {
-      max-width: 68ch;
+      max-width: var(--measure);
       margin: 0;
+    }
+.more {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--rule);
     }
     .updated {
       color: var(--fg-muted);
@@ -44,8 +52,8 @@ import { SeoService } from '../../core/seo/seo.service';
     }
     .intro {
       font-size: var(--step-1);
-      // the larger size would stretch 68ch past the body's measure (issue #93)
-      max-width: 56ch;
+      // the larger size would stretch the body's measure: 58ch ÷ 1.25 (issues #93, #229)
+      max-width: 46ch;
     }
   `,
 })

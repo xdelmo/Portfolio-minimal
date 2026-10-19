@@ -217,8 +217,8 @@ test('a case study ends with the next one, which opens at its top (#91)', async 
   const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
   await next.scrollIntoViewIfNeeded();
   await next.click();
-  await expect(page).toHaveURL(/\/it\/work\/ice-friends-breaker$/);
-  await expect(page.locator('h1')).toHaveText('Ice Friends Breaker');
+  await expect(page).toHaveURL(/\/it\/work\/pokeverba$/);
+  await expect(page.locator('h1')).toHaveText('PokèVerba');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
 

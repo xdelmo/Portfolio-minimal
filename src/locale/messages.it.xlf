@@ -287,8 +287,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="home.sideQuests.lede" datatype="html">
-        <source>Things I build for fun, from crosswords to 3D-printed parts.</source>
-        <target>Cose che costruisco per divertimento, dai cruciverba ai pezzi stampati in 3D.</target>
+        <source>Things I build for fun, from Telegram bots to 3D-printed parts.</source>
+        <target>Cose che costruisco per divertimento, dai bot Telegram ai pezzi stampati in 3D.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/home/home.ts</context>
           <context context-type="linenumber">35,36</context>
@@ -427,8 +427,8 @@
         <target><x id="INTERPOLATION" equiv-text="{{ post.minutes }}"/> min di lettura</target>
       </trans-unit>
       <trans-unit id="blog.more" datatype="html">
-        <source>More</source>
-        <target>Altro</target>
+        <source>After this post</source>
+        <target>Dopo questo articolo</target>
       </trans-unit>
       <trans-unit id="blog.project" datatype="html">
         <source>The project behind it</source>
@@ -463,16 +463,24 @@
         <target>Blog</target>
       </trans-unit>
       <trans-unit id="blog.lede" datatype="html">
-        <source>Notes from building enterprise front ends: what I tried, what broke, what I would do again.</source>
-        <target>Appunti dal costruire front end enterprise: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
+        <source>Notes from building Angular front ends: what I tried, what broke, what I would do again.</source>
+        <target>Appunti dal costruire front end in Angular: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
       </trans-unit>
       <trans-unit id="blog.description" datatype="html">
-        <source>Notes on Angular, Signals, RxJS and enterprise front ends by <x id="name" equiv-text="person.name"/>.</source>
-        <target>Appunti su Angular, Signals, RxJS e front end enterprise di <x id="name" equiv-text="person.name"/>.</target>
+        <source>Notes on Angular, Signals, RxJS and Spring Boot by <x id="name" equiv-text="person.name"/>.</source>
+        <target>Appunti su Angular, Signals, RxJS e Spring Boot di <x id="name" equiv-text="person.name"/>.</target>
       </trans-unit>
       <trans-unit id="case.posts" datatype="html">
         <source>I wrote about it</source>
         <target>Ne ho scritto</target>
+      </trans-unit>
+      <trans-unit id="contactPrompt.lead" datatype="html">
+        <source>Looking for a front-end engineer?</source>
+        <target>Cerchi un frontend engineer?</target>
+      </trans-unit>
+      <trans-unit id="contactPrompt.cta" datatype="html">
+        <source>Email me</source>
+        <target>Scrivimi una email</target>
       </trans-unit>
     </body>
   </file>

@@ -131,6 +131,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     // in its middle
     .media {
       display: grid;
+      // one row as tall as the frame, so a phone picture's percentage height resolves against it: with an auto row the
+      // picture kept its own height and the frame cut it (issue #229)
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
       place-items: center;
       aspect-ratio: 3 / 2;
       overflow: hidden;

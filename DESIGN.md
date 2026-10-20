@@ -24,6 +24,10 @@ colors:
   band-ink: "#1d1d1c"
   band-ink-text: "#f2f2f2"
   band-link: "#0b4f96"
+  band-pastel-muted: "#2f4560"
+  band-lavender-muted: "#4a3d6b"
+  band-ink-muted: "#b8b8b2"
+  band-ink-link: "#9ccaff"
 typography:
   display:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
@@ -132,7 +136,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Pixel Sky, Mist, Lavender, Lilac, Peach** (`pixel-*`): dots of the hero field, sprites, seams, ambient orbs. Brighter variants in dark theme (`--px-1` … `--px-6`).
 
 ### Bands
-- **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus` and `--rule` to its own AA-checked set (`band-link` on the pastel bands), so its content follows by itself. In dark theme the bands turn deep navy and violet.
+- **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus` and `--rule` to its own AA-checked set (`band-link` on the pastel bands; `band-pastel-muted`, `band-lavender-muted`, `band-ink-muted` for secondary text and `band-ink-link` for links on ink), so its content follows by itself. In dark theme the bands turn deep navy and violet.
 
 ### Named Rules
 **The No Green Rule.** No green anywhere: not for success, not in syntax colours, not as a pastel. The brand is greys, the blue family, lavender and peach.
@@ -159,7 +163,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 The scale is modular, 1.25 on 18px (`--step--1` … `--step-5`). The contact title is the one oversized exception (up to 9rem).
 
 ### Named Rules
-**The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. The one exception: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px.
+**The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.
 
 **The Width Not Weight Rule.** Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights or a second family for emphasis.
 

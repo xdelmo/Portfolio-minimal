@@ -17,6 +17,10 @@ html {
 main *,
 app-site-footer * {
   scroll-margin-top: var(--header-h);
+  /* phones: nor under the back-to-top button in the bottom corner (48px and its 16px inset, issue #231) */
+  @media (width < 768px) {
+    scroll-margin-bottom: calc(48px + 2 * var(--space-2));
+  }
 }
 
 body {

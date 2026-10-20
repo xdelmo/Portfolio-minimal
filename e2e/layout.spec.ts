@@ -244,9 +244,10 @@ for (const width of [1280, 390]) {
     expect(count).toBe(await page.locator('#work .project').count());
     // the layout box: the reveal may still be scaling a frame
     const boxes = await frames.evaluateAll((els) => els.map((el) => ({ w: (el as HTMLElement).offsetWidth, h: (el as HTMLElement).offsetHeight })));
-    for (const box of boxes) {
+    // from 1024px the lead project (the first) takes the whole row and its frame is larger; the others match
+    for (const box of width < 1024 ? boxes : boxes.slice(1)) {
       expect(Math.abs(box.w / box.h - 3 / 2)).toBeLessThan(0.02);
-      expect(Math.abs(box.h - boxes[0].h)).toBeLessThanOrEqual(1);
+      expect(Math.abs(box.h - boxes[boxes.length - 1].h)).toBeLessThanOrEqual(1);
     }
     for (let i = 0; i < count; i++) {
       expect(await frames.nth(i).locator('img.shot, app-quest-sprite').count(), `project ${String(i)}`).toBe(1);
@@ -315,3 +316,15 @@ for (const width of [1280, 390]) {
     }
   });
 }
+
+// ApexFlow leads the list (issue #231): from 1024px it takes the whole row, the other projects pair up under it
+test('the lead project spans the work list on desktop, the others share the row under it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const boxes = await page.locator('#work .project').evaluateAll((els) => els.map((el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width }; }));
+  const list = await page.locator('#work .projects').evaluate((el) => el.getBoundingClientRect().width);
+  expect(boxes[0].w).toBeCloseTo(list, 0);
+  expect(boxes[1].w).toBeLessThan(list / 2);
+  expect(Math.abs(boxes[1].y - boxes[2].y)).toBeLessThanOrEqual(1);
+  expect(boxes[2].x).toBeGreaterThan(boxes[1].x);
+});

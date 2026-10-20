@@ -30,7 +30,9 @@ export const heroEffect: Effect = (root, { gsap, SplitText, desktop }) => {
 
   if (document.documentElement.classList.contains('intro-on')) {
     const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
-    const rest = hero.querySelectorAll(':scope > p, :scope > .actions');
+    // the buttons stay put at full contrast: fading in after the headline they were the last thing readable, and
+    // mid-fade too faint to pass contrast (issue #231)
+    const rest = hero.querySelectorAll(':scope > p');
     const entrance = gsap
       .timeline({
         paused: true,
@@ -39,7 +41,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText, desktop }) => {
         },
       })
       .from(split.lines, { yPercent: 110, duration: 1.1, stagger: 0.08, ease: 'expo.out' })
-      .from(rest, { autoAlpha: 0, y: 24, duration: 0.8, stagger: 0.08, ease: 'power3.out', clearProps: 'all' }, 0.35);
+      .from(rest, { autoAlpha: 0, y: 24, duration: 0.8, stagger: 0.08, ease: 'power3.out', clearProps: 'all' }, 0.2);
     afterIntro(() => {
       entrance.play();
     });

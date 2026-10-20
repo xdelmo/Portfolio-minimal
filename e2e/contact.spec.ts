@@ -20,6 +20,27 @@ test.describe('contact finale', () => {
     });
   }
 
+  // without a mail program the title's mailto does nothing: a button copies the address (issue #231)
+  test('a button copies the email address without printing it', async ({ page, context, browserName }) => {
+    test.skip(browserName !== 'chromium', 'clipboard permissions are granted in Chromium only');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/en/');
+    const copy = page.locator('#contact').getByRole('button', { name: 'Copy my email address' });
+    await copy.click();
+    await expect(page.locator('#contact').getByRole('status')).toHaveText('Email address copied');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(EMAIL);
+    await expect(page.locator('#contact')).not.toContainText(EMAIL);
+  });
+
+  test.describe('without JavaScript', () => {
+    test.use({ javaScriptEnabled: false });
+    test('there is no copy button that would do nothing, nor an empty item in the list', async ({ page }) => {
+      await page.goto('/en/');
+      await expect(page.locator('#contact').getByRole('button')).toHaveCount(0);
+      await expect(page.locator('#contact .profiles').getByRole('listitem')).toHaveCount(2);
+    });
+  });
+
   test('LinkedIn and GitHub are pixel-mark tags in the finale, marked as my profiles', async ({ page }) => {
     await page.goto('/en/');
     for (const profile of ['LinkedIn', 'GitHub']) {

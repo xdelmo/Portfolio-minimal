@@ -28,13 +28,14 @@ import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
+import { CopyEmail } from '../../layout/copy-email';
 import { LinkedinMark } from '../../layout/linkedin-mark';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, Depixelate],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
@@ -105,6 +106,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
+          <li><app-copy-email /></li>
         </ul>
       </div>
       <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
@@ -206,6 +208,10 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       .contact-link:hover .contact-arrow {
         transform: translate(0.08em, -0.08em);
       }
+    }
+    // the copy button's item stays out of the list (and of the count a screen reader gives) until it can copy
+    .profiles li:has(> app-copy-email:empty) {
+      display: none;
     }
     .profiles {
       display: flex;

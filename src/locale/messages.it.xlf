@@ -482,6 +482,22 @@
         <source>Email me</source>
         <target>Scrivimi una email</target>
       </trans-unit>
+      <trans-unit id="work.demo" datatype="html">
+        <source>Live demo</source>
+        <target>Demo online</target>
+      </trans-unit>
+      <trans-unit id="contact.copy" datatype="html">
+        <source>Copy my email address</source>
+        <target>Copia il mio indirizzo email</target>
+      </trans-unit>
+      <trans-unit id="contact.copied" datatype="html">
+        <source>Copied</source>
+        <target>Copiato</target>
+      </trans-unit>
+      <trans-unit id="contact.copiedStatus" datatype="html">
+        <source>Email address copied</source>
+        <target>Indirizzo email copiato</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

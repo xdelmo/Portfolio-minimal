@@ -31,4 +31,15 @@ describe('WorkList', () => {
     const el = await render();
     expect(el.querySelectorAll('li.project')[0].textContent).toContain('Spring Boot');
   });
+
+  // issue #231: whose project it is, and the demo, already in the list
+  it('says whose project each one is and links its live demo when there is one', async () => {
+    const el = await render();
+    const items = [...el.querySelectorAll('li.project')];
+    CONTENT_EN.projects.forEach((project, i) => {
+      expect(items[i].querySelector('.role')?.textContent).toBe(project.role);
+      const demo = items[i].querySelector<HTMLAnchorElement>('a[target="_blank"]:not([href*="github.com"])');
+      expect(demo?.getAttribute('href') ?? undefined).toBe(project.demoUrl);
+    });
+  });
 });

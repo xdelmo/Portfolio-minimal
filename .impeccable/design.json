@@ -16,7 +16,11 @@
       "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffc9a8" },
       "band-pastel": { "role": "secondary", "displayName": "Pastel Band", "canonical": "#b9d5f5" },
       "band-lavender": { "role": "secondary", "displayName": "Lavender Band", "canonical": "#dccff8" },
-      "band-ink": { "role": "secondary", "displayName": "Ink Band", "canonical": "#1d1d1c" }
+      "band-ink": { "role": "secondary", "displayName": "Ink Band", "canonical": "#1d1d1c" },
+      "band-pastel-muted": { "role": "secondary", "displayName": "Pastel Band Muted", "canonical": "#2f4560" },
+      "band-lavender-muted": { "role": "secondary", "displayName": "Lavender Band Muted", "canonical": "#4a3d6b" },
+      "band-ink-muted": { "role": "secondary", "displayName": "Ink Band Muted", "canonical": "#b8b8b2" },
+      "band-ink-link": { "role": "secondary", "displayName": "Ink Band Link", "canonical": "#9ccaff" }
     },
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "The hero headline only, condensed (wdth 75)." },

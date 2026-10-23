@@ -11,14 +11,13 @@ export const CONTENT_IT: SiteContent = {
   person: {
     ...CONTENT_EN.person,
     location: 'Latina, Italia',
-    availability: 'Disponibile per ruoli da remoto.',
     summary:
       'Emanuele Del Monte è un Frontend Engineer di Latina che sviluppa frontend enterprise in Angular con Signals, RxJS e NgRx.',
   },
   seo: {
     title: 'Emanuele Del Monte — Frontend Engineer Angular',
     description:
-      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina, disponibile per ruoli da remoto.',
+      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
   },
   hero: {
     headline: 'Interfacce Angular veloci anche con molti dati.',

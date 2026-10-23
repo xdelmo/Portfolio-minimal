@@ -56,6 +56,8 @@ import { MotionHost } from '../motion/motion-host';
       justify-content: center;
       gap: 4px;
       margin: 0;
+      // the global measure on <p> would make the row narrower than the name, off the centre (issue #234)
+      max-width: none;
     }
     .px {
       width: 12px;

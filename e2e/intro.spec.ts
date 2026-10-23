@@ -16,6 +16,17 @@ test.describe('intro', () => {
     await expect(intro).toBeHidden({ timeout: 6000 });
   });
 
+  test('centres the pixel row under the name', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.goto('/en/');
+    // the global measure on <p> once left the row narrower than the name, off the centre (issue #234)
+    const offset = await page.evaluate(() => {
+      const px = [...document.querySelectorAll('.site-intro .px')].map((el) => el.getBoundingClientRect());
+      return (px[0].left + px[px.length - 1].right) / 2 - innerWidth / 2;
+    });
+    expect(Math.abs(offset)).toBeLessThan(1);
+  });
+
   for (const colorScheme of ['light', 'dark'] as const) {
     test(`hides the page completely in the ${colorScheme} theme`, async ({ page, isMobile }) => {
       test.skip(isMobile, 'desktop only');

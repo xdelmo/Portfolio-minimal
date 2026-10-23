@@ -7,13 +7,11 @@ on:
     branches: [v2, master, devel]
 
 jobs:
-  test:
+  check:
+    name: Lint & Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # e2e:changed compares the branch with its base
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -26,17 +24,141 @@ jobs:
       - run: npm run lint
       - run: npx ng test --no-watch
       - run: npm run test:scripts
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
       - run: npm run build
-      - run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run e2e
-      - if: github.event_name == 'pull_request'
-        run: npm run e2e:changed
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+          retention-days: 1
+
+  lhci:
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
       - run: npm run lhci
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: reports-lhci
+          path: .lighthouseci
+
+  e2e:
+    name: E2E (${{ matrix.name }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Chromium
+            project: chromium
+            browser: chromium
+            shard: 1/1
+          - name: Firefox
+            project: firefox
+            browser: firefox
+            shard: 1/1
+          - name: Android
+            project: android
+            browser: chromium
+            shard: 1/1
+          - name: WebKit (1/2)
+            project: webkit
+            browser: webkit
+            shard: 1/2
+          - name: WebKit (2/2)
+            project: webkit
+            browser: webkit
+            shard: 2/2
+          - name: iPhone (1/2)
+            project: iphone
+            browser: webkit
+            shard: 1/2
+          - name: iPhone (2/2)
+            project: iphone
+            browser: webkit
+            shard: 2/2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+      - name: Cache Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run E2E tests
+        run: npm run e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-e2e-${{ matrix.project }}-shard-${{ strategy.job-index }}
           path: |
             playwright-report
             test-results
-            .lighthouseci
+
+  e2e-changed:
+    name: E2E Changed Specs
+    if: github.event_name == 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-all-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Run E2E changed
+        run: npm run e2e:changed
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-e2e-changed
+          path: |
+            playwright-report
+            test-results

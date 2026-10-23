@@ -7,15 +7,9 @@ export const SMOOTH_OFF_KEY = 'smooth-scroll';
 /** Desktop with a mouse or a trackpad and no reduced motion: touch keeps its native scroll. */
 export const SMOOTH_QUERY = '(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)';
 
-let current: ScrollSmoother | undefined;
-
-export function smoother(): ScrollSmoother | undefined {
-  return current;
-}
-
-export function setSmoother(s: ScrollSmoother): void {
-  current = s;
-}
+export let currentSmoother: ScrollSmoother | undefined;
+export const smoother = (): ScrollSmoother | undefined => currentSmoother;
+export const setSmoother = (s: ScrollSmoother): void => { currentSmoother = s; };
 
 export function wantsSmooth(): boolean {
   try {

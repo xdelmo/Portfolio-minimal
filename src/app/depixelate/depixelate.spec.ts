@@ -1,4 +1,4 @@
-import { STEPS, fit, grid } from './depixelate';
+import { STEPS, fit, grid } from './depixelate.directive';
 
 describe('depixelate', () => {
   it('cover fills the box and crops the long side, centred', () => {

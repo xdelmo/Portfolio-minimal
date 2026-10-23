@@ -1,4 +1,4 @@
-import { dissolveThresholds, type DissolvePath } from '../../pixel-dissolve/dissolve';
+import { dissolveThresholds, type DissolvePath } from '../../pixel-dissolve/pixel-dissolve';
 
 /** A 16 × 16 pixel drawing: one character per cell, `.` for empty, every other one a key of the palette. */
 export interface Sprite {

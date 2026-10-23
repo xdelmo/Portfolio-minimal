@@ -1,4 +1,4 @@
-import { dissolvePaths, dissolveThresholds } from './dissolve';
+import { dissolvePaths, dissolveThresholds } from './pixel-dissolve';
 
 describe('dissolveThresholds', () => {
   it('gives every cell a threshold in [0, 1)', () => {

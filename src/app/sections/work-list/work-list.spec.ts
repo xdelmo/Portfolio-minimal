@@ -21,10 +21,7 @@ describe('WorkList', () => {
   it('shows an image with alt text only for projects that have one', async () => {
     const el = await render();
     const imgs = [...el.querySelectorAll('img.shot')];
-    expect(imgs.map((i) => i.getAttribute('alt'))).toEqual([
-      CONTENT_EN.projects[0].image?.alt,
-      CONTENT_EN.projects[2].image?.alt,
-    ]);
+    expect(imgs.map((i) => i.getAttribute('alt'))).toEqual(CONTENT_EN.projects.flatMap((p) => (p.image ? [p.image.alt] : [])));
   });
 
   it('lists the stack of each project', async () => {

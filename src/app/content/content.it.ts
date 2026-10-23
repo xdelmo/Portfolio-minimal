@@ -86,6 +86,12 @@ export const CONTENT_IT: SiteContent = {
       role: 'Un progetto con Matteo Terenzi, che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
       summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
+      image: {
+        src: 'images/work/pokeverba.jpg',
+        alt: 'Il cruciverba Pokémon del giorno di PokèVerba: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
+        width: 1600,
+        height: 1011,
+      },
       caseStudy: {
         context:
           'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi è un uso commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',

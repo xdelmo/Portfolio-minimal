@@ -1,4 +1,4 @@
-import { readStoredTheme, resolveTheme } from './theme';
+import { readStoredTheme, resolveTheme } from './theme.service';
 
 describe('resolveTheme', () => {
   it('uses a valid stored choice over the system preference', () => {

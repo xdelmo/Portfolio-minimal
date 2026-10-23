@@ -51,15 +51,24 @@ export const heroEffect: Effect = (root, { gsap, SplitText, desktop }) => {
   gsap.to(title, { yPercent: -18, scale: 1.08, transformOrigin: '0% 100%', ease: 'none', scrollTrigger: away });
   // desktop: the condensed headline also widens on its variable axis as it leaves, and narrows coming back (issue #131),
   // only as far as its lines still break where they did: one more line would make the hero taller and move the page
-  if (desktop) {
-    // fromTo: a refresh measures the end again but never reads the start back from the page
-    gsap.fromTo(
-      title,
-      { '--hero-wdth': 75 },
-      { '--hero-wdth': () => widest(title), ease: 'none', scrollTrigger: { ...away, invalidateOnRefresh: true } },
-    );
-  }
   const field = hero.querySelector('.field');
   // the field behind the text sinks a little slower than the page, on phones as on desktop
   if (field) gsap.to(field, { y: 90, ease: 'none', scrollTrigger: away });
+  if (!desktop) return;
+  // whole steps only: every new wdth shapes, lays out and rasterises the giant headline again, and a value that
+  // changed at every frame dropped about 40 frames between the hero and the work (issue #233)
+  const wdth = { v: 75 };
+  // fromTo: a refresh measures the end again but never reads the start back from the page
+  gsap.fromTo(wdth, { v: 75 }, {
+    v: () => widest(title),
+    ease: 'none',
+    scrollTrigger: { ...away, invalidateOnRefresh: true },
+    onUpdate: () => {
+      const step = String(Math.round(wdth.v));
+      if (title.style.getPropertyValue('--hero-wdth') !== step) title.style.setProperty('--hero-wdth', step);
+    },
+  });
+  return () => {
+    title.style.removeProperty('--hero-wdth');
+  };
 };

@@ -92,6 +92,12 @@ export const CONTENT_EN: SiteContent = {
       stack: ['WordPress', 'PHP', 'React', 'Vite'],
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       demoUrl: 'https://sbustiamobro.it',
+      image: {
+        src: 'images/work/pokeverba.jpg',
+        alt: "PokèVerba's daily Pokémon crossword: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
+        width: 1600,
+        height: 1011,
+      },
       caseStudy: {
         context:
           'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so it is a commercial use: no official text or image may appear anywhere, and every clue has to be our own.',

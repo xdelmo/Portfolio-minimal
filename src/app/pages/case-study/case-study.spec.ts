@@ -80,8 +80,8 @@ describe('CaseStudy', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        // no public code anywhere, and PokèVerba without its demo either
-        { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [], demoUrl: p.slug === 'pokeverba' ? undefined : p.demoUrl })) } },
+        // no public code anywhere, and PokèVerba without its demo either (nor screenshots: only the links are under test)
+        { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [], image: undefined, demoUrl: p.slug === 'pokeverba' ? undefined : p.demoUrl })) } },
       ],
     });
     const fixture = TestBed.createComponent(CaseStudy);
@@ -95,7 +95,13 @@ describe('CaseStudy', () => {
   });
 
   it('shows the pixel item for a project without a screenshot', async () => {
-    const el = await render('pokeverba');
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, image: undefined })) } }],
+    });
+    const fixture = TestBed.createComponent(CaseStudy);
+    fixture.componentRef.setInput('slug', 'pokeverba');
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
     expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub', 'Open the live demo']);
     expect(el.querySelector('img')).toBeNull();
     expect(el.querySelector('.item app-quest-sprite')).not.toBeNull();

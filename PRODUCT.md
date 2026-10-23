@@ -43,7 +43,7 @@ Success: within 30 seconds a visitor understands who Emanuele is, his level (Fro
 
 ## Evidence on Hand
 
-- Case studies: ApexFlow (lead, the first and widest card on the home), PokèVerba, Ice Friends Breaker; side quests MCP Server, Telegram bots and 3D-printed CAD objects. Images in `public/images/work/`.
+- Case studies: ApexFlow (lead, the first and widest card on the home), PokèVerba, Ice Friends Breaker; side quests Telegram bots and 3D-printed CAD objects. Images in `public/images/work/`.
 - Experience, education and certifications as on LinkedIn (aligned 2026-10-06), in the content files.
 - Blog posts in `src/app/content/blog/` are drafts written from LinkedIn posts, not yet reviewed by Emanuele.
 - Absent, never to be fabricated: CV (not published, never mentioned), metrics, testimonials, clients, press.

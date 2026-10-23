@@ -65,6 +65,9 @@ test.describe('hero', () => {
     const height = await heroHeight();
     await page.evaluate(() => { window.scrollTo(0, 400); });
     await expect.poll(async () => Number(/[\d.]+$/.exec(await wdth())?.[0])).toBeGreaterThan(75);
+    // whole steps only: a wdth that changed at every frame reshaped the giant headline at every frame and dropped
+    // about 40 frames between the hero and the work (issue #233)
+    expect(Number.isInteger(Number(/[\d.]+$/.exec(await wdth())?.[0]))).toBe(true);
     // the wider headline breaks its lines where it did: the hero keeps its height and the page below stays put
     expect(await heroHeight()).toBe(height);
     await page.evaluate(() => { window.scrollTo(0, 0); });

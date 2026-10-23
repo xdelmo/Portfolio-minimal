@@ -5,7 +5,6 @@ export interface Person {
   role: string;
   employer: string;
   location: string;
-  availability: string;
   email: string;
   linkedin: string;
   github: string;

@@ -41,7 +41,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
-      <p class="availability">{{ content.person.availability }}</p>
       <div class="actions">
         <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
         <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
@@ -99,7 +98,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <p class="contact-lede"><span i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</span> {{ content.person.availability }}</p>
+        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</p>
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
@@ -141,7 +140,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         font-size: var(--step-1);
       }
     }
-    .availability,
     .muted {
       color: var(--fg-muted);
     }

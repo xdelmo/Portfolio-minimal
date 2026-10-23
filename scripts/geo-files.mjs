@@ -13,7 +13,7 @@ export function homeMarkdown(c, locale) {
   return `${[
     `# ${c.person.name} — ${c.person.role}`,
     c.hero.headline,
-    `${c.hero.lede} ${c.person.availability}`,
+    c.hero.lede,
     list(c.glance, (g) => `- ${g.label}: ${g.value}`),
     `## ${l.work}`,
     list(c.projects, (p) => `- [${p.title}](${url(locale, `work/${p.slug}`)}): ${p.summary}`),
@@ -79,7 +79,7 @@ export function llmsTxt(contents, blog = {}) {
       ...(blog[locale] ?? []).map((a) => `- [${a.title}](${url(locale, `blog/${a.slug}.md`)}): ${a.description}`),
     ].join('\n'),
   );
-  return `${[`# ${en.person.name}`, `> ${en.person.summary} ${en.person.availability}`, ...sections].join('\n\n')}\n`;
+  return `${[`# ${en.person.name}`, `> ${en.person.summary}`, ...sections].join('\n\n')}\n`;
 }
 
 export function geoFiles(contents, blog = {}) {

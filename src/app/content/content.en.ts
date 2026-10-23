@@ -6,7 +6,6 @@ export const CONTENT_EN: SiteContent = {
     role: 'Frontend Engineer',
     employer: 'IPS S.p.A.',
     location: 'Latina, Italy',
-    availability: 'Open to remote roles.',
     email: 'info@emanueledelmonte.it',
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
@@ -17,7 +16,7 @@ export const CONTENT_EN: SiteContent = {
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
     description:
-      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy, open to remote roles.',
+      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
   },
   hero: {
     headline: 'I build Angular interfaces that stay fast when the data gets big.',

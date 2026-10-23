@@ -117,21 +117,16 @@ import { QuestSprite } from './quest-sprite';
         }
       }
     }
-    // four items: two by two on tablets, one row from 1024px (issue #229)
+    // three items: one row from 768px
     @include bp.up(md) {
       .quests {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
       li {
         grid-template-columns: minmax(0, 1fr);
       }
       .slot {
         justify-self: start;
-      }
-    }
-    @include bp.up(lg) {
-      .quests {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
   `,

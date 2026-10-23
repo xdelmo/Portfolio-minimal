@@ -273,28 +273,6 @@ export const SPRITES = {
       '..kkkkkkkkkkkk..',
     ],
   },
-  // MCP server, in the work list: the plug a model uses to reach a tool
-  plug: {
-    palette: { ...INK, a: '--accent', b: '--px-2' },
-    rows: [
-      '.....k....k.....',
-      '.....k....k.....',
-      '.....k....k.....',
-      '...kkkkkkkkkk...',
-      '...kaaaaaaaak...',
-      '...kaaaaaaaak...',
-      '...kabaaaaaak...',
-      '....kaaaaaak....',
-      '.....kkkkkk.....',
-      '.......kk.......',
-      '.......kk.......',
-      '........kk......',
-      '.........kk.....',
-      '..........kk....',
-      '...........kkk..',
-      '................',
-    ],
-  },
   // the 404 page (pages/not-found/): the wild creature a broken link runs into
   wild404: {
     palette: { ...INK, l: '--px-4', p: '--px-6', w: '--surface' },

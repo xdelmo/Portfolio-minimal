@@ -6,13 +6,13 @@ const progress = (page: Page) => sprites(page).evaluateAll((els) => els.map((el)
 test('side quests sit on a lavender band, each with its own pixel sprite', async ({ page }) => {
   await page.goto('/en/');
   await expect(page.locator('#side-quests')).toHaveClass(/band--lavender/);
-  await expect(sprites(page)).toHaveCount(4);
+  await expect(sprites(page)).toHaveCount(3);
   for (const svg of await sprites(page).locator('svg').all()) {
     await expect(svg).toHaveAttribute('aria-hidden', 'true');
     expect(await svg.locator('path').count()).toBeGreaterThan(3);
   }
   const shapes = await sprites(page).evaluateAll((els) => els.map((el) => el.getAttribute('data-sprite')));
-  expect(new Set(shapes).size).toBe(4);
+  expect(new Set(shapes).size).toBe(3);
 });
 
 test('the sprites assemble from their pixels as they scroll in', async ({ page }) => {
@@ -87,11 +87,11 @@ test.describe('on a phone', () => {
   });
 });
 
-test('on desktop the side quests stay a grid of four columns that never scrolls', async ({ page, isMobile }) => {
+test('on desktop the side quests stay a grid of three columns that never scrolls', async ({ page, isMobile }) => {
   test.skip(isMobile, 'desktop');
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/en/');
   const list = page.locator('#side-quests .quests');
-  expect(await list.evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(4);
+  expect(await list.evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);
   expect(await list.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
 });

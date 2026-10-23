@@ -262,13 +262,6 @@ export const CONTENT_EN: SiteContent = {
   },
   sideQuests: [
     {
-      title: 'MCP Server',
-      summary: 'A Model Context Protocol server and client that let a language model read and edit documents through custom tools, built after the Anthropic Academy courses.',
-      tags: ['Python', 'MCP'],
-      repo: 'https://github.com/xdelmo/mcp-server',
-      sprite: 'plug',
-    },
-    {
       title: 'Telegram bots',
       summary: 'Three bots I use every day, each answering only to me: car deadlines, my Pokémon card binder and attendance timesheets.',
       tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],

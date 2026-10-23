@@ -2,7 +2,7 @@ import { CONTENT_EN } from './content.en';
 import { onlyPublic } from './public-repos';
 
 describe('onlyPublic', () => {
-  const isPublic = (url: string) => url.endsWith('/mcp-server') || url.endsWith('/backend-tesi');
+  const isPublic = (url: string) => url.endsWith('/magsafe-cardholder') || url.endsWith('/backend-tesi');
 
   it('keeps only the links to public repositories, and the projects and side quests themselves', () => {
     const c = onlyPublic(CONTENT_EN, isPublic);

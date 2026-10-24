@@ -6,7 +6,7 @@ for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba', '/it/work/ice-friends-breaker']) {
+    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} at ${String(width)}px`).toBeLessThanOrEqual(0);
@@ -124,18 +124,6 @@ test.describe('hero and work on phones', () => {
     const text = await first.locator('.text').boundingBox();
     if (!media || !text) throw new Error('missing project boxes');
     expect(media.y).toBeLessThan(text.y);
-  });
-
-  test('a phone screenshot downloads the half-width copy on a phone', async ({ browser, browserName }) => {
-    test.skip(browserName !== 'chromium', 'image choice is checked once, in Chromium');
-    // a 1x phone: the tall picture is shown at most 280px wide, so the 300px copy is enough
-    const context = await browser.newContext({ viewport: { width: 412, height: 900 }, deviceScaleFactor: 1 });
-    const page = await context.newPage();
-    await page.goto('/en/');
-    const shot = page.locator('#work .project--tall .shot');
-    await shot.scrollIntoViewIfNeeded();
-    await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/ice-friends-breaker-300\.jpg$/);
-    await context.close();
   });
 
   test('project pictures below the hero leave the bandwidth to the hero', async ({ page }) => {
@@ -318,13 +306,11 @@ for (const width of [1280, 390]) {
 }
 
 // ApexFlow leads the list (issue #231): from 1024px it takes the whole row, the other projects pair up under it
-test('the lead project spans the work list on desktop, the others share the row under it', async ({ page }) => {
+test('the lead project spans the work list on desktop, the next one sits under it', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/en/');
   const boxes = await page.locator('#work .project').evaluateAll((els) => els.map((el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width }; }));
   const list = await page.locator('#work .projects').evaluate((el) => el.getBoundingClientRect().width);
   expect(boxes[0].w).toBeCloseTo(list, 0);
   expect(boxes[1].w).toBeLessThan(list / 2);
-  expect(Math.abs(boxes[1].y - boxes[2].y)).toBeLessThanOrEqual(1);
-  expect(boxes[2].x).toBeGreaterThan(boxes[1].x);
 });

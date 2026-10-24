@@ -117,38 +117,6 @@ export const CONTENT_IT: SiteContent = {
         outcome: 'Online su sbustiamobro.it e alla versione 1.18 a ottobre 2026, con un cruciverba regionale, gettoni e traguardi.',
       },
     },
-    {
-      ...en('ice-friends-breaker'),
-      role: 'Un progetto personale che ho costruito e gestisco da solo.',
-      summary: 'Un gioco di carte per rompere il ghiaccio, installabile sul telefono come PWA e come app nativa.',
-      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
-      image: {
-        src: 'images/work/ice-friends-breaker.jpg',
-        alt: 'Ice Friends Breaker su un telefono: la carta con la domanda del giorno, il contatore della serie e la navigazione in basso',
-        width: 600,
-        height: 1299,
-      },
-      caseStudy: {
-        context:
-          'Un gioco di carte che dà agli amici qualcosa di meglio di cui parlare del meteo. Doveva sembrare un\'app nativa sul telefono ed essere veloce da costruire e gestire da solo.',
-        architecture: [
-          'Next.js 16 con App Router, Tailwind CSS v4 e componenti shadcn/ui.',
-          "Supabase per database e autenticazione, con un pannello admin riservato per ruolo.",
-          'Installabile come PWA e impacchettata per iOS e Android con Capacitor.',
-        ],
-        decisions: [
-          {
-            title: 'Una domanda al giorno, uguale per tutti',
-            body: 'La domanda del giorno è la stessa per ogni utente e cambia ogni 24 ore, così gli amici possono parlarne anche se giocano lontani.',
-          },
-          {
-            title: 'Mobile first, davvero',
-            body: "Barra di navigazione in basso, tema scuro che segue il sistema e controlli a misura di dito: l'app nasce per il telefono e poi si allarga per il desktop.",
-          },
-        ],
-        outcome: 'Online su Vercel, con serie di giorni consecutivi, più modalità di gioco e un pannello admin per ruolo per gestire domande e categorie.',
-      },
-    },
   ],
   experience: [
     {

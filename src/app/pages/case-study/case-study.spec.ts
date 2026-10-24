@@ -85,7 +85,7 @@ describe('CaseStudy', () => {
       ],
     });
     const fixture = TestBed.createComponent(CaseStudy);
-    fixture.componentRef.setInput('slug', 'ice-friends-breaker');
+    fixture.componentRef.setInput('slug', 'apexflow');
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     expect([...el.querySelectorAll('.links a')].map((a) => [a.textContent.trim(), a.classList.contains('button--primary')])).toEqual([['Open the live demo', true]]);

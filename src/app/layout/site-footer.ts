@@ -89,8 +89,13 @@ import { CONTENT } from '../content/content';
       padding: 0;
       list-style: none;
     }
+    // flex items, so no line box puts the Start key (whose baseline is the bottom of its drawing) on another line than the links
+    li {
+      display: flex;
+    }
     a {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       min-height: 24px;
     }
     // the console's start key, drawn in pixels: a small outline pointing right, "Start" beside it, on the line of the
@@ -108,13 +113,14 @@ import { CONTENT } from '../content/content';
       font: inherit;
       cursor: pointer;
     }
-    // touch screens (after the Start key's own rule, which it overrides): 44px targets (issue #130), centred on the same line
+    // touch screens: 44px targets (issue #130), their content on the left edge so every item starts where the text above
+    // it does, and a gap small enough to keep the Start key on the line of the links
     @media (pointer: coarse) {
+      ul {
+        column-gap: var(--space-2);
+      }
       a,
       .press-start {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         min-width: 44px;
         min-height: 44px;
       }

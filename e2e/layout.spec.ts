@@ -221,6 +221,23 @@ test('back to top sits in the middle of the footer, with an arrow pointing up', 
   await expect(top.locator('svg')).toBeVisible();
 });
 
+// the Start key's baseline is the bottom of its drawing: in a line box it sat off the links, and on phones it wrapped alone (issue #253)
+test('the Start key sits on the line of the footer links, with the same height', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('[data-press-start]')).toBeVisible();
+  const boxes = await page.locator('app-site-footer li').evaluateAll((items) =>
+    items.map((li) => {
+      const { top, height } = li.getBoundingClientRect();
+      return { top, height };
+    }),
+  );
+  expect(boxes).toHaveLength(5);
+  for (const box of boxes) {
+    expect(Math.abs(box.top - boxes[0].top)).toBeLessThan(1);
+    expect(Math.abs(box.height - boxes[0].height)).toBeLessThan(1);
+  }
+});
+
 // one frame per project, the same 3:2 window for a desktop screenshot, a phone screenshot or, without either,
 // the project's pixel item: the list keeps one rhythm and no column is left empty
 for (const width of [1280, 390]) {

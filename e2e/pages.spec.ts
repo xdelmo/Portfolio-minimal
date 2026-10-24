@@ -55,10 +55,10 @@ test('case study has canonical and hreflang links', async ({ page }) => {
 });
 
 const WILD = {
-  en: { title: 'A wild 404 appeared!', menu: 'What to do', moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
-  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
+  en: { title: 'A wild 404 appeared!', menu: 'What to do', prompt: 'What will you do?', hints: ['Go and see the projects.', 'Write to me.', 'Open the player card.', 'Back to the home page.'], moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
+  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', prompt: 'Cosa vuoi fare?', hints: ['Vai a vedere i progetti.', 'Scrivimi.', 'Apri la scheda giocatore.', 'Torna alla home.'], moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
 };
-for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
+for (const [locale, { title, menu: label, moves, hints, prompt }] of Object.entries(WILD)) {
   test(`the ${locale} 404 is a wild encounter with a battle menu`, async ({ page, request }) => {
     // the local server answers 404 for any unknown URL; the per-locale page Netlify serves is checked by verify:deploy
     expect((await request.get(`/${locale}/nope`)).status()).toBe(404);
@@ -77,6 +77,17 @@ for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
     await expect(menu.nth(1)).toBeFocused();
     await page.keyboard.press('ArrowLeft');
     await expect(menu.first()).toBeFocused();
+    // the dialog box keeps its explanation and says what the move under the cursor does, then asks again when you leave the menu
+    const line = page.locator('.says');
+    await menu.first().blur();
+    await expect(line).toHaveText(prompt);
+    await expect(page.locator('.text p').first()).toBeVisible();
+    for (const [i, hint] of hints.entries()) {
+      await menu.nth(i).focus();
+      await expect(line).toHaveText(hint);
+    }
+    await menu.nth(3).blur();
+    await expect(line).toHaveText(prompt);
     // the bag opens the player card of the Press start easter egg
     await menu.nth(2).click();
     await expect(page.getByRole('dialog')).toBeVisible();

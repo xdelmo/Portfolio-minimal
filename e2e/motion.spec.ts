@@ -88,7 +88,8 @@ test.describe('hero', () => {
 
     // issue #251: the motion script came too late for the timeline, the CSS fallback lifts the panel, and the
     // squares used to stay one flat colour (black in the light theme) with the letters dim
-    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page }) => {
+    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page, isMobile }) => {
+      test.skip(isMobile, 'the intro is desktop only: on phones the squares are never animated');
       // every script is held until the same instant, 2 s from now (a delay per file would stack along the chain of
       // imports and the effect would start after the panel is gone): past the point where the whole timeline fits
       // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel

@@ -194,6 +194,26 @@
         <source>Bag: the player card</source>
         <target>Zaino: la scheda giocatore</target>
       </trans-unit>
+      <trans-unit id="notFound.workHint" datatype="html">
+        <source>Go and see the projects.</source>
+        <target>Vai a vedere i progetti.</target>
+      </trans-unit>
+      <trans-unit id="notFound.contactHint" datatype="html">
+        <source>Write to me.</source>
+        <target>Scrivimi.</target>
+      </trans-unit>
+      <trans-unit id="notFound.bagHint" datatype="html">
+        <source>Open the player card.</source>
+        <target>Apri la scheda giocatore.</target>
+      </trans-unit>
+      <trans-unit id="notFound.runHint" datatype="html">
+        <source>Back to the home page.</source>
+        <target>Torna alla home.</target>
+      </trans-unit>
+      <trans-unit id="notFound.prompt" datatype="html">
+        <source>What will you do?</source>
+        <target>Cosa vuoi fare?</target>
+      </trans-unit>
       <trans-unit id="a11y.newTab" datatype="html">
         <source>Opens in a new tab</source>
         <target>Si apre in una nuova scheda</target>
@@ -207,8 +227,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="notFound.text" datatype="html">
-        <source>The link may be old or mistyped. What will you do?</source>
-        <target>Il link potrebbe essere vecchio o scritto male. Cosa vuoi fare?</target>
+        <source>The link may be old or mistyped.</source>
+        <target>Il link potrebbe essere vecchio o scritto male.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/not-found/not-found.ts</context>
           <context context-type="linenumber">11,12</context>

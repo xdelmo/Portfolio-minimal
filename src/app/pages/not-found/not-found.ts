@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/seo/seo.service';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
@@ -7,13 +7,14 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
  * The 404 as a wild encounter in a Game Boy battle (issue #45): the broken link is the creature, the dialog box
  * says so and the battle menu leads back into the site. Only a homage to the style: no original sprites, fonts or
  * sounds. The menu is the game's two-by-two box in the site's frame: my work, contact, the bag (the player card of
- * the Press start easter egg) and run; it moves with the arrow keys as well as Tab, like a real one.
+ * the Press start easter egg) and run; it moves with the arrow keys as well as Tab, like a real one. As in the game,
+ * the dialog box says what the move under the cursor does, so the game words are never the only hint.
  */
 @Component({
   selector: 'app-not-found',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, QuestSprite],
-  host: { '(keydown)': 'move($event)' },
+  host: { '(keydown)': 'move($event)', '(mouseover)': 'say($event)', '(focusin)': 'say($event)', '(mouseleave)': 'hint.set(null)', '(focusout)': 'hint.set(null)' },
   template: `
     <section class="container battle" aria-labelledby="not-found-title">
       <!-- the title first for a screen reader; the grid areas put the status box above it (issue #229) -->
@@ -25,7 +26,14 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
           </svg>
         }
         <h1 id="not-found-title" i18n="@@notFound.title">A wild 404 appeared!</h1>
-        <p i18n="@@notFound.text">The link may be old or mistyped. What will you do?</p>
+        <p i18n="@@notFound.text">The link may be old or mistyped.</p>
+        <p class="says">
+          @if (hint(); as line) {
+            {{ line }}
+          } @else {
+            <ng-container i18n="@@notFound.prompt">What will you do?</ng-container>
+          }
+        </p>
       </div>
       <div class="box status">
         <p class="name"><strong>404</strong> <span i18n="@@notFound.level">Lv. 4</span></p>
@@ -43,15 +51,15 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
           </svg>
         }
         <ul>
-          <li><a class="move" routerLink="/" fragment="work" i18n="@@notFound.work">My work</a></li>
-          <li><a class="move" routerLink="/" fragment="contact" i18n="@@notFound.contact">Contact</a></li>
+          <li><a class="move" routerLink="/" fragment="work" i18n="@@notFound.work" i18n-data-hint="@@notFound.workHint" data-hint="Go and see the projects.">My work</a></li>
+          <li><a class="move" routerLink="/" fragment="contact" i18n="@@notFound.contact" i18n-data-hint="@@notFound.contactHint" data-hint="Write to me.">Contact</a></li>
           <li>
-            <button class="move" type="button" data-press-start i18n-aria-label="@@notFound.bagLabel" aria-label="Bag: the player card">
+            <button class="move" type="button" data-press-start i18n-aria-label="@@notFound.bagLabel" aria-label="Bag: the player card" i18n-data-hint="@@notFound.bagHint" data-hint="Open the player card.">
               <span i18n="@@notFound.bag">Bag</span>
             </button>
           </li>
           <li>
-            <a class="move" routerLink="/" i18n-aria-label="@@notFound.runLabel" aria-label="Run: to the home page">
+            <a class="move" routerLink="/" i18n-aria-label="@@notFound.runLabel" aria-label="Run: to the home page" i18n-data-hint="@@notFound.runHint" data-hint="Back to the home page.">
               <span i18n="@@notFound.run">Run</span>
             </a>
           </li>
@@ -134,6 +142,10 @@ import { QuestSprite } from '../../sections/side-quests/quest-sprite';
       align-content: start;
       gap: var(--space-2);
       align-self: stretch;
+    }
+    // the line that answers the cursor: the prompt until you point at a move, then what the move does
+    .says {
+      font-weight: 600;
     }
     h1 {
       font-size: var(--step-4);
@@ -273,6 +285,13 @@ export class NotFound {
   /** The corner knot, 8 × 8 cells: a ring with a square inside, drawn on the frame's lines. */
   protected readonly knot =
     'M2 0h4v1h-4zM1 1h1v1h-1zM6 1h1v1h-1zM0 2h1v4h-1zM7 2h1v4h-1zM2 2h4v1h-4zM2 3h1v2h-1zM5 3h1v2h-1zM2 5h4v1h-4zM1 6h1v1h-1zM6 6h1v1h-1zM2 7h4v1h-4z';
+
+  /** What the move under the cursor does; the dialog box shows it in place of its prompt. */
+  protected readonly hint = signal<string | null>(null);
+
+  protected say(event: Event): void {
+    this.hint.set((event.target as Element).closest('.move')?.getAttribute('data-hint') ?? null);
+  }
 
   /** The arrows move round the two-by-two menu as in the game: left and right in a row, up and down between rows. */
   protected move(event: KeyboardEvent): void {

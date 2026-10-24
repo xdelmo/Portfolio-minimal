@@ -85,6 +85,22 @@ test.describe('hero', () => {
       await expect.poll(() => isPlainText(page.locator('h1'))).toBe(true);
       await expect(page.locator('h1')).toBeInViewport();
     });
+
+    // issue #251: the motion script came too late for the timeline, the CSS fallback lifts the panel, and the
+    // squares used to stay one flat colour (black in the light theme) with the letters dim
+    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page }) => {
+      // every script is held until the same instant, 2 s from now (a delay per file would stack along the chain of
+      // imports and the effect would start after the panel is gone): past the point where the whole timeline fits
+      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel
+      const release = Date.now() + 2000;
+      await page.route('**/*.js', async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.max(0, release - Date.now())));
+        await route.continue();
+      });
+      await page.goto('/en/');
+      await expect(page.locator('.px').first()).toHaveCSS('background-color', 'rgb(127, 178, 236)', { timeout: 5000 });
+      await expect(page.locator('.letter').first()).toHaveCSS('opacity', '1');
+    });
   });
 });
 

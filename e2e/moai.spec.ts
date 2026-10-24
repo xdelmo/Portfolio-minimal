@@ -232,6 +232,15 @@ test('its eyes follow the mouse', async ({ page, isMobile }) => {
   await expect(host).toHaveAttribute('data-gaze', 'right-down');
 });
 
+test('on a phone its eyes are open: white with a pupil, with no pointer to follow', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'phones only');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await expect(page.locator('app-moai-scene')).toHaveAttribute('data-gaze', /.+/);
+});
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`the whites of its eyes are lighter than the stone, ${colorScheme} theme`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });

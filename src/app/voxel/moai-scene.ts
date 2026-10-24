@@ -24,9 +24,9 @@ import {
   WebGLRenderer,
 } from 'three';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
+import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, glance, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, PHONE_GAZE, bubble, bubbleCells, breath, follow, gaze, glance, isPupil, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
@@ -72,7 +72,7 @@ export class MoaiScene {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
   protected readonly desktop = signal(false);
-  /** Where the pixel pupils look, on desktop once the mouse moves; null keeps the eyes fully lit. */
+  /** Where the pixel pupils look, on desktop once the mouse moves (null keeps the eyes fully lit), fixed on phones. */
   protected readonly gaze = signal<Gaze | null>(null);
   /** While a bubble of pink gum is out (a double click or double tap on the moai). */
   protected readonly gum = signal(false);
@@ -107,6 +107,8 @@ export class MoaiScene {
     const root = document.documentElement;
     const desktopQuery = matchMedia('(min-width: 1024px) and (pointer: fine)');
     this.desktop.set(desktopQuery.matches);
+    // no pointer to follow on phones: the eyes stay open, looking where the face points
+    this.gaze.set(desktopQuery.matches ? null : PHONE_GAZE);
 
     // create the context ourselves: when WebGL is missing Three.js would log an error before throwing
     const context = canvas.getContext('webgl2', { antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
@@ -184,20 +186,13 @@ export class MoaiScene {
     camera.position.copy(target).add(new Vector3(50, 50, 50));
     camera.lookAt(target);
 
-    // each eye is a 2×2 block: with a gaze, one voxel is the pupil and the other three the white
     const eyes = voxels.filter((v) => v.color === 'eye');
-    const isPupil = (v: Voxel, g: Gaze): boolean => {
-      const mine = eyes.filter((e) => Math.sign(e.x) === Math.sign(v.x));
-      const xs = mine.map((e) => e.x);
-      const ys = mine.map((e) => e.y);
-      return v.x === (g.startsWith('right') ? Math.max(...xs) : Math.min(...xs)) && v.y === (g.endsWith('up') ? Math.max(...ys) : Math.min(...ys));
-    };
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
       const g = this.gaze();
       voxels.forEach((v, i) => {
-        const token = v.color === 'eye' && g && !isPupil(v, g) ? SCLERA : CSS_COLORS[v.color];
+        const token = v.color === 'eye' && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
         mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -316,6 +311,8 @@ export class MoaiScene {
     };
     const onDesktop = (): void => {
       this.desktop.set(desktopQuery.matches);
+      this.gaze.set(desktopQuery.matches ? null : PHONE_GAZE);
+      paint();
       resize();
     };
     const onVisibility = (): void => {

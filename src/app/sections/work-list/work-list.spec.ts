@@ -15,7 +15,7 @@ describe('WorkList', () => {
   it('renders one item per project with a link to its case study', async () => {
     const el = await render();
     const links = [...el.querySelectorAll('h3 a')].map((a) => a.getAttribute('href'));
-    expect(links).toEqual(['/work/apexflow', '/work/pokeverba', '/work/ice-friends-breaker']);
+    expect(links).toEqual(['/work/apexflow', '/work/pokeverba']);
   });
 
   it('shows an image with alt text only for projects that have one', async () => {

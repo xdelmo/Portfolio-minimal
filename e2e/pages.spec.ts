@@ -126,7 +126,7 @@ for (const locale of ['en', 'it']) {
   test(`project images load in the ${locale} build`, async ({ page }) => {
     await page.goto(`/${locale}/`);
     const images = page.locator('#work img.shot');
-    await expect(images).toHaveCount(3);
+    await expect(images).toHaveCount(2);
     // query the live DOM on every attempt: WebKit can replace the elements while hydrating
     await expect
       .poll(() =>
@@ -250,11 +250,6 @@ test('pages name the site, the 404 says what it is without empty descriptions, t
   }
   const sitemap = await (await request.get('/sitemap.xml')).text();
   expect(sitemap).toContain('hreflang="x-default" href="https://www.emanueledelmonte.it/en/work/apexflow"');
-});
-
-test('a tall project image asks for the size it is shown at', async ({ page }) => {
-  await page.goto('/en/work/ice-friends-breaker');
-  await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');
 });
 
 for (const colorScheme of ['light', 'dark'] as const) {

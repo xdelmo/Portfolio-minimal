@@ -123,41 +123,6 @@ export const CONTENT_EN: SiteContent = {
         outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',
       },
     },
-    {
-      slug: 'ice-friends-breaker',
-      title: 'Ice Friends Breaker',
-      role: 'A personal project I built and run on my own.',
-      summary: 'A social card game to break the ice, installable on phones as a PWA and native app.',
-      stack: ['Next.js', 'Supabase', 'Tailwind CSS', 'Capacitor'],
-      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
-      demoUrl: 'https://ice-friends-breaker.vercel.app',
-      image: {
-        src: 'images/work/ice-friends-breaker.jpg',
-        alt: 'Ice Friends Breaker on a phone: the daily question card, the streak counter and the bottom navigation',
-        width: 600,
-        height: 1299,
-      },
-      caseStudy: {
-        context:
-          'A card game that gives friends something better to talk about than the weather. It had to feel like a native app on a phone and be quick to build and run on my own.',
-        architecture: [
-          'Next.js 16 with the App Router, Tailwind CSS v4 and shadcn/ui components.',
-          'Supabase for the database and authentication, with an admin panel limited by role.',
-          'Installable as a PWA and packaged for iOS and Android with Capacitor.',
-        ],
-        decisions: [
-          {
-            title: 'One daily question for everyone',
-            body: 'The daily drop is the same for every user and changes every 24 hours, so friends can talk about the same question even when they play apart.',
-          },
-          {
-            title: 'Mobile first, for real',
-            body: 'A bottom navigation bar, dark mode that follows the system and touch-sized controls: the app is designed for the phone and then widened for the desktop.',
-          },
-        ],
-        outcome: 'Live on Vercel, with streaks, multiple game modes and a role-based admin panel to manage questions and categories.',
-      },
-    },
   ],
   experience: [
     {

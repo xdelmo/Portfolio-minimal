@@ -46,6 +46,17 @@ export function gaze(dx: number, dy: number): Gaze {
   return `${dx < 0 ? 'left' : 'right'}-${dy < 0 ? 'up' : 'down'}` as const;
 }
 
+/** Where phones' moai looks, with no pointer to follow: where its face points (also the still image's). */
+export const PHONE_GAZE: Gaze = 'left-down';
+
+/** Each eye is a 2×2 block: with a gaze, one voxel (the corner `g` points to) is the pupil and the other three the white. */
+export function isPupil(eyes: readonly { x: number; y: number }[], v: { x: number; y: number }, g: Gaze): boolean {
+  const mine = eyes.filter((e) => Math.sign(e.x) === Math.sign(v.x));
+  const xs = mine.map((e) => e.x);
+  const ys = mine.map((e) => e.y);
+  return v.x === (g.startsWith('right') ? Math.max(...xs) : Math.min(...xs)) && v.y === (g.endsWith('up') ? Math.max(...ys) : Math.min(...ys));
+}
+
 export const BUBBLE_GROW_MS = 900;
 export const BUBBLE_HOLD_MS = 500;
 const BUBBLE_POP_MS = 120;

@@ -1,4 +1,4 @@
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SCROLL_SWING, breath, follow, gaze, glance, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SCROLL_SWING, breath, follow, gaze, glance, isPupil, scrollYaw, sectionProgress } from './motion';
 import { moaiCell } from './moai.model';
 
 describe('moai motion', () => {
@@ -56,6 +56,22 @@ describe('gaze', () => {
     expect(gaze(80, -10)).toBe('right-up');
     expect(gaze(-5, 200)).toBe('left-down');
     expect(gaze(300, 1)).toBe('right-down');
+  });
+});
+
+describe('pupils', () => {
+  const eyes = [-3, -2, 2, 3].flatMap((x) => [15, 16].map((y) => ({ x, y })));
+
+  it('puts one pupil in each eye, in the corner the gaze points to', () => {
+    const pupils = eyes.filter((e) => isPupil(eyes, e, 'left-down'));
+    expect(pupils).toEqual([
+      { x: -3, y: 15 },
+      { x: 2, y: 15 },
+    ]);
+    expect(eyes.filter((e) => isPupil(eyes, e, 'right-up'))).toEqual([
+      { x: -2, y: 16 },
+      { x: 3, y: 16 },
+    ]);
   });
 });
 

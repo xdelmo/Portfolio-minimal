@@ -1,4 +1,4 @@
-import { endIntro, INTRO_CSS_MS, introFits } from '../intro-state';
+import { endIntro, INTRO_CSS_LIFT_MS, INTRO_CSS_MS, introFits } from '../intro-state';
 import type { Effect } from '../motion-host';
 
 // the pixel palette of src/styles/_tokens.scss
@@ -21,15 +21,23 @@ export const introEffect: Effect = (root, { gsap }) => {
       { scale: 1, backgroundColor: (i: number) => PIXELS[i % PIXELS.length], duration: 0.3, stagger: 0.03, ease: 'back.out(3)' },
       0.1,
     )
+    .addLabel('lift')
     .to(panel, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '+=0.25');
   // the motion script came late (a slow phone, a busy CI): replaying the intro now would hold the page past the
   // CSS fallback, so the fallback finishes the lift
   // the CSS animation starts with the first render, not with the navigation: its own start time is the reference
   const cssStart = Number(panel.getAnimations()[0]?.startTime ?? 0);
   if (!introFits(performance.now(), intro.duration(), cssStart)) {
-    intro.revert();
-    if (getComputedStyle(panel).visibility === 'hidden') endIntro();
-    else panel.addEventListener('animationend', endIntro, { once: true });
+    if (getComputedStyle(panel).visibility === 'hidden') {
+      intro.revert();
+      endIntro();
+      return undefined;
+    }
+    // the letters and the squares still reach their end state (issue #251: without it they stay dim and black
+    // under the panel): animated if they fit before the fallback starts to lift, snapped to it otherwise
+    if (introFits(performance.now(), intro.labels['lift'] ?? 0, cssStart - INTRO_CSS_LIFT_MS)) intro.tweenTo('lift');
+    else intro.seek('lift');
+    panel.addEventListener('animationend', endIntro, { once: true });
     return undefined;
   }
   panel.style.animation = 'none';

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [v2, master, devel]
+    branches: [master, devel]
   pull_request:
-    branches: [v2, master, devel]
+    branches: [master, devel]
 
 jobs:
   check:
@@ -152,7 +152,7 @@ jobs:
       - id: diff
         name: Check changed specs
         run: |
-          base=$(git merge-base HEAD "origin/${GITHUB_BASE_REF:-v2}" 2>/dev/null || true)
+          base=$(git merge-base HEAD "origin/${GITHUB_BASE_REF:-devel}" 2>/dev/null || true)
           if [ -n "$base" ] && [ -n "$(git diff --name-only --diff-filter=AM "$base" -- 'e2e/*.spec.ts')" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "Changed specs found"

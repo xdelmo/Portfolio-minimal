@@ -117,6 +117,46 @@ export const CONTENT_IT: SiteContent = {
         outcome: 'Online su sbustiamobro.it e alla versione 1.18 a ottobre 2026, con un cruciverba regionale, gettoni e traguardi.',
       },
     },
+    {
+      ...en('wedding-3d-invite'),
+      title: 'Invito di nozze 3D',
+      role: 'Un progetto personale, progettato e costruito da solo nel 2026.',
+      summary:
+        'Un invito di nozze digitale pensato per il telefono: una busta di pizzo in Three.js che si apre al tocco, poi la giornata raccontata in undici slide, con RSVP e funzionamento offline.',
+      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
+      image: {
+        src: 'images/work/wedding-invite.jpg',
+        alt: "L'invito chiuso: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L, sopra l'invito a toccarla per aprirla",
+        width: 1600,
+        height: 1011,
+      },
+      caseStudy: {
+        context:
+          "Un invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi rispondere a ogni domanda pratica: quando, dove, come arrivarci, cosa indossare e se ci sarai.",
+        architecture: [
+          "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
+          'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
+          'Undici slide a schermo intero con lo scroll snap di CSS: conto alla rovescia, salvataggio nel calendario, mappe, programma, dress code, trasporti e RSVP.',
+          "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
+        ],
+        decisions: [
+          {
+            title: 'Un repository, un deploy per ogni coppia',
+            body: "Ogni coppia è un file di configurazione e una cartella di asset; una variabile di build sceglie quale finisce nel bundle, e parte solo il contenuto di quella coppia. Titolo, tag Open Graph, JSON-LD dell'evento, manifest e service worker nascono dalla stessa configurazione.",
+          },
+          {
+            title: 'La scena 3D si ferma quando la busta è aperta',
+            body: "Finita l'animazione di apertura il ciclo di rendering si congela, così leggere l'invito non costa GPU né batteria. Un pulsante nel footer fa rivedere l'apertura.",
+          },
+          {
+            title: 'Colori che la coppia può cambiare, contrasto che non può rompere',
+            body: 'Una coppia può sostituire la palette bordeaux e avorio, che arriva a Tailwind, Three.js, manifest e icone. Un test unitario blocca la build su ogni combinazione sotto il contrasto WCAG AA.',
+          },
+        ],
+        outcome:
+          'La demo è online con una coppia di esempio, e a una nuova coppia servono solo una configurazione, i suoi asset e un progetto Vercel sullo stesso repository.',
+      },
+    },
   ],
   experience: [
     {

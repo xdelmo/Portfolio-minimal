@@ -34,6 +34,8 @@ const GUM = '--gum';
 /** Two taps or clicks closer than this, and closer than DOUBLE_TAP_PX, blow a bubble. */
 const DOUBLE_TAP_MS = 350;
 const DOUBLE_TAP_PX = 12;
+/** Pixels a touch or pointer moves before locking into horizontal swipe or vertical page scroll. */
+const SWIPE_LOCK_PX = 8;
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',
@@ -270,22 +272,43 @@ export class MoaiScene {
       event.preventDefault();
       this.fail();
     };
-    // desktop: drag with the mouse; phones: swipe with a finger (touch pointers are captured by the canvas already)
+    // desktop: drag with the mouse; phones: swipe with a finger, locking to horizontal rotation or vertical page scroll
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let pointerDir: 'x' | 'y' | null = null;
     const onDown = (e: PointerEvent): void => {
       const mouse = this.desktop() && e.pointerType === 'mouse';
       const finger = !this.desktop() && e.pointerType === 'touch';
       if (!mouse && !finger) return;
       pointerX = e.clientX;
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+      pointerDir = mouse ? 'x' : null;
       if (mouse) canvas.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent): void => {
       if (pointerX === null) return;
+      if (pointerDir === null) {
+        const dx = e.clientX - pointerStartX;
+        const dy = e.clientY - pointerStartY;
+        if (Math.abs(dx) < SWIPE_LOCK_PX && Math.abs(dy) < SWIPE_LOCK_PX) return;
+        pointerDir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+        if (pointerDir === 'x' && !this.desktop()) {
+          try {
+            if (!canvas.hasPointerCapture(e.pointerId)) canvas.setPointerCapture(e.pointerId);
+          } catch {
+            // pointer capture not supported or released
+          }
+        }
+      }
+      if (pointerDir === 'y') return;
       this.drag += (e.clientX - pointerX) * 0.01;
       pointerX = e.clientX;
     };
     let lastTap: { time: number; x: number; y: number } | null = null;
     const onUp = (e: PointerEvent): void => {
       pointerX = null;
+      pointerDir = null;
       const tap = { time: e.timeStamp, x: e.clientX, y: e.clientY };
       const double = lastTap !== null && tap.time - lastTap.time < DOUBLE_TAP_MS && Math.hypot(tap.x - lastTap.x, tap.y - lastTap.y) < DOUBLE_TAP_PX;
       lastTap = double ? null : tap;
@@ -297,6 +320,35 @@ export class MoaiScene {
     };
     const onCancel = (): void => {
       pointerX = null;
+      pointerDir = null;
+    };
+
+    // on phones, cancel vertical scrolling only when the gesture is locked to horizontal swipe
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchDir: 'x' | 'y' | null = null;
+    const onTouchStart = (e: TouchEvent): void => {
+      if (this.desktop() || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchDir = null;
+    };
+    const onTouchMove = (e: TouchEvent): void => {
+      if (this.desktop() || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      if (touchDir === null) {
+        if (Math.abs(dx) < SWIPE_LOCK_PX && Math.abs(dy) < SWIPE_LOCK_PX) return;
+        touchDir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+      }
+      if (touchDir === 'x' && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+    const onTouchEnd = (): void => {
+      touchDir = null;
     };
     const onLook = (e: PointerEvent): void => {
       if (e.pointerType !== 'mouse') return;
@@ -323,6 +375,10 @@ export class MoaiScene {
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerup', onUp);
     canvas.addEventListener('pointercancel', onCancel);
+    canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: true });
     addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
@@ -335,6 +391,10 @@ export class MoaiScene {
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
       canvas.removeEventListener('pointercancel', onCancel);
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
       removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);

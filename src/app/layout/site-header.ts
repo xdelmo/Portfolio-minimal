@@ -1,0 +1,149 @@
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { currentUrl, inPageHref } from '../core/current-url';
+import { LanguageSwitch } from '../core/i18n/language-switch';
+import { ThemeToggle } from '../core/theme/theme-toggle';
+import { PauseToggle } from './pause-toggle';
+import { SiteMenu } from './site-menu';
+
+@Component({
+  selector: 'app-site-header',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
+  template: `
+    <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
+    <header class="site-header container">
+      <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
+        ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
+      >
+      <nav i18n-aria-label="@@nav.label" aria-label="Main">
+        <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
+        <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
+        <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
+        <a data-magnetic routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" i18n="@@nav.blog">Blog</a>
+        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
+      </nav>
+      <div class="controls">
+        <app-language-switch />
+        <app-pause-toggle />
+        <app-theme-toggle />
+        <app-site-menu class="menu" />
+      </div>
+    </header>
+  `,
+  styles: `
+    @use 'styles/breakpoints' as bp;
+
+    /* always on screen: sticky over the page, under the intro (z 100) */
+    :host {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: block;
+      background: var(--bg);
+      box-shadow: 0 1px 0 var(--rule);
+    }
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-height: var(--header-h);
+    }
+    // the mark, a rule, then the full name on two lines: the site signed like a letterhead
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      margin-right: auto;
+      // touch screens: a 44px target (issue #130)
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .mark {
+      font-size: var(--step-1);
+      font-weight: 700;
+    }
+    // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
+    // ran 96px past the edge); the full name signs the bar from 1024px
+    .name {
+      display: none;
+      padding-left: var(--space-1);
+      border-left: 1px solid var(--rule);
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    nav {
+      display: none;
+      gap: var(--space-3);
+    }
+    nav a {
+      color: var(--fg);
+      text-decoration: none;
+      // a two-word item ("Chi sono") must stay on one line, also while its letters scramble
+      white-space: nowrap;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    // the section you are in (issue #229): the other items lead back to the home
+    nav a[aria-current] {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.3em;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+    }
+    // phones: the bar keeps the mark and the menu button; language, pause and theme are in the menu (issue #193). Only
+    // hidden below 768px, never shown by force above it: the pause button hides itself with reduced motion
+    @media (max-width: 767.98px) {
+      .controls > :not(.menu) {
+        display: none;
+      }
+    }
+    @include bp.up(md) {
+      nav {
+        display: flex;
+      }
+      // the links and the controls are in the header itself from here
+      .menu {
+        display: none;
+      }
+      // room to breathe once the header is wide
+      .logo {
+        gap: var(--space-2);
+      }
+      .site-header {
+        gap: var(--space-3);
+      }
+      .name {
+        padding-left: var(--space-2);
+        letter-spacing: 0.12em;
+      }
+    }
+    @include bp.up(lg) {
+      .name {
+        display: grid;
+      }
+    }
+  `,
+})
+export class SiteHeader {
+  private readonly url = currentUrl();
+  protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
+
+  // with JavaScript, move the focus in place
+
+  skipToMain(event: Event): void {
+    event.preventDefault();
+    document.getElementById('main')?.focus();
+  }
+}

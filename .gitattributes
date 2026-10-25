@@ -1,0 +1,3 @@
+# the spec grows by rows appended to its change table (§17): parallel branches each add one, and a union merge keeps
+# both instead of stopping every rebase on a conflict
+docs/superpowers/specs/*.md merge=union

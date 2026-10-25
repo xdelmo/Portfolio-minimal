@@ -1,0 +1,70 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { CHECKS, runChecks } from './verify-deploy.mjs';
+
+const BASE = 'https://preview.example';
+const response = (status, { location, body = '', type = 'text/html' } = {}) =>
+  new globalThis.Response(status === 301 || status === 302 ? null : body, { status, headers: { ...(location ? { location } : {}), 'content-type': type } });
+
+test('a row passes when status and location match', async () => {
+  const [row] = await runChecks(BASE, async () => response(302, { location: `${BASE}/it/` }), [{ name: 'it root', path: '/', status: 302, location: '/it/' }]);
+  assert.equal(row.ok, true);
+});
+
+test('the status must match exactly and the location must be the same absolute URL', async () => {
+  const wrongStatus = await runChecks(BASE, async () => response(301, { location: `${BASE}/it/` }), [{ name: 'a', path: '/', status: 302, location: '/it/' }]);
+  assert.equal(wrongStatus[0].ok, false);
+  const wrongSlash = await runChecks(BASE, async () => response(302, { location: `${BASE}/it` }), [{ name: 'b', path: '/', status: 302, location: '/it/' }]);
+  assert.equal(wrongSlash[0].ok, false);
+  const relative = await runChecks(BASE, async () => response(302, { location: '/it/' }), [{ name: 'c', path: '/', status: 302, location: '/it/' }]);
+  assert.equal(relative[0].ok, true);
+});
+
+test('content checks read the body and the content type', async () => {
+  const html = await runChecks(BASE, async () => response(200, { body: '<!doctype html>' }), [{ name: 'llms', path: '/llms.txt', status: 200, contains: '# Emanuele Del Monte' }]);
+  assert.equal(html[0].ok, false);
+  const md = await runChecks(BASE, async () => response(200, { body: '# x', type: 'text/plain' }), [{ name: 'md', path: '/en/index.md', status: 200, contentType: 'text/markdown' }]);
+  assert.equal(md[0].ok, false);
+});
+
+test('header checks need every header to contain its part', async () => {
+  const check = [{ name: 'h', path: '/en/', status: 200, headerHas: { 'x-content-type-options': 'nosniff' } }];
+  const without = await runChecks(BASE, async () => response(200), check);
+  assert.equal(without[0].ok, false);
+  const withIt = await runChecks(BASE, async () => new globalThis.Response('', { status: 200, headers: { 'x-content-type-options': 'nosniff' } }), check);
+  assert.equal(withIt[0].ok, true);
+});
+
+test('a network error fails its row and the others still run', async () => {
+  let calls = 0;
+  const fetchImpl = async () => {
+    calls++;
+    if (calls === 1) throw new Error('ECONNRESET');
+    return response(200, { body: 'ok' });
+  };
+  const rows = await runChecks(BASE, fetchImpl, [{ name: 'a', path: '/a', status: 200 }, { name: 'b', path: '/b', status: 200 }]);
+  assert.deepEqual(rows.map((r) => r.ok), [false, true]);
+  assert.match(rows[0].detail, /ECONNRESET/);
+});
+
+test('the default table covers language, legacy, 404 and GEO rows', () => {
+  const names = CHECKS.map((c) => c.name).join('\n');
+  for (const part of ['it-IT', 'it-CH', 'de-DE', 'nf_lang', '/privacy', '/it/work/apexflw', 'llms.txt', 'index.md', 'sitemap.xml', 'og image', 'security headers', 'client-side shell']) {
+    assert.ok(names.includes(part), part);
+  }
+});
+
+test('a check can read its path from a page, resolved against it (issue #153)', async () => {
+  const asked = [];
+  const fetchImpl = async (url) => {
+    asked.push(String(url));
+    if (String(url).endsWith('/en/')) return response(200, { body: '<script>["polyfills-AAAAAAAA.js","main-K4PR4QRI.js"]</script>' });
+    return new globalThis.Response('', { status: 200, headers: { 'cache-control': 'public, max-age=31536000, immutable' } });
+  };
+  const check = CHECKS.filter((c) => c.pathFrom);
+  const [row] = await runChecks(BASE, fetchImpl, check);
+  assert.equal(row.ok, true, row.detail);
+  assert.equal(asked[1], `${BASE}/en/main-K4PR4QRI.js`);
+  const missing = await runChecks(BASE, async () => response(200, { body: 'no scripts' }), check);
+  assert.match(missing[0].detail, /has no/);
+});

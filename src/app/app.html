@@ -1,0 +1,18 @@
+<app-ambient [appMotion]="ambient" />
+<app-site-intro [appMotion]="intro" />
+<app-pixel-cursor [appMotion]="cursor" />
+<app-site-header />
+<!-- ScrollSmoother moves what is inside with a transform (issue #159): fixed things and the header stay outside -->
+<div id="smooth-wrapper">
+  <div id="smooth-content">
+    <main id="main" tabindex="-1">
+      <router-outlet />
+    </main>
+    <app-site-footer />
+  </div>
+</div>
+<app-game-trigger />
+<app-back-to-top />
+<!-- read after every link to another site (aria-describedby="new-tab"): they open in a new tab -->
+<span id="new-tab" hidden i18n="@@a11y.newTab">Opens in a new tab</span>
+

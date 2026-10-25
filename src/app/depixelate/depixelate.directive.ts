@@ -1,0 +1,139 @@
+import { DestroyRef, Directive, ElementRef, afterNextRender, inject } from '@angular/core';
+
+/** Blocks across the photo at each step, one step every STEP_MS; after the last one the photo itself shows. */
+export const STEPS = [8, 16, 32, 48, 96, 128] as const;
+export const STEP_MS = 100;
+
+export interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** Where `object-fit` draws an image of `iw` × `ih` inside a box of `bw` × `bh` (cover crops, contain letterboxes). */
+export function fit(mode: string, bw: number, bh: number, iw: number, ih: number): Rect {
+  if (mode !== 'cover' && mode !== 'contain') return { x: 0, y: 0, w: bw, h: bh };
+  const scale = mode === 'cover' ? Math.max(bw / iw, bh / ih) : Math.min(bw / iw, bh / ih);
+  const w = iw * scale;
+  const h = ih * scale;
+  return { x: (bw - w) / 2, y: (bh - h) / 2, w, h };
+}
+
+/** The canvas of one step: `cols` blocks across the box, square blocks, so as many rows as the box's shape asks. */
+export function grid(cols: number, bw: number, bh: number): { cols: number; rows: number } {
+  return { cols, rows: Math.max(1, Math.round((cols * bh) / bw)) };
+}
+
+// the CSS a canvas over the photo copies from it, so its outline stays the same (the contact photo's pixel circle)
+const MASK = ['mask-image', 'mask-size', 'mask-position', 'mask-repeat', '-webkit-mask-image', '-webkit-mask-size', '-webkit-mask-position', '-webkit-mask-repeat'];
+
+/**
+ * A photo that loads depixelating, as on locomotive.ca (issue #157): once 15% of the screen past its top edge, a canvas
+ * over it draws it in 8, 16, 32, 48, 96 and 128 blocks across, one step every 100 ms, then the photo itself shows.
+ * Nothing changes without JavaScript, with reduced motion, or for a photo already on screen when the page opens (it
+ * would flash sharp, then pixelated).
+ */
+@Directive({ selector: 'img[appDepixelate]' })
+export class Depixelate {
+  constructor() {
+    const img = inject<ElementRef<HTMLImageElement>>(ElementRef).nativeElement;
+    let stop = (): void => undefined;
+    afterNextRender(() => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const box = img.getBoundingClientRect();
+      if (box.top < innerHeight && box.bottom > 0) return;
+      img.style.opacity = '0';
+      const views = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          views.disconnect();
+          stop = depixelate(img);
+        },
+        { rootMargin: '0px 0px -15% 0px' },
+      );
+      views.observe(img);
+      stop = () => {
+        views.disconnect();
+        img.style.opacity = '';
+      };
+    });
+    inject(DestroyRef).onDestroy(() => {
+      stop();
+    });
+  }
+}
+
+/** Runs the steps on a canvas over `img`; returns what stops them and shows the photo. */
+function depixelate(img: HTMLImageElement): () => void {
+  const canvas = document.createElement('canvas');
+  let timer = 0;
+  let bitmap: ImageBitmap | undefined;
+  let stopped = false;
+  const done = (): void => {
+    stopped = true;
+    clearTimeout(timer);
+    bitmap?.close();
+    canvas.remove();
+    img.style.opacity = '';
+  };
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    done();
+    return done;
+  }
+  const style = getComputedStyle(img);
+  for (const property of MASK) canvas.style.setProperty(property, style.getPropertyValue(property));
+  Object.assign(canvas.style, { position: 'absolute', imageRendering: 'pixelated', pointerEvents: 'none' });
+  canvas.setAttribute('aria-hidden', 'true');
+
+  const step = (from: ImageBitmap, i: number): void => {
+    if (i === STEPS.length) {
+      done();
+      return;
+    }
+    // measured at every step: the layout may move while the photo scrolls in
+    const bw = img.offsetWidth;
+    const bh = img.offsetHeight;
+    Object.assign(canvas.style, { left: `${String(img.offsetLeft)}px`, top: `${String(img.offsetTop)}px`, width: `${String(bw)}px`, height: `${String(bh)}px` });
+    const { cols, rows } = grid(STEPS[i], bw, bh);
+    canvas.width = cols;
+    canvas.height = rows;
+    const r = fit(style.objectFit, bw, bh, img.naturalWidth, img.naturalHeight);
+    const s = cols / bw;
+    ctx.drawImage(from, r.x * s, r.y * s, r.w * s, r.h * s);
+    timer = window.setTimeout(() => {
+      step(from, i + 1);
+    }, STEP_MS);
+  };
+  const start = (): void => {
+    if (!img.naturalWidth) {
+      done();
+      return;
+    }
+    // drawing the <img> itself decoded the whole JPEG on the main thread at every step, 16 ms each, and a bitmap made
+    // from the <img> decodes it there too (issue #207): only a bitmap made from the file decodes off the main thread.
+    // The file is the one the photo loaded, from the HTTP cache; small, since the finest step is 128 blocks across
+    fetch(img.currentSrc)
+      .then((response) => response.blob())
+      .then((file) => createImageBitmap(file, { resizeWidth: Math.min(img.naturalWidth, 512), resizeQuality: 'medium' }))
+      .then(
+        (decoded) => {
+          if (stopped) {
+            decoded.close();
+            return;
+          }
+          bitmap = decoded;
+          img.after(canvas);
+          step(decoded, 0);
+        },
+        done,
+      );
+  };
+  if (img.complete) start();
+  else {
+    img.addEventListener('load', start, { once: true });
+    img.addEventListener('error', done, { once: true });
+  }
+  return done;
+}

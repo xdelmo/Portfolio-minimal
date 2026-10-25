@@ -1,0 +1,36 @@
+name: Public repositories
+
+# Every day: when the repositories GitHub shows to a visitor differ from the ones the live site links (/repos.json,
+# written by scripts/postbuild.mjs), rebuild the site through a Netlify build hook, so a repository made public gets
+# its link (and one made private loses it) with no edit (issue #81). GitHub runs scheduled workflows only from the
+# default branch (master), so this starts with the launch.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - id: compare
+        run: |
+          github=$(node scripts/public-repos.mjs --print)
+          site=$(curl -fsS https://www.emanueledelmonte.it/repos.json || echo 'not published')
+          echo "GitHub: $github"
+          echo "site:   $site"
+          if [ "$github" = "$site" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.compare.outputs.changed == 'true'
+        env:
+          HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::The public repositories changed, but the NETLIFY_BUILD_HOOK secret is not set (launch kit §4)"
+            exit 1
+          fi
+          curl -fsS -X POST -d '{}' "$HOOK"
+          echo "Netlify rebuild started"

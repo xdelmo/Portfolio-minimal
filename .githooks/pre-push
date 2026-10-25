@@ -1,0 +1,6 @@
+#!/bin/sh
+# A branch without a prefix saying what it does (feat/, fix/, …), or a direct push to v2, devel or master, is not
+# pushed: changes reach those through a pull request, whose CI is the full gate (`npm run verify` runs it by hand).
+# Escape hatch for the owner only: ALLOW_PROTECTED_PUSH=1 git push …
+export PATH="$HOME/.local/node/current/bin:$PATH"
+exec node scripts/branch-name.mjs --pre-push

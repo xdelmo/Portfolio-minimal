@@ -3,8 +3,8 @@
 # WebKit and iPhone in CI's image as in e2e:webkit. A test that depends on timing and fails one time in ten fails here.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-base=$(git merge-base HEAD "origin/${GITHUB_BASE_REF:-v2}" 2>/dev/null || true)
-[ -z "$base" ] && { echo "e2e:changed: no origin/${GITHUB_BASE_REF:-v2} to compare with"; exit 0; }
+base=$(git merge-base HEAD "origin/${GITHUB_BASE_REF:-devel}" 2>/dev/null || true)
+[ -z "$base" ] && { echo "e2e:changed: no origin/${GITHUB_BASE_REF:-devel} to compare with"; exit 0; }
 specs=()
 while IFS= read -r spec; do specs+=("$spec"); done < <(git diff --name-only --diff-filter=AM "$base" -- 'e2e/*.spec.ts')
 [ ${#specs[@]} -eq 0 ] && { echo "e2e:changed: no e2e spec changed"; exit 0; }

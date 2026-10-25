@@ -12,7 +12,7 @@ const project = {
   caseStudy: { context: 'Why.', architecture: ['One', 'Two'], decisions: [{ title: 'Pick A', body: 'Because.' }], outcome: 'Done.' },
 };
 const content = {
-  person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', availability: 'Open from March.', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada', summary: 'Ada builds Angular front ends.' },
+  person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada', summary: 'Ada builds Angular front ends.' },
   hero: { headline: 'Headline.', lede: 'Lede.' },
   aboutStatement: 'I care.',
   about: ['About.'],
@@ -29,7 +29,7 @@ const content = {
 
 test('home markdown starts with the person and lists every section as plain text', () => {
   const md = homeMarkdown(content, 'en');
-  assert.match(md, /^# Ada — Frontend Engineer\n\nHeadline\.\n\nLede\. Open from March\./);
+  assert.match(md, /^# Ada — Frontend Engineer\n\nHeadline\.\n\nLede\./);
   for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work. Tables. Signals.', '- Front end: Angular', 'Email: a@x.it', '- [Quest](https://github.com/x/quest): Fun.', 'I care.\n\nAbout.']) {
     assert.ok(md.includes(part), part);
   }
@@ -50,7 +50,7 @@ test('project markdown has the case-study sections in the page language', () => 
 
 test('llms.txt links every markdown page of both languages', () => {
   const txt = llmsTxt({ en: content, it: content });
-  assert.match(txt, /^# Ada\n\n> Ada builds Angular front ends\. Open from March\.\n/);
+  assert.match(txt, /^# Ada\n\n> Ada builds Angular front ends\.\n/);
   for (const url of ['/en/index.md', '/it/index.md', '/en/work/demo.md', '/it/work/demo.md']) {
     assert.ok(txt.includes(`https://www.emanueledelmonte.it${url}`), url);
   }

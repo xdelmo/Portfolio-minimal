@@ -11,18 +11,17 @@ export const CONTENT_IT: SiteContent = {
   person: {
     ...CONTENT_EN.person,
     location: 'Latina, Italia',
-    availability: 'Disponibile per ruoli da remoto.',
     summary:
       'Emanuele Del Monte è un Frontend Engineer di Latina che sviluppa frontend enterprise in Angular con Signals, RxJS e NgRx.',
   },
   seo: {
     title: 'Emanuele Del Monte — Frontend Engineer Angular',
     description:
-      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina, disponibile per ruoli da remoto.',
+      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
   },
   hero: {
     headline: 'Interfacce Angular veloci anche con molti dati.',
-    lede: 'Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica.',
+    lede: 'Sono Emanuele Del Monte, Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about: [
@@ -40,15 +39,15 @@ export const CONTENT_IT: SiteContent = {
   projects: [
     {
       ...en('apexflow'),
+      role: 'La mia tesi in Ingegneria Informatica, costruita durante il tirocinio in IPS S.p.A. nel 2026.',
       summary:
         'Una dashboard CRM e di analytics: Angular 19 con Signals e RxJS nel frontend, Spring Boot 3 e PostgreSQL nel backend.',
       repos: [
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
-        { label: 'Codice del backend', url: 'https://github.com/xdelmo/backend-tesi' },
       ],
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'La dashboard di ApexFlow con i totali di fatturato, spese, utile e nuovi clienti, il grafico del fatturato e la barra di navigazione',
+        alt: 'La dashboard di ApexFlow con fatturato totale, ordini in attesa, clienti attivi e totali, il grafico annuale del fatturato e la barra di navigazione',
         width: 1600,
         height: 1011,
       },
@@ -81,89 +80,80 @@ export const CONTENT_IT: SiteContent = {
       },
     },
     {
-      ...en('ice-friends-breaker'),
-      summary: 'Un gioco di carte per rompere il ghiaccio, installabile sul telefono come PWA e come app nativa.',
-      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
+      ...en('pokeverba'),
+      role: 'Un progetto con un amico che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
+      summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
+      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {
-        src: 'images/work/ice-friends-breaker.jpg',
-        alt: 'Ice Friends Breaker su un telefono: la carta con la domanda del giorno, il contatore della serie e la navigazione in basso',
-        width: 600,
-        height: 1299,
+        src: 'images/work/pokeverba.jpg',
+        alt: 'Il cruciverba Pokémon del giorno di PokèVerba: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
+        width: 1600,
+        height: 1011,
       },
       caseStudy: {
         context:
-          'Un gioco di carte che dà agli amici qualcosa di meglio di cui parlare del meteo. Doveva sembrare un\'app nativa sul telefono ed essere veloce da costruire e gestire da solo.',
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi è un uso commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
-          'Next.js 16 con App Router, Tailwind CSS v4 e componenti shadcn/ui.',
-          "Supabase per database e autenticazione, con un pannello admin riservato per ruolo.",
-          'Installabile come PWA e impacchettata per iOS e Android con Capacitor.',
+          'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
+          "Un'app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
+          'Un generatore lato server dispone da 10 a 15 parole in una griglia fino a 15 × 15, con il seme dato dalla data e nessun Pokémon ripetuto entro 30 giorni.',
+          'Italiano e inglese senza plugin multilingua; i progressi restano nel browser, nel local storage.',
         ],
         decisions: [
           {
-            title: 'Una domanda al giorno, uguale per tutti',
-            body: 'La domanda del giorno è la stessa per ogni utente e cambia ogni 24 ore, così gli amici possono parlarne anche se giocano lontani.',
+            title: 'Le risposte non arrivano mai al browser',
+            body: "L'app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
           },
           {
-            title: 'Mobile first, davvero',
-            body: "Barra di navigazione in basso, tema scuro che segue il sistema e controlli a misura di dito: l'app nasce per il telefono e poi si allarga per il desktop.",
+            title: 'Indizi originali composti da fatti',
+            body: "Gli indizi sono composti da fatti come tipo, generazione, altezza e peso, importati da PokéAPI, e ogni indizio che nomina la risposta viene scartato. Nessun testo ufficiale viene copiato.",
+          },
+          {
+            title: 'Un cruciverba al giorno, in cache fino a mezzanotte',
+            body: 'Il cruciverba di oggi resta in cache fino alla mezzanotte di Roma, quando si genera il successivo, così il server lavora una volta al giorno.',
           },
         ],
-        outcome: 'Online su Vercel, con serie di giorni consecutivi, più modalità di gioco e un pannello admin per ruolo per gestire domande e categorie.',
+        outcome: 'Online su sbustiamobro.it e alla versione 1.18 a ottobre 2026, con un cruciverba regionale, gettoni e traguardi.',
       },
     },
     {
-      ...en('mcp-server'),
+      ...en('wedding-3d-invite'),
+      title: 'Invito di nozze 3D',
+      role: 'Progettato e costruito da solo nel 2026, per il matrimonio di due amici.',
       summary:
-        'Un server e un client Model Context Protocol che permettono a un LLM di leggere e modificare documenti tramite tool personalizzati.',
-      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/mcp-server' }],
-      caseStudy: {
-        context:
-          "L'ho costruito per capire come i modelli linguistici si collegano a strumenti e dati reali con il Model Context Protocol, seguendo i due corsi MCP dell'Anthropic Academy.",
-        architecture: [
-          'Un server MCP in Python che espone tool (lettura, modifica, riassunto, ricerca, elenco delle cartelle consentite, lettura di una cartella), risorse e un template di prompt.',
-          'Un client Python che parla con il server tramite input e output standard e gestisce sampling, avanzamento, log e cartelle consentite.',
-        ],
-        decisions: [
-          {
-            title: 'Accesso solo alle cartelle approvate',
-            body: 'Il tool che legge le cartelle lavora solo dentro le radici esposte dal client, così il modello non può girare liberamente nel file system.',
-          },
-          {
-            title: 'Funzioni deprecate tenute apposta',
-            body: "Sampling, roots e logging sono stati deprecati nella specifica MCP a luglio 2026. L'esempio avanzato li mantiene a scopo didattico, mentre quello base mostra l'approccio attuale.",
-          },
-        ],
-        outcome: 'Un riferimento funzionante per costruire integrazioni MCP, pubblico su GitHub.',
+        'Un invito di nozze digitale pensato per il telefono: una busta di pizzo in Three.js che si apre al tocco, poi la giornata raccontata in undici slide, con RSVP e funzionamento offline.',
+      repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
+      image: {
+        src: 'images/work/wedding-invite.jpg',
+        alt: "L'invito chiuso: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L, sopra l'invito a toccarla per aprirla",
+        width: 1600,
+        height: 1011,
       },
-    },
-    {
-      ...en('telegram-bots'),
-      title: 'Bot Telegram',
-      summary: "Tre bot che uso ogni giorno: scadenze dell'auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
-      repos: [
-        { label: "Bot delle scadenze dell'auto", url: 'https://github.com/xdelmo/auto-scadenze-bot' },
-        { label: 'Bot del raccoglitore Pokémon', url: 'https://github.com/xdelmo/hoenn-binder' },
-        { label: 'Bot delle presenze', url: 'https://github.com/xdelmo/presenz-lazy-bot' },
-      ],
       caseStudy: {
         context:
-          'Piccoli strumenti personali che mi tolgono una seccatura dalla settimana. Ognuno risponde solo a me, gira in Docker e tiene i dati in SQLite o in Excel.',
+          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi rispondere a ogni domanda pratica: quando, dove, come arrivarci, cosa indossare e se ci sarai.",
         architecture: [
-          "Scadenze dell'auto: TypeScript eseguito nativamente su Node 24 con grammY e node:sqlite; promemoria per data e per chilometri, storico delle spese e backup mensili.",
-          'Raccoglitore Pokémon: TypeScript, grammY, SQLite con Drizzle ORM e Vitest; tiene traccia di 135 carte e calcola pagina, riga e colonna nel raccoglitore fisico.',
-          'Presenze: Python con una pianificazione nei giorni feriali che compila un foglio Excel e, una volta al mese, lo invia per email dopo aver chiesto conferma.',
+          "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
+          'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
+          'Undici slide a schermo intero con lo scroll snap di CSS: conto alla rovescia, salvataggio nel calendario, mappe, programma, dress code, trasporti e RSVP.',
+          "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
         ],
         decisions: [
           {
-            title: 'Niente chat intasate',
-            body: 'Il bot del raccoglitore modifica lo stesso messaggio con le tastiere inline invece di mandarne di nuovi, così la chat resta leggibile.',
+            title: "Ogni parola dell'invito in un solo file di configurazione",
+            body: "Nomi, data, luoghi, programma e RSVP stanno in una configurazione tipizzata, così la demo gira con nomi di esempio mentre l'invito vero tiene i suoi. Titolo, tag Open Graph, JSON-LD dell'evento, manifest e service worker nascono dalla stessa configurazione.",
           },
           {
-            title: 'Prima stima, poi ricorda',
-            body: "Il bot dell'auto impara quanti chilometri faccio al mese e stima quando arriverò al prossimo tagliando, così i promemoria arrivano prima della scadenza, non dopo.",
+            title: 'La scena 3D si ferma quando la busta è aperta',
+            body: "Finita l'animazione di apertura il ciclo di rendering si congela, così leggere l'invito non costa GPU né batteria. Un pulsante nel footer fa rivedere l'apertura.",
+          },
+          {
+            title: 'Una sola palette, con il contrasto sotto test',
+            body: 'La palette bordeaux e avorio è definita una volta sola e arriva a Tailwind, Three.js, manifest e icone. Un test unitario blocca la build su ogni combinazione sotto il contrasto WCAG AA.',
           },
         ],
-        outcome: 'Tutti e tre girano ogni giorno sul mio server di casa.',
+        outcome:
+          "L'invito vero è dei miei amici e resta privato; la demo pubblica su Vercel mostra lo stesso invito con nomi di esempio.",
       },
     },
   ],
@@ -275,11 +265,10 @@ export const CONTENT_IT: SiteContent = {
   },
   sideQuests: [
     {
-      title: 'PokèVerba',
-      summary: 'Un cruciverba Pokémon quotidiano e un Pokédex personale: un plugin WordPress con dentro un\'app React, in stile Game Boy.',
-      tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
-      repo: 'https://github.com/xdelmo/pokeverba-site',
-      sprite: 'crossword',
+      title: 'Bot Telegram',
+      summary: "Tre bot che uso ogni giorno, ognuno risponde solo a me: scadenze dell'auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
+      tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],
+      sprite: 'robot',
     },
     {
       title: 'Porta-carte MagSafe',

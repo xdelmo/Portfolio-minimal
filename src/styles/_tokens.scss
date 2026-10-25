@@ -107,7 +107,8 @@
   --step-hero: clamp(2.747rem, 1.6rem + 5.2vw, 6rem); /* 44px → 96px */
 
   --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
-  --measure: 68ch;
+  /* in ch of Instrument Sans the zero is wider than the average letter: 58ch is about 75 characters a line (issue #229) */
+  --measure: 58ch;
   --container: 1200px;
   --gutter: 16px;
   /* the sticky header (site-header.ts); anchors and the experience pin start below it */

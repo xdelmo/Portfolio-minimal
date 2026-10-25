@@ -18,6 +18,8 @@ export function endIntro(): void {
 
 /** How long the CSS fallback in site-intro.ts takes to lift the panel from when it starts (3s delay + 0.6s), in ms. */
 export const INTRO_CSS_MS = 3600;
+/** How long of that is the lift itself (the 0.6s animation), in ms. */
+export const INTRO_CSS_LIFT_MS = 600;
 
 /**
  * Whether a timeline of `duration` seconds started at `now` ends before the CSS fallback, which started at `cssStart`

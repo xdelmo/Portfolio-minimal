@@ -1,0 +1,10 @@
+#!/bin/sh
+# A branch switch that changes package-lock.json brings node_modules and Playwright's browsers up to date at once
+# (issue #214): on 2026-10-17 a switch to v2 left both behind, and two pushes failed ten minutes into verify.
+# $1 old HEAD, $2 new HEAD, $3 1 for a branch checkout (0 for a file checkout).
+[ "$3" = 1 ] || exit 0
+[ "$1" = "$2" ] && exit 0
+git diff --quiet "$1" "$2" -- package-lock.json && exit 0
+export PATH="$HOME/.local/node/current/bin:$PATH"
+echo "post-checkout: package-lock.json changed, running npm ci and playwright install"
+npm ci --no-audit --no-fund && npx playwright install chromium firefox

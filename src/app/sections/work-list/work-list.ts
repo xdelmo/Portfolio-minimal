@@ -17,6 +17,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
           <div class="text">
             <h3 [style.view-transition-name]="'title-' + project.slug"><a class="touch-line" [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
             <p>{{ project.summary }}</p>
+            <p class="role">{{ project.role }}</p>
             <ul class="stack" i18n-aria-label="@@work.stack" aria-label="Technologies">
               @for (tech of project.stack; track tech) {
                 <li>{{ tech }}</li>
@@ -33,6 +34,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
                   }
                 </ul>
               }
+              @if (project.demoUrl) {
+                <a class="repo-link" [href]="project.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener"
+                  ><span i18n="@@work.demo">Live demo</span><span class="visually-hidden">: {{ project.title }}</span></a
+                >
+              }
             </div>
           </div>
           <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
@@ -41,7 +47,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
               <img
                 appDepixelate
                 class="shot"
-                [style.view-transition-name]="'shot-' + project.slug"
                 [ngSrc]="image.src"
                 [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
                 [loaderParams]="{ full: image.width }"
@@ -51,7 +56,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
                 [sizes]="image.height > image.width ? '280px' : '(min-width: 768px) 50vw, 100vw'"
               />
             } @else if (project.sprite; as sprite) {
-              <app-quest-sprite class="item" [name]="sprite" [style.view-transition-name]="'shot-' + project.slug" />
+              <app-quest-sprite class="item" [name]="sprite" />
             }
           </div>
         </li>
@@ -60,12 +65,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
-
-    // the picture grows into the case study in steps (issue #161, src/styles/_base.scss)
-    .shot,
-    .item {
-      view-transition-class: shot;
-    }
 
     .projects {
       display: grid;
@@ -85,6 +84,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     h3 a {
       color: var(--fg);
+    }
+    .role {
+      color: var(--fg-muted);
     }
     .stack {
       display: flex;
@@ -131,6 +133,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     // in its middle
     .media {
       display: grid;
+      // one row as tall as the frame, so a phone picture's percentage height resolves against it: with an auto row the
+      // picture kept its own height and the frame cut it (issue #229)
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
       place-items: center;
       aspect-ratio: 3 / 2;
       overflow: hidden;
@@ -160,6 +165,25 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         grid-template-columns: 1fr 1fr;
         gap: var(--space-6);
         align-items: center;
+      }
+    }
+    // the lead project (the first, ApexFlow) takes the whole row; the others pair up under it, each picture on top of
+    // its text (issue #231: the three looked like equals)
+    @include bp.up(lg) {
+      .projects {
+        grid-template-columns: 1fr 1fr;
+        column-gap: var(--space-6);
+      }
+      .project:first-child {
+        grid-column: 1 / -1;
+      }
+      .project:not(:first-child) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-3);
+        align-items: start;
+      }
+      .project:not(:first-child) .media {
+        order: -1;
       }
     }
   `,

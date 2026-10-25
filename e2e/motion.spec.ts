@@ -12,7 +12,7 @@ test.describe('section titles', () => {
     await expect.poll(() => isPlainText(title)).toBe(false);
     await expect(title).toHaveAccessibleName('Experience');
     await title.scrollIntoViewIfNeeded();
-    await expect.poll(() => isPlainText(title), { timeout: 4000 }).toBe(true);
+    await expect.poll(() => isPlainText(title)).toBe(true);
     await expect(title).toHaveText('Experience');
   });
 
@@ -65,6 +65,9 @@ test.describe('hero', () => {
     const height = await heroHeight();
     await page.evaluate(() => { window.scrollTo(0, 400); });
     await expect.poll(async () => Number(/[\d.]+$/.exec(await wdth())?.[0])).toBeGreaterThan(75);
+    // whole steps only: a wdth that changed at every frame reshaped the giant headline at every frame and dropped
+    // about 40 frames between the hero and the work (issue #233)
+    expect(Number.isInteger(Number(/[\d.]+$/.exec(await wdth())?.[0]))).toBe(true);
     // the wider headline breaks its lines where it did: the hero keeps its height and the page below stays put
     expect(await heroHeight()).toBe(height);
     await page.evaluate(() => { window.scrollTo(0, 0); });
@@ -79,8 +82,25 @@ test.describe('hero', () => {
       // its deadline); counted from the end of goto, and with WebKit in CI delivering frames late under load (a run
       // took the CSS path and ended past 4 s), 6 s is that bound plus the frames' lag
       await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
-      await expect.poll(() => isPlainText(page.locator('h1')), { timeout: 4000 }).toBe(true);
+      await expect.poll(() => isPlainText(page.locator('h1'))).toBe(true);
       await expect(page.locator('h1')).toBeInViewport();
+    });
+
+    // issue #251: the motion script came too late for the timeline, the CSS fallback lifts the panel, and the
+    // squares used to stay one flat colour (black in the light theme) with the letters dim
+    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page, isMobile }) => {
+      test.skip(isMobile, 'the intro is desktop only: on phones the squares are never animated');
+      // every script is held until the same instant, 2 s from now (a delay per file would stack along the chain of
+      // imports and the effect would start after the panel is gone): past the point where the whole timeline fits
+      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel
+      const release = Date.now() + 2000;
+      await page.route('**/*.js', async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.max(0, release - Date.now())));
+        await route.continue();
+      });
+      await page.goto('/en/');
+      await expect(page.locator('.px').first()).toHaveCSS('background-color', 'rgb(127, 178, 236)', { timeout: 5000 });
+      await expect(page.locator('.letter').first()).toHaveCSS('opacity', '1');
     });
   });
 });
@@ -94,35 +114,12 @@ test('project title and case-study heading share a view-transition name', async 
   await expect(page.locator('h1')).toHaveCSS('view-transition-name', name);
 });
 
-test('a project screenshot grows into its case study in steps (issue #161)', async ({ page, browserName }) => {
+test('project screenshots have no view-transition name so they do not scroll across the screen (issue #256)', async ({ page }) => {
   await page.goto('/en/');
   const shot = page.locator('#work .shot').first();
-  const name = await shot.evaluate((el) => getComputedStyle(el).viewTransitionName);
-  expect(name).toMatch(/^shot-/);
-  test.skip(browserName !== 'chromium', 'reads the transition through Chromium\'s view transition API');
-  // note the transition's groups once it is ready, whatever the speed of the test
-  await page.evaluate(() => {
-    const start = document.startViewTransition.bind(document);
-    const w = window as unknown as { groups: { name: string; easing: string }[] };
-    w.groups = [];
-    document.startViewTransition = (update) => {
-      const t = start(update);
-      void t.ready.then(() => {
-        for (const a of document.getAnimations()) {
-          const { pseudoElement } = (a.effect ?? {}) as KeyframeEffect;
-          if (pseudoElement?.startsWith('::view-transition-group(')) {
-            w.groups.push({ name: pseudoElement, easing: getComputedStyle(document.documentElement, pseudoElement).animationTimingFunction });
-          }
-        }
-      });
-      return t;
-    };
-  });
+  await expect(shot).toHaveCSS('view-transition-name', 'none');
   await page.locator('#work h3 a').first().click();
-  await expect(page.locator('.case-study .shot')).toHaveCSS('view-transition-name', name);
-  const groups = await page.evaluate(() => (window as unknown as { groups: { name: string; easing: string }[] }).groups);
-  const group = groups.find((g) => g.name === `::view-transition-group(${name})`);
-  expect(group?.easing).toMatch(/^steps\(6/);
+  await expect(page.locator('.case-study .shot')).toHaveCSS('view-transition-name', 'none');
 });
 
 test.describe('with reduced motion', () => {
@@ -247,9 +244,9 @@ test.describe('experience', () => {
     await expect.poll(() => chapters.last().evaluate((a) => getComputedStyle(a).getPropertyValue('--fill'))).toBe('0');
     // a click on the current job's chapter scrolls the pin to where its card is on top
     await chapters.last().click();
-    await expect(chapters.last()).toHaveAttribute('aria-current', 'step', { timeout: 5000 });
+    await expect(chapters.last()).toHaveAttribute('aria-current', 'step');
     await expect(page.locator('#exp-2')).toBeFocused();
-    await expect.poll(() => page.locator('#exp-2').evaluate((li) => Math.round(new DOMMatrix(getComputedStyle(li).transform).m42)), { timeout: 5000 }).toBe(0);
+    await expect.poll(() => page.locator('#exp-2').evaluate((li) => Math.round(new DOMMatrix(getComputedStyle(li).transform).m42))).toBe(0);
   });
 
   test('is not sticky on desktop', async ({ page, isMobile }) => {

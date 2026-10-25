@@ -12,21 +12,18 @@ async function travel(page: Page): Promise<number[]> {
     addEventListener('scroll', () => w.positions.push(window.scrollY));
   });
   await navLink(page).click();
-  await expect.poll(() => experienceTop(page), { timeout: 4000 }).toBeLessThanOrEqual(113);
+  await expect.poll(() => experienceTop(page)).toBeLessThanOrEqual(113);
   await page.waitForTimeout(200);
   expect(await experienceTop(page)).toBeGreaterThanOrEqual(111); // under the 96px header, plus the section's 16px scroll-margin
   return page.evaluate(() => (window as unknown as { positions: number[] }).positions);
 }
 
-test('a header link glides to its section instead of jumping, and stops under the header', async ({ page, browserName }) => {
-  // headless WebKit on Linux (CI) leaves smooth scrolling to a platform setting and often jumps; Safari glides
-  test.skip(browserName === 'webkit', 'smooth scrolling is a platform setting in headless WebKitGTK');
+test('a header link jumps to its section without scrolling through the page in between, and stops under the header', async ({ page }) => {
+  // issue #245: gliding showed every picture between the two sections going by
   await page.goto('/en/');
   test.skip(!(await navLink(page).isVisible()), 'no header nav on this viewport');
   const positions = await travel(page);
-  const final = positions.at(-1) ?? 0;
-  // WebKit on Linux glides in a single step: one position on the way is enough to tell it from a jump
-  expect(positions.filter((y) => y > 0 && y < final - 1).length).toBeGreaterThan(0);
+  expect(new Set(positions).size).toBe(1);
 });
 
 test('a page opened at an anchor stays on its section once the headline font is in', async ({ page }) => {

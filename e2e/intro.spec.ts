@@ -2,6 +2,9 @@ import { expect, test } from './fixtures';
 
 test.describe('intro', () => {
   test.use({ intro: true });
+  // every test here is about the intro's own seconds: waiting for the motion effects took WebKit past its 3.6 s bound,
+  // so a test read the lift, or the empty page after it, instead of the intro (#213)
+  test.use({ motionReady: false });
 
   test('covers the first view, then lifts away by itself', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
@@ -11,6 +14,17 @@ test.describe('intro', () => {
     await expect(intro).toHaveAttribute('aria-hidden', 'true');
     // at the latest the CSS lift ends 3.6s after the first render, which a slow machine pushes back
     await expect(intro).toBeHidden({ timeout: 6000 });
+  });
+
+  test('centres the pixel row under the name', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.goto('/en/');
+    // the global measure on <p> once left the row narrower than the name, off the centre (issue #234)
+    const offset = await page.evaluate(() => {
+      const px = [...document.querySelectorAll('.site-intro .px')].map((el) => el.getBoundingClientRect());
+      return (px[0].left + px[px.length - 1].right) / 2 - innerWidth / 2;
+    });
+    expect(Math.abs(offset)).toBeLessThan(1);
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {
@@ -42,7 +56,7 @@ test.describe('intro', () => {
     await page.goto('/en/');
     await expect(page.locator('.site-intro')).toBeVisible();
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await expect(page.locator('.site-intro')).toBeHidden({ timeout: 5000 });
+    await expect(page.locator('.site-intro')).toBeHidden();
   });
 
   // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding

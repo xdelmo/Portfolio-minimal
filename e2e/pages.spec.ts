@@ -55,10 +55,10 @@ test('case study has canonical and hreflang links', async ({ page }) => {
 });
 
 const WILD = {
-  en: { title: 'A wild 404 appeared!', menu: 'What to do', moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
-  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
+  en: { title: 'A wild 404 appeared!', menu: 'What to do', prompt: 'What will you do?', hints: ['Go and see the projects.', 'Write to me.', 'Open the player card.', 'Back to the home page.'], moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
+  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', prompt: 'Cosa vuoi fare?', hints: ['Vai a vedere i progetti.', 'Scrivimi.', 'Apri la scheda giocatore.', 'Torna alla home.'], moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
 };
-for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
+for (const [locale, { title, menu: label, moves, hints, prompt }] of Object.entries(WILD)) {
   test(`the ${locale} 404 is a wild encounter with a battle menu`, async ({ page, request }) => {
     // the local server answers 404 for any unknown URL; the per-locale page Netlify serves is checked by verify:deploy
     expect((await request.get(`/${locale}/nope`)).status()).toBe(404);
@@ -77,6 +77,17 @@ for (const [locale, { title, menu: label, moves }] of Object.entries(WILD)) {
     await expect(menu.nth(1)).toBeFocused();
     await page.keyboard.press('ArrowLeft');
     await expect(menu.first()).toBeFocused();
+    // the dialog box keeps its explanation and says what the move under the cursor does, then asks again when you leave the menu
+    const line = page.locator('.says');
+    await menu.first().blur();
+    await expect(line).toHaveText(prompt);
+    await expect(page.locator('.text p').first()).toBeVisible();
+    for (const [i, hint] of hints.entries()) {
+      await menu.nth(i).focus();
+      await expect(line).toHaveText(hint);
+    }
+    await menu.nth(3).blur();
+    await expect(line).toHaveText(prompt);
     // the bag opens the player card of the Press start easter egg
     await menu.nth(2).click();
     await expect(page.getByRole('dialog')).toBeVisible();
@@ -126,7 +137,7 @@ for (const locale of ['en', 'it']) {
   test(`project images load in the ${locale} build`, async ({ page }) => {
     await page.goto(`/${locale}/`);
     const images = page.locator('#work img.shot');
-    await expect(images).toHaveCount(2);
+    await expect(images).toHaveCount(3);
     // query the live DOM on every attempt: WebKit can replace the elements while hydrating
     await expect
       .poll(() =>
@@ -217,8 +228,8 @@ test('a case study ends with the next one, which opens at its top (#91)', async 
   const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
   await next.scrollIntoViewIfNeeded();
   await next.click();
-  await expect(page).toHaveURL(/\/it\/work\/ice-friends-breaker$/);
-  await expect(page.locator('h1')).toHaveText('Ice Friends Breaker');
+  await expect(page).toHaveURL(/\/it\/work\/pokeverba$/);
+  await expect(page.locator('h1')).toHaveText('PokèVerba');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
 
@@ -250,11 +261,6 @@ test('pages name the site, the 404 says what it is without empty descriptions, t
   }
   const sitemap = await (await request.get('/sitemap.xml')).text();
   expect(sitemap).toContain('hreflang="x-default" href="https://www.emanueledelmonte.it/en/work/apexflow"');
-});
-
-test('a tall project image asks for the size it is shown at', async ({ page }) => {
-  await page.goto('/en/work/ice-friends-breaker');
-  await expect(page.locator('img.shot')).toHaveAttribute('sizes', '(min-width: 400px) 360px, 100vw');
 });
 
 for (const colorScheme of ['light', 'dark'] as const) {
@@ -330,6 +336,6 @@ for (const [from, name, link] of [
         const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
         return Math.abs(top - stop) <= 2 || (bottom && top > 0 && top < stop + innerHeight);
       });
-    await expect.poll(landed, { timeout: 5000 }).toBe(true);
+    await expect.poll(landed).toBe(true);
   });
 }

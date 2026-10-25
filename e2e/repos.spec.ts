@@ -5,7 +5,7 @@ import { expect, test } from './fixtures';
 // whatever is public today, links nothing else and leaves no empty list or row of buttons behind.
 const PUBLIC = readFileSync('src/app/content/public-repos.generated.ts', 'utf8').match(/https:\/\/github\.com\/xdelmo\/[\w.-]+/g) ?? [];
 
-for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/ice-friends-breaker', '/en/work/telegram-bots', '/it/work/mcp-server']) {
+for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/pokeverba', '/it/work/pokeverba']) {
   test(`${path} links only public repositories, with no empty lists`, async ({ page }) => {
     await page.goto(path);
     const repos = await page.locator('a[href^="https://github.com/xdelmo/"]').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).href));
@@ -16,15 +16,18 @@ for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/ice-friends-b
 }
 
 test('every link to a repository carries the pixel GitHub mark, hidden from assistive tech', async ({ page }) => {
+  let total = 0;
   for (const path of ['/en/', '/en/work/apexflow']) {
     await page.goto(path);
     const links = page.locator('a[href^="https://github.com/xdelmo/"]');
     const count = await links.count();
-    expect(count).toBeGreaterThan(0);
+    total += count;
     for (let i = 0; i < count; i++) {
       const link = links.nth(i);
       await expect(link.locator('app-github-mark svg')).toHaveAttribute('aria-hidden', 'true');
       await expect(link).toHaveAccessibleName((await link.innerText()).trim());
     }
   }
+  // Since #262 only ApexFlow's front end is left, and it is private: the check comes back once a repository is public.
+  test.skip(total === 0, 'no public repository is linked today');
 });

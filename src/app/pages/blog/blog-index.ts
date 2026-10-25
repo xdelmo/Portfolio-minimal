@@ -15,7 +15,7 @@ import { SeoService } from '../../core/seo/seo.service';
     <div class="container blog">
       <header class="intro">
         <h1 i18n="@@blog.title">Blog</h1>
-        <p class="lede" i18n="@@blog.lede">Notes from building enterprise front ends: what I tried, what broke, what I would do again.</p>
+        <p class="lede" i18n="@@blog.lede">Notes from building Angular front ends: what I tried, what broke, what I would do again.</p>
       </header>
       <ol class="posts">
         @for (post of articles; track post.slug) {
@@ -75,7 +75,7 @@ export class BlogIndex {
   constructor() {
     const seo = inject(SeoService);
     const { person } = inject(CONTENT);
-    seo.update({ path: '/blog', title: `Blog — ${person.name}`, description: $localize`:@@blog.description:Notes on Angular, Signals, RxJS and enterprise front ends by ${person.name}:name:.`, ogImage: 'blog' });
+    seo.update({ path: '/blog', title: `Blog — ${person.name}`, description: $localize`:@@blog.description:Notes on Angular, Signals, RxJS and Spring Boot by ${person.name}:name:.`, ogImage: 'blog' });
     seo.setJsonLd('ld-page', blogJsonLd(this.articles, person, toLocale(inject(LOCALE_ID))));
   }
 }

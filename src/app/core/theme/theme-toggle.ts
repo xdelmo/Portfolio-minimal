@@ -27,9 +27,9 @@ import { ThemeService } from './theme.service';
       color: var(--fg);
       cursor: pointer;
     }
-    /* on hover the sun turns its rays, the moon rocks */
+    /* on hover the sun turns its rays, the moon rocks: in steps, like the site's other controls (issue #229) */
     svg {
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 240ms steps(3);
     }
     .theme-toggle:hover .sun,
     .theme-toggle:focus-visible .sun {

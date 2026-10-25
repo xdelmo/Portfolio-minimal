@@ -5,6 +5,7 @@ import { BLOG } from '../../content/blog';
 import { CONTENT } from '../../content/content';
 import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
+import { ContactPrompt } from '../../layout/contact-prompt';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
@@ -28,13 +29,15 @@ const UNLOCK_NOTICE_MS = 4000;
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate, MotionHost],
+  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, QuestSprite, Depixelate, MotionHost],
   template: `
     <article class="container case-study" [appMotion]="effects">
       @if (project(); as p) {
         <header class="intro">
           <h1 [style.view-transition-name]="'title-' + p.slug">{{ p.title }}</h1>
           <p class="summary">{{ p.summary }}</p>
+          <!-- whose project and in what context, before the details (issue #229) -->
+          <p class="role">{{ p.role }}</p>
           <ul class="stack" i18n-aria-label="@@case.stack" aria-label="Technologies">
             @for (tech of p.stack; track tech) {
               <li>{{ tech }}</li>
@@ -54,10 +57,10 @@ const UNLOCK_NOTICE_MS = 4000;
         </header>
 
         @if (p.image; as image) {
-          <img appDepixelate class="shot" [style.view-transition-name]="'shot-' + p.slug" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
+          <img appDepixelate class="shot" [class.shot--tall]="image.height > image.width" [ngSrc]="image.src" [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'" [loaderParams]="{ full: image.width }" [sizes]="image.height > image.width ? '(min-width: 400px) 360px, 100vw' : '(min-width: 1024px) 960px, 100vw'" [width]="image.width" [height]="image.height" [alt]="image.alt" priority />
         } @else if (p.sprite; as sprite) {
           <!-- no screenshot: the project's pixel item, as in the work list -->
-          <div class="item" [style.view-transition-name]="'shot-' + p.slug"><app-quest-sprite [name]="sprite" /></div>
+          <div class="item"><app-quest-sprite [name]="sprite" /></div>
         }
 
         <!-- desktop: the sections beside the text, the one being read lit like a node of the home's thread (issue #96) -->
@@ -111,6 +114,7 @@ const UNLOCK_NOTICE_MS = 4000;
 
         <!-- the next project, so a reader goes on without going back to the home (issue #91) -->
         <nav class="more" i18n-aria-label="@@case.more" aria-label="More projects">
+          <app-contact-prompt />
           @if (next(); as n) {
             <a class="next" [routerLink]="['/work', n.slug]">
               <span class="next-label" i18n="@@case.next">Next project</span>
@@ -134,12 +138,6 @@ const UNLOCK_NOTICE_MS = 4000;
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
-
-    // the picture grows into the case study in steps (issue #161, src/styles/_base.scss)
-    .shot,
-    .item {
-      view-transition-class: shot;
-    }
 
     .unlock {
       position: fixed;
@@ -184,6 +182,9 @@ const UNLOCK_NOTICE_MS = 4000;
     .summary {
       font-size: var(--step-1);
     }
+    .role {
+      color: var(--fg-muted);
+    }
     .stack {
       display: flex;
       flex-wrap: wrap;
@@ -204,6 +205,10 @@ const UNLOCK_NOTICE_MS = 4000;
     h3 {
       margin-top: var(--space-2);
       font-size: var(--step-1);
+    }
+    // prose keeps the body measure (issue #213: up to 99 characters a line on desktop)
+    section > p {
+      max-width: var(--measure);
     }
     .bullets {
       display: grid;

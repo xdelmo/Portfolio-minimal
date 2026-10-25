@@ -1,4 +1,4 @@
-import { KONAMI, konamiStep } from './konami';
+import { KONAMI, konamiStep } from './game-trigger';
 
 const play = (keys: readonly string[]) => keys.reduce(konamiStep, 0);
 

@@ -8,9 +8,8 @@ import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
 import { onlyPublic } from '../src/app/content/public-repos.ts';
 import { withScriptsAfterPaint } from './after-paint.mjs';
-import { withFontPreload } from './font-preload.mjs';
 import { geoFiles } from './geo-files.mjs';
-import { INITIAL_JS_BUDGET, initialScripts } from './js-budget.mjs';
+import { INITIAL_JS_BUDGET, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
 import { HASHED_FILE, contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 

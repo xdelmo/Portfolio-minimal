@@ -17,6 +17,10 @@ html {
 main *,
 app-site-footer * {
   scroll-margin-top: var(--header-h);
+  /* phones: nor under the back-to-top button in the bottom corner (48px and its 16px inset, issue #231) */
+  @media (width < 768px) {
+    scroll-margin-bottom: calc(48px + 2 * var(--space-2));
+  }
 }
 
 body {
@@ -205,19 +209,6 @@ canvas {
   ::view-transition-new(*) {
     animation: none !important;
   }
-}
-
-/* A project's picture grows from the work list into its case study, and back, in steps like the site's other
-   transitions (issue #161): the two share the name `shot-<slug>` and the class `shot` (work-list.ts, case-study.ts). */
-::view-transition-group(.shot) {
-  animation-duration: 0.48s;
-  animation-timing-function: steps(6, end);
-}
-::view-transition-old(.shot),
-::view-transition-new(.shot) {
-  height: 100%;
-  object-fit: cover;
-  animation-timing-function: steps(6, end);
 }
 
 /* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport (from light

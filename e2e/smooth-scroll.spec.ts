@@ -1,9 +1,6 @@
-import { expect, test, type Page } from './fixtures';
+import { REST_MS, expect, test, type Page } from './fixtures';
 
 // issue #159: smooth scroll with GSAP ScrollSmoother, on desktop with a mouse only
-// GSAP's lag smoothing advances its clock by at most ~33 ms a frame: on a busy machine (200 ms frames) the one-second
-// glide takes about six, so waiting for the content to rest allows 15 s
-const REST_MS = 15_000;
 
 const contentY = (page: Page) =>
   page.evaluate(() => new DOMMatrix(getComputedStyle(document.getElementById('smooth-content') ?? document.body).transform).m42);
@@ -112,22 +109,31 @@ test.describe('parallax under smooth scroll (issue #160)', () => {
   test('a project picture scrolls slower than its text, and sits in place when centred', async ({ page }) => {
     await page.goto('/en/');
     const media = page.locator('#work .media').first();
-    const atRest = async () => Math.abs((await contentY(page)) + (await page.evaluate(() => window.scrollY))) < 2;
+    // Every read waits for the page to settle, and each scroll is aimed again until its check holds: the content at
+    // rest for one read could still be nudged by a ScrollTrigger refresh, and an aim taken before it left the picture
+    // 87 px off centre in WebKit on CI (issue #222).
     // the picture near the top of the screen: moved off its place
-    await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
-    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
-    // speed 0.9: off its place by a tenth of how far its centre is from the screen's (as laid out, before the lift)
-    const expected = await media.evaluate((m) => {
-      const box = m.getBoundingClientRect();
-      const y = new DOMMatrix(getComputedStyle(m).transform).m42;
-      return 0.1 * Math.abs(innerHeight / 2 - (box.top - y + box.height / 2));
-    });
-    expect(expected).toBeGreaterThan(3);
-    expect(Math.abs(Math.abs(await lift(page)) - expected)).toBeLessThan(2);
-    // centred in the screen: where the layout puts it
-    await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - (innerHeight - m.offsetHeight) / 2); });
-    await expect.poll(atRest, { timeout: REST_MS }).toBe(true);
-    await expect.poll(async () => Math.abs(await lift(page)), { timeout: REST_MS }).toBeLessThan(3);
+    await expect(async () => {
+      await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
+      await settledTop(page, '#work .media >> nth=0');
+      // speed 0.9: off its place by a tenth of how far its centre is from the screen's (as laid out, before the lift)
+      const expected = await media.evaluate((m) => {
+        const box = m.getBoundingClientRect();
+        const y = new DOMMatrix(getComputedStyle(m).transform).m42;
+        return 0.1 * Math.abs(innerHeight / 2 - (box.top - y + box.height / 2));
+      });
+      expect(expected).toBeGreaterThan(3);
+      expect(Math.abs(Math.abs(await lift(page)) - expected)).toBeLessThan(2);
+    }).toPass({ timeout: 2 * REST_MS });
+    // centred in the screen: where the layout puts it, so the aim leaves out the lift
+    await expect(async () => {
+      await media.evaluate((m) => {
+        const top = m.getBoundingClientRect().top - new DOMMatrix(getComputedStyle(m).transform).m42;
+        window.scrollTo(0, top + window.scrollY - (innerHeight - m.offsetHeight) / 2);
+      });
+      await settledTop(page, '#work .media >> nth=0');
+      expect(Math.abs(await lift(page))).toBeLessThan(3);
+    }).toPass({ timeout: 2 * REST_MS });
   });
 });
 

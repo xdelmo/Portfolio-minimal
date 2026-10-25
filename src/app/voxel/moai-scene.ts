@@ -24,9 +24,9 @@ import {
   WebGLRenderer,
 } from 'three';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_FRAME, Voxel, VoxelColor, moaiVoxels } from './moai.model';
+import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, bubble, bubbleCells, breath, follow, gaze, glance, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, PHONE_GAZE, bubble, bubbleCells, breath, follow, gaze, glance, isPupil, scrollYaw, sectionProgress } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
@@ -34,6 +34,8 @@ const GUM = '--gum';
 /** Two taps or clicks closer than this, and closer than DOUBLE_TAP_PX, blow a bubble. */
 const DOUBLE_TAP_MS = 350;
 const DOUBLE_TAP_PX = 12;
+/** Pixels a touch or pointer moves before locking into horizontal swipe or vertical page scroll. */
+const SWIPE_LOCK_PX = 8;
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',
@@ -72,7 +74,7 @@ export class MoaiScene {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
   protected readonly desktop = signal(false);
-  /** Where the pixel pupils look, on desktop once the mouse moves; null keeps the eyes fully lit. */
+  /** Where the pixel pupils look, on desktop once the mouse moves (null keeps the eyes fully lit), fixed on phones. */
   protected readonly gaze = signal<Gaze | null>(null);
   /** While a bubble of pink gum is out (a double click or double tap on the moai). */
   protected readonly gum = signal(false);
@@ -107,6 +109,8 @@ export class MoaiScene {
     const root = document.documentElement;
     const desktopQuery = matchMedia('(min-width: 1024px) and (pointer: fine)');
     this.desktop.set(desktopQuery.matches);
+    // no pointer to follow on phones: the eyes stay open, looking where the face points
+    this.gaze.set(desktopQuery.matches ? null : PHONE_GAZE);
 
     // create the context ourselves: when WebGL is missing Three.js would log an error before throwing
     const context = canvas.getContext('webgl2', { antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'low-power' });
@@ -184,20 +188,13 @@ export class MoaiScene {
     camera.position.copy(target).add(new Vector3(50, 50, 50));
     camera.lookAt(target);
 
-    // each eye is a 2×2 block: with a gaze, one voxel is the pupil and the other three the white
     const eyes = voxels.filter((v) => v.color === 'eye');
-    const isPupil = (v: Voxel, g: Gaze): boolean => {
-      const mine = eyes.filter((e) => Math.sign(e.x) === Math.sign(v.x));
-      const xs = mine.map((e) => e.x);
-      const ys = mine.map((e) => e.y);
-      return v.x === (g.startsWith('right') ? Math.max(...xs) : Math.min(...xs)) && v.y === (g.endsWith('up') ? Math.max(...ys) : Math.min(...ys));
-    };
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
       const g = this.gaze();
       voxels.forEach((v, i) => {
-        const token = v.color === 'eye' && g && !isPupil(v, g) ? SCLERA : CSS_COLORS[v.color];
+        const token = v.color === 'eye' && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
         mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -275,22 +272,43 @@ export class MoaiScene {
       event.preventDefault();
       this.fail();
     };
-    // desktop: drag with the mouse; phones: swipe with a finger (touch pointers are captured by the canvas already)
+    // desktop: drag with the mouse; phones: swipe with a finger, locking to horizontal rotation or vertical page scroll
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let pointerDir: 'x' | 'y' | null = null;
     const onDown = (e: PointerEvent): void => {
       const mouse = this.desktop() && e.pointerType === 'mouse';
       const finger = !this.desktop() && e.pointerType === 'touch';
       if (!mouse && !finger) return;
       pointerX = e.clientX;
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+      pointerDir = mouse ? 'x' : null;
       if (mouse) canvas.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent): void => {
       if (pointerX === null) return;
+      if (pointerDir === null) {
+        const dx = e.clientX - pointerStartX;
+        const dy = e.clientY - pointerStartY;
+        if (Math.abs(dx) < SWIPE_LOCK_PX && Math.abs(dy) < SWIPE_LOCK_PX) return;
+        pointerDir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+        if (pointerDir === 'x' && !this.desktop()) {
+          try {
+            if (!canvas.hasPointerCapture(e.pointerId)) canvas.setPointerCapture(e.pointerId);
+          } catch {
+            // pointer capture not supported or released
+          }
+        }
+      }
+      if (pointerDir === 'y') return;
       this.drag += (e.clientX - pointerX) * 0.01;
       pointerX = e.clientX;
     };
     let lastTap: { time: number; x: number; y: number } | null = null;
     const onUp = (e: PointerEvent): void => {
       pointerX = null;
+      pointerDir = null;
       const tap = { time: e.timeStamp, x: e.clientX, y: e.clientY };
       const double = lastTap !== null && tap.time - lastTap.time < DOUBLE_TAP_MS && Math.hypot(tap.x - lastTap.x, tap.y - lastTap.y) < DOUBLE_TAP_PX;
       lastTap = double ? null : tap;
@@ -302,6 +320,35 @@ export class MoaiScene {
     };
     const onCancel = (): void => {
       pointerX = null;
+      pointerDir = null;
+    };
+
+    // on phones, cancel vertical scrolling only when the gesture is locked to horizontal swipe
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchDir: 'x' | 'y' | null = null;
+    const onTouchStart = (e: TouchEvent): void => {
+      if (this.desktop() || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchDir = null;
+    };
+    const onTouchMove = (e: TouchEvent): void => {
+      if (this.desktop() || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      if (touchDir === null) {
+        if (Math.abs(dx) < SWIPE_LOCK_PX && Math.abs(dy) < SWIPE_LOCK_PX) return;
+        touchDir = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+      }
+      if (touchDir === 'x' && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+    const onTouchEnd = (): void => {
+      touchDir = null;
     };
     const onLook = (e: PointerEvent): void => {
       if (e.pointerType !== 'mouse') return;
@@ -316,6 +363,8 @@ export class MoaiScene {
     };
     const onDesktop = (): void => {
       this.desktop.set(desktopQuery.matches);
+      this.gaze.set(desktopQuery.matches ? null : PHONE_GAZE);
+      paint();
       resize();
     };
     const onVisibility = (): void => {
@@ -326,6 +375,10 @@ export class MoaiScene {
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerup', onUp);
     canvas.addEventListener('pointercancel', onCancel);
+    canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: true });
     addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
@@ -338,6 +391,10 @@ export class MoaiScene {
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
       canvas.removeEventListener('pointercancel', onCancel);
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
       removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);

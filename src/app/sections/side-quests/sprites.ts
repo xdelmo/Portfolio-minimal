@@ -1,4 +1,4 @@
-import { dissolveThresholds, type DissolvePath } from '../../pixel-dissolve/dissolve';
+import { dissolveThresholds, type DissolvePath } from '../../pixel-dissolve/pixel-dissolve';
 
 /** A 16 × 16 pixel drawing: one character per cell, `.` for empty, every other one a key of the palette. */
 export interface Sprite {
@@ -271,28 +271,6 @@ export const SPRITES = {
       '...kkllllllkk...',
       '..kllllllllllk..',
       '..kkkkkkkkkkkk..',
-    ],
-  },
-  // MCP server, in the work list: the plug a model uses to reach a tool
-  plug: {
-    palette: { ...INK, a: '--accent', b: '--px-2' },
-    rows: [
-      '.....k....k.....',
-      '.....k....k.....',
-      '.....k....k.....',
-      '...kkkkkkkkkk...',
-      '...kaaaaaaaak...',
-      '...kaaaaaaaak...',
-      '...kabaaaaaak...',
-      '....kaaaaaak....',
-      '.....kkkkkk.....',
-      '.......kk.......',
-      '.......kk.......',
-      '........kk......',
-      '.........kk.....',
-      '..........kk....',
-      '...........kkk..',
-      '................',
     ],
   },
   // the 404 page (pages/not-found/): the wild creature a broken link runs into

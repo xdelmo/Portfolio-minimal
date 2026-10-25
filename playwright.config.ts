@@ -27,8 +27,11 @@ export default defineConfig({
     { name: 'android', use: { ...devices['Pixel 7'] } },
     ...(webkitAvailable
       ? [
-          { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-          { name: 'iphone', use: { ...devices['iPhone 15'] } },
+          // WebKit in the Linux image is several times slower than the others on the fanless Mac: a router navigation or
+          // a replayed click took over 5 s there while CI passed, one test per push (#213). Its waits get three times
+          // as long; a test about a deadline sets its own timeout
+          { name: 'webkit', use: { ...devices['Desktop Safari'] }, expect: { timeout: 15_000 }, timeout: 90_000 },
+          { name: 'iphone', use: { ...devices['iPhone 15'] }, expect: { timeout: 15_000 }, timeout: 90_000 },
         ]
       : []),
   ],

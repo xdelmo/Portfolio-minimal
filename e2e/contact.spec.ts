@@ -3,9 +3,9 @@ import { expect, test } from './fixtures';
 const EMAIL = 'info@emanueledelmonte.it';
 
 test.describe('contact finale', () => {
-  for (const [lang, name, lede, availability] of [
-    ['en', 'Get in touch', 'Building something with Angular, or hiring for a frontend role? Write to me.', 'Open to remote roles.'],
-    ['it', 'Contatti', 'Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.', 'Disponibile per ruoli da remoto.'],
+  for (const [lang, name, lede] of [
+    ['en', 'Get in touch', 'Building something with Angular, or hiring for a frontend role? Write to me.'],
+    ['it', 'Contatti', 'Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.'],
   ] as const) {
     test(`${lang}: the giant title is the email link, under one sentence on what to write about`, async ({ page }) => {
       await page.goto(`/${lang}/`);
@@ -14,11 +14,31 @@ test.describe('contact finale', () => {
       await expect(title).toHaveAttribute('href', `mailto:${EMAIL}`);
       await expect(contact.locator('h2')).toHaveAccessibleName(name);
       await expect(contact).toContainText(lede);
-      await expect(contact).toContainText(availability);
       // the title is the way to write: the address itself is not printed (removed on request)
       await expect(contact).not.toContainText(EMAIL);
     });
   }
+
+  // without a mail program the title's mailto does nothing: a button copies the address (issue #231)
+  test('a button copies the email address without printing it', async ({ page, context, browserName }) => {
+    test.skip(browserName !== 'chromium', 'clipboard permissions are granted in Chromium only');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/en/');
+    const copy = page.locator('#contact').getByRole('button', { name: 'Copy my email address' });
+    await copy.click();
+    await expect(page.locator('#contact').getByRole('status')).toHaveText('Email address copied');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(EMAIL);
+    await expect(page.locator('#contact')).not.toContainText(EMAIL);
+  });
+
+  test.describe('without JavaScript', () => {
+    test.use({ javaScriptEnabled: false });
+    test('there is no copy button that would do nothing, nor an empty item in the list', async ({ page }) => {
+      await page.goto('/en/');
+      await expect(page.locator('#contact').getByRole('button')).toHaveCount(0);
+      await expect(page.locator('#contact .profiles').getByRole('listitem')).toHaveCount(2);
+    });
+  });
 
   test('LinkedIn and GitHub are pixel-mark tags in the finale, marked as my profiles', async ({ page }) => {
     await page.goto('/en/');

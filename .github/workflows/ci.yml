@@ -7,7 +7,8 @@ on:
     branches: [v2, master, devel]
 
 jobs:
-  test:
+  check:
+    name: Lint & Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,15 +24,170 @@ jobs:
       - run: npm run lint
       - run: npx ng test --no-watch
       - run: npm run test:scripts
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
       - run: npm run build
-      - run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run e2e
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+          retention-days: 1
+
+  lhci:
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
       - run: npm run lhci
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: reports-lhci
+          path: .lighthouseci
+
+  e2e:
+    name: E2E (${{ matrix.name }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Chromium (1/2)
+            project: chromium
+            browser: chromium
+            shard: 1/2
+          - name: Chromium (2/2)
+            project: chromium
+            browser: chromium
+            shard: 2/2
+          - name: Firefox (1/3)
+            project: firefox
+            browser: firefox
+            shard: 1/3
+          - name: Firefox (2/3)
+            project: firefox
+            browser: firefox
+            shard: 2/3
+          - name: Firefox (3/3)
+            project: firefox
+            browser: firefox
+            shard: 3/3
+          - name: Android
+            project: android
+            browser: chromium
+            shard: 1/1
+          - name: WebKit (1/2)
+            project: webkit
+            browser: webkit
+            shard: 1/2
+          - name: WebKit (2/2)
+            project: webkit
+            browser: webkit
+            shard: 2/2
+          - name: iPhone (1/2)
+            project: iphone
+            browser: webkit
+            shard: 1/2
+          - name: iPhone (2/2)
+            project: iphone
+            browser: webkit
+            shard: 2/2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+      - name: Cache Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run E2E tests
+        run: npm run e2e -- --project=${{ matrix.project }} --shard=${{ matrix.shard }}
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-e2e-${{ matrix.project }}-shard-${{ strategy.job-index }}
           path: |
             playwright-report
             test-results
-            .lighthouseci
+
+  e2e-changed:
+    name: E2E Changed Specs
+    if: github.event_name == 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        name: Check changed specs
+        run: |
+          base=$(git merge-base HEAD "origin/${GITHUB_BASE_REF:-v2}" 2>/dev/null || true)
+          if [ -n "$base" ] && [ -n "$(git diff --name-only --diff-filter=AM "$base" -- 'e2e/*.spec.ts')" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changed specs found"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changed specs"
+          fi
+      - if: steps.diff.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.diff.outputs.changed == 'true'
+        run: npm ci
+      - if: steps.diff.outputs.changed == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-portfolio
+          path: dist/portfolio
+      - if: steps.diff.outputs.changed == 'true'
+        name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-all-${{ hashFiles('package-lock.json') }}
+      - if: steps.diff.outputs.changed == 'true'
+        name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+      - if: steps.diff.outputs.changed == 'true'
+        name: Run E2E changed
+        run: npm run e2e:changed
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-e2e-changed
+          path: |
+            playwright-report
+            test-results

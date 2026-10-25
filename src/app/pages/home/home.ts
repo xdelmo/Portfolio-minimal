@@ -28,19 +28,19 @@ import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
+import { CopyEmail } from '../../layout/copy-email';
 import { LinkedinMark } from '../../layout/linkedin-mark';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, Depixelate],
+  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
-      <p class="availability">{{ content.person.availability }}</p>
       <div class="actions">
         <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
         <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
@@ -83,7 +83,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="side-quests" class="section container band band--lavender" aria-labelledby="side-quests-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="sideQuestsSeam" grow="up" />
       <h2 id="side-quests-title" i18n="@@home.sideQuests.title">Side quests</h2>
-      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from crosswords to 3D-printed parts.</p>
+      <p class="muted" i18n="@@home.sideQuests.lede">Things I build for fun, from Telegram bots to 3D-printed parts.</p>
       <app-side-quests [items]="content.sideQuests" />
     </section>
 
@@ -98,13 +98,14 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <p class="contact-lede"><span i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</span> {{ content.person.availability }}</p>
+        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</p>
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
+          <li><app-copy-email /></li>
         </ul>
       </div>
       <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
@@ -139,7 +140,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         font-size: var(--step-1);
       }
     }
-    .availability,
     .muted {
       color: var(--fg-muted);
     }
@@ -206,6 +206,10 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       .contact-link:hover .contact-arrow {
         transform: translate(0.08em, -0.08em);
       }
+    }
+    // the copy button's item stays out of the list (and of the count a screen reader gives) until it can copy
+    .profiles li:has(> app-copy-email:empty) {
+      display: none;
     }
     .profiles {
       display: flex;

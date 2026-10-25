@@ -6,7 +6,7 @@ for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/telegram-bots', '/it/work/mcp-server']) {
+    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} at ${String(width)}px`).toBeLessThanOrEqual(0);
@@ -126,18 +126,6 @@ test.describe('hero and work on phones', () => {
     expect(media.y).toBeLessThan(text.y);
   });
 
-  test('a phone screenshot downloads the half-width copy on a phone', async ({ browser, browserName }) => {
-    test.skip(browserName !== 'chromium', 'image choice is checked once, in Chromium');
-    // a 1x phone: the tall picture is shown at most 280px wide, so the 300px copy is enough
-    const context = await browser.newContext({ viewport: { width: 412, height: 900 }, deviceScaleFactor: 1 });
-    const page = await context.newPage();
-    await page.goto('/en/');
-    const shot = page.locator('#work .project--tall .shot');
-    await shot.scrollIntoViewIfNeeded();
-    await expect.poll(() => shot.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/ice-friends-breaker-300\.jpg$/);
-    await context.close();
-  });
-
   test('project pictures below the hero leave the bandwidth to the hero', async ({ page }) => {
     // the hero fills the first screen, so no project picture is preloaded or fetched eagerly
     await page.goto('/en/');
@@ -233,6 +221,23 @@ test('back to top sits in the middle of the footer, with an arrow pointing up', 
   await expect(top.locator('svg')).toBeVisible();
 });
 
+// the Start key's baseline is the bottom of its drawing: in a line box it sat off the links, and on phones it wrapped alone (issue #253)
+test('the Start key sits on the line of the footer links, with the same height', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('[data-press-start]')).toBeVisible();
+  const boxes = await page.locator('app-site-footer li').evaluateAll((items) =>
+    items.map((li) => {
+      const { top, height } = li.getBoundingClientRect();
+      return { top, height };
+    }),
+  );
+  expect(boxes).toHaveLength(5);
+  for (const box of boxes) {
+    expect(Math.abs(box.top - boxes[0].top)).toBeLessThan(1);
+    expect(Math.abs(box.height - boxes[0].height)).toBeLessThan(1);
+  }
+});
+
 // one frame per project, the same 3:2 window for a desktop screenshot, a phone screenshot or, without either,
 // the project's pixel item: the list keeps one rhythm and no column is left empty
 for (const width of [1280, 390]) {
@@ -244,9 +249,10 @@ for (const width of [1280, 390]) {
     expect(count).toBe(await page.locator('#work .project').count());
     // the layout box: the reveal may still be scaling a frame
     const boxes = await frames.evaluateAll((els) => els.map((el) => ({ w: (el as HTMLElement).offsetWidth, h: (el as HTMLElement).offsetHeight })));
-    for (const box of boxes) {
+    // from 1024px the lead project (the first) takes the whole row and its frame is larger; the others match
+    for (const box of width < 1024 ? boxes : boxes.slice(1)) {
       expect(Math.abs(box.w / box.h - 3 / 2)).toBeLessThan(0.02);
-      expect(Math.abs(box.h - boxes[0].h)).toBeLessThanOrEqual(1);
+      expect(Math.abs(box.h - boxes[boxes.length - 1].h)).toBeLessThanOrEqual(1);
     }
     for (let i = 0; i < count; i++) {
       expect(await frames.nth(i).locator('img.shot, app-quest-sprite').count(), `project ${String(i)}`).toBe(1);
@@ -299,4 +305,29 @@ test('names and tools are kept out of automatic translation', async ({ page }) =
   for (const selector of ['.logo .mark', '.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
     await expect(page.locator(selector).first(), selector).toHaveAttribute('translate', 'no');
   }
+});
+
+// a phone screenshot stands whole in the work list's 3:2 frame: with an auto grid row it kept its own height and the
+// frame cut it (issue #229)
+for (const width of [1280, 390]) {
+  test(`every project picture fits inside its frame at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    for (const media of await page.locator('#work .media').all()) {
+      const [frame, shot] = await media.evaluate((m) => [m.getBoundingClientRect(), m.firstElementChild?.getBoundingClientRect()].map((r) => r && { top: r.top, bottom: r.bottom }));
+      if (!frame || !shot) continue;
+      expect(shot.top).toBeGreaterThanOrEqual(frame.top - 1);
+      expect(shot.bottom).toBeLessThanOrEqual(frame.bottom + 1);
+    }
+  });
+}
+
+// ApexFlow leads the list (issue #231): from 1024px it takes the whole row, the other projects pair up under it
+test('the lead project spans the work list on desktop, the next one sits under it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const boxes = await page.locator('#work .project').evaluateAll((els) => els.map((el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width }; }));
+  const list = await page.locator('#work .projects').evaluate((el) => el.getBoundingClientRect().width);
+  expect(boxes[0].w).toBeCloseTo(list, 0);
+  expect(boxes[1].w).toBeLessThan(list / 2);
 });

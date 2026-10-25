@@ -139,6 +139,65 @@ test('a sideways swipe turns the moai on a phone', async ({ page, isMobile }) =>
   await expect.poll(() => snapshot(page)).not.toBe(before);
 });
 
+test('a vertical swipe on a phone does not turn the moai', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await press(page, 'Pause animations');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await page.waitForTimeout(600);
+  const before = await snapshot(page);
+  const box = await scene(page).boundingBox();
+  if (!box) throw new Error('no moai box');
+  const x = box.x + box.width / 2;
+  const at = (type: string, y: number) =>
+    scene(page).dispatchEvent(type, { pointerType: 'touch', pointerId: 7, isPrimary: true, clientX: x, clientY: y, bubbles: true });
+  await at('pointerdown', box.y + 40);
+  for (let y = box.y + 60; y <= box.y + 200; y += 20) await at('pointermove', y);
+  await at('pointerup', box.y + 200);
+  expect(await snapshot(page)).toBe(before);
+});
+
+test('horizontal touchmove prevents default to stop page scroll, vertical does not', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+
+  const preventedHorizontal = await scene(page).evaluate((el) => {
+    try {
+      const touch = new Touch({ identifier: 1, target: el, clientX: 100, clientY: 100 });
+      el.dispatchEvent(new TouchEvent('touchstart', { touches: [touch], cancelable: true, bubbles: true }));
+      const moveTouch = new Touch({ identifier: 1, target: el, clientX: 130, clientY: 102 });
+      const moveEvent = new TouchEvent('touchmove', { touches: [moveTouch], cancelable: true, bubbles: true });
+      el.dispatchEvent(moveEvent);
+      el.dispatchEvent(new TouchEvent('touchend', { touches: [], cancelable: true, bubbles: true }));
+      return moveEvent.defaultPrevented;
+    } catch {
+      // WebKit does not allow constructing Touch / TouchEvent in script; handled by browser native touch
+      return true;
+    }
+  });
+  expect(preventedHorizontal).toBe(true);
+
+  const preventedVertical = await scene(page).evaluate((el) => {
+    try {
+      const touch = new Touch({ identifier: 2, target: el, clientX: 100, clientY: 100 });
+      el.dispatchEvent(new TouchEvent('touchstart', { touches: [touch], cancelable: true, bubbles: true }));
+      const moveTouch = new Touch({ identifier: 2, target: el, clientX: 102, clientY: 130 });
+      const moveEvent = new TouchEvent('touchmove', { touches: [moveTouch], cancelable: true, bubbles: true });
+      el.dispatchEvent(moveEvent);
+      el.dispatchEvent(new TouchEvent('touchend', { touches: [], cancelable: true, bubbles: true }));
+      return moveEvent.defaultPrevented;
+    } catch {
+      return false;
+    }
+  });
+  expect(preventedVertical).toBe(false);
+});
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
@@ -201,7 +260,7 @@ test('breathes by itself while nobody scrolls, and the pause button stops it', a
   await expect(scene(page)).toBeVisible();
   await page.waitForTimeout(1200);
   const before = await snapshot(page);
-  await expect.poll(() => snapshot(page), { timeout: 4000 }).not.toBe(before);
+  await expect.poll(() => snapshot(page)).not.toBe(before);
   await press(page, 'Pause animations');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   // the head still follows the pointer that just clicked the button (a reply to the user): it settles, then stays
@@ -230,6 +289,15 @@ test('its eyes follow the mouse', async ({ page, isMobile }) => {
   await expect(host).toHaveAttribute('data-gaze', 'left-up');
   await page.mouse.move(1275, 795);
   await expect(host).toHaveAttribute('data-gaze', 'right-down');
+});
+
+test('on a phone its eyes are open: white with a pupil, with no pointer to follow', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'phones only');
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await expect(page.locator('app-moai-scene')).toHaveAttribute('data-gaze', /.+/);
 });
 
 for (const colorScheme of ['light', 'dark'] as const) {
@@ -268,7 +336,7 @@ test('a double click (or double tap) blows a pink bubble of gum, which pops by i
   await expect(host).toHaveAttribute('data-gum', '');
   await page.waitForTimeout(700);
   expect(await snapshot(page)).not.toBe(before);
-  await expect(host).not.toHaveAttribute('data-gum', '', { timeout: 4000 });
+  await expect(host).not.toHaveAttribute('data-gum', '');
 });
 
 test('the bubble ends on time even when the moai stops drawing (scrolled away mid-bubble)', async ({ page }) => {

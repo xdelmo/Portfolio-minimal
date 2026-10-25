@@ -6,7 +6,6 @@ export const CONTENT_EN: SiteContent = {
     role: 'Frontend Engineer',
     employer: 'IPS S.p.A.',
     location: 'Latina, Italy',
-    availability: 'Open to remote roles.',
     email: 'info@emanueledelmonte.it',
     linkedin: 'https://www.linkedin.com/in/emanueledelmonte/',
     github: 'https://github.com/xdelmo',
@@ -17,11 +16,11 @@ export const CONTENT_EN: SiteContent = {
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
     description:
-      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy, open to remote roles.',
+      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
   },
   hero: {
     headline: 'I build Angular interfaces that stay fast when the data gets big.',
-    lede: 'Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate.',
+    lede: "I'm Emanuele Del Monte, Frontend Engineer at IPS S.p.A., based in Latina, Italy. Computer Engineering graduate.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   about: [
@@ -40,17 +39,17 @@ export const CONTENT_EN: SiteContent = {
     {
       slug: 'apexflow',
       title: 'ApexFlow',
+      role: 'My Computer Engineering thesis, built during my internship at IPS S.p.A. in 2026.',
       summary:
         'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the front end, Spring Boot 3 and PostgreSQL on the back end.',
       stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
       repos: [
         { label: 'Front-end code', url: 'https://github.com/xdelmo/dashboard-tesi' },
-        { label: 'Back-end code', url: 'https://github.com/xdelmo/backend-tesi' },
       ],
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'ApexFlow dashboard with revenue, expense, profit and new-customer totals, a revenue chart and the navigation sidebar',
+        alt: 'ApexFlow dashboard with total revenue, pending orders, active and total customers, the yearly revenue chart and the navigation sidebar',
         width: 1600,
         height: 1011,
       },
@@ -83,97 +82,86 @@ export const CONTENT_EN: SiteContent = {
       },
     },
     {
-      slug: 'ice-friends-breaker',
-      title: 'Ice Friends Breaker',
-      summary: 'A social card game to break the ice, installable on phones as a PWA and native app.',
-      stack: ['Next.js', 'Supabase', 'Tailwind CSS', 'Capacitor'],
-      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/ice-friends-breaker' }],
-      demoUrl: 'https://ice-friends-breaker.vercel.app',
+      slug: 'pokeverba',
+      sprite: 'crossword',
+      title: 'PokèVerba',
+      role: 'A side project with a friend who writes the content; I build and run the site. 2026.',
+      summary: 'A daily Pokémon crossword with a collection of the Pokémon you catch and a blog, in Italian and English.',
+      stack: ['WordPress', 'PHP', 'React', 'Vite'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
+      demoUrl: 'https://sbustiamobro.it',
       image: {
-        src: 'images/work/ice-friends-breaker.jpg',
-        alt: 'Ice Friends Breaker on a phone: the daily question card, the streak counter and the bottom navigation',
-        width: 600,
-        height: 1299,
+        src: 'images/work/pokeverba.jpg',
+        alt: "PokèVerba's daily Pokémon crossword: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
+        width: 1600,
+        height: 1011,
       },
       caseStudy: {
         context:
-          'A card game that gives friends something better to talk about than the weather. It had to feel like a native app on a phone and be quick to build and run on my own.',
+          'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so it is a commercial use: no official text or image may appear anywhere, and every clue has to be our own.',
         architecture: [
-          'Next.js 16 with the App Router, Tailwind CSS v4 and shadcn/ui components.',
-          'Supabase for the database and authentication, with an admin panel limited by role.',
-          'Installable as a PWA and packaged for iOS and Android with Capacitor.',
+          'A classic WordPress theme for the whole site (home, blog, pages) and a plugin with its own tables, a REST API and WP-CLI commands.',
+          'A React app built with Vite, embedded through a shortcode: the grid, the Collection of caught Pokémon, achievements and coins.',
+          'A server-side generator lays out 10 to 15 words in a grid of up to 15 × 15, seeded by the date, with no Pokémon repeated within 30 days.',
+          'Italian and English without a multilingual plugin; progress lives in the browser, in local storage.',
         ],
         decisions: [
           {
-            title: 'One daily question for everyone',
-            body: 'The daily drop is the same for every user and changes every 24 hours, so friends can talk about the same question even when they play apart.',
+            title: 'The answers never reach the browser',
+            body: 'The app only knows how long each word is. Checking goes through the API, which judges whole words only, so the Check button never gives letters away one at a time.',
           },
           {
-            title: 'Mobile first, for real',
-            body: 'A bottom navigation bar, dark mode that follows the system and touch-sized controls: the app is designed for the phone and then widened for the desktop.',
+            title: 'Original clues composed from facts',
+            body: 'Clues are composed from facts such as type, generation, height and weight, imported from PokéAPI, and any clue that names the answer is rejected. No official text is ever copied.',
+          },
+          {
+            title: 'One puzzle a day, cached until midnight',
+            body: "Today's puzzle is cached until midnight in Rome, when the next one is generated, so the server does the work once a day.",
           },
         ],
-        outcome: 'Live on Vercel, with streaks, multiple game modes and a role-based admin panel to manage questions and categories.',
+        outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',
       },
     },
     {
-      slug: 'mcp-server',
-      sprite: 'plug',
-      title: 'MCP Server',
+      slug: 'wedding-3d-invite',
+      title: 'Wedding 3D Invite',
+      role: 'Designed and built on my own in 2026, for the wedding of two friends.',
       summary:
-        'A Model Context Protocol server and client that lets an LLM read and edit documents through custom tools.',
-      stack: ['Python', 'MCP'],
-      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/mcp-server' }],
-      caseStudy: {
-        context:
-          'I built this to learn how language models connect to real tools and data with the Model Context Protocol, following the two MCP courses of the Anthropic Academy.',
-        architecture: [
-          'A Python MCP server that exposes tools (read, edit, summarize, research, list roots, read directory), resources and a prompt template.',
-          'A Python client that talks to the server over standard input and output and handles sampling, progress, logging and roots.',
-        ],
-        decisions: [
-          {
-            title: 'Access limited to approved folders',
-            body: 'The directory tool only reads inside the roots the client exposes, so the model cannot wander around the file system.',
-          },
-          {
-            title: 'Keeping deprecated features, on purpose',
-            body: 'Sampling, roots and logging were deprecated in the MCP specification in July 2026. The advanced example keeps them for learning, while the basic example shows the current approach.',
-          },
-        ],
-        outcome: 'A working reference for building MCP integrations, public on GitHub.',
+        'A mobile-first digital wedding invitation: a lace envelope in Three.js that opens at a tap, then the day told in eleven slides, with RSVP and offline support.',
+      stack: ['React', 'TypeScript', 'Three.js', 'Tailwind CSS', 'Vite'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
+      demoUrl: 'https://wedding-3d-invite-demo-five.vercel.app/',
+      image: {
+        src: 'images/work/wedding-invite.jpg',
+        alt: 'The closed invitation: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L, above the hint to tap and open it',
+        width: 1600,
+        height: 1011,
       },
-    },
-    {
-      slug: 'telegram-bots',
-      sprite: 'robot',
-      title: 'Telegram bots',
-      summary: 'Three bots I use every day: car deadlines, my Pokémon TCG binder and attendance timesheets.',
-      stack: ['TypeScript', 'Python', 'grammY', 'SQLite', 'Docker'],
-      repos: [
-        { label: 'Car deadlines bot', url: 'https://github.com/xdelmo/auto-scadenze-bot' },
-        { label: 'Pokémon binder bot', url: 'https://github.com/xdelmo/hoenn-binder' },
-        { label: 'Timesheet bot', url: 'https://github.com/xdelmo/presenz-lazy-bot' },
-      ],
       caseStudy: {
         context:
-          'Small personal tools that remove a chore from my week. Each one answers only to me, runs in Docker and keeps its data in SQLite or Excel.',
+          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the phone their guests already hold. It has to feel like opening a real envelope, then answer every practical question: when, where, how to get there, what to wear, and whether you are coming.',
         architecture: [
-          'Car deadlines: TypeScript run natively on Node 24 with grammY and node:sqlite; reminders by date and by mileage, expense history and monthly backups.',
-          'Pokémon binder: TypeScript, grammY, SQLite with Drizzle ORM and Vitest; tracks 135 cards and computes page, row and column in the physical binder.',
-          'Timesheet: Python with a weekday schedule that fills an Excel sheet and, once a month, emails it after asking for confirmation.',
+          'A React and TypeScript single-page app built with Vite and styled with Tailwind CSS, mobile first; on a desktop the invitation sits in a phone-sized frame.',
+          'The envelope is a Three.js scene: lace flaps that open, a wax seal that lifts away and pearls with physically based materials.',
+          'Eleven full-screen slides with CSS scroll snap: countdown, calendar export, maps, programme, dress code, transport and RSVP.',
+          'RSVP answers go to a Google Sheet through Google Apps Script, so there is no server to run; a service worker keeps the invitation working offline as a PWA.',
         ],
         decisions: [
           {
-            title: 'No chat clutter',
-            body: 'The binder bot edits the same message through inline keyboards instead of sending new ones, so the chat stays readable.',
+            title: 'Every word of the invitation in one config file',
+            body: 'Names, date, places, programme and RSVP live in a typed config, so the demo runs on sample names while the real invitation keeps its own. Title, Open Graph tags, event JSON-LD, manifest and service worker are generated from the same config.',
           },
           {
-            title: 'Estimate, then remind',
-            body: 'The car bot learns how many kilometres I drive per month and estimates when I will reach the next service, so reminders arrive before the deadline, not after.',
+            title: 'The 3D scene stops once the envelope is open',
+            body: 'After the opening animation the render loop freezes, so reading the invitation costs no GPU time and no battery. A button in the footer plays the opening again.',
+          },
+          {
+            title: 'One palette, with contrast under test',
+            body: 'The burgundy and ivory palette is defined once and flows into Tailwind, Three.js, the manifest and the icons. A unit test fails the build on any combination below WCAG AA contrast.',
           },
         ],
-        outcome: 'All three run every day on my home server.',
+        outcome:
+          'The real invitation belongs to my friends and stays private; the public demo on Vercel shows the same invitation with sample names.',
       },
     },
   ],
@@ -285,11 +273,10 @@ export const CONTENT_EN: SiteContent = {
   },
   sideQuests: [
     {
-      title: 'PokèVerba',
-      summary: 'A daily Pokémon crossword and a personal Pokédex: a WordPress plugin with a React app inside, styled like a Game Boy.',
-      tags: ['WordPress', 'React', 'Zustand', 'Tailwind CSS'],
-      repo: 'https://github.com/xdelmo/pokeverba-site',
-      sprite: 'crossword',
+      title: 'Telegram bots',
+      summary: 'Three bots I use every day, each answering only to me: car deadlines, my Pokémon card binder and attendance timesheets.',
+      tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],
+      sprite: 'robot',
     },
     {
       title: 'MagSafe card holder',

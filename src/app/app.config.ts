@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay(), withI18nSupport()),
     { provide: IMAGE_LOADER, useValue: workImageLoader },
     // The router reaches an anchor with window.scrollTo: an instant jump that ignores the sticky header's scroll-margin.
-    // scrollIntoView honours scroll-margin, and glides unless the visitor asked for reduced motion.
+    // scrollIntoView honours scroll-margin.
     provideEnvironmentInitializer(() => {
       if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
       const scroller = inject(ViewportScroller);
@@ -33,7 +33,7 @@ export const appConfig: ApplicationConfig = {
       scroller.scrollToPosition = (position, options) => {
         const smooth = smoother();
         if (smooth) smooth.scrollTop(position[1]);
-        else toPosition(position, options);
+        else toPosition(position, { ...options, behavior: 'instant' });
       };
       scroller.scrollToAnchor = (anchor) => {
         const target = document.getElementById(anchor);
@@ -43,7 +43,8 @@ export const appConfig: ApplicationConfig = {
           // scrollTo was killed by a ScrollTrigger refresh (images loading) and left the page where it was
           const smooth = smoother();
           if (smooth) smooth.scrollTo(target, false, `top ${getComputedStyle(document.documentElement).getPropertyValue('--header-h')}`);
-          else target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+          // native scroll: jump too (issue #245), gliding showed every picture between the two sections going by
+          else target.scrollIntoView({ behavior: 'instant' });
           target.focus({ preventScroll: true });
         };
         // Coming from another page, the anchor's motion effects are still starting: their first measure (ScrollTrigger

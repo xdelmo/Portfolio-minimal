@@ -1,5 +1,5 @@
 // Checks a Netlify deploy against the redirect, 404, SEO/GEO and security header rules (spec §8, §9, §14).
-// Usage: npm run verify:deploy -- https://v2--<site>.netlify.app
+// Usage: npm run verify:deploy -- https://deploy-preview-<n>--<site>.netlify.app
 import { argv, exit } from 'node:process';
 import { URL } from 'node:url';
 

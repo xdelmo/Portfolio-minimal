@@ -16,15 +16,18 @@ for (const path of ['/en/', '/it/', '/en/work/apexflow', '/en/work/pokeverba', '
 }
 
 test('every link to a repository carries the pixel GitHub mark, hidden from assistive tech', async ({ page }) => {
+  let total = 0;
   for (const path of ['/en/', '/en/work/apexflow']) {
     await page.goto(path);
     const links = page.locator('a[href^="https://github.com/xdelmo/"]');
     const count = await links.count();
-    expect(count).toBeGreaterThan(0);
+    total += count;
     for (let i = 0; i < count; i++) {
       const link = links.nth(i);
       await expect(link.locator('app-github-mark svg')).toHaveAttribute('aria-hidden', 'true');
       await expect(link).toHaveAccessibleName((await link.innerText()).trim());
     }
   }
+  // Since #262 only ApexFlow's front end is left, and it is private: the check comes back once a repository is public.
+  test.skip(total === 0, 'no public repository is linked today');
 });

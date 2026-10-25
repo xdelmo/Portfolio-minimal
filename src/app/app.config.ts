@@ -33,7 +33,7 @@ export const appConfig: ApplicationConfig = {
       scroller.scrollToPosition = (position, options) => {
         const smooth = smoother();
         if (smooth) smooth.scrollTop(position[1]);
-        else toPosition(position, options);
+        else toPosition(position, { ...options, behavior: 'instant' });
       };
       scroller.scrollToAnchor = (anchor) => {
         const target = document.getElementById(anchor);

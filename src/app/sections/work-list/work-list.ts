@@ -47,7 +47,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
               <img
                 appDepixelate
                 class="shot"
-                [style.view-transition-name]="'shot-' + project.slug"
                 [ngSrc]="image.src"
                 [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
                 [loaderParams]="{ full: image.width }"
@@ -57,7 +56,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
                 [sizes]="image.height > image.width ? '280px' : '(min-width: 768px) 50vw, 100vw'"
               />
             } @else if (project.sprite; as sprite) {
-              <app-quest-sprite class="item" [name]="sprite" [style.view-transition-name]="'shot-' + project.slug" />
+              <app-quest-sprite class="item" [name]="sprite" />
             }
           </div>
         </li>
@@ -66,12 +65,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
-
-    // the picture grows into the case study in steps (issue #161, src/styles/_base.scss)
-    .shot,
-    .item {
-      view-transition-class: shot;
-    }
 
     .projects {
       display: grid;

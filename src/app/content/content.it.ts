@@ -82,7 +82,7 @@ export const CONTENT_IT: SiteContent = {
     },
     {
       ...en('pokeverba'),
-      role: 'Un progetto con Matteo Terenzi, che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
+      role: 'Un progetto con un amico che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
       summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {

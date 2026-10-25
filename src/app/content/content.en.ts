@@ -86,7 +86,7 @@ export const CONTENT_EN: SiteContent = {
       slug: 'pokeverba',
       sprite: 'crossword',
       title: 'PokèVerba',
-      role: 'A side project with Matteo Terenzi, who writes the content; I build and run the site. 2026.',
+      role: 'A side project with a friend who writes the content; I build and run the site. 2026.',
       summary: 'A daily Pokémon crossword with a collection of the Pokémon you catch and a blog, in Italian and English.',
       stack: ['WordPress', 'PHP', 'React', 'Vite'],
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],

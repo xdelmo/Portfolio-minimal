@@ -123,6 +123,48 @@ export const CONTENT_EN: SiteContent = {
         outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',
       },
     },
+    {
+      slug: 'wedding-3d-invite',
+      title: 'Wedding 3D Invite',
+      role: 'A side project, designed and built on my own in 2026.',
+      summary:
+        'A mobile-first digital wedding invitation: a lace envelope in Three.js that opens at a tap, then the day told in eleven slides, with RSVP and offline support.',
+      stack: ['React', 'TypeScript', 'Three.js', 'Tailwind CSS', 'Vite'],
+      repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
+      demoUrl: 'https://wedding-3d-invite-demo-five.vercel.app/',
+      image: {
+        src: 'images/work/wedding-invite.jpg',
+        alt: 'The closed invitation: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L, above the hint to tap and open it',
+        width: 1600,
+        height: 1011,
+      },
+      caseStudy: {
+        context:
+          'A paper wedding invitation, in lace and pearls, rebuilt for the phone guests already hold. It has to feel like opening a real envelope, then answer every practical question: when, where, how to get there, what to wear, and whether you are coming.',
+        architecture: [
+          'A React and TypeScript single-page app built with Vite and styled with Tailwind CSS, mobile first; on a desktop the invitation sits in a phone-sized frame.',
+          'The envelope is a Three.js scene: lace flaps that open, a wax seal that lifts away and pearls with physically based materials.',
+          'Eleven full-screen slides with CSS scroll snap: countdown, calendar export, maps, programme, dress code, transport and RSVP.',
+          'RSVP answers go to a Google Sheet through Google Apps Script, so there is no server to run; a service worker keeps the invitation working offline as a PWA.',
+        ],
+        decisions: [
+          {
+            title: 'One repository, one deploy per couple',
+            body: "Every couple is a config file and a folder of assets; a build variable picks which one goes into the bundle, and only that couple's data ships. Title, Open Graph tags, event JSON-LD, manifest and service worker are generated from the same config.",
+          },
+          {
+            title: 'The 3D scene stops once the envelope is open',
+            body: 'After the opening animation the render loop freezes, so reading the invitation costs no GPU time and no battery. A button in the footer plays the opening again.',
+          },
+          {
+            title: 'Colours a couple can change, contrast they cannot break',
+            body: 'A couple can replace the burgundy and ivory palette, which flows into Tailwind, Three.js, the manifest and the icons. A unit test fails the build on any combination below WCAG AA contrast.',
+          },
+        ],
+        outcome:
+          'The demo is live with a sample couple, and a new couple needs only a config, its assets and a Vercel project on the same repository.',
+      },
+    },
   ],
   experience: [
     {

@@ -137,7 +137,7 @@ for (const locale of ['en', 'it']) {
   test(`project images load in the ${locale} build`, async ({ page }) => {
     await page.goto(`/${locale}/`);
     const images = page.locator('#work img.shot');
-    await expect(images).toHaveCount(2);
+    await expect(images).toHaveCount(3);
     // query the live DOM on every attempt: WebKit can replace the elements while hydrating
     await expect
       .poll(() =>

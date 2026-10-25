@@ -35,7 +35,7 @@ Un iPhone e un Android:
   1. Netlify → Site configuration → Build & deploy → Build hooks → *Add build hook*, nome `public-repos`, branch `master`; copia l'URL.
   2. GitHub → repo → Settings → Secrets and variables → Actions → *New repository secret*: nome `NETLIFY_BUILD_HOOK`, valore l'URL del passo 1.
   Senza il secret il workflow fallisce (e GitHub ti avvisa) il giorno in cui le repo pubbliche cambiano.
-- [ ] **Prova generale su `devel`** (creato da `master` il 2026-10-08): `v2` entra prima in `devel` con una PR e un merge commit, così i problemi del lancio escono lì e non su `master`. Cosa ha mostrato finora:
+- [x] **Prova generale su `devel`** (creato da `master` il 2026-10-08): `v2` entra prima in `devel` con una PR e un merge commit, così i problemi del lancio escono lì e non su `master`. Cosa ha mostrato finora:
   - nessun conflitto: `master` è il commit da cui parte `v2`, il merge aggiunge solo i 188 commit sopra;
   - merge commit, non squash: lo squash schiaccerebbe tutta la storia di `v2` in un commit;
   - il controllo dei nomi dei branch e la CI conoscevano solo `v2` e `master`: aggiunto `devel` (per `master` erano già a posto);
@@ -44,9 +44,9 @@ Un iPhone e un Android:
   - `v2` è entrato in `devel` il 2026-10-08 (PR #73, merge commit, CI verde). Il deploy preview della PR (`https://deploy-preview-73--emanueledelmonte.netlify.app`) passa tutte le 18 righe di `npm run verify:deploy`: build, redirect di lingua, 404 per lingua, sitemap, robots, llms.txt e immagini OG funzionano sulla build che andrà online;
   - Netlify non pubblica `devel`: `https://devel--emanueledelmonte.netlify.app` dà 404 ovunque, perché i branch deploy sono attivi solo per `v2`. Se vuoi un indirizzo fisso di `devel`, aggiungi `devel` in Netlify → Site configuration → Build & deploy → Branches and deploy contexts → Branch deploys; altrimenti basta il deploy preview della PR;
   - il vecchio `/privacy` di Gatsby andava su `/it/`: ora va su `/it/privacy/` (2026-10-08), e `verify:deploy` lo controlla.
-- [ ] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione. Il sito Gatsby su `master` non ha più il plugin Gatsby: se serve ribuildarlo prima del merge, è un sito statico e builda comunque.
-- [ ] Subito dopo: `npm run verify:deploy -- https://www.emanueledelmonte.it`.
-- [ ] `curl -sI https://emanueledelmonte.it/` deve dare `301` verso `https://www.emanueledelmonte.it/`.
+- [x] Mi dai il via libera al merge di `v2` su `master`. Apro la PR, aspetto la CI e faccio il merge; Netlify pubblica la produzione. Il sito Gatsby su `master` non ha più il plugin Gatsby: se serve ribuildarlo prima del merge, è un sito statico e builda comunque. Fatto il 2026-10-25: `v2` → `devel` (PR #266) → `master` (PR #267), CI verde su entrambe.
+- [x] Subito dopo: `npm run verify:deploy -- https://www.emanueledelmonte.it`. Passato il 2026-10-25, tutti i 22 controlli.
+- [x] `curl -sI https://emanueledelmonte.it/` deve dare `301` verso `https://www.emanueledelmonte.it/`. Verificato il 2026-10-25.
 
 ## 5. Fuori dal sito (spec §8 e §9)
 

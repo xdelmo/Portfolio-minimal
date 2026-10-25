@@ -126,7 +126,7 @@ export const CONTENT_EN: SiteContent = {
     {
       slug: 'wedding-3d-invite',
       title: 'Wedding 3D Invite',
-      role: 'A side project, designed and built on my own in 2026.',
+      role: 'Designed and built on my own in 2026, for the wedding of two friends.',
       summary:
         'A mobile-first digital wedding invitation: a lace envelope in Three.js that opens at a tap, then the day told in eleven slides, with RSVP and offline support.',
       stack: ['React', 'TypeScript', 'Three.js', 'Tailwind CSS', 'Vite'],
@@ -140,7 +140,7 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'A paper wedding invitation, in lace and pearls, rebuilt for the phone guests already hold. It has to feel like opening a real envelope, then answer every practical question: when, where, how to get there, what to wear, and whether you are coming.',
+          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the phone their guests already hold. It has to feel like opening a real envelope, then answer every practical question: when, where, how to get there, what to wear, and whether you are coming.',
         architecture: [
           'A React and TypeScript single-page app built with Vite and styled with Tailwind CSS, mobile first; on a desktop the invitation sits in a phone-sized frame.',
           'The envelope is a Three.js scene: lace flaps that open, a wax seal that lifts away and pearls with physically based materials.',
@@ -149,20 +149,20 @@ export const CONTENT_EN: SiteContent = {
         ],
         decisions: [
           {
-            title: 'One repository, one deploy per couple',
-            body: "Every couple is a config file and a folder of assets; a build variable picks which one goes into the bundle, and only that couple's data ships. Title, Open Graph tags, event JSON-LD, manifest and service worker are generated from the same config.",
+            title: 'Every word of the invitation in one config file',
+            body: 'Names, date, places, programme and RSVP live in a typed config, so the demo runs on sample names while the real invitation keeps its own. Title, Open Graph tags, event JSON-LD, manifest and service worker are generated from the same config.',
           },
           {
             title: 'The 3D scene stops once the envelope is open',
             body: 'After the opening animation the render loop freezes, so reading the invitation costs no GPU time and no battery. A button in the footer plays the opening again.',
           },
           {
-            title: 'Colours a couple can change, contrast they cannot break',
-            body: 'A couple can replace the burgundy and ivory palette, which flows into Tailwind, Three.js, the manifest and the icons. A unit test fails the build on any combination below WCAG AA contrast.',
+            title: 'One palette, with contrast under test',
+            body: 'The burgundy and ivory palette is defined once and flows into Tailwind, Three.js, the manifest and the icons. A unit test fails the build on any combination below WCAG AA contrast.',
           },
         ],
         outcome:
-          'The demo is live with a sample couple, and a new couple needs only a config, its assets and a Vercel project on the same repository.',
+          'The real invitation belongs to my friends and stays private; the public demo on Vercel shows the same invitation with sample names.',
       },
     },
   ],

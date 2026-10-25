@@ -114,35 +114,12 @@ test('project title and case-study heading share a view-transition name', async 
   await expect(page.locator('h1')).toHaveCSS('view-transition-name', name);
 });
 
-test('a project screenshot grows into its case study in steps (issue #161)', async ({ page, browserName }) => {
+test('project screenshots have no view-transition name so they do not scroll across the screen (issue #256)', async ({ page }) => {
   await page.goto('/en/');
   const shot = page.locator('#work .shot').first();
-  const name = await shot.evaluate((el) => getComputedStyle(el).viewTransitionName);
-  expect(name).toMatch(/^shot-/);
-  test.skip(browserName !== 'chromium', 'reads the transition through Chromium\'s view transition API');
-  // note the transition's groups once it is ready, whatever the speed of the test
-  await page.evaluate(() => {
-    const start = document.startViewTransition.bind(document);
-    const w = window as unknown as { groups: { name: string; easing: string }[] };
-    w.groups = [];
-    document.startViewTransition = (update) => {
-      const t = start(update);
-      void t.ready.then(() => {
-        for (const a of document.getAnimations()) {
-          const { pseudoElement } = (a.effect ?? {}) as KeyframeEffect;
-          if (pseudoElement?.startsWith('::view-transition-group(')) {
-            w.groups.push({ name: pseudoElement, easing: getComputedStyle(document.documentElement, pseudoElement).animationTimingFunction });
-          }
-        }
-      });
-      return t;
-    };
-  });
+  await expect(shot).toHaveCSS('view-transition-name', 'none');
   await page.locator('#work h3 a').first().click();
-  await expect(page.locator('.case-study .shot')).toHaveCSS('view-transition-name', name);
-  const groups = await page.evaluate(() => (window as unknown as { groups: { name: string; easing: string }[] }).groups);
-  const group = groups.find((g) => g.name === `::view-transition-group(${name})`);
-  expect(group?.easing).toMatch(/^steps\(6/);
+  await expect(page.locator('.case-study .shot')).toHaveCSS('view-transition-name', 'none');
 });
 
 test.describe('with reduced motion', () => {

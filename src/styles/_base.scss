@@ -211,19 +211,6 @@ canvas {
   }
 }
 
-/* A project's picture grows from the work list into its case study, and back, in steps like the site's other
-   transitions (issue #161): the two share the name `shot-<slug>` and the class `shot` (work-list.ts, case-study.ts). */
-::view-transition-group(.shot) {
-  animation-duration: 0.48s;
-  animation-timing-function: steps(6, end);
-}
-::view-transition-old(.shot),
-::view-transition-new(.shot) {
-  height: 100%;
-  object-fit: cover;
-  animation-timing-function: steps(6, end);
-}
-
 /* Theme switch (theme-toggle.ts): the new theme grows as a circle from the toggle over the whole viewport (from light
    to dark the light one closes into it instead, below).
    Named elements (the card → case study transition) join the root snapshot so the circle covers them too. */

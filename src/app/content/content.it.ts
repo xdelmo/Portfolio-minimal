@@ -44,11 +44,10 @@ export const CONTENT_IT: SiteContent = {
         'Una dashboard CRM e di analytics: Angular 19 con Signals e RxJS nel frontend, Spring Boot 3 e PostgreSQL nel backend.',
       repos: [
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
-        { label: 'Codice del backend', url: 'https://github.com/xdelmo/backend-tesi' },
       ],
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'La dashboard di ApexFlow con i totali di fatturato, spese, utile e nuovi clienti, il grafico del fatturato e la barra di navigazione',
+        alt: 'La dashboard di ApexFlow con fatturato totale, ordini in attesa, clienti attivi e totali, il grafico annuale del fatturato e la barra di navigazione',
         width: 1600,
         height: 1011,
       },

@@ -45,12 +45,11 @@ export const CONTENT_EN: SiteContent = {
       stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
       repos: [
         { label: 'Front-end code', url: 'https://github.com/xdelmo/dashboard-tesi' },
-        { label: 'Back-end code', url: 'https://github.com/xdelmo/backend-tesi' },
       ],
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'ApexFlow dashboard with revenue, expense, profit and new-customer totals, a revenue chart and the navigation sidebar',
+        alt: 'ApexFlow dashboard with total revenue, pending orders, active and total customers, the yearly revenue chart and the navigation sidebar',
         width: 1600,
         height: 1011,
       },

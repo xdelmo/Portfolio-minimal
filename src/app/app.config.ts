@@ -38,7 +38,7 @@ export const appConfig: ApplicationConfig = {
       scroller.scrollToAnchor = (anchor) => {
         const target = document.getElementById(anchor);
         if (!target) return;
-        const go = (): void => {
+        const jump = (): void => {
           // smooth scroll (issue #159): the page jumps there and the content glides after it by itself; a tweened
           // scrollTo was killed by a ScrollTrigger refresh (images loading) and left the page where it was
           const smooth = smoother();
@@ -46,6 +46,16 @@ export const appConfig: ApplicationConfig = {
           // native scroll: jump too (issue #245), gliding showed every picture between the two sections going by
           else target.scrollIntoView({ behavior: 'instant' });
           target.focus({ preventScroll: true });
+        };
+        // A ScrollTrigger refresh after the jump (pins measured again, an image loading) changes the page's height and
+        // moves the section off its place: follow it while the page settles, until the visitor scrolls (issue #216).
+        const go = (): void => {
+          jump();
+          const follow = new ResizeObserver(jump);
+          const stop = (): void => { follow.disconnect(); };
+          follow.observe(document.body);
+          setTimeout(stop, 2000);
+          for (const type of ['wheel', 'touchstart', 'keydown']) addEventListener(type, stop, { once: true, passive: true });
         };
         // Coming from another page, the anchor's motion effects are still starting: their first measure (ScrollTrigger
         // scrolls to the top and back) would stop the smooth scroll a few pixels in. Scroll once they are running.

@@ -19,7 +19,9 @@ export default defineConfig({
   webServer: {
     command: 'npx http-server dist/portfolio/browser -p 4300 -s -c-1',
     url: 'http://localhost:4300/en/',
-    reuseExistingServer: !process.env['CI'],
+    // Never reuse a server already on the port: one from another worktree or session serves a different build (issue
+    // #218). Playwright fails at once instead.
+    reuseExistingServer: false,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

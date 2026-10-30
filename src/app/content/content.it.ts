@@ -20,8 +20,8 @@ export const CONTENT_IT: SiteContent = {
       'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
   },
   hero: {
-    headline: 'Interfacce Angular veloci anche con molti dati.',
-    lede: 'Sono Emanuele Del Monte, Frontend Engineer in IPS S.p.A., a Latina. Laureato in Ingegneria Informatica.',
+    headline: 'Ingegnere di formazione, non un robot di natura: costruisco interfacce Angular veloci e solide, con un pizzico di gioco.',
+    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Curo le parti che gli utenti non vedono ma sentono sempre, e qua e là nascondo un easter egg.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about: [

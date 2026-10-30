@@ -130,7 +130,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       padding-block: var(--space-8) var(--space-12);
     }
     .hero h1 {
-      max-width: 16ch;
+      // a step below --step-hero (44 → 72px): the two-clause headline (issue #271) keeps lede and buttons above the
+      // fold, and stays at least 4/3 of the section titles
+      font-size: clamp(2.747rem, 1.8rem + 3.2vw, 4.5rem);
+      max-width: 22ch;
+      text-wrap: balance;
       // the hero effect widens it as the hero scrolls away (desktop, issue #131)
       font-variation-settings: 'wdth' var(--hero-wdth, 75);
     }

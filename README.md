@@ -36,7 +36,7 @@ The design spec keeps a dated list of changes: [docs/superpowers/specs/2026-10-0
 - **Press start**: the Konami code (↑ ↑ ↓ ↓ ← → ← → B A), five quick taps on the logo or the "Press start" key in the footer opens a player card: class, level, experience points to the next role and three achievements drawn as 16 × 16 pixel items. A native modal in a lazy chunk (`src/app/game/`).
 - **Voxel moai**: a Three.js `InstancedMesh` loaded only when it scrolls into view, with a prerendered still image for reduced motion, missing WebGL or a failed download.
 - **Search and AI agents**: JSON-LD graph per page, sitemap with hreflang, `llms.txt` and a Markdown copy of every page generated from the same content files, Open Graph image per page and language.
-- **Netlify**: language redirect on `/` (with the `nf_lang` cookie from the language switch), per-locale 404s, legacy Gatsby URLs, and a generated `_redirects` that serves case studies at their canonical URL without a trailing-slash 301. Branch preview: `https://v2--emanueledelmonte.netlify.app`.
+- **Netlify**: language redirect on `/` (with the `nf_lang` cookie from the language switch), per-locale 404s, legacy Gatsby URLs, and a generated `_redirects` that serves case studies at their canonical URL without a trailing-slash 301. Pull request preview: `https://deploy-preview-<n>--emanueledelmonte.netlify.app`.
 - **Privacy**: no analytics, no third-party scripts; `/privacy` (linked from the footer, `noindex`) lists exactly what the browser keeps (the `nf_lang` cookie, the theme, three session entries). Update it before adding any analytics.
 - **Quality gates**: strict ESLint, Vitest, Playwright with axe (WCAG 2.2 AA, both themes) on Chromium, Firefox, WebKit and mobile emulation, Lighthouse CI.
 

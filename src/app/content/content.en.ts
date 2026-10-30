@@ -19,7 +19,7 @@ export const CONTENT_EN: SiteContent = {
       'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
   },
   hero: {
-    headline: 'Engineer by training, not a robot by nature: I build fast, solid Angular interfaces, with a bit of play.',
+    headline: 'Engineer by method, curious by nature: I build fast, solid Angular interfaces, with a bit of play.',
     lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I care about the parts users never see but always feel, and I hide an easter egg here and there.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',

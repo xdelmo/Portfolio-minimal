@@ -7,8 +7,8 @@ import { pathToFileURL } from 'node:url';
 
 export const PREFIXES = ['feat', 'fix', 'docs', 'chore', 'ci', 'test', 'refactor', 'perf', 'style', 'build'];
 // the long-lived branches, and the archived copy of the Gatsby site
-const KEPT = /^(v2|master|devel|archive\/.+)$/;
-export const PROTECTED = ['v2', 'master', 'devel'];
+const KEPT = /^(master|devel|archive\/.+)$/;
+export const PROTECTED = ['master', 'devel'];
 
 export function validBranch(name) {
   return KEPT.test(name) || new RegExp(`^(${PREFIXES.join('|')})/[a-z0-9][a-z0-9.-]*$`).test(name);

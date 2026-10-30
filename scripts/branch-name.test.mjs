@@ -4,10 +4,10 @@ import { spawnSync } from 'node:child_process';
 import { PROTECTED, pushedBranches, validBranch } from './branch-name.mjs';
 
 test('a branch says what it does before the slash', () => {
-  for (const name of ['feat/404-wild-encounter', 'fix/hero-lede', 'docs/claude-md-linux', 'chore/triage', 'fix/45-hero', 'v2', 'master', 'devel', 'archive/gatsby-master']) {
+  for (const name of ['feat/404-wild-encounter', 'fix/hero-lede', 'docs/claude-md-linux', 'chore/triage', 'fix/45-hero', 'master', 'devel', 'archive/gatsby-master']) {
     assert.ok(validBranch(name), name);
   }
-  for (const name of ['hero-lede', 'worktree-pixel-field-fade', 'robustness-skills', 'feature/x', 'feat/', 'feat/Hero', 'fix/a/b', 'v3']) {
+  for (const name of ['hero-lede', 'worktree-pixel-field-fade', 'robustness-skills', 'feature/x', 'feat/', 'feat/Hero', 'fix/a/b', 'v2', 'v3']) {
     assert.ok(!validBranch(name), name);
   }
 });
@@ -30,6 +30,6 @@ test('the pre-push hook refuses a direct push to a long-lived branch', () => {
       env: { ...process.env, ALLOW_PROTECTED_PUSH: '', ...env },
     }).status;
   for (const branch of PROTECTED) assert.equal(run(branch), 1, branch);
-  assert.equal(run('v2', { ALLOW_PROTECTED_PUSH: '1' }), 0);
+  assert.equal(run('devel', { ALLOW_PROTECTED_PUSH: '1' }), 0);
   assert.equal(run('ci/223-light-pre-push'), 0);
 });

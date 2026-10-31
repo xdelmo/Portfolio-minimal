@@ -1,6 +1,6 @@
 {
   "name": "portfolio",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "scripts": {
     "ng": "ng",
     "generate": "node scripts/version.mjs && node scripts/public-repos.mjs && node --import ./scripts/ts-resolve.mjs scripts/blog.mjs",

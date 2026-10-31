@@ -5,6 +5,14 @@ const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElem
 const scene = (page: Page) => page.locator('app-moai-scene canvas');
 const still = (page: Page) => page.locator('app-moai-figure img.still').filter({ visible: true });
 const snapshot = (page: Page) => scene(page).evaluate((c) => (c as HTMLCanvasElement).toDataURL());
+// as Firefox in CI's image, which has none: the still image is all there is
+const withoutWebGL = (page: Page) => page.addInitScript(() => {
+  const proto = HTMLCanvasElement.prototype as unknown as { getContext: (this: HTMLCanvasElement, type: string, ...rest: unknown[]) => unknown };
+  const original = proto.getContext;
+  proto.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+    return type.startsWith('webgl') ? null : original.call(this, type, ...rest);
+  };
+});
 
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -51,13 +59,7 @@ test('repaints with the new colours when the theme changes', async ({ page }) =>
 
 test('falls back to the still image without WebGL', async ({ page }) => {
   const errors = collectErrors(page);
-  await page.addInitScript(() => {
-    const proto = HTMLCanvasElement.prototype as unknown as { getContext: (this: HTMLCanvasElement, type: string, ...rest: unknown[]) => unknown };
-    const original = proto.getContext;
-    proto.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
-      return type.startsWith('webgl') ? null : original.call(this, type, ...rest);
-    };
-  });
+  await withoutWebGL(page);
   await page.goto('/en/');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(still(page)).toBeVisible();
@@ -466,10 +468,12 @@ test('on desktop it shrinks into the bottom-right corner as the About scrolls aw
   }).toEqual([Math.round(home.top), Math.round(home.left), Math.round(home.height)]);
 });
 
-// the About is a band: the bands and the side quests after it must not paint over the moai in the corner
-test('in the corner it stays on top of every section it passes over', async ({ page, isMobile }) => {
+// the About is a band: the bands and the side quests after it must not paint over the moai in the corner; without
+// WebGL the still image takes the clicks (only the scene did, and CI's Firefox, with no WebGL, clicked through it)
+for (const webgl of [true, false]) test(`in the corner it stays on top of every section it passes over${webgl ? '' : ', without WebGL too'}`, async ({ page, isMobile }) => {
   test.skip(isMobile, 'desktop only');
   await page.setViewportSize({ width: 1280, height: 800 });
+  if (!webgl) await withoutWebGL(page);
   await page.goto('/en/');
   for (const id of ['experience', 'side-quests', 'stack', 'contact']) {
     await page.locator(`#${id}`).evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });

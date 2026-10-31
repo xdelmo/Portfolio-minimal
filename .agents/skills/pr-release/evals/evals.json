@@ -1,0 +1,23 @@
+{
+  "skill_name": "pr-release",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "È stata approvata e mergiata la PR #292 in master. Esegui una verifica preventiva in modalità dry-run con lo script di release per verificare quale versione SemVer verrebbe calcolata e mostra l'anteprima delle note di rilascio.",
+      "expected_output": "Esegue node scripts/release.mjs --dry-run --pr-number 292, identifica la versione corrente (2.1.0), il bump minor dovuto ai commit feat (es. feat: add release version to site footer), la nuova versione target (2.2.0 / v2.2.0) e le release notes formattate con categorizzazione delle modifiche.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Come funziona l'automazione di rilascio configurata su GitHub Actions quando una PR viene mergiata in master, e come posso verificarne l'esito o eseguirla manualmente in fallback?",
+      "expected_output": "Spiega il trigger di .github/workflows/release.yml (pull_request closed su master con merged == true), i permessi e le azioni eseguite (bump package.json, tag git, gh release create), oltre alle modalità di avvio manuale (workflow_dispatch) e al comando fallback locale dell'agente.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Mostrami le regole di determinazione SemVer da Conventional Commits usate nel progetto e verifica con i test unitari che la logica di calcolo delle versioni e categorizzazione delle modifiche funzioni correttamente.",
+      "expected_output": "Mostra la tabella delle regole Conventional Commits (breaking -> major, feat -> minor, fix/chore -> patch) ed esegue la test suite degli script (npm run test:scripts) verificando il passaggio di tutti i test su release.mjs.",
+      "files": []
+    }
+  ]
+}

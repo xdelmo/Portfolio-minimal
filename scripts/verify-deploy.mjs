@@ -21,6 +21,7 @@ export const CHECKS = [
   { name: "Angular's client-side shell is not published", path: '/en/index.csr.html', status: 404 },
   { name: 'sitemap.xml', path: '/sitemap.xml', status: 200, contains: '<urlset' },
   { name: 'robots.txt allows AI crawlers', path: '/robots.txt', status: 200, contains: 'ClaudeBot' },
+  { name: "/sw.js retires the old Gatsby service worker (issue #289)", path: '/sw.js', status: 200, contains: 'unregister()' },
   { name: 'llms.txt', path: '/llms.txt', status: 200, contains: '# Emanuele Del Monte' },
   { name: 'index.md is served as Markdown', path: '/en/index.md', status: 200, contentType: 'text/markdown', contains: '# Emanuele Del Monte' },
   { name: 'og image for the Italian home', path: '/it/og/it-home.png', status: 200, contentType: 'image/png' },

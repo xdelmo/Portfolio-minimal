@@ -1,0 +1,76 @@
+name: Release
+
+# Automatically cuts a release on master whenever a pull request is merged:
+# 1. Bumps version in package.json and package-lock.json
+# 2. Generates src/app/core/version.generated.ts
+# 3. Creates an annotated Git tag vX.Y.Z
+# 4. Publishes a GitHub Release with Conventional Commits release notes
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to release (optional)'
+        required: false
+        type: string
+      bump:
+        description: 'Explicit SemVer bump (patch, minor, major)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+        default: auto
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  release:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Configure Git Bot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Release Automation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALLOW_PROTECTED_PUSH: '1'
+        run: |
+          PR_NUM="${{ github.event.pull_request.number || inputs.pr_number }}"
+          BUMP="${{ inputs.bump || 'auto' }}"
+
+          CMD="node scripts/release.mjs"
+          if [ -n "$PR_NUM" ]; then
+            CMD="$CMD --pr-number $PR_NUM"
+          fi
+          if [ "$BUMP" != "auto" ] && [ -n "$BUMP" ]; then
+            CMD="$CMD --bump $BUMP"
+          fi
+
+          echo "Executing: $CMD"
+          eval "$CMD"

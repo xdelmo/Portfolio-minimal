@@ -15,7 +15,7 @@ import { SeoService } from '../../core/seo/seo.service';
     <div class="container blog">
       <header class="intro">
         <h1 i18n="@@blog.title">Blog</h1>
-        <p class="lede" i18n="@@blog.lede">Notes from building Angular front ends: what I tried, what broke, what I would do again.</p>
+        <p class="lede" i18n="@@blog.lede">Notes from building Angular frontends: what I tried, what broke, what I would do again.</p>
       </header>
       <ol class="posts">
         @for (post of articles; track post.slug) {

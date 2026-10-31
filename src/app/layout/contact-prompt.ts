@@ -6,7 +6,7 @@ import { CONTENT } from '../content/content';
   selector: 'app-contact-prompt',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <p class="lead" i18n="@@contactPrompt.lead">Looking for a front-end engineer?</p>
+    <p class="lead" i18n="@@contactPrompt.lead">Looking for a frontend engineer?</p>
     <a class="button button--primary" [href]="'mailto:' + email" i18n="@@contactPrompt.cta">Email me</a>
   `,
   styles: `

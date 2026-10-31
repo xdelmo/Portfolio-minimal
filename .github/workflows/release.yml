@@ -74,3 +74,14 @@ jobs:
 
           echo "Executing: $CMD"
           eval "$CMD"
+
+      # Keep devel on top of master so the next release PR neither conflicts
+      # nor lists old commits again (issue #298). A conflict fails the job.
+      - name: Merge master back into devel
+        env:
+          ALLOW_PROTECTED_PUSH: '1'
+        run: |
+          git fetch origin devel
+          git checkout -B devel origin/devel
+          git merge --no-edit master
+          git push origin devel

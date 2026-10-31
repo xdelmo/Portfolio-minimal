@@ -52,7 +52,7 @@ describe('moai model', () => {
 
 describe('moai frame', () => {
   // the scene's camera frames the moai's isometric bounds times MOAI_FRAME, widened by MOAI_BLEED on each side;
-  // the bubble hangs from the lips (gum ball at y 10.5, z 4.5 in the pivot, dropped GUM_DROP rows), and the pivot turns
+  // the bubble is blown from the lips (gum ball at y 8.5, z 4.5 in the pivot), and the pivot turns
   it('keeps the whole bubble inside the picture at any angle the moai turns to', () => {
     const bounds = isoBounds(isoFaces(moaiVoxels()));
     const centre = bounds.minX + bounds.width / 2;

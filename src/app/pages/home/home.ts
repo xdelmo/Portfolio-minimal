@@ -15,11 +15,11 @@ import { StackList } from '../../sections/stack-list/stack-list';
 import { WorkList } from '../../sections/work-list/work-list';
 import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
-import { stickyEffect } from '../../motion/effects/sticky';
 import { parallaxEffect } from '../../motion/effects/parallax';
 import { experienceEffect } from '../../motion/effects/experience';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
+import { moaiEffect } from '../../motion/effects/moai';
 import { stackLevelsEffect } from '../../motion/effects/stack-levels';
 import { threadEffect } from '../../motion/effects/thread';
 import { titlesEffect } from '../../motion/effects/titles';
@@ -68,7 +68,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         </div>
         <app-at-a-glance [items]="content.glance" />
       </div>
-      <app-moai-figure class="about-moai" data-sticky />
+      <app-moai-figure class="about-moai" />
     </section>
 
     <section id="experience" class="section container" aria-labelledby="experience-title">
@@ -125,21 +125,28 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       position: relative;
       display: grid;
       align-content: center;
-      gap: var(--space-3);
+      // centred both ways, a poster on the first screen (issue #270)
+      justify-items: center;
+      text-align: center;
+      // the headline's descenders need room above the lede; the buttons stand apart as their own group
+      gap: var(--space-4);
       min-height: calc(100svh - var(--header-h));
       padding-block: var(--space-8) var(--space-12);
     }
     .hero h1 {
-      // a step below --step-hero (44 → 72px): the two-clause headline (issue #271) keeps lede and buttons above the
-      // fold, and stays at least 4/3 of the section titles
-      font-size: clamp(2.747rem, 1.8rem + 3.2vw, 4.5rem);
-      max-width: 22ch;
+      // 44 → 88px: the text alone fills the hero (the moai lives in the About, issue #270), and at 1280×800 the
+      // two-clause headline (issue #271) still keeps lede and buttons above the fold
+      font-size: clamp(2.747rem, 1.4rem + 4.4vw, 5.5rem);
+      // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
       // the hero effect widens it as the hero scrolls away (desktop, issue #131)
       font-variation-settings: 'wdth' var(--hero-wdth, 75);
     }
     // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
+    // centred, it keeps a readable measure under the wide headline (issue #270)
     .lede {
+      max-width: 60ch;
+      text-wrap: balance;
       @include bp.up(md) {
         font-size: var(--step-1);
       }
@@ -150,11 +157,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .actions {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: var(--space-2);
-      margin-top: var(--space-2);
+      margin-top: var(--space-3);
     }
-    // the field fills the whole hero, edge to edge, behind the text. Phones: lit in the space above the title, faint
-    // under the text, which runs the full width there
+    // the field fills the whole hero, edge to edge, behind the text
     .hero {
       isolation: isolate;
     }
@@ -163,7 +170,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       inset: 0 calc(50% - 50vw);
       z-index: -1;
       height: auto;
-      mask-image: linear-gradient(to bottom, #000 0, rgb(0 0 0 / 0.6) var(--space-16));
+      // alive at the edges, faint behind the centred text so the words keep their contrast
+      mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, rgb(0 0 0 / 0.35), #000);
     }
     .contact {
       display: grid;
@@ -273,25 +281,10 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         column-gap: var(--space-8);
         align-items: start;
       }
-      .about-moai {
-        position: sticky;
-        // below the sticky header, never under it
-        top: calc(var(--header-h) + var(--space-8));
-      }
-      .hero {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        column-gap: var(--space-8);
-        align-content: start;
-        padding-block: var(--space-8);
-      }
-      // not the seam: an absolute child placed in a column takes that column's area as its box, and its full-bleed
-      // inset (50% - 50vw) then starts 16px in from the left edge (issue #85)
-      .hero > :not(.field, .seam) {
-        grid-column: 1;
-      }
-      // desktop: faint under the text column so the words keep their contrast, alive towards the right
-      .field {
-        mask-image: linear-gradient(to right, rgb(0 0 0 / 0.35) 0 40%, #000 70%);
+      // its own stacking context (.band) holds the moai pinned in the corner (motion/effects/moai.ts): above every
+      // section after it, which would paint over the moai otherwise (issue #270); under the header
+      .about {
+        z-index: 2;
       }
     }
     // pixel seams: full-bleed strips of 16px cells; a band grows one above its top edge, the hero one at its foot
@@ -339,7 +332,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
-  protected readonly effects: readonly Effect[] = [heroEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, stickyEffect, parallaxEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

@@ -1,20 +1,21 @@
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_DROP, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SCROLL_SWING, breath, follow, gaze, glance, isPupil, scrollYaw, sectionProgress } from './motion';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SLEEP_MS, WAVE_MS, breath, follow, gaze, glance, isPupil, wave } from './motion';
 import { moaiCell } from './moai.model';
 
 describe('moai motion', () => {
-  it('measures how far the section has scrolled past the middle of the screen', () => {
-    expect(sectionProgress(1000, 800, 900)).toBe(0);
-    expect(sectionProgress(450, 800, 900)).toBe(0);
-    expect(sectionProgress(50, 800, 900)).toBeCloseTo(0.5);
-    expect(sectionProgress(-1000, 800, 900)).toBe(1);
+  it('waves hello once: a small roll that starts and ends level, and is still outside its second', () => {
+    expect(wave(-1)).toBe(0);
+    expect(wave(0)).toBeCloseTo(0);
+    expect(wave(WAVE_MS)).toBeCloseTo(0);
+    expect(wave(WAVE_MS + 1)).toBe(0);
+    expect(WAVE_MS).toBeLessThan(1000);
+    const rolls = Array.from({ length: 19 }, (_, i) => wave((WAVE_MS * (i + 1)) / 20));
+    expect(Math.max(...rolls)).toBeGreaterThan(0.05);
+    expect(Math.min(...rolls)).toBeLessThan(-0.05);
+    for (const r of rolls) expect(Math.abs(r)).toBeLessThan(0.2);
   });
 
-  // the camera sits at 45°: turning the other way would show its profile while the text beside it is being read
-  it('turns the moai towards the viewer in the middle of its section, never away, and back at both ends', () => {
-    expect(scrollYaw(0)).toBe(0);
-    expect(scrollYaw(0.5)).toBeCloseTo(SCROLL_SWING);
-    expect(scrollYaw(1)).toBeCloseTo(0);
-    for (let p = 0; p <= 1; p += 0.05) expect(scrollYaw(p)).toBeGreaterThanOrEqual(0);
+  it('falls asleep after 20 s without input', () => {
+    expect(SLEEP_MS).toBe(20_000);
   });
 
   it('breathes: a small pitch that returns every BREATH_MS', () => {
@@ -109,37 +110,20 @@ describe('bubbleCells', () => {
     expect(cells.every((c) => all.has(key({ ...c, x: -c.x })))).toBe(true);
   });
 
-  // the ball hangs GUM_DROP rows below the lips: without a neck it floats in front of the mouth, seen from the side
-  it('is joined to the lips: a pink neck from the mouth, every cell touching the next', () => {
-    const cells = bubbleCells();
-    const key = (x: number, y: number, z: number) => `${String(x)},${String(y)},${String(z)}`;
-    const all = new Set(cells.map((c) => key(c.x, c.y, c.z)));
-    const lips = key(0, GUM_DROP, 0);
-    expect(all.has(lips)).toBe(true);
-    const seen = new Set([lips]);
-    const queue = [lips];
-    while (queue.length) {
-      const [x, y, z] = (queue.shift() ?? '').split(',').map(Number);
-      for (const [dx, dy, dz] of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) {
-        const next = key(x + dx, y + dy, z + dz);
-        if (all.has(next) && !seen.has(next)) {
-          seen.add(next);
-          queue.push(next);
-        }
-      }
-    }
-    expect(seen.size).toBe(all.size);
+  it('starts on the lips: a cell on their front face, in the middle of the mouth', () => {
+    expect(bubbleCells()).toContainEqual({ x: 0, y: 0, z: 0 });
   });
 });
 
 describe('GUM_LIPS', () => {
-  it('is the middle of the lips, under the nose: the bubble comes out of the mouth', () => {
+  it('is the middle of the lips, two rows below the nose: the bubble comes out of the mouth', () => {
     expect(moaiCell(0, GUM_LIPS.y, GUM_LIPS.z)).toBe('stoneDark');
-    expect(moaiCell(0, GUM_LIPS.y + 1, GUM_LIPS.z)).toBe('stoneLight');
+    expect(moaiCell(0, GUM_LIPS.y + 1, GUM_LIPS.z)).toBeNull();
+    expect(moaiCell(0, GUM_LIPS.y + 2, GUM_LIPS.z)).toBeNull();
+    expect(moaiCell(0, GUM_LIPS.y + 3, GUM_LIPS.z)).toBe('stoneLight');
   });
 
-  it('hangs the bubble from the lips, all of it below the nose, so the nose never seems to blow it', () => {
-    const rows = bubbleCells().map((c) => GUM_LIPS.y + c.y - GUM_DROP);
-    expect(Math.max(...rows)).toBe(GUM_LIPS.y);
+  it('keeps the bubble in front of the nose tip, never inside it', () => {
+    for (const c of bubbleCells()) expect(moaiCell(c.x, GUM_LIPS.y + c.y, GUM_LIPS.z + 1 + c.z)).toBeNull();
   });
 });

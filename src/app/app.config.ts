@@ -73,8 +73,10 @@ export const appConfig: ApplicationConfig = {
       };
       // A page opened at an anchor (/en/#work) is scrolled by the browser alone, often while the hero is still set in the
       // wider fallback font: once the condensed headline is in, the hero is shorter and the page sits past its section.
-      const opened = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (opened) void document.fonts.ready.then(() => { opened.scrollIntoView({ behavior: 'instant' }); });
+      // Then the motion effects start and refresh their pins: follow the section as a header link does (issue #270, the
+      // one-off scroll left #work 3px off in WebKit).
+      const opened = decodeURIComponent(location.hash.slice(1));
+      if (document.getElementById(opened)) void document.fonts.ready.then(() => { scroller.scrollToAnchor(opened); });
     }),
   ],
 };

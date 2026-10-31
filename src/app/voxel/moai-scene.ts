@@ -26,11 +26,17 @@ import {
 import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
-import { BUBBLE_MS, GUM_DROP, GUM_LIPS, Gaze, PHONE_GAZE, bubble, bubbleCells, breath, follow, gaze, glance, isPupil, scrollYaw, sectionProgress } from './motion';
+import { afterIntro } from '../motion/intro-state';
+import { BUBBLE_MS, GUM_LIPS, Gaze, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, isPupil, wave } from './motion';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
 const GUM = '--gum';
+/** The colour of closed eyelids: the stone of the face. */
+const LIDS = '--stone';
+/** The page counts as scrolling until this long after its last scroll event. */
+const SCROLL_REST_MS = 250;
+const WAKE_EVENTS = ['pointermove', 'pointerdown', 'keydown', 'wheel', 'scroll', 'touchstart'] as const;
 /** Two taps or clicks closer than this, and closer than DOUBLE_TAP_PX, blow a bubble. */
 const DOUBLE_TAP_MS = 350;
 const DOUBLE_TAP_PX = 12;
@@ -48,9 +54,22 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
 @Component({
   selector: 'app-moai-scene',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[attr.data-gaze]': 'gaze()', '[attr.data-gum]': 'gum() ? "" : null' },
+  host: {
+    '[attr.data-gaze]': 'gaze()',
+    '[attr.data-gum]': 'gum() ? "" : null',
+    '[attr.data-waving]': 'waving() ? "" : null',
+    '[attr.data-scrolling]': 'scrolling() ? "" : null',
+    '[attr.data-asleep]': 'asleep() ? "" : null',
+  },
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
+    @if (asleep()) {
+      <span class="zzz" aria-hidden="true">
+        @for (z of zs; track z) {
+          <svg viewBox="0 0 3 3"><path d="M0 0h3v1H0zM1 1h1v1H1zM0 2h3v1H0z" /></svg>
+        }
+      </span>
+    }
   `,
   styles: `
     :host {
@@ -64,6 +83,45 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
       height: 100%;
       touch-action: pan-y pinch-zoom;
     }
+    // asleep: pixel z's of 8px cells rise from the top of the head and fade, one after the other
+    .zzz {
+      position: absolute;
+      top: 2%;
+      left: 58%;
+      pointer-events: none;
+    }
+    svg {
+      position: absolute;
+      width: 24px;
+      fill: var(--px-4);
+      shape-rendering: crispEdges;
+      opacity: 0;
+      animation: zzz 3s steps(6) infinite;
+    }
+    svg:nth-child(2) {
+      animation-delay: 1s;
+    }
+    svg:nth-child(3) {
+      animation-delay: 2s;
+    }
+    :host-context(html[data-motion-paused]) svg {
+      animation-play-state: paused;
+    }
+    @keyframes zzz {
+      0% {
+        opacity: 0;
+        translate: 0 0;
+        scale: 0.5;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        translate: 24px -48px;
+        scale: 1;
+      }
+    }
   `,
 })
 export class MoaiScene {
@@ -71,13 +129,19 @@ export class MoaiScene {
   /** Fires after the first frame, so the still image can stay underneath until then. */
   readonly drawn = output();
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly ready = signal(false);
   protected readonly desktop = signal(false);
   /** Where the pixel pupils look, on desktop once the mouse moves (null keeps the eyes fully lit), fixed on phones. */
   protected readonly gaze = signal<Gaze | null>(null);
   /** While a bubble of pink gum is out (a double click or double tap on the moai). */
   protected readonly gum = signal(false);
+  /** The greeting, once per page load, after the intro. */
+  protected readonly waving = signal(false);
+  /** While the page scrolls the moai looks down. */
+  protected readonly scrolling = signal(false);
+  /** After SLEEP_MS without input: eyes closed, slower breath, pixel z's. Any input wakes it. */
+  protected readonly asleep = signal(false);
+  protected readonly zs = [0, 1, 2];
   // its idle life (breath, the phones' glances) stops with the one header pause button (WCAG 2.2.2)
   private readonly pause = inject(MotionPause);
 
@@ -141,7 +205,7 @@ export class MoaiScene {
     mesh.position.set(-0.5, 0, -0.5);
     pivot.add(mesh);
 
-    // the bubble gum: a ball of pink voxels hanging from the lips, its back on their front face; it grows from the lips
+    // the bubble gum: a ball of pink voxels blown from the lips, its back on their front face; it grows from the lips
     const gumCells = bubbleCells();
     const gumMaterial = new MeshLambertMaterial();
     const gumMesh = new InstancedMesh(geometry, gumMaterial, gumCells.length);
@@ -154,7 +218,6 @@ export class MoaiScene {
     const gumBall = new Group();
     gumBall.position.set(0, GUM_LIPS.y + 0.5, GUM_LIPS.z + 0.5);
     gumBall.visible = false;
-    gumMesh.position.y = -GUM_DROP;
     gumBall.add(gumMesh);
     pivot.add(gumBall);
     this.cleanups.push(() => {
@@ -192,9 +255,13 @@ export class MoaiScene {
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
-      const g = this.gaze();
+      const asleep = this.asleep();
+      const looking = this.gaze();
+      // while the page scrolls the pupils drop to the bottom of the eyes
+      const g = this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking;
       voxels.forEach((v, i) => {
-        const token = v.color === 'eye' && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
+        const eye = v.color === 'eye';
+        const token = eye && asleep ? LIDS : eye && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
         mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -223,7 +290,6 @@ export class MoaiScene {
     const themes = new MutationObserver(paint);
     themes.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-    const section = this.host.nativeElement.closest('section');
     let last = performance.now();
     let pointerX: number | null = null;
     let firstDrawn = false;
@@ -231,24 +297,33 @@ export class MoaiScene {
     let idle = 0;
     let look = 0;
     let lookTarget = 0;
+    let down = 0;
+    let waveT = -1;
+    let lastScroll = -Infinity;
     const frame = (now: number): void => {
       try {
         const elapsed = Math.max(0, now - last);
         const dt = Math.min(100, elapsed);
         last = now;
-        let scroll = 0;
-        if (section) {
-          const box = section.getBoundingClientRect();
-          scroll = sectionProgress(box.top, box.height, innerHeight);
-        }
         const paused = this.pause.paused();
-        if (!paused) idle += dt;
+        // asleep it breathes at half speed
+        if (!paused) idle += dt * (this.asleep() ? 0.5 : 1);
+        const scrolling = !paused && now - lastScroll < SCROLL_REST_MS;
+        if (scrolling !== this.scrolling()) {
+          this.scrolling.set(scrolling);
+          paint();
+        }
+        // the greeting runs on real time, not the capped step: on a slow page it still ends within its second
+        if (waveT >= 0 && !paused) waveT += elapsed;
+        if (this.waving() && waveT > WAVE_MS) this.waving.set(false);
         // a glance is a slow turn of a stone head, slower than the reply to a pointer. Eased over the real time that went
         // by (follow is exact for any step): on a busy phone drawing few frames, the capped dt slowed the head's way
         // back to rest after a pause past ten seconds (issue #203)
         look = this.desktop() ? follow(look, lookTarget, elapsed) : follow(look, paused ? 0 : glance(idle), elapsed, 700);
-        pivot.rotation.x = breath(idle);
-        pivot.rotation.y = scrollYaw(scroll) + this.drag + look;
+        down = follow(down, scrolling ? LOOK_DOWN : 0, elapsed);
+        pivot.rotation.x = breath(idle) + down;
+        pivot.rotation.y = this.drag + look;
+        pivot.rotation.z = wave(waveT);
         // no fly-in: the scene replaces a still image that is already on screen
         const size = gumStart === null ? null : bubble(now - gumStart);
         gumBall.visible = size !== null && size > 0;
@@ -370,6 +445,35 @@ export class MoaiScene {
     const onVisibility = (): void => {
       this.sync();
     };
+    const onScroll = (): void => {
+      lastScroll = performance.now();
+      // on a page drawing few frames (WebKit in CI, about 4 a second) the next frame may come after the rest: look down now
+      if (this.pause.paused() || this.scrolling()) return;
+      this.scrolling.set(true);
+      paint();
+    };
+    let lastInput = performance.now();
+    const onInput = (): void => {
+      lastInput = performance.now();
+      if (!this.asleep()) return;
+      this.asleep.set(false);
+      paint();
+    };
+    // the paused moai neither falls asleep nor wakes by itself: its clock starts again from the pause
+    const sleepTimer = window.setInterval(() => {
+      const now = performance.now();
+      if (this.pause.paused()) lastInput = now;
+      else if (!this.asleep() && now - lastInput > SLEEP_MS) {
+        this.asleep.set(true);
+        paint();
+      }
+    }, 1000);
+    for (const type of WAKE_EVENTS) addEventListener(type, onInput, { passive: true });
+    addEventListener('scroll', onScroll, { passive: true });
+    const cancelIntro = afterIntro(() => {
+      waveT = 0;
+      this.waving.set(true);
+    });
     canvas.addEventListener('webglcontextlost', onLost);
     canvas.addEventListener('pointerdown', onDown);
     canvas.addEventListener('pointermove', onMove);
@@ -398,6 +502,10 @@ export class MoaiScene {
       removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);
+      for (const type of WAKE_EVENTS) removeEventListener(type, onInput);
+      removeEventListener('scroll', onScroll);
+      clearInterval(sleepTimer);
+      cancelIntro();
     });
 
     resize();

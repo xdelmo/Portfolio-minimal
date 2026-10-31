@@ -1,15 +1,17 @@
-// radians the moai turns towards the viewer while its section crosses the screen: from the camera's 45° to facing it
-export const SCROLL_SWING = Math.PI / 4;
+/** The hello the moai waves as the home opens, in milliseconds: under a second. */
+export const WAVE_MS = 900;
 
-/** 0 while the section top is below the middle of the screen, 1 once its bottom is above it. */
-export function sectionProgress(top: number, height: number, viewport: number): number {
-  return Math.min(1, Math.max(0, (viewport / 2 - top) / height));
+/** Roll of the moai `t` ms into its hello, in radians: it rocks side to side twice, starting and ending level. */
+export function wave(t: number): number {
+  if (t < 0 || t > WAVE_MS) return 0;
+  return Math.sin((t / WAVE_MS) * Math.PI * 4) * Math.sin((t / WAVE_MS) * Math.PI) * 0.12;
 }
 
-/** Turns to face the viewer and back while the section scrolls: 0 at both ends, so the swap from the still image is invisible. */
-export function scrollYaw(progress: number): number {
-  return ((1 - Math.cos(progress * Math.PI * 2)) / 2) * SCROLL_SWING;
-}
+/** How long without any input before the moai falls asleep, in milliseconds. */
+export const SLEEP_MS = 20_000;
+
+// radians the moai bows its head while the page scrolls: it looks down at what passes by
+export const LOOK_DOWN = 0.18;
 
 /** One breath of the idle moai, in milliseconds. */
 export const BREATH_MS = 4000;
@@ -28,7 +30,7 @@ export function follow(current: number, target: number, dt: number, tau = 250): 
 /** How long the phones' moai holds each glance, in milliseconds. */
 export const GLANCE_MS = 2400;
 // radians: where it looks in turn; a repeated value is a pause, so it never sways like a metronome. Mostly towards
-// the viewer: the camera sits at 45°, and a wide turn the other way would show its profile (see scrollYaw)
+// the viewer: the camera sits at 45°, and a wide turn the other way would show its profile
 const GLANCES = [0, 0, 0.3, 0.3, -0.12, 0, 0, 0.18, 0.18, -0.1, 0, 0] as const;
 
 /**
@@ -73,18 +75,12 @@ export function bubble(t: number): number | null {
   return 1 + 0.25 * ((t - BUBBLE_GROW_MS - BUBBLE_HOLD_MS) / BUBBLE_POP_MS);
 }
 
-/** The model cell the bubble is blown from: the middle of the pursed lips, right under the nose. */
-export const GUM_LIPS = { y: 10, z: 4 } as const;
+/** The model cell the bubble is blown from: the middle of the pursed lips, two rows below the nose. */
+export const GUM_LIPS = { y: 8, z: 4 } as const;
 
 /**
- * Rows the ball hangs below the lips: its top row level with them. Centred on the lips it rose in front of the
- * long nose, and in the isometric view the nose seemed to end in the bubble.
- */
-export const GUM_DROP = 3;
-
-/**
- * The bubble as voxels: a ball of radius 3, z = 0 at the mouth and growing towards the viewer, joined to the lips
- * (the row GUM_DROP above its centre) by a neck of pink cubes.
+ * The bubble as voxels: a ball of radius 3 centred on the lips, z = 0 on their front face and growing towards the
+ * viewer. The lips sit two rows below the nose, so its top row stays clear of the nose's tip.
  */
 export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
   const cells: { x: number; y: number; z: number }[] = [];
@@ -95,6 +91,5 @@ export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
       }
     }
   }
-  for (let z = 0; !cells.some((c) => c.x === 0 && c.y === GUM_DROP && c.z === z); z++) cells.push({ x: 0, y: GUM_DROP, z });
   return cells;
 }

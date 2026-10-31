@@ -35,6 +35,7 @@ export function moaiCell(x: number, y: number, z: number): VoxelColor | null {
     if (ax === 5 && y >= 2 && z >= 0) return 'stoneDark';
     return 'stone';
   }
+  if (y === 8 && z === 4 && ax <= 2) return 'stoneDark'; // pursed lips, two rows below the nose
   if (y <= 9) return ax <= 4 && z <= 3 ? 'stone' : null; // neck
   if (y <= 20) {
     if (ax === 5) return y >= 11 && y <= 18 && (z === -1 || z === 0) ? 'stoneDark' : null; // long ears
@@ -43,7 +44,6 @@ export function moaiCell(x: number, y: number, z: number): VoxelColor | null {
       if (y >= 18 && y <= 19 && ax <= 3) return 'stoneLight'; // heavy brow
       if (ax === 0 && y >= 11) return 'stoneLight'; // long nose
       if (ax === 1 && y === 11) return 'stoneLight'; // nostrils
-      if (y === 10 && ax <= 2) return 'stoneDark'; // pursed lips
       return null;
     }
     return ax === 0 && y >= 11 && y <= 13 ? 'stoneLight' : null; // tip of the nose (z = 5)

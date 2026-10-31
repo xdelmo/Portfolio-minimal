@@ -1,9 +1,9 @@
 {
   "name": "portfolio",
-  "version": "0.0.0",
+  "version": "2.1.0",
   "scripts": {
     "ng": "ng",
-    "generate": "node scripts/public-repos.mjs && node --import ./scripts/ts-resolve.mjs scripts/blog.mjs",
+    "generate": "node scripts/version.mjs && node scripts/public-repos.mjs && node --import ./scripts/ts-resolve.mjs scripts/blog.mjs",
     "prepare": "git config core.hooksPath .githooks && npm run generate",
     "start": "npm run generate && (ng serve -c development-it --port 4201 & ng serve --port 4200)",
     "build": "npm run generate && ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",

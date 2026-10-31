@@ -57,45 +57,15 @@ test.describe('smooth scroll on desktop', () => {
     await expect.poll(() => page.locator('#work').evaluate((s) => Math.round(s.getBoundingClientRect().top))).toBeGreaterThanOrEqual(Math.floor(header) - 2);
   });
 
-  test('the moai stays in view while the About text scrolls, as sticky did', async ({ page }) => {
+  // issue #270: pinned through the smoother, moved by its transform
+  test('past the About the moai rests in the bottom-right corner, 16px from the edges', async ({ page }) => {
     await page.goto('/en/');
-    await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
-    const before = await settledTop(page, '.about-moai');
-    await page.evaluate(() => { window.scrollBy(0, 200); });
-    expect(Math.abs((await settledTop(page, '.about-moai')) - before)).toBeLessThan(4);
-  });
-
-  test('the moai sticks at its own top under the header, and stops at the end of the About section (issue #169)', async ({ page }) => {
-    await page.goto('/en/');
-    const stickyTop = await page.evaluate(() => {
-      const probe = document.createElement('div');
-      probe.style.height = 'calc(var(--header-h) + var(--space-8))';
-      document.body.append(probe);
-      const h = probe.offsetHeight;
-      probe.remove();
-      return h;
-    });
-    await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 100); });
-    expect(Math.abs((await settledTop(page, '.about-moai')) - stickyTop)).toBeLessThan(4);
-    // well past the section: the moai has left with it, its foot never below the section's
-    await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
-    await settledTop(page, '.about-moai');
-    const [moaiBottom, aboutBottom] = await page.evaluate(() => [
-      document.querySelector('.about-moai')?.getBoundingClientRect().bottom ?? 0,
-      document.getElementById('about')?.getBoundingClientRect().bottom ?? 0,
-    ]);
-    expect(moaiBottom).toBeLessThanOrEqual(aboutBottom + 1);
-  });
-
-  test('the moai keeps sticking when the About section grows after the page has loaded', async ({ page }) => {
-    await page.goto('/en/');
-    // 300 px more text: the pin measured its end on the shorter section (the WebKit failure of a pre-push run)
-    await page.locator('#about .about-text').evaluate((t) => { t.insertAdjacentHTML('beforeend', '<div style="height: 300px"></div>'); });
-    await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
-    const before = await settledTop(page, '.about-moai');
-    // past where the shorter section ended its pin
-    await page.evaluate(() => { window.scrollBy(0, 450); });
-    expect(Math.abs((await settledTop(page, '.about-moai')) - before)).toBeLessThan(4);
+    await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+    const top = await settledTop(page, 'app-moai-figure .body');
+    const bottom = await page.locator('app-moai-figure .body').evaluate((el) => document.documentElement.clientHeight - el.getBoundingClientRect().bottom);
+    expect(Math.abs(bottom - 16)).toBeLessThan(2);
+    await page.evaluate(() => { window.scrollBy(0, 600); });
+    expect(Math.abs((await settledTop(page, 'app-moai-figure .body')) - top)).toBeLessThan(2);
   });
 });
 

@@ -177,7 +177,7 @@ test.describe('experience', () => {
     // attempt, because late content (the moai, images) can still move the pin while the page settles
     const lastAtEnd = () =>
       page.evaluate(() => {
-        const spacer = document.querySelector<HTMLElement>('.pin-spacer');
+        const spacer = document.querySelector<HTMLElement>('#experience .pin-spacer');
         const section = document.querySelector<HTMLElement>('#experience .deck');
         // the pin ends once the spacer's extra height (spacer minus section) has been scrolled
         if (spacer && section) window.scrollTo(0, spacer.getBoundingClientRect().top + scrollY + spacer.offsetHeight - section.offsetHeight);
@@ -189,10 +189,10 @@ test.describe('experience', () => {
     await expect(last).toBeInViewport();
     await page.locator('#work h3 a').first().click();
     await expect(page).toHaveURL(/\/work\//);
-    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    await expect(page.locator('#experience .pin-spacer')).toHaveCount(0);
     await page.goBack();
     await ready(page);
-    await expect(page.locator('.pin-spacer')).toHaveCount(1);
+    await expect(page.locator('#experience .pin-spacer')).toHaveCount(1);
   });
 
   test('stacks as sticky cards on phones, and lets the next section through', async ({ page, isMobile }) => {
@@ -237,7 +237,7 @@ test.describe('experience', () => {
     await expect(chapters).toHaveCount(3);
     // at the start of the pin only the first chapter is lit and current
     await page.evaluate(() => {
-      const spacer = document.querySelector<HTMLElement>('.pin-spacer');
+      const spacer = document.querySelector<HTMLElement>('#experience .pin-spacer');
       if (spacer) window.scrollTo(0, spacer.getBoundingClientRect().top + scrollY - 96 + 2);
     });
     await expect(chapters.first()).toHaveAttribute('aria-current', 'step');

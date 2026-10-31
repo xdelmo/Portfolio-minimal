@@ -166,7 +166,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     .field {
       position: absolute;
-      inset: 0 calc(50% - 50vw);
+      inset: 0;
       z-index: -1;
       height: auto;
       // appears around the centred hero text, fading to transparent towards the edges

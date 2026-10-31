@@ -1,0 +1,35 @@
+name: Maintenance / Task
+description: Maintenance, chore, refactor, or tooling task
+labels: ["maintenance"]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What needs to be accomplished.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Detailed description of the work and rationale.
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Subtasks to complete.
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Notes
+      description: Any blockers, related issues, or notes.
+    validations:
+      required: false

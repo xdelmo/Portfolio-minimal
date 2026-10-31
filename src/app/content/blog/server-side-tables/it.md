@@ -4,7 +4,7 @@ description: Paginazione, ordinamento e filtri lato server per le tabelle PrimeN
 date: 2026-10-11
 project: apexflow
 ---
-Nelle prime settimane del mio tirocinio in IPS ho incontrato uno dei problemi più comuni, e più sottovalutati, del front end enterprise: tabelle di dati con paginazione e filtri lato server. Con dieci record carichi tutto e filtri nel browser. Con diecimila non puoi: il server pagina, ordina e filtra, e il front end deve chiedere ogni volta esattamente la fetta giusta quando qualcosa cambia.
+Nelle prime settimane del mio tirocinio in IPS ho incontrato uno dei problemi più comuni, e più sottovalutati, del frontend enterprise: tabelle di dati con paginazione e filtri lato server. Con dieci record carichi tutto e filtri nel browser. Con diecimila non puoi: il server pagina, ordina e filtra, e il frontend deve chiedere ogni volta esattamente la fetta giusta quando qualcosa cambia.
 
 Ho portato quell'esperienza direttamente nella mia tesi, ApexFlow. Clienti, ordini e prodotti sono tabelle PrimeNG in modalità lazy, e volevo lasciarmi alle spalle l'approccio in cui ogni cambiamento chiama a mano un metodo `load()`.
 
@@ -65,7 +65,7 @@ export class CustomerListComponent {
 ## Il risultato
 
 1. **Stato prevedibile.** Ogni tabella ha gli stessi pochi signal, e i parametri di una richiesta sono una funzione di quei signal: niente può andare fuori sincrono.
-2. **Componenti puliti.** Nessun `subscribe()` manuale, nessuna sottoscrizione da distruggere, nessun `load()` da ricordare. Un componente dichiara la sua tabella e cosa caricare.
-3. **Un'integrazione realistica.** Il front end delega davvero paginazione e filtri al server. Mentre l'API Spring Boot prendeva forma, al suo posto c'era un JSON Server con un piccolo middleware personalizzato; il contratto sono solo i parametri, quindi cambiare back end tocca il servizio, non le tabelle.
+2. **Componenti puliti.** Un componente dichiara la sua tabella e cosa caricare. Non chiama mai `subscribe()` né `load()`, quindi non ha sottoscrizioni da distruggere.
+3. **Un'integrazione realistica.** Il frontend delega davvero paginazione e filtri al server. Mentre l'API Spring Boot prendeva forma, al suo posto c'era un JSON Server con un piccolo middleware personalizzato; il contratto sono solo i parametri, quindi cambiare backend tocca il servizio, non le tabelle.
 
-Ogni tabella di ApexFlow riusa la stessa classe. Risolvere bene il problema una volta, sul campo, ha dato alla tesi una spina dorsale che da un libro non avrei progettato.
+Ogni tabella di ApexFlow riusa la stessa classe.

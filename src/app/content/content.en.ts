@@ -11,7 +11,7 @@ export const CONTENT_EN: SiteContent = {
     github: 'https://github.com/xdelmo',
     knowsAbout: ['Angular', 'Angular Signals', 'RxJS', 'TypeScript', 'NgRx', 'PrimeNG', 'Spring Boot', 'Model Context Protocol', 'AI-assisted development'],
     summary:
-      'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular front ends with Signals, RxJS and NgRx.',
+      'Emanuele Del Monte is a Frontend Engineer in Latina, Italy, who builds enterprise Angular frontends with Signals, RxJS and NgRx.',
   },
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
@@ -19,18 +19,18 @@ export const CONTENT_EN: SiteContent = {
       'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
   },
   hero: {
-    headline: 'Engineer by method, curious by nature: I\u00a0build fast, solid Angular interfaces, with a bit of play.',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I care about the parts users never see but always feel, and I hide an easter egg here and there.",
+    headline: 'Engineer by method, curious by nature.',
+    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   about: [
-    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise front ends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular front end and a Spring Boot back end.",
+    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise frontends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular frontend and a Spring Boot backend.",
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
   ],
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
-    { label: 'Experience', value: 'Building web front ends since 2022' },
+    { label: 'Experience', value: 'Building web frontends since 2022' },
     { label: 'Main stack', value: 'Angular, Signals, RxJS, NgRx, TypeScript' },
     { label: 'Education', value: 'BSc in Computer Engineering, Università Mercatorum, 2026' },
     { label: 'Languages', value: 'Italian (native), English (professional)' },
@@ -41,10 +41,10 @@ export const CONTENT_EN: SiteContent = {
       title: 'ApexFlow',
       role: 'My Computer Engineering thesis, built during my internship at IPS S.p.A. in 2026.',
       summary:
-        'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the front end, Spring Boot 3 and PostgreSQL on the back end.',
+        'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the frontend, Spring Boot 3 and PostgreSQL on the backend.',
       stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
       repos: [
-        { label: 'Front-end code', url: 'https://github.com/xdelmo/dashboard-tesi' },
+        { label: 'Frontend code', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
       image: {
@@ -55,13 +55,13 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'For my Computer Engineering thesis I wanted a project that faced real problems, not a toy. ApexFlow simulates a SaaS platform that a tech company would use to manage customers, subscriptions, products and orders, with the constraints of a production system.',
+          'For my Computer Engineering thesis I wanted a project with real problems to solve. ApexFlow simulates a SaaS platform that a tech company would use to manage customers, subscriptions, products and orders, with the constraints of a production system.',
         architecture: [
           'Angular 19 single-page app with standalone components and Signals for state.',
           'PrimeNG for data-heavy components: tables, forms, dialogs and toasts.',
           'Role-based access with route guards (admin-only settings, profile pages limited to the owner or an admin).',
           'HTTP interceptors that attach the bearer token and turn API errors into toast notifications in one place.',
-          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; front end on Vercel, back end on Render.',
+          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; frontend on Vercel, backend on Render.',
         ],
         decisions: [
           {
@@ -73,8 +73,8 @@ export const CONTENT_EN: SiteContent = {
             body: 'A TablePaginationState class keeps page, sort and filters in the URL and bridges signals and observables with toSignal and toObservable. Changing a filter or a page triggers exactly one API call, and every table in the app reuses the same logic.',
           },
           {
-            title: 'Spring Boot instead of a JavaScript back end',
-            body: 'NestJS would have kept everything in TypeScript, but Spring Boot is what most enterprise teams run. Making the two worlds talk taught me more than staying in one.',
+            title: 'Spring Boot instead of a JavaScript backend',
+            body: 'NestJS would have kept everything in TypeScript, but Spring Boot is what most of the job posts I read asked for next to Angular. With two languages, the contract between client and server has to be explicit: every field the frontend relies on is a decision.',
           },
         ],
         outcome:
@@ -98,7 +98,7 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so it is a commercial use: no official text or image may appear anywhere, and every clue has to be our own.',
+          'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so the use is commercial: no official text or image may appear anywhere, and every clue has to be our own.',
         architecture: [
           'A classic WordPress theme for the whole site (home, blog, pages) and a plugin with its own tables, a REST API and WP-CLI commands.',
           'A React app built with Vite, embedded through a shortcode: the grid, the Collection of caught Pokémon, achievements and coins.',
@@ -112,7 +112,7 @@ export const CONTENT_EN: SiteContent = {
           },
           {
             title: 'Original clues composed from facts',
-            body: 'Clues are composed from facts such as type, generation, height and weight, imported from PokéAPI, and any clue that names the answer is rejected. No official text is ever copied.',
+            body: 'The generator composes each clue from facts such as type, generation, height and weight, imported from PokéAPI, and rejects any clue that names the answer. No official text is ever copied.',
           },
           {
             title: 'One puzzle a day, cached until midnight',
@@ -173,8 +173,8 @@ export const CONTENT_EN: SiteContent = {
       org: 'Web agency',
       summary: 'About two years building CRMs, single-page apps and e-commerce sites for clients.',
       highlights: [
-        'Flexie, a B2B configurator for flexible packaging: more than 100 combinations of materials, formats and accessories, priced in real time.',
-        'Custom WordPress plugins for e-commerce sites, and third-party REST APIs wired into them.',
+        'Built Flexie, a B2B configurator for flexible packaging: more than 100 combinations of materials, formats and accessories, priced in real time.',
+        'Wrote custom WordPress plugins for e-commerce sites and wired third-party REST APIs into them.',
       ],
       tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],
     },
@@ -186,7 +186,7 @@ export const CONTENT_EN: SiteContent = {
       summary: 'Joined the frontend team while finishing my degree.',
       highlights: [
         'Built ApexFlow, a dashboard for complex data, in Angular 19 with Signals.',
-        'Filtering and pagination over large data sets, role-based permissions, unit tests.',
+        'Added server-side filtering and pagination over large data sets, role-based permissions and unit tests.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
@@ -196,11 +196,11 @@ export const CONTENT_EN: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'Product team of an enterprise platform for cybersecurity.',
+      summary: 'On the product team of an enterprise cybersecurity platform.',
       highlights: [
-        'Legacy components moved to Signals, with facades over the NgRx store.',
-        'A query builder for advanced filters on big data, in Kendo Grid.',
-        'A custom HTML5 video player with search inside its subtitles.',
+        'Moved legacy components to Signals, with facades over the NgRx store.',
+        'Built a query builder for advanced filters on big data in Kendo Grid.',
+        'Built a custom HTML5 video player that searches inside its subtitles.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },
@@ -232,7 +232,7 @@ export const CONTENT_EN: SiteContent = {
   privacy: {
     updated: 'Last updated: 10 October 2026',
     intro:
-      'This site is my personal portfolio. It has no analytics, no ads, no tracking and no third-party scripts: it only keeps in your browser what it needs to remember your choices.',
+      'This site is my personal portfolio. It loads only its own scripts, without analytics or ads, and keeps in your browser only what it needs to remember your choices.',
     sections: [
       {
         heading: 'Who is responsible',

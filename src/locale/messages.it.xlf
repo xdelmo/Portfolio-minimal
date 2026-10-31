@@ -176,7 +176,7 @@
       </trans-unit>
       <trans-unit id="notFound.work" datatype="html">
         <source>My work</source>
-        <target>Lavori</target>
+        <target>Progetti</target>
       </trans-unit>
       <trans-unit id="notFound.contact" datatype="html">
         <source>Contact</source>
@@ -252,7 +252,7 @@
       </trans-unit>
       <trans-unit id="case.architecture" datatype="html">
         <source>How it is built</source>
-        <target>Come è costruito</target>
+        <target>Com'è costruito</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
           <context context-type="linenumber">42,43</context>
@@ -452,7 +452,7 @@
       </trans-unit>
       <trans-unit id="blog.project" datatype="html">
         <source>The project behind it</source>
-        <target>Il progetto dietro</target>
+        <target>Il progetto dietro l'articolo</target>
       </trans-unit>
       <trans-unit id="blog.linkedin" datatype="html">
         <source>First posted on LinkedIn</source>
@@ -483,8 +483,8 @@
         <target>Blog</target>
       </trans-unit>
       <trans-unit id="blog.lede" datatype="html">
-        <source>Notes from building Angular front ends: what I tried, what broke, what I would do again.</source>
-        <target>Appunti dal costruire front end in Angular: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
+        <source>Notes from building Angular frontends: what I tried, what broke, what I would do again.</source>
+        <target>Appunti dal lavoro sui frontend in Angular: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
       </trans-unit>
       <trans-unit id="blog.description" datatype="html">
         <source>Notes on Angular, Signals, RxJS and Spring Boot by <x id="name" equiv-text="person.name"/>.</source>
@@ -495,7 +495,7 @@
         <target>Ne ho scritto</target>
       </trans-unit>
       <trans-unit id="contactPrompt.lead" datatype="html">
-        <source>Looking for a front-end engineer?</source>
+        <source>Looking for a frontend engineer?</source>
         <target>Cerchi un frontend engineer?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">

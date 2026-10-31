@@ -44,14 +44,14 @@ Logging in and out are just two `set()` calls. Every view that reads the user up
 
 ## What disappeared
 
-- **Manual subscriptions.** Not one `subscribe()` in a component to follow the auth state, so no `ngOnDestroy`, no `takeUntil`, no leak to hunt when a page is left.
+- **Manual subscriptions.** No component calls `subscribe()` to follow the auth state, so there is nothing to tear down in `ngOnDestroy` and nothing leaks when a page is left.
 - **Order bugs.** A signal always has a value. A guard never runs before the first emission, because there is no first emission.
 - **Guessing in the debugger.** The state is a value: put a breakpoint anywhere and read it, instead of tapping a pipe to see what went through it.
 
 ## Where RxJS stays
 
-Signals did not replace RxJS in ApexFlow, they gave it a narrower job. Time is still RxJS: the HTTP call that logs in is an `Observable`, and so are debounced search boxes and requests that must cancel the one before them. Signals hold *what is true now*; observables describe *what happens over time*. The two meet through `toSignal` and `toObservable`, which I used for the server-side tables (the next post).
+In ApexFlow, Signals gave RxJS a narrower job. Time is still RxJS: the HTTP call that logs in is an `Observable`, and so are debounced search boxes and requests that must cancel the one before them. Signals hold *what is true now*; observables describe *what happens over time*. The two meet through `toSignal` and `toObservable`, which I used for the server-side tables (the next post).
 
 ## Would I do it again?
 
-Yes, and from the first commit. If you are starting a new Angular project today, put its state in signals and keep RxJS for the events and the async work it was made for. The code reads like a description of the state rather than a set of instructions for keeping it consistent, and that is most of what I wanted from it.
+Yes, and from the first commit. If you are starting a new Angular project today, put its state in signals and keep RxJS for the events and the async work it was made for. The code reads like a description of the state rather than a set of instructions for keeping it consistent.

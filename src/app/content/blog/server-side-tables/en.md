@@ -4,7 +4,7 @@ description: Server-side pagination, sorting and filters for PrimeNG tables, wit
 date: 2026-10-11
 project: apexflow
 ---
-In my first weeks as an intern at IPS I met one of the most common, and most underestimated, problems of enterprise front ends: data tables with pagination and filters done on the server. With ten records you load everything and filter in the browser. With ten thousand you cannot: the server pages, sorts and filters, and the front end has to ask for exactly the right slice every time something changes.
+In my first weeks as an intern at IPS I met one of the most common, and most underestimated, problems of enterprise frontends: data tables with pagination and filters done on the server. With ten records you load everything and filter in the browser. With ten thousand you cannot: the server pages, sorts and filters, and the frontend has to ask for exactly the right slice every time something changes.
 
 I took that experience straight into my thesis, ApexFlow. Its customers, orders and products are PrimeNG tables in lazy mode, and I wanted to leave behind the approach where every change calls a `load()` method by hand.
 
@@ -65,7 +65,7 @@ export class CustomerListComponent {
 ## The result
 
 1. **Predictable state.** Every table has the same handful of signals, and the parameters of a request are a function of them: nothing can drift apart.
-2. **Clean components.** No manual `subscribe()`, no subscription to destroy, no `load()` to remember. A component declares its table and what to fetch.
-3. **A realistic integration.** The front end really delegates paging and filtering to the server. While the Spring Boot API was being built, a JSON Server with a small custom middleware stood in for it; the parameters are the only contract, so switching back end touches the service, not the tables.
+2. **Clean components.** A component declares its table and what to fetch. It never calls `subscribe()` or `load()`, so it has no subscription to destroy.
+3. **A realistic integration.** The frontend really delegates paging and filtering to the server. While the Spring Boot API was being built, a JSON Server with a small custom middleware stood in for it; the parameters are the only contract, so switching backend touches the service, not the tables.
 
-Every table in ApexFlow reuses the same class. Solving the problem properly once, in the field, gave the thesis a backbone I would not have designed from a textbook.
+Every table in ApexFlow reuses the same class.

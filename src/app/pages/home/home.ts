@@ -134,9 +134,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       padding-block: var(--space-8) var(--space-12);
     }
     .hero h1 {
-      // 44 → 88px: the text alone fills the hero (the moai lives in the About, issue #270), and at 1280×800 the
-      // two-clause headline (issue #271) still keeps lede and buttons above the fold
-      font-size: clamp(2.747rem, 1.4rem + 4.4vw, 5.5rem);
+      // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),
+      // and the short headline (issue #280) keeps lede and buttons above the fold, so the base h1 size applies
       // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
       // the hero effect widens it as the hero scrolls away (desktop, issue #131)

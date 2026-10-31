@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from './fixtures';
 
 const EMAIL = 'info@emanueledelmonte.it';
+const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
 
 test.describe('contact finale', () => {
   for (const [lang, name, lede] of [
@@ -55,7 +57,7 @@ test.describe('footer', () => {
   test('ends the page with the year, my profiles and a way back up, without repeating the address', async ({ page }) => {
     await page.goto('/en/');
     const footer = page.locator('app-site-footer footer');
-    await expect(footer.locator('p')).toHaveText(`© ${String(new Date().getFullYear())} Emanuele Del Monte`);
+    await expect(footer.locator('p')).toHaveText(`© ${String(new Date().getFullYear())} Emanuele Del Monte · v${version}`);
     await expect(footer.getByRole('link', { name: 'Email' })).toHaveAttribute('href', `mailto:${EMAIL}`);
     await expect(footer.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('rel', /\bme\b/);
     await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveAttribute('rel', /\bme\b/);

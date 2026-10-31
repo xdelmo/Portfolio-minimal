@@ -57,3 +57,6 @@ src/locale/messages.xlf
 
 # written at every build by scripts/blog.mjs (issue #1)
 /src/app/content/blog.generated.ts
+
+# written at every build by scripts/version.mjs (issue #291)
+/src/app/core/version.generated.ts

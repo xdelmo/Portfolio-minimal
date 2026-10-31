@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, afterNextRender, computed, inject, 
 import { RouterLink } from '@angular/router';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { CONTENT } from '../content/content';
+import { APP_VERSION } from '../core/version.generated';
 
 /**
  * The end of every page: the year, a way back up, my profiles, the privacy page, and the door to the easter egg (craft.wild.as closes
@@ -13,7 +14,7 @@ import { CONTENT } from '../content/content';
   imports: [RouterLink],
   template: `
     <footer class="site-footer container band band--ink">
-      <p>© {{ year }} {{ content.person.name }}</p>
+      <p>© {{ year }} {{ content.person.name }} · v{{ version }}</p>
       <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
         ><span i18n="@@footer.top">Back to top</span
         ><svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
@@ -155,6 +156,7 @@ import { CONTENT } from '../content/content';
 export class SiteFooter {
   protected readonly content = inject(CONTENT);
   protected readonly year = new Date().getFullYear();
+  protected readonly version = APP_VERSION;
   protected readonly ready = signal(false);
 
   constructor() {

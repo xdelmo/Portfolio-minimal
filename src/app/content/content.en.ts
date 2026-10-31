@@ -186,7 +186,7 @@ export const CONTENT_EN: SiteContent = {
       summary: 'Joined the frontend team while finishing my degree.',
       highlights: [
         'Built ApexFlow, a dashboard for complex data, in Angular 19 with Signals.',
-        'Added server-side filtering and pagination over large data sets, role-based permissions and unit tests.',
+        'Added server-side filtering, pagination, role-based permissions and unit tests.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },

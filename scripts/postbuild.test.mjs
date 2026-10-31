@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { initialScripts, withFontPreload } from './postbuild-helpers.mjs';
+import { SW_KILL_SWITCH, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
 
 const html = '<html><head><base href="/en/"><link rel="stylesheet" href="styles.css"></head><body></body></html>';
 
@@ -28,4 +28,23 @@ test('lists the entry module and its modulepreloads once each', () => {
 
 test('ignores inline scripts', () => {
   assert.deepEqual(initialScripts('<script>window.x = 1</script>'), []);
+});
+
+// issue #289: the old Gatsby site's service worker kept serving it at / to its past visitors
+test('the /sw.js kill switch empties the caches, unregisters itself and reloads its pages', async () => {
+  const listeners = {};
+  const done = [];
+  const self = {
+    addEventListener: (type, fn) => (listeners[type] = fn),
+    skipWaiting: () => done.push('skipWaiting'),
+    registration: { unregister: async () => done.push('unregister') },
+    clients: { matchAll: async () => [{ url: 'https://x/', navigate: (url) => done.push(`navigate ${url}`) }] },
+  };
+  const caches = { keys: async () => ['a', 'b'], delete: async (key) => done.push(`delete ${key}`) };
+  new Function('self', 'caches', SW_KILL_SWITCH)(self, caches);
+  listeners.install();
+  let work;
+  listeners.activate({ waitUntil: (p) => (work = p) });
+  await work;
+  assert.deepEqual(done, ['skipWaiting', 'delete a', 'delete b', 'unregister', 'navigate https://x/']);
 });

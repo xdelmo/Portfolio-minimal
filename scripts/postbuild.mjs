@@ -9,7 +9,7 @@ import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
 import { onlyPublic } from '../src/app/content/public-repos.ts';
 import { withScriptsAfterPaint } from './after-paint.mjs';
 import { geoFiles } from './geo-files.mjs';
-import { INITIAL_JS_BUDGET, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
+import { INITIAL_JS_BUDGET, SW_KILL_SWITCH, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
 import { HASHED_FILE, contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
@@ -66,6 +66,7 @@ console.log(`postbuild: ${String(geo.length)} Markdown and llms files`);
 
 await writeFile(join(ROOT, 'sitemap.xml'), sitemapXml(pages));
 await writeFile(join(ROOT, 'robots.txt'), robotsTxt(SITE_URL));
+await writeFile(join(ROOT, 'sw.js'), SW_KILL_SWITCH);
 await writeFile(join(ROOT, '_redirects'), redirectsFile(pages));
 const hashes = inlineScriptHashes(htmls);
 const hashed = (await readdir(ROOT, { recursive: true })).map((path) => path.split(sep).join('/')).filter((path) => HASHED_FILE.test(path)).sort();

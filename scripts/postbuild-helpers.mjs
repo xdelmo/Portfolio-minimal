@@ -16,3 +16,18 @@ export function initialScripts(html) {
   for (const [, href] of html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)) found.add(href);
   return [...found];
 }
+
+/**
+ * Published as /sw.js (issue #289). The old Gatsby site registered a service worker there (gatsby-plugin-offline,
+ * scope /) that kept answering / from its cache to past visitors; a 404 on /sw.js leaves it installed, so the browser's
+ * next update check must find this one: it empties the caches, unregisters itself and reloads the open pages.
+ */
+export const SW_KILL_SWITCH = `self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) await caches.delete(key);
+    await self.registration.unregister();
+    for (const client of await self.clients.matchAll({ type: 'window' })) client.navigate(client.url);
+  })());
+});
+`;

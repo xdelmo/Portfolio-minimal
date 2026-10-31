@@ -73,7 +73,7 @@ describe('CaseStudy', () => {
   it('labels each repository link', async () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());
-    expect(labels).toEqual(['Front-end code', 'Open the live demo']);
+    expect(labels).toEqual(['Frontend code', 'Open the live demo']);
   });
 
   it('leads with the demo when no code is public, and drops the row when there is neither', async () => {

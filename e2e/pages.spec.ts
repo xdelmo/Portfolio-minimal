@@ -56,7 +56,7 @@ test('case study has canonical and hreflang links', async ({ page }) => {
 
 const WILD = {
   en: { title: 'A wild 404 appeared!', menu: 'What to do', prompt: 'What will you do?', hints: ['Go and see the projects.', 'Write to me.', 'Open the player card.', 'Back to the home page.'], moves: ['My work', 'Contact', 'Bag: the player card', 'Run: to the home page'] },
-  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', prompt: 'Cosa vuoi fare?', hints: ['Vai a vedere i progetti.', 'Scrivimi.', 'Apri la scheda giocatore.', 'Torna alla home.'], moves: ['Lavori', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
+  it: { title: 'È apparso un 404 selvatico!', menu: 'Cosa fare', prompt: 'Cosa vuoi fare?', hints: ['Vai a vedere i progetti.', 'Scrivimi.', 'Apri la scheda giocatore.', 'Torna alla home.'], moves: ['Progetti', 'Contatti', 'Zaino: la scheda giocatore', 'Fuggi: alla home'] },
 };
 for (const [locale, { title, menu: label, moves, hints, prompt }] of Object.entries(WILD)) {
   test(`the ${locale} 404 is a wild encounter with a battle menu`, async ({ page, request }) => {

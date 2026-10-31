@@ -28,6 +28,6 @@ test('every link to a repository carries the pixel GitHub mark, hidden from assi
       await expect(link).toHaveAccessibleName((await link.innerText()).trim());
     }
   }
-  // Since #262 only ApexFlow's front end is left, and it is private: the check comes back once a repository is public.
+  // Since #262 only ApexFlow's frontend is left, and it is private: the check comes back once a repository is public.
   test.skip(total === 0, 'no public repository is linked today');
 });

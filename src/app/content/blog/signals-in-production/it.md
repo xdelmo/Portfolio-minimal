@@ -44,14 +44,14 @@ Login e logout sono due chiamate a `set()`. Ogni vista che legge l'utente si agg
 
 ## Cosa è sparito
 
-- **Le sottoscrizioni manuali.** Nessun `subscribe()` nei componenti per seguire lo stato di autenticazione: niente `ngOnDestroy`, niente `takeUntil`, nessun leak da cercare quando si lascia una pagina.
+- **Le sottoscrizioni manuali.** Nessun componente chiama `subscribe()` per seguire lo stato di autenticazione, quindi non c'è niente da chiudere in `ngOnDestroy` e niente resta in memoria quando si lascia una pagina.
 - **I bug di ordine.** Un signal ha sempre un valore. Una guard non gira mai prima della prima emissione, perché una prima emissione non c'è.
 - **Le ipotesi nel debugger.** Lo stato è un valore: metti un breakpoint ovunque e lo leggi, invece di aggiungere un `tap` per vedere cosa è passato.
 
 ## Dove resta RxJS
 
-In ApexFlow i Signals non hanno sostituito RxJS, gli hanno dato un compito più preciso. Il tempo resta a RxJS: la chiamata HTTP del login è un `Observable`, e lo sono le ricerche con debounce e le richieste che devono annullare quella prima. I signal tengono *ciò che è vero adesso*; gli observable descrivono *ciò che succede nel tempo*. I due si incontrano con `toSignal` e `toObservable`, che ho usato per le tabelle lato server (il prossimo articolo).
+In ApexFlow i Signals hanno dato a RxJS un compito più preciso. Il tempo resta a RxJS: la chiamata HTTP del login è un `Observable`, e lo sono le ricerche con debounce e le richieste che devono annullare quella prima. I signal tengono *ciò che è vero adesso*; gli observable descrivono *ciò che succede nel tempo*. I due si incontrano con `toSignal` e `toObservable`, che ho usato per le tabelle lato server (il prossimo articolo).
 
 ## Lo rifarei?
 
-Sì, e dal primo commit. Se oggi inizi un progetto Angular, metti lo stato nei signal e tieni RxJS per gli eventi e il lavoro asincrono per cui è nato. Il codice si legge come una descrizione dello stato, non come una serie di istruzioni per tenerlo coerente, ed era soprattutto questo che cercavo.
+Sì, e dal primo commit. Se oggi inizi un progetto Angular, metti lo stato nei signal e tieni RxJS per gli eventi e il lavoro asincrono per cui è nato. Il codice si legge come una descrizione dello stato, non come una serie di istruzioni per tenerlo coerente.

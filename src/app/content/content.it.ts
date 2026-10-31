@@ -20,8 +20,8 @@ export const CONTENT_IT: SiteContent = {
       'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
   },
   hero: {
-    headline: 'Ingegnere per metodo, curioso per natura: costruisco interfacce Angular veloci e solide, con un pizzico di gioco.',
-    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Curo le parti che gli utenti non vedono ma sentono sempre, e qua e là nascondo un easter egg.',
+    headline: 'Ingegnere per metodo, curioso per natura.',
+    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Costruisco interfacce Angular veloci e solide, e qua e là nascondo un easter egg.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about: [
@@ -53,10 +53,10 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Per la tesi in Ingegneria Informatica volevo un progetto che affrontasse problemi reali, non un esercizio. ApexFlow simula una piattaforma SaaS con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'Per la tesi in Ingegneria Informatica volevo un progetto con problemi reali da risolvere. ApexFlow simula una piattaforma SaaS con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
         architecture: [
           'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
-          'PrimeNG per i componenti pieni di dati: tabelle, form, dialog e notifiche.',
+          'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
           'Accesso basato sui ruoli con route guard (impostazioni solo per gli admin, pagine profilo visibili al proprietario o a un admin).',
           'Interceptor HTTP che aggiungono il token e trasformano gli errori delle API in notifiche, in un unico punto.',
           'API REST in Spring Boot 3 su Java 21 con Spring Data JPA, PostgreSQL e Docker; frontend su Vercel, backend su Render.',
@@ -64,7 +64,7 @@ export const CONTENT_IT: SiteContent = {
         decisions: [
           {
             title: 'Signals per lo stato, RxJS dove conta il tempo',
-            body: "Lo stato dell'autenticazione vive nei signal, così i componenti non si iscrivono né si disiscrivono a mano. RxJS resta dove è lo strumento giusto: il debounce dei filtri e l'annullamento delle richieste superate.",
+            body: "Lo stato dell'autenticazione vive nei signal, così i componenti non si iscrivono né si disiscrivono a mano. RxJS resta dove è lo strumento giusto: il debounce dei filtri e l'annullamento delle richieste non più attuali.",
           },
           {
             title: 'Tabelle lato server con una sola classe di stato riutilizzabile',
@@ -72,7 +72,7 @@ export const CONTENT_IT: SiteContent = {
           },
           {
             title: 'Spring Boot invece di un backend JavaScript',
-            body: 'NestJS mi avrebbe tenuto tutto in TypeScript, ma Spring Boot è quello che usa la maggior parte dei team enterprise. Far parlare due mondi diversi mi ha insegnato più che restare in uno solo.',
+            body: 'Con NestJS avrei scritto tutto in TypeScript, ma Spring Boot era lo stack che la maggior parte degli annunci che leggevo chiedeva accanto ad Angular. Con due linguaggi il contratto tra client e server deve essere esplicito: ogni campo su cui conta il frontend è una scelta.',
           },
         ],
         outcome:
@@ -92,7 +92,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi è un uso commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l\'uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
           'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
           "Un'app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
@@ -106,7 +106,7 @@ export const CONTENT_IT: SiteContent = {
           },
           {
             title: 'Indizi originali composti da fatti',
-            body: "Gli indizi sono composti da fatti come tipo, generazione, altezza e peso, importati da PokéAPI, e ogni indizio che nomina la risposta viene scartato. Nessun testo ufficiale viene copiato.",
+            body: "Il generatore compone ogni indizio da fatti come tipo, generazione, altezza e peso, importati da PokéAPI, e scarta quelli che nominano la risposta. Nessun testo ufficiale viene copiato.",
           },
           {
             title: 'Un cruciverba al giorno, in cache fino a mezzanotte',
@@ -165,8 +165,8 @@ export const CONTENT_IT: SiteContent = {
       org: 'Web agency',
       summary: 'Circa due anni a costruire CRM, single-page app ed e-commerce per i clienti.',
       highlights: [
-        'Flexie, un configuratore B2B per packaging flessibile: più di 100 combinazioni di materiali, formati e accessori, con il prezzo calcolato in tempo reale.',
-        'Plugin WordPress su misura per gli e-commerce, collegati ad API REST di terze parti.',
+        'Ho costruito Flexie, un configuratore B2B per packaging flessibile: più di 100 combinazioni di materiali, formati e accessori, con il prezzo calcolato in tempo reale.',
+        'Ho scritto plugin WordPress su misura per gli e-commerce e li ho collegati ad API REST di terze parti.',
       ],
       tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],
     },
@@ -178,7 +178,7 @@ export const CONTENT_IT: SiteContent = {
       summary: 'Sono entrato nel team frontend mentre finivo la laurea.',
       highlights: [
         'Ho costruito ApexFlow, una dashboard per dati complessi, in Angular 19 con Signals.',
-        'Filtri e paginazione su grandi dataset, permessi per ruolo, unit test.',
+        'Ho aggiunto filtri e paginazione lato server su grandi dataset, permessi per ruolo e unit test.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'Case study di ApexFlow' },
@@ -188,11 +188,11 @@ export const CONTENT_IT: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'Nel team di prodotto di un gestionale enterprise per la cybersecurity.',
+      summary: 'Nel team di prodotto di una piattaforma enterprise per la cybersecurity.',
       highlights: [
-        'Componenti legacy portati su Signals, con facade sullo store NgRx.',
-        'Un query builder per filtri avanzati su big data, in Kendo Grid.',
-        'Un player video HTML5 su misura con ricerca nei sottotitoli.',
+        'Ho portato i componenti legacy su Signals, con facade sullo store NgRx.',
+        'Ho costruito un query builder per filtri avanzati su big data, in Kendo Grid.',
+        'Ho sviluppato un player video HTML5 su misura con ricerca nei sottotitoli.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },
@@ -224,7 +224,7 @@ export const CONTENT_IT: SiteContent = {
   privacy: {
     updated: 'Ultimo aggiornamento: 10 ottobre 2026',
     intro:
-      'Questo sito è il mio portfolio personale. Non ha statistiche, pubblicità, tracciamento né script di terze parti: tiene nel tuo browser solo quello che serve a ricordare le tue scelte.',
+      'Questo sito è il mio portfolio personale. Carica solo i propri script, senza statistiche né pubblicità, e tiene nel tuo browser solo quello che serve a ricordare le tue scelte.',
     sections: [
       {
         heading: 'Chi è il titolare',

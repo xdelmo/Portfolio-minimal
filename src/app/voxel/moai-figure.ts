@@ -40,12 +40,12 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
         // shorter than the about text, so the pin has room beside it, and never taller than the screen below the header
         height: min(26rem, calc(100svh - var(--header-h) - 2 * var(--space-8)));
       }
-      // its box stays where the pin holds it, so it lets clicks through; only the small moai's own scene takes them
-      // (a double click still blows the bubble)
+      // its box stays where the pin holds it, so it lets clicks through; only the small moai takes them, its scene (a
+      // double click still blows the bubble) or, without WebGL, the still image
       :host([data-corner]) {
         pointer-events: none;
       }
-      :host([data-corner]) app-moai-scene {
+      :host([data-corner]) .body {
         pointer-events: auto;
       }
       .body {

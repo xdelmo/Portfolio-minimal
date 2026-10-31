@@ -12,15 +12,17 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
   host: { '[style.aspect-ratio]': 'ratio', '[style.--moai-bleed]': 'bleed' },
   template: `
     <!-- the still moai stays underneath until the 3D scene has drawn its first frame -->
-    <img class="still still--light" [class.covered]="drawn()" [src]="image.src" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
-    <img class="still still--dark" [class.covered]="drawn()" [src]="image.darkSrc" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
-    @if (live() && !failed()) {
-      @defer (on viewport) {
-        <app-moai-scene class="layer" (drawn)="drawn.set(true)" (failed)="drawn.set(false); failed.set(true)" />
-      } @placeholder {
-        <span class="layer"></span>
+    <span class="body">
+      <img class="still still--light" [class.covered]="drawn()" [src]="image.src" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
+      <img class="still still--dark" [class.covered]="drawn()" [src]="image.darkSrc" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
+      @if (live() && !failed()) {
+        @defer (on viewport) {
+          <app-moai-scene class="layer" (drawn)="drawn.set(true)" (failed)="drawn.set(false); failed.set(true)" />
+        } @placeholder {
+          <span class="layer"></span>
+        }
       }
-    }
+    </span>
   `,
   styles: `
     @use 'styles/breakpoints' as bp;
@@ -30,6 +32,29 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
       display: block;
       width: min(60%, 14rem);
     }
+    // desktop: pinned beside the About and moved into the corner as the About scrolls away (motion/effects/moai.ts),
+    // where it lets the clicks beside it through; on the inner box, never the pinned host, whose box the pin measures
+    @include bp.up(lg) {
+      :host {
+        width: auto;
+        // shorter than the about text, so the pin has room beside it, and never taller than the screen below the header
+        height: min(26rem, calc(100svh - var(--header-h) - 2 * var(--space-8)));
+      }
+      // its box stays where the pin holds it, so it lets clicks through; only the small moai's own scene takes them
+      // (a double click still blows the bubble)
+      :host([data-corner]) {
+        pointer-events: none;
+      }
+      :host([data-corner]) app-moai-scene {
+        pointer-events: auto;
+      }
+      .body {
+        translate: var(--moai-x, 0) var(--moai-y, 0);
+        scale: var(--moai-s, 1);
+        transform-origin: 100% 100%;
+      }
+    }
+    .body,
     .still,
     .layer {
       position: absolute;
@@ -54,13 +79,6 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
     }
     .covered {
       visibility: hidden;
-    }
-    @include bp.up(lg) {
-      :host {
-        width: auto;
-        // shorter than the about text, so the sticky column has room to pin it, and never taller than the screen below the header
-        height: min(26rem, calc(100svh - var(--header-h) - 2 * var(--space-8)));
-      }
     }
   `,
 })

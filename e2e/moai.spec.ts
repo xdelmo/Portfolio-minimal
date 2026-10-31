@@ -15,13 +15,15 @@ function collectErrors(page: Page): string[] {
   return errors;
 }
 
-test('swaps the still image for the 3D moai once it is in view', async ({ page }) => {
+// issue #270: the moai is in the About, in view once the About scrolls in, so the scene may cover the still before any check
+test('swaps the still image for the 3D moai once it has drawn', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  await expect(still(page)).toHaveCount(1);
+  await expect(page.locator('app-moai-figure img.still')).toHaveCount(2);
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
+  await expect(still(page)).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
@@ -225,23 +227,6 @@ test.describe('without JavaScript', () => {
   });
 });
 
-test('stays pinned on desktop while the about text scrolls', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'the pin is desktop only');
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/en/');
-  const top = async (offset: number): Promise<number | undefined> => {
-    await page.locator('#about').evaluate((el, by) => {
-      window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + by);
-    }, offset);
-    await page.waitForTimeout(100);
-    return (await page.locator('app-moai-figure').boundingBox())?.y;
-  };
-  const first = await top(150);
-  const second = await top(250);
-  expect(first).toBeDefined();
-  expect(second).toBeCloseTo(first ?? Number.NaN, 0);
-});
-
 test.describe('in dark theme with reduced motion', () => {
   test.use({ reducedMotion: 'reduce', colorScheme: 'dark' });
 
@@ -360,65 +345,193 @@ test('the bubble ends on time even when the moai stops drawing (scrolled away mi
   await expect(host).not.toHaveAttribute('data-gum');
 });
 
-test('stays whole at the end of its section on desktop: no burst into cubes (removed on request)', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'the scroll drives the moai on desktop only');
-  await page.setViewportSize({ width: 1440, height: 900 });
+// issue #270: the moai is the site's mascot, in the About
+test('waves hello once, after the intro', async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { waves: number };
+    w.waves = 0;
+    new MutationObserver((records) => {
+      for (const r of records) if ((r.target as Element).hasAttribute('data-waving')) w.waves++;
+    }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-waving'] });
+  });
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  // the width of the drawn moai: the columns that hold at least one opaque pixel
-  const widthAt = async (progress: number): Promise<number> => {
-    await page.locator('#about').evaluate((el, p) => {
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, top - innerHeight / 2 + p * el.getBoundingClientRect().height);
-    }, progress);
-    await page.waitForTimeout(400);
-    return scene(page).evaluate((c) => {
-      const canvas = c as HTMLCanvasElement;
-      const copy = document.createElement('canvas');
-      copy.width = canvas.width;
-      copy.height = canvas.height;
-      const ctx = copy.getContext('2d');
-      if (!ctx) return -1;
-      ctx.drawImage(canvas, 0, 0);
-      const { data } = ctx.getImageData(0, 0, copy.width, copy.height);
-      let min = copy.width;
-      let max = -1;
-      for (let i = 3; i < data.length; i += 4) {
-        if (data[i] > 0) {
-          const x = ((i - 3) / 4) % copy.width;
-          min = Math.min(min, x);
-          max = Math.max(max, x);
-        }
-      }
-      return (max - min) / copy.width;
-    });
-  };
-  // WebKit may hand back an empty WebGL buffer between frames (-1 = no opaque pixel): read until a frame is there,
-  // or an empty end frame would pass the comparison by itself
-  let middle = -1;
-  await expect.poll(async () => (middle = await widthAt(0.5))).toBeGreaterThan(0);
-  let end = -1;
-  await expect.poll(async () => (end = await widthAt(0.97))).toBeGreaterThan(0);
-  expect(end).toBeLessThan(middle * 1.25);
+  const waves = () => page.evaluate(() => (window as unknown as { waves: number }).waves);
+  await expect.poll(waves).toBe(1);
+  // the wave lasts under a second, then the attribute goes and no second one comes
+  await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-waving');
+  await page.waitForTimeout(1000);
+  expect(await waves()).toBe(1);
 });
 
-// desktop: the moai stays beside the text as it scrolls, fully below the sticky header, at least 400px tall
-for (const height of [720, 900]) {
-  test(`on desktop the moai pins below the header, whole, beside the text (${String(height)}px tall)`, async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height });
+test('looks down while the page scrolls, and up again once it stops', async ({ page }) => {
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  // the scene only draws, and so only notices the scroll, while it is in view: centre it and scroll a little
+  await page.locator('app-moai-figure').evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+  await expect(scene(page)).toBeVisible();
+  const host = page.locator('app-moai-scene');
+  await expect(host).not.toHaveAttribute('data-scrolling');
+  // the page counts as scrolling for only 250 ms after the last scroll: a poll can miss it on a busy machine, an observer cannot
+  const lookedDown = await host.evaluate(
+    (el) =>
+      new Promise<boolean>((resolve) => {
+        const seen = new MutationObserver(() => {
+          if (el.hasAttribute('data-scrolling')) resolve(true);
+        });
+        seen.observe(el, { attributes: true, attributeFilter: ['data-scrolling'] });
+        window.scrollBy(0, 100);
+        setTimeout(() => { resolve(false); }, 5000);
+      }),
+  );
+  expect(lookedDown).toBe(true);
+  await expect(host).not.toHaveAttribute('data-scrolling');
+});
+
+test.describe('sleep', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install();
+  });
+
+  test('falls asleep after 20 s without input, with pixel z\'s, and the mouse wakes it', async ({ page }) => {
     await page.goto('/en/');
-    await page.evaluate(() => {
-      const about = document.querySelector('#about');
-      if (about) scrollTo(0, about.getBoundingClientRect().top + scrollY + 300);
-    });
-    const [headerBottom, top, bottom] = await page.evaluate(() => {
-      const moai = document.querySelector('app-moai-figure')?.getBoundingClientRect();
-      return [document.querySelector('app-site-header header')?.getBoundingClientRect().bottom ?? 0, moai?.top ?? 0, moai?.bottom ?? 0];
-    });
-    expect(top).toBeGreaterThanOrEqual(headerBottom + 56);
-    expect(bottom).toBeLessThanOrEqual(height - 56);
-    expect(bottom - top).toBeGreaterThanOrEqual(400);
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const host = page.locator('app-moai-scene');
+    await page.clock.fastForward('00:10');
+    await expect(host).not.toHaveAttribute('data-asleep');
+    await page.clock.fastForward('00:12');
+    await expect(host).toHaveAttribute('data-asleep', '');
+    await expect(host.locator('.zzz')).toBeAttached();
+    await page.mouse.move(200, 200);
+    await expect(host).not.toHaveAttribute('data-asleep');
+    await expect(host.locator('.zzz')).toHaveCount(0);
+  });
+
+  test('does not fall asleep while the animations are paused', async ({ page }) => {
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    await press(page, 'Pause animations');
+    await page.clock.fastForward('00:25');
+    await page.clock.fastForward('00:25');
+    await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-asleep');
+  });
+});
+
+const rect = (page: Page, selector = 'app-moai-figure .body') => page.locator(selector).evaluate((el) => el.getBoundingClientRect().toJSON() as DOMRect);
+
+for (const [width, height] of [[1280, 800], [1440, 900]]) {
+  test(`on desktop the moai stands whole beside the About's text, inside the window (${String(width)} x ${String(height)})`, async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width, height });
+    await page.goto('/en/');
+    await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
+    await expect(page.locator('app-moai-figure')).not.toHaveAttribute('data-corner');
+    await expect.poll(async () => {
+      const [moai, text] = await Promise.all([rect(page), rect(page, '.about-text')]);
+      return moai.left >= text.right - 1 && moai.top >= 0 && moai.bottom <= height;
+    }).toBe(true);
   });
 }
+
+test('on desktop it shrinks into the bottom-right corner as the About scrolls away, lets clicks through, and comes back', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const figure = page.locator('app-moai-figure');
+  const home = await rect(page);
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+  await expect(figure).toHaveAttribute('data-corner', '');
+  const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
+  await expect.poll(async () => {
+    const r = await rect(page);
+    return [Math.round(r.height), Math.round(w - r.right), Math.round(h - r.bottom)];
+  }).toEqual([140, 16, 16]);
+  // what is beside it gets the click; the small moai keeps its own
+  const r = await rect(page);
+  const hit = (x: number, y: number) => page.evaluate(([px, py]) => document.elementFromPoint(px, py)?.closest('app-moai-figure') != null, [x, y]);
+  expect(await hit(r.left - 40, r.top + r.height / 2)).toBe(false);
+  expect(await hit(r.left + r.width / 2, r.top - 20)).toBe(false);
+  expect(await hit(r.left + r.width / 2, r.top + r.height / 2)).toBe(true);
+  await page.evaluate(() => { window.scrollTo(0, 0); });
+  await expect(figure).not.toHaveAttribute('data-corner');
+  await expect.poll(async () => {
+    const r = await rect(page);
+    return [Math.round(r.top), Math.round(r.left), Math.round(r.height)];
+  }).toEqual([Math.round(home.top), Math.round(home.left), Math.round(home.height)]);
+});
+
+// the About is a band: the bands and the side quests after it must not paint over the moai in the corner
+test('in the corner it stays on top of every section it passes over', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  for (const id of ['experience', 'side-quests', 'stack', 'contact']) {
+    await page.locator(`#${id}`).evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
+    await expect(page.locator('app-moai-figure')).toHaveAttribute('data-corner', '');
+    await expect.poll(async () => {
+      const r = await rect(page);
+      return page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('app-moai-figure') != null, [r.left + r.width / 2, r.top + r.height / 2]);
+    }, { message: `over #${id}` }).toBe(true);
+  }
+});
+
+test('in the corner a double click on the small moai still blows the bubble', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 200); });
+  await expect(page.locator('app-moai-figure')).toHaveAttribute('data-corner', '');
+  await expect.poll(async () => Math.round((await rect(page)).height)).toBe(140);
+  const r = await rect(page);
+  await page.mouse.dblclick(r.left + r.width / 2, r.top + r.height / 2);
+  await expect(page.locator('app-moai-scene')).toHaveAttribute('data-gum', '');
+});
+
+// a reparented pin stayed fixed while a refresh measured it: past the About, a resize or coming back to the home put
+// the moai a scroll's length below the window
+test('coming back to the home past the About, and after a resize there, it is still in the corner', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  // well past the About: the resize makes it taller
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+  await expect(page.locator('app-moai-figure')).toHaveAttribute('data-corner', '');
+  const inCorner = async () => {
+    const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
+    await expect.poll(async () => {
+      const r = await rect(page);
+      return [Math.round(r.height), Math.round(w - r.right), Math.round(h - r.bottom)];
+    }).toEqual([140, 16, 16]);
+  };
+  await page.setViewportSize({ width: 1300, height: 820 });
+  await inCorner();
+  await page.getByRole('link', { name: 'ApexFlow' }).first().click();
+  await expect(page.locator('h1')).toHaveText('ApexFlow');
+  await page.goBack();
+  // the router restores the page where the link was (#work, above the About): the pin is measured there
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+  await inCorner();
+});
+
+// issue #109: a resize across 1024px reverts the desktop effect; the phone layout must not keep the corner's shrink
+test('back in the About on a narrow window after a resize from the corner', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+  await expect(page.locator('app-moai-figure')).toHaveAttribute('data-corner', '');
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.locator('#about').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY); });
+  await expect(page.locator('app-moai-figure')).not.toHaveAttribute('data-corner');
+  await expect.poll(async () => {
+    const [moai, about] = await Promise.all([rect(page), rect(page, '#about')]);
+    return moai.top >= about.top && moai.bottom <= about.bottom && moai.left >= about.left && moai.right <= about.right && moai.height > 140;
+  }).toBe(true);
+});

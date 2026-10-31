@@ -142,4 +142,14 @@ test.describe('the abstract field', () => {
     const onTop = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('h1') !== null, [title.x + 20, title.y + title.height / 2]);
     expect(onTop).toBe(true);
   });
+
+  test('it is masked to fade out towards the edges (issue #287)', async ({ page }) => {
+    await page.goto('/en/');
+    const mask = await page.locator('.hero app-pixel-field').evaluate((el) => {
+      const style = getComputedStyle(el);
+      return style.maskImage || style.getPropertyValue('-webkit-mask-image');
+    });
+    expect(mask).toContain('radial-gradient');
+    expect(mask).toMatch(/transparent|rgba\(0,\s*0,\s*0,\s*0\)/);
+  });
 });

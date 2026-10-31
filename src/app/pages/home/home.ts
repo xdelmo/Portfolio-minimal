@@ -160,7 +160,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       gap: var(--space-2);
       margin-top: var(--space-3);
     }
-    // the field fills the whole hero, edge to edge, behind the text
+    // the field sits behind the hero text, fading out towards the edges (issue #287)
     .hero {
       isolation: isolate;
     }
@@ -169,8 +169,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       inset: 0 calc(50% - 50vw);
       z-index: -1;
       height: auto;
-      // alive at the edges, faint behind the centred text so the words keep their contrast
-      mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, rgb(0 0 0 / 0.35), #000);
+      // appears around the centred hero text, fading to transparent towards the edges
+      mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
     }
     .contact {
       display: grid;

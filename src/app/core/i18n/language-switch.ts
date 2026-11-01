@@ -38,10 +38,10 @@ const COVER_MS = 500;
           <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" d="M2 0h4v1H2zM1 1h1v1H1zM6 1h1v1H6zM0 2h1v4H0zM7 2h1v4H7zM1 6h1v1H1zM6 6h1v1H6zM2 7h4v1H2zM3 1h2v6H3zM1 3h6v2H1z" />
           </svg>
-          <!-- phones show the code, to leave the header room for the name; the full name is still read out -->
+          <!-- tablets show the code, to leave the bar room for the call to action; the full name is still read out -->
           <span class="lang-name"><span class="visually-hidden" i18n="@@lang.label">Language:</span> {{ names[current] }}</span>
           <span class="lang-code" aria-hidden="true">{{ current.toUpperCase() }}</span>
-          <svg class="chevron" viewBox="0 0 8 8" width="12" height="12" shape-rendering="crispEdges" aria-hidden="true">
+          <svg class="chevron" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" d="M1 2h2v1H1zM5 2h2v1H5zM2 3h2v1H2zM4 3h2v1H4zM3 4h2v1H3z" />
           </svg>
         </summary>
@@ -62,7 +62,6 @@ const COVER_MS = 500;
       min-height: 48px;
       padding-inline: var(--space-1);
       color: var(--fg);
-      font-weight: 600;
       list-style: none;
       cursor: pointer;
     }
@@ -79,7 +78,7 @@ const COVER_MS = 500;
       clip-path: inset(50%);
       white-space: nowrap;
     }
-    @include bp.up(md) {
+    @include bp.up(lg) {
       .lang-name {
         position: static;
         width: auto;
@@ -95,7 +94,7 @@ const COVER_MS = 500;
       display: none;
     }
     .chevron {
-      transition: transform 0.2s ease;
+      transition: transform 120ms steps(2);
     }
     [open] .chevron {
       transform: rotate(180deg);
@@ -145,16 +144,21 @@ const COVER_MS = 500;
       background: none;
       box-shadow: none;
     }
+    // the current language's square starts on the menu rows' left edge
     ul.languages li > * {
       min-height: 48px;
+      padding-inline: var(--space-2) var(--space-3);
     }
     [aria-current]::before {
       content: '';
       position: absolute;
-      left: calc(var(--space-1) + 5px);
-      width: 6px;
-      height: 6px;
+      left: calc(var(--space-1) + 4px);
+      width: 8px;
+      height: 8px;
       background: var(--accent);
+    }
+    ul.languages [aria-current]::before {
+      left: 0;
     }
     @media (prefers-reduced-motion: reduce) {
       .chevron {

@@ -1,6 +1,10 @@
-import { expect, test } from './fixtures';
+import { expect, test, type Page } from './fixtures';
 
 const WIDTHS = [320, 375, 768, 1024, 1440, 1920];
+
+/** Where the header row ends: the root clips sideways, so a row that overflows only shows in its children's boxes. */
+const headerRight = (page: Page): Promise<number> =>
+  page.locator('app-site-header header > *').evaluateAll((items) => Math.max(...items.map((el) => el.getBoundingClientRect().right)));
 
 for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
@@ -193,9 +197,7 @@ for (const width of [1280, 1024]) {
     const lines = await name.locator('span').evaluateAll((spans) => spans.map((s) => Math.round(s.getBoundingClientRect().top)));
     expect(lines).toHaveLength(2);
     expect(lines[1]).toBeGreaterThan(lines[0]);
-    // the header row still fits: nothing pushed off the right edge
-    const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
-    expect(right).toBeLessThanOrEqual(width);
+    expect(await headerRight(page)).toBeLessThanOrEqual(width);
   });
 }
 
@@ -205,9 +207,23 @@ for (const width of [768, 390, 320]) {
     await page.goto('/en/');
     await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
     await expect(page.locator('app-site-header .logo .name')).toBeHidden();
-    const right = await page.locator('app-site-header .controls').evaluate((el) => el.getBoundingClientRect().right);
-    expect(right).toBeLessThanOrEqual(width);
+    expect(await headerRight(page)).toBeLessThanOrEqual(width);
   });
+}
+
+// issue #305: the primary button is in the bar on every width, in both languages, and leads to the contact
+for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const) {
+  for (const width of [1280, 1024, 768, 390, 320]) {
+    test(`the header carries the call to action and still fits, /${lang}/ at ${String(width)}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 640 });
+      await page.goto(`/${lang}/`);
+      const cta = page.locator('app-site-header .cta');
+      await expect(cta).toBeVisible();
+      await expect(cta).toHaveText(label);
+      await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);
+      expect(await headerRight(page)).toBeLessThanOrEqual(width);
+    });
+  }
 }
 
 test('back to top sits in the middle of the footer, with an arrow pointing up', async ({ page }) => {

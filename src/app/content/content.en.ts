@@ -49,9 +49,9 @@ export const CONTENT_EN: SiteContent = {
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'ApexFlow dashboard with total revenue, pending orders, active and total customers, the yearly revenue chart and the navigation sidebar',
-        width: 1600,
-        height: 1011,
+        alt: 'The orders page of the ApexFlow dashboard: a table of order IDs, dates, customers, service types, totals and payment statuses, with sorting, filters and pagination, beside the navigation sidebar',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -92,9 +92,9 @@ export const CONTENT_EN: SiteContent = {
       demoUrl: 'https://sbustiamobro.it',
       image: {
         src: 'images/work/pokeverba.jpg',
-        alt: "PokèVerba's daily Pokémon crossword: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
-        width: 1600,
-        height: 1011,
+        alt: "PokèVerba's daily Pokémon crossword with two words filled in: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -133,9 +133,9 @@ export const CONTENT_EN: SiteContent = {
       demoUrl: 'https://wedding-3d-invite-demo-five.vercel.app/',
       image: {
         src: 'images/work/wedding-invite.jpg',
-        alt: 'The closed invitation: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L, above the hint to tap and open it',
-        width: 1600,
-        height: 1011,
+        alt: 'The closed invitation up close: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:

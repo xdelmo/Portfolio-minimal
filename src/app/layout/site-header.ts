@@ -18,7 +18,6 @@ import { SiteMenu } from './site-menu';
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
-        <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
         <a data-magnetic routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" i18n="@@nav.blog">Blog</a>
       </nav>
@@ -91,7 +90,7 @@ import { SiteMenu } from './site-menu';
       min-height: 48px;
       color: var(--fg);
       text-decoration: none;
-      // a two-word item ("Chi sono") must stay on one line, also while its letters scramble
+      // an item stays on one line, also while its letters scramble
       white-space: nowrap;
     }
     // one underline for hover and for the section you are in (issue #229): a hard 2px line that draws itself in steps

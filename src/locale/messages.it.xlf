@@ -74,14 +74,6 @@
           <context context-type="linenumber">16,17</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="nav.contact" datatype="html">
-        <source>Contact</source>
-        <target>Contatti</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
-          <context context-type="linenumber">17,19</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="case.stack" datatype="html">
         <source>Technologies</source>
         <target>Tecnologie</target>

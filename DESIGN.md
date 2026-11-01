@@ -206,7 +206,7 @@ A hard-edged tag holding the pixel GitHub mark and the repository name.
 Full-bleed coloured backgrounds behind a section (see Colors). On desktop a band grows from an inset block with a hard clip; its top and bottom meet the page through a seam of crumbling pixels.
 
 ### Navigation
-A fixed header outside the scrolling content: the `edm.` mark (with the full name in tracked capitals from 1024px), section links, language switch, theme toggle and the single motion pause button. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
+A fixed header outside the scrolling content: the `edm.` mark (with the full name in tracked capitals from 1024px), section links, language switch, the single motion pause button, theme toggle and, last, the bar's one filled element: the primary "Contact me" button, on every width (on phones a compact key between the mark and the menu button, 40px tall, 44px on touch screens; the other links and the controls are in the menu). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
 
 ### The living objects
 The hero pixel field, the voxel moai, the tool rings, the ambient orbs, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.

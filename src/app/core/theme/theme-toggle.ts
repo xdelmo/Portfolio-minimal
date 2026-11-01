@@ -6,7 +6,7 @@ import { ThemeService } from './theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button type="button" class="theme-toggle" (click)="switchTheme($event)" [attr.aria-label]="label()">
-      <svg [class]="themes.theme() === 'dark' ? 'sun' : 'moon'" viewBox="0 0 8 8" width="24" height="24" shape-rendering="crispEdges" aria-hidden="true">
+      <svg [class]="themes.theme() === 'dark' ? 'sun' : 'moon'" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
         @if (themes.theme() === 'dark') {
           <path fill="currentColor" d="M3 0h2v1H3zM3 7h2v1H3zM0 3h1v2H0zM7 3h1v2H7zM1 1h1v1H1zM6 1h1v1H6zM1 6h1v1H1zM6 6h1v1H6zM2 2h4v4H2z" />
         } @else {

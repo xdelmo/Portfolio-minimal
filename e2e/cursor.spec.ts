@@ -4,7 +4,8 @@ const cursor = (page: Page) => page.locator('app-pixel-cursor .pixel-cursor');
 const ready = (page: Page) => expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
 // the lean lives in the `translate` property, apart from hover transforms
 const translate = (page: Page, selector: string) =>
-  page.locator(selector).first().evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
+  // strict on purpose: a selector that starts matching a second element fails here, instead of measuring the wrong one (issue #305)
+  page.locator(selector).evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
 
 // a title's words, not its full-width block (SplitText wraps them in lines as wide as the column)
 const words = (title: Locator) =>
@@ -106,9 +107,9 @@ test.describe('on a desktop with a mouse', () => {
     const box = await button.boundingBox();
     if (!box) throw new Error('no button');
     await button.hover({ position: { x: box.width - 4, y: box.height / 2 } });
-    await expect.poll(() => translate(page, 'a.button--primary')).toBeGreaterThan(1);
+    await expect.poll(() => translate(page, '.hero a.button--primary')).toBeGreaterThan(1);
     await page.getByRole('heading', { level: 1 }).hover();
-    await expect.poll(() => translate(page, 'a.button--primary')).toBeCloseTo(0, 0);
+    await expect.poll(() => translate(page, '.hero a.button--primary')).toBeCloseTo(0, 0);
   });
 });
 

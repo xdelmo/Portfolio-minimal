@@ -47,9 +47,9 @@ export const CONTENT_IT: SiteContent = {
       ],
       image: {
         src: 'images/work/apexflow.jpg',
-        alt: 'La dashboard di ApexFlow con fatturato totale, ordini in attesa, clienti attivi e totali, il grafico annuale del fatturato e la barra di navigazione',
-        width: 1600,
-        height: 1011,
+        alt: 'La pagina ordini della dashboard di ApexFlow: una tabella con ID ordine, data, cliente, tipo di servizio, totale e stato del pagamento, con ordinamento, filtri e paginazione, accanto alla barra di navigazione',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -86,9 +86,9 @@ export const CONTENT_IT: SiteContent = {
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {
         src: 'images/work/pokeverba.jpg',
-        alt: 'Il cruciverba Pokémon del giorno di PokèVerba: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
-        width: 1600,
-        height: 1011,
+        alt: 'Il cruciverba Pokémon del giorno di PokèVerba con due parole inserite: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -125,9 +125,9 @@ export const CONTENT_IT: SiteContent = {
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
       image: {
         src: 'images/work/wedding-invite.jpg',
-        alt: "L'invito chiuso: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L, sopra l'invito a toccarla per aprirla",
-        width: 1600,
-        height: 1011,
+        alt: "L'invito chiuso da vicino: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L",
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:

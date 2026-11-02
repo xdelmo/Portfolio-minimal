@@ -5,6 +5,9 @@
 [ "$3" = 1 ] || exit 0
 [ "$1" = "$2" ] && exit 0
 git diff --quiet "$1" "$2" -- package-lock.json && exit 0
+# Only on a developer's machine: Netlify keeps the hooks in its cached clone and checks out before npm exists (issue #298).
+[ -n "$CI" ] || [ -n "$NETLIFY" ] && exit 0
 export PATH="$HOME/.local/node/current/bin:$PATH"
+command -v npm >/dev/null 2>&1 || { echo "post-checkout: npm not found, skipping npm ci"; exit 0; }
 echo "post-checkout: package-lock.json changed, running npm ci and playwright install"
 npm ci --no-audit --no-fund && npx playwright install chromium firefox

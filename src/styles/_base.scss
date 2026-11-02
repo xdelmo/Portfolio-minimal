@@ -67,6 +67,11 @@ p {
   text-wrap: pretty;
 }
 
+/* the system's one emphasis weight, not the browser's 700 */
+strong {
+  font-weight: 600;
+}
+
 a {
   color: var(--link);
   text-underline-offset: 0.2em;

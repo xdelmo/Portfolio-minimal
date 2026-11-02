@@ -12,7 +12,7 @@ const BG = '#e5e5e5';
 const FG = '#1d1d1c';
 const MUTED = '#555555';
 const PIXELS = ['#0066d4', '#7fb2ec', '#b9d5f5', '#c9b8f5', '#dccff8', '#ffc9a8'];
-const FONT = readFileSync('node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2').toString('base64');
+const FONT = readFileSync('node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wdth-normal.woff2').toString('base64');
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 // 5×7 bitmap font for "edm." (the hero field drew it once; it lives here since the field went abstract)
@@ -62,10 +62,10 @@ for (const [locale, c] of [['en', CONTENT_EN], ['it', CONTENT_IT]]) {
   ];
   for (const [key, title, line] of cards) {
     await page.setContent(`<style>
-      @font-face { font-family: 'Instrument Sans'; src: url(data:font/woff2;base64,${FONT}) format('woff2'); font-weight: 400 700; }
+      @font-face { font-family: 'Instrument Sans'; src: url(data:font/woff2;base64,${FONT}) format('woff2'); font-weight: 400 700; font-stretch: 75% 100%; }
       body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: ${BG}; color: ${FG}; font-family: 'Instrument Sans'; display: flex; }
       main { flex: 1; padding: 64px 0 64px 72px; display: flex; flex-direction: column; justify-content: space-between; }
-      h1 { margin: 0; font-size: 76px; line-height: 1.04; letter-spacing: -0.02em; font-weight: 700; }
+      h1 { margin: 0; font-size: 80px; line-height: 1.02; letter-spacing: -0.01em; font-weight: 600; font-variation-settings: 'wdth' 75; text-wrap: balance; }
       p { margin: 28px 0 0; font-size: 32px; line-height: 1.3; color: ${MUTED}; max-width: 20em; }
       footer { font-size: 28px; font-weight: 600; }
       svg { flex: none; margin: 0 40px 0 24px; align-self: center; }

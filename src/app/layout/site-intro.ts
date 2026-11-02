@@ -41,10 +41,12 @@ import { MotionHost } from '../motion/motion-host';
     }
     .name {
       margin: 0;
-      font-size: clamp(2.5rem, 1rem + 6vw, 6rem);
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.03em;
+      // the same type as the hero's h1, which shows this name right after
+      font-size: var(--step-hero);
+      font-weight: 600;
+      font-variation-settings: 'wdth' 75;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
       text-align: center;
     }
     .letter {

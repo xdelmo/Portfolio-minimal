@@ -39,13 +39,15 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
+      <div class="copy" #copy>
       <h1 id="hero-title">{{ content.hero.headline }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
       <div class="actions">
         <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
         <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
-      <app-pixel-field class="field" />
+      </div>
+      <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
     </section>
 
@@ -121,15 +123,18 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 
     // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport on every
     // screen (issue #104: on phones it used to end with the text); svh: the screen with Safari's bars showing
-    .hero {
-      position: relative;
+    .hero,
+    .copy {
       display: grid;
-      align-content: center;
       // centred both ways, a poster on the first screen (issue #270)
       justify-items: center;
-      text-align: center;
       // the headline's descenders need room above the lede; the buttons stand apart as their own group
       gap: var(--space-4);
+    }
+    .hero {
+      position: relative;
+      align-content: center;
+      text-align: center;
       min-height: calc(100svh - var(--header-h));
       padding-block: var(--space-8) var(--space-12);
     }
@@ -160,7 +165,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       gap: var(--space-2);
       margin-top: var(--space-3);
     }
-    // the field sits behind the hero text, fading out towards the edges (issue #287)
+    // the field sits behind the hero text: a cloud around a clearing for it (issue #304)
     .hero {
       isolation: isolate;
     }
@@ -168,10 +173,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       position: absolute;
       inset: 0;
       z-index: -1;
-      height: auto;
-      // appears around the centred hero text, fading to transparent towards the edges
-      mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
     }
     .contact {
       display: grid;

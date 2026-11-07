@@ -64,3 +64,23 @@ test('the Italian copy button speaks Italian', async ({ page }) => {
   await page.goto(`/it/blog/${POST}`);
   await expect(page.locator('app-code-block').first().getByRole('button', { name: 'Copia il codice' })).toBeVisible();
 });
+
+test('the article offers back-to-all link, reading progress, and adjacent navigation (issue #315)', async ({ page }) => {
+  await page.goto(`/en/blog/${POST}`);
+  const back = page.locator('.intro .back-link');
+  await expect(back).toBeVisible();
+  await expect(page.locator('.reading-progress')).toBeAttached();
+  const adjacent = page.locator('.adjacent .adjacent-card');
+  await expect(adjacent.first()).toBeVisible();
+});
+
+test('article copy link button copies current URL to clipboard (issue #315)', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'reading the clipboard back needs the permissions only Chromium grants');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto(`/en/blog/${POST}`);
+  const copyBtn = page.locator('.meta-row .action-btn');
+  await expect(copyBtn).toBeVisible();
+  await copyBtn.click();
+  await expect(copyBtn).toContainText('Copied');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(`/en/blog/${POST}`);
+});

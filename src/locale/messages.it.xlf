@@ -482,6 +482,38 @@
         <source>Notes on Angular, Signals, RxJS and Spring Boot by <x id="name" equiv-text="person.name"/>.</source>
         <target>Appunti su Angular, Signals, RxJS e Spring Boot di <x id="name" equiv-text="person.name"/>.</target>
       </trans-unit>
+      <trans-unit id="blog.readMore" datatype="html">
+        <source>Read article</source>
+        <target>Leggi l'articolo</target>
+      </trans-unit>
+      <trans-unit id="blog.backToAll" datatype="html">
+        <source>All posts</source>
+        <target>Tutti gli articoli</target>
+      </trans-unit>
+      <trans-unit id="blog.copyLink" datatype="html">
+        <source>Copy link</source>
+        <target>Copia link</target>
+      </trans-unit>
+      <trans-unit id="blog.linkCopied" datatype="html">
+        <source>Copied</source>
+        <target>Copiato</target>
+      </trans-unit>
+      <trans-unit id="blog.linkCopiedStatus" datatype="html">
+        <source>Article link copied to clipboard</source>
+        <target>Link dell'articolo copiato negli appunti</target>
+      </trans-unit>
+      <trans-unit id="blog.adjacent" datatype="html">
+        <source>Adjacent articles</source>
+        <target>Articoli adiacenti</target>
+      </trans-unit>
+      <trans-unit id="blog.prevPost" datatype="html">
+        <source>Previous post</source>
+        <target>Articolo precedente</target>
+      </trans-unit>
+      <trans-unit id="blog.nextPost" datatype="html">
+        <source>Next post</source>
+        <target>Articolo successivo</target>
+      </trans-unit>
       <trans-unit id="case.posts" datatype="html">
         <source>I wrote about it</source>
         <target>Ne ho scritto</target>

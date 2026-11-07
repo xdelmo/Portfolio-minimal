@@ -149,6 +149,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
       font-variation-settings: 'wdth' 100;
+      // the approved mockup's proportion (issue #304): the headline about 55% of the hero's width, so the cloud's
+      // clearing stays an ellipse around it instead of a box (44px on phones, 96px on wide screens)
+      font-size: clamp(2.747rem, 5.3vw, 6rem);
+      line-height: 0.98;
+      letter-spacing: -0.025em;
       // the two voices stand on their own lines: the method, then the voice (issue #304)
       .method,
       .voice {
@@ -158,7 +163,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
     // centred, it keeps a readable measure under the wide headline (issue #270)
     .lede {
-      max-width: 60ch;
+      max-width: 44ch;
       text-wrap: balance;
       @include bp.up(md) {
         font-size: var(--step-1);

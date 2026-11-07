@@ -81,14 +81,15 @@ test('while the experience deck is pinned the thread stands still with it, and i
   for (const into of [0, 0.5, 0.95]) {
     await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header + pinLength * into);
     await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
+    // the dashes slide exactly as far as the page scrolls: the phase alone misses a drift by a multiple of 16 px
+    // (issue #336); polled, since WebKit can read a frame before the thread catches up, a real drift never settles
+    if (shifts.length) await expect.poll(async () => Math.abs((await sample()).shift - shifts[0])).toBeLessThanOrEqual(2);
     const { phase, shift } = await sample();
     seen.push(phase);
     shifts.push(shift);
   }
   // WebKit rounds the pinned scroll to whole pixels: a desync would be hundreds of pixels, not one
   expect(Math.max(...seen) - Math.min(...seen)).toBeLessThanOrEqual(2);
-  // the dashes slide exactly as far as the page scrolls: the phase alone misses a drift by a multiple of 16 px (issue #336)
-  expect(Math.max(...shifts) - Math.min(...shifts)).toBeLessThanOrEqual(2);
   // past the pin the section has moved down by the pin length, and the node with it
   await page.evaluate((y) => { scrollTo(0, y); }, pinTop + pinLength - header + 200);
   await expect.poll(async () => (await sample()).gap).toBeLessThan(8);

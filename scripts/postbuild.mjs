@@ -9,7 +9,7 @@ import { PUBLIC_REPOS } from '../src/app/content/public-repos.generated.ts';
 import { onlyPublic } from '../src/app/content/public-repos.ts';
 import { withScriptsAfterPaint } from './after-paint.mjs';
 import { geoFiles } from './geo-files.mjs';
-import { INITIAL_JS_BUDGET, SW_KILL_SWITCH, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
+import { INITIAL_JS_BUDGET, SW_KILL_SWITCH, fontPreloads, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
 import { HASHED_FILE, contentSecurityPolicy, headersFile, inlineScriptHashes } from './security-headers.mjs';
 import { extractOgImage, extractSeoLinks, redirectsFile, robotsTxt, sitemapXml } from './seo-files.mjs';
 
@@ -31,10 +31,12 @@ for (const locale of ['en', 'it']) {
   // the latin subset covers every glyph of both languages
   const font = (await readdir(join(ROOT, locale, 'media'))).find((name) => /^instrument-sans-latin-wdth-normal-.*\.woff2$/.test(name));
   if (!font) throw new Error(`postbuild: latin font not found in ${locale}/media`);
+  const serif = (await readdir(join(ROOT, locale, 'media'))).find((name) => /^instrument-serif-latin-400-italic-.*\.woff2$/.test(name));
+  if (!serif) throw new Error(`postbuild: serif font not found in ${locale}/media`);
   for (const file of await htmlFiles(join(ROOT, locale))) {
     const built = await readFile(file, 'utf8');
     if (file === join(ROOT, 'en', 'index.html')) homeHtml = built;
-    const html = withScriptsAfterPaint(withFontPreload(built, `media/${font}`));
+    const html = withScriptsAfterPaint(fontPreloads(built, { sans: `media/${font}`, serif: `media/${serif}` }).reduce(withFontPreload, built));
     await writeFile(file, html);
     htmls.push(html);
     const og = extractOgImage(html);

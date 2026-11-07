@@ -24,3 +24,14 @@ $files: '../../node_modules/@fontsource-variable/instrument-sans/files';
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+// Instrument Serif italic for the `.voice` spans, latin subset only; preloaded by scripts/postbuild.mjs on the pages that use it
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-display: optional;
+  font-weight: 400;
+  src: url('../../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

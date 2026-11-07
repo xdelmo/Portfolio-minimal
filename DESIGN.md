@@ -117,7 +117,7 @@ A sober page, a game inside. What a recruiter meets first is plain and calm: a c
 Density is low and text-first. Sections alternate with full-bleed bands (pastel, lavender, ink) that change the mood without changing the type. Edges are hard and stepped, never soft: no rounded cards, no blur, no decorative gradients. Boldness is spent on a few named living objects; everything else stays out of their way.
 
 **Key Characteristics:**
-- One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body).
+- One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body), plus one italic serif voice, Instrument Serif, for the curious half of a display sentence.
 - One accent, Signal Blue, for actions, focus and pixels; pastels only in decoration.
 - 8px grid for every space, icon, cell and image size.
 - Stepped shapes and `steps()` transitions instead of curves.
@@ -232,5 +232,5 @@ The hero pixel field, the voxel moai, the tool rings, the ambient orbs, the pixe
 - **Don't** use rounded cards, soft drop shadows, blur or gradients as decoration.
 - **Don't** set text in a `pixel-*` colour.
 - **Don't** use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.
-- **Don't** add a second typeface or extra weights for emphasis.
+- **Don't** add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.
 - **Don't** add hover-only behaviour on phones, or block vertical scrolling on anything swipeable.

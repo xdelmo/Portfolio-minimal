@@ -21,9 +21,11 @@ export const CONTENT_IT: SiteContent = {
   },
   hero: {
     headline: 'Ingegnere per metodo, curioso per natura.',
+    voice: 'curioso per natura.',
     lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Costruisco interfacce Angular veloci e solide, e qua e là nascondo un easter egg.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
+  aboutVoice: 'ma tutti sentono.',
   about: [
     "Sono Emanuele Del Monte, Frontend Engineer a Latina. Costruisco frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",

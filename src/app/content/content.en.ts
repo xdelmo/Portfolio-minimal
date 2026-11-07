@@ -20,9 +20,11 @@ export const CONTENT_EN: SiteContent = {
   },
   hero: {
     headline: 'Engineer by method, curious by nature.',
+    voice: 'curious by nature.',
     lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
+  aboutVoice: 'but always feel.',
   about: [
     "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise frontends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular frontend and a Spring Boot backend.",
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",

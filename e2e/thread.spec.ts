@@ -55,8 +55,7 @@ test.describe('with reduced motion', () => {
   });
 });
 
-// fixme: the first phase sample is 9px off in CI only, issue #336
-test.fixme('while the experience deck is pinned the thread stands still with it, and its node stays on the title after', async ({ page, isMobile }) => {
+test('while the experience deck is pinned the thread stands still with it, and its node stays on the title after', async ({ page, isMobile }) => {
   test.skip(isMobile, 'the deck is pinned on desktop only');
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/en/');
@@ -72,19 +71,24 @@ test.fixme('while the experience deck is pinned the thread stands still with it,
       const node = nodes[i].getBoundingClientRect();
       const title = titles[i].getBoundingClientRect();
       const track = document.querySelector<HTMLElement>('app-thread .thread');
-      if (!track) return { gap: Infinity, phase: NaN };
+      if (!track) return { gap: Infinity, phase: NaN, shift: NaN };
       const phase = (track.getBoundingClientRect().top + parseFloat(getComputedStyle(track).backgroundPositionY)) % 16;
-      return { gap: Math.abs(node.top + node.height / 2 - (title.top + title.height / 2)), phase: (phase + 16) % 16 };
+      return { gap: Math.abs(node.top + node.height / 2 - (title.top + title.height / 2)), phase: (phase + 16) % 16, shift: parseFloat(getComputedStyle(track).backgroundPositionY) - scrollY };
     });
   const header = 96;
   const seen: number[] = [];
+  const shifts: number[] = [];
   for (const into of [0, 0.5, 0.95]) {
     await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header + pinLength * into);
     await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
-    seen.push((await sample()).phase);
+    const { phase, shift } = await sample();
+    seen.push(phase);
+    shifts.push(shift);
   }
   // WebKit rounds the pinned scroll to whole pixels: a desync would be hundreds of pixels, not one
   expect(Math.max(...seen) - Math.min(...seen)).toBeLessThanOrEqual(2);
+  // the dashes slide exactly as far as the page scrolls: the phase alone misses a drift by a multiple of 16 px (issue #336)
+  expect(Math.max(...shifts) - Math.min(...shifts)).toBeLessThanOrEqual(2);
   // past the pin the section has moved down by the pin length, and the node with it
   await page.evaluate((y) => { scrollTo(0, y); }, pinTop + pinLength - header + 200);
   await expect.poll(async () => (await sample()).gap).toBeLessThan(8);

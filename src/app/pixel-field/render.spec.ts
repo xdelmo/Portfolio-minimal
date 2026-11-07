@@ -69,7 +69,7 @@ describe('drawFrame', () => {
     const pad = CLEAR_PAD * CLOUD_CELL;
     for (let t = 0; t < 14000; t += 500) {
       const { ctx, rects } = fakeContext();
-      drawFrame(ctx, grid, palette, { ...still, animate: true, t, clear });
+      drawFrame(ctx, grid, palette, { ...still, animate: true, t, clear: [clear] });
       for (const r of rects) {
         const x = r.x + r.size / 2;
         const y = r.y + r.size / 2;
@@ -96,18 +96,18 @@ describe('drawFrame', () => {
   });
 
   it('caches the cells per clearing', () => {
-    const a = cellsOf(grid, { x: 200, y: 60, w: 200, h: 120 });
-    expect(cellsOf(grid, { x: 200, y: 60, w: 200, h: 120 })).toBe(a);
-    const b = cellsOf(grid, { x: 100, y: 60, w: 200, h: 120 });
+    const a = cellsOf(grid, [{ x: 200, y: 60, w: 200, h: 120 }]);
+    expect(cellsOf(grid, [{ x: 200, y: 60, w: 200, h: 120 }])).toBe(a);
+    const b = cellsOf(grid, [{ x: 100, y: 60, w: 200, h: 120 }]);
     expect(b).not.toBe(a);
     expect(b.depth).not.toEqual(a.depth);
   });
 
   it('caches the cells per drift step too', () => {
     const box = { x: 200, y: 60, w: 200, h: 120 };
-    const a = cellsOf(grid, box, 0);
-    expect(cellsOf(grid, box, 0)).toBe(a);
-    expect(cellsOf(grid, box, 1.5)).not.toBe(a);
+    const a = cellsOf(grid, [box], 0);
+    expect(cellsOf(grid, [box], 0)).toBe(a);
+    expect(cellsOf(grid, [box], 1.5)).not.toBe(a);
   });
 
   it('ignores the pointer when the field is still', () => {

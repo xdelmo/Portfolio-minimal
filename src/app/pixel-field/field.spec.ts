@@ -54,14 +54,14 @@ describe('the cloud mask', () => {
       const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
       const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
       if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
-        expect(cloudDepth(col, row, l, clear)).toBeLessThanOrEqual(-2 * BREATHE);
+        expect(cloudDepth(col, row, l, [clear])).toBeLessThanOrEqual(-2 * BREATHE);
       }
     }
   });
 
   it("cloudDepth is deepest at the hero's corners", () => {
     for (const [c, r] of [[0, 0], [l.cols - 1, 0], [0, l.rows - 1], [l.cols - 1, l.rows - 1]]) {
-      expect(cloudDepth(c, r, l, clear)).toBeGreaterThan(0.75);
+      expect(cloudDepth(c, r, l, [clear])).toBeGreaterThan(0.75);
     }
     expect(cloudDepth(0, 0, l, null)).toBeGreaterThan(0.75);
   });
@@ -74,7 +74,7 @@ describe('the cloud mask', () => {
     for (let i = 0; i < big.cols * big.rows; i++) {
       const col = i % big.cols;
       const row = Math.floor(i / big.cols);
-      if (cloudDepth(col, row, big, text) <= 0) continue;
+      if (cloudDepth(col, row, big, [text]) <= 0) continue;
       lit++;
       if (col < big.cols * 0.1) strips.left++;
       if (col >= big.cols * 0.9) strips.right++;
@@ -83,7 +83,7 @@ describe('the cloud mask', () => {
     }
     expect(lit / (big.cols * big.rows)).toBeGreaterThanOrEqual(0.25);
     for (const n of Object.values(strips)) expect(n).toBeGreaterThan(0);
-    expect(cloudDepth(0, 0, big, text)).toBeGreaterThan(0.75);
+    expect(cloudDepth(0, 0, big, [text])).toBeGreaterThan(0.75);
   });
 
   it('the drifting cloud never lights the padded clearing', () => {
@@ -95,7 +95,7 @@ describe('the cloud mask', () => {
         const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
         const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
         if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
-          expect(cloudDepth(col, row, l, clear, shift)).toBeLessThanOrEqual(-2 * BREATHE);
+          expect(cloudDepth(col, row, l, [clear], shift)).toBeLessThanOrEqual(-2 * BREATHE);
         }
       }
     }
@@ -106,7 +106,7 @@ describe('the cloud mask', () => {
     for (let i = 0; i < l.cols * l.rows; i++) {
       const col = i % l.cols;
       const row = Math.floor(i / l.cols);
-      if (cloudDepth(col, row, l, clear, 3) !== cloudDepth(col, row, l, clear)) moved++;
+      if (cloudDepth(col, row, l, [clear], 3) !== cloudDepth(col, row, l, [clear])) moved++;
     }
     expect(moved).toBeGreaterThan(0);
   });
@@ -120,7 +120,7 @@ describe('the cloud mask', () => {
   });
 
   it('cloudDepth is deterministic', () => {
-    expect(cloudDepth(7, 9, l, clear)).toBe(cloudDepth(7, 9, l, clear));
+    expect(cloudDepth(7, 9, l, [clear])).toBe(cloudDepth(7, 9, l, [clear]));
   });
 
   it('breathe drifts at most 0.08, and not at all when time is frozen', () => {

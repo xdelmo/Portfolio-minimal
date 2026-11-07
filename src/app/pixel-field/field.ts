@@ -92,50 +92,88 @@ function cloudNoise(col: number, row: number): number {
   return 0.6 * noise(col / 9, row / 9) + 0.4 * noise((col + 50) / 4, (row + 50) / 4);
 }
 
-/**
- * How deep in the cloud a cell is, as in the approved mockup: a soft, noisy ellipse (radii 40% of the hero, 46% by 40%
- * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
- * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse is joined with a rounded box around `clear`
- * grown by CLEAR_PAD cells. Like andreas.vision's sky, the clearing is a soft mask, never a clip: the noise fades out over
- * 2 * CLEAR_PAD cells before the padded box, so the drifting cloud thins towards the words instead of being cut by its
- * straight edges, and the cells next to the box stay at most -BREATHE * 2.5, below anything breathing can light. `clear`
- * null (not measured yet) is a centred box of a quarter of the canvas. `shift` (cells, see `drift`) slides the noise
- * sideways: the cloud drifts with the wind while its clearing stays put.
- */
-export function cloudDepth(col: number, row: number, l: FieldLayout, clear: Box | null, shift = 0): number {
+/** The box around all of `boxes`. */
+export function bounds(boxes: readonly Box[]): Box {
+  const x = Math.min(...boxes.map((b) => b.x));
+  const y = Math.min(...boxes.map((b) => b.y));
+  return { x, y, w: Math.max(...boxes.map((b) => b.x + b.w)) - x, h: Math.max(...boxes.map((b) => b.y + b.h)) - y };
+}
+
+/** How far (px) the text's boxes melt into one shape where they come close (a smooth minimum). */
+const MELT = 48;
+/** Over how many cells past the margin the rim's noise turns from outward only to the mockup's both ways. */
+const REACH = 8;
+
+/** The part of the mask that does not drift: per cell, its base depth (NaN in the padded text) and how far it is from the text (0-1). */
+interface Shape {
+  l: FieldLayout;
+  clear: readonly Box[] | null;
+  base: Float64Array;
+  near: Float64Array;
+}
+let shape: Shape | null = null;
+
+function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
+  if (shape?.l === l && shape.clear === clear) return shape;
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
   const h = l.y0 + l.rows * CLOUD_CELL;
-  const b = clear ?? { x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 };
+  const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
+  const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
   const mx = b.x + b.w / 2;
   const my = b.y + b.h / 2;
-  const tx = b.w / 2;
-  const ty = b.h / 2;
-  const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
-  const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
-  // signed distance (px) from a rounded box of half sizes hx, hy around the text's centre: negative inside
-  const box = (px: number, py: number, hx: number, hy: number, round: number): number => {
-    const qx = Math.abs(px - mx) - (hx - round);
-    const qy = Math.abs(py - my) - (hy - round);
-    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - round;
+  // distance (px) from the text itself: its line boxes melted together, so the clearing follows the lines, not their container
+  const gap = (px: number, py: number): number => {
+    let g = Infinity;
+    for (const r of boxes) {
+      const qx = Math.abs(px - r.x - r.w / 2) - r.w / 2;
+      const qy = Math.abs(py - r.y - r.h / 2) - r.h / 2;
+      const d = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0);
+      const k = Math.max(MELT - Math.abs(g - d), 0) / MELT;
+      g = Math.min(g, d) - k * k * MELT / 4;
+    }
+    return g;
   };
-  // the padded box: never lit, whatever the noise (the fade below keeps the cloud off its edges anyway)
-  const off = box(x, y, tx + pad, ty + pad, 0);
-  if (off <= 0) return -0.2;
-  const tall = h > w;
-  const rx0 = w * (tall ? 0.46 : 0.4);
-  const ry0 = h * 0.4;
-  const round = 0.6 * Math.min(tx + pad, ty + pad);
-  // the mockup's ellipse, joined with the padded box (which pokes out of it where the text is wide): whichever is nearer
-  const dist = (px: number, py: number): number =>
-    Math.min(Math.hypot((px - mx) / rx0, (py - my) / ry0), 1 + box(px, py, tx + pad, ty + pad, round) / ry0);
-  // the mockup's hero corner sits at d = 1.77: where the box pushed the edge outwards, squeeze the band so the corners still get there
+  // the mockup's ellipse, grown until the padded text fits inside it: its edge is never the text's outline (a rounded box)
+  const a = b.w / 2 + pad;
+  const c = b.h / 2 + pad;
+  const rx = Math.max(w * (h > w ? 0.46 : 0.4), Math.SQRT2 * a);
+  const ry = Math.max(h * 0.4, c / Math.sqrt(1 - (a / rx) ** 2));
+  const dist = (px: number, py: number): number => Math.hypot((px - mx) / rx, (py - my) / ry);
+  // the mockup's hero corner sits at d = 1.77: where the text pushed the edge outwards, squeeze the band so the corners still get there
   const far = Math.max(dist(0, 0), dist(w, 0), dist(0, h), dist(w, h));
-  const base = 1 + (dist(x, y) - 1) * Math.max(1, 0.77 / Math.max(far - 1, 0.01));
-  // the mockup's 0.7 noise, calmed far out so the corners are always solid blue, and faded out towards the text
-  const near = Math.min(1, Math.max(0, off / (2 * pad)));
-  const amp = 0.7 * Math.min(1, Math.max(0, (2 - base) * 2)) * near * near * (3 - 2 * near);
-  const d = Math.min(base, 1 - 2.5 * BREATHE + (2.5 * BREATHE + 0.35) * off / (2 * pad)) + (cloudNoise(col - shift, row) - 0.5) * amp;
+  const squeeze = Math.max(1, 0.77 / Math.max(far - 1, 0.01));
+  const n = l.cols * l.rows;
+  shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n) };
+  for (let i = 0; i < n; i++) {
+    const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
+    const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
+    const g = gap(x, y);
+    shape.base[i] = g <= pad ? NaN : 1 + (dist(x, y) - 1) * squeeze;
+    shape.near[i] = Math.min(1, Math.max(0, (g - pad) / (REACH * CLOUD_CELL)));
+  }
+  return shape;
+}
+
+/**
+ * How deep in the cloud a cell is, as in the approved mockup: a soft, noisy ellipse (radii 40% of the hero, 46% by 40%
+ * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
+ * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse grows until the text's own line boxes
+ * (`clear`, melted together, plus CLEAR_PAD cells) fit inside it, and those are never lit. Like andreas.vision's sky
+ * the rim is noise, never the text's outline: next to the text the noise only pushes the cloud away (by up to REACH
+ * cells), and further out it swings both ways as in the mockup. `clear` null
+ * (not measured yet) is a centred box of a quarter of the canvas. `shift` (cells, see `drift`) slides the noise
+ * sideways: the cloud drifts with the wind while its clearing stays put.
+ */
+export function cloudDepth(col: number, row: number, l: FieldLayout, clear: readonly Box[] | null, shift = 0): number {
+  const s = shapeOf(l, clear);
+  const i = row * l.cols + col;
+  const base = s.base[i];
+  if (Number.isNaN(base)) return -0.2;
+  const near = s.near[i];
+  // the mockup's ±0.35 noise, outward only next to the text, calmed far out so the corners are always solid blue
+  const calm = Math.min(1, Math.max(0, (2 - base) * 2));
+  const d = base + ((cloudNoise(col - shift, row) - 0.5) * 0.7 - 0.35 * (1 - near)) * calm;
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
   return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
 }
@@ -153,9 +191,12 @@ export function tone(depth: number, shade: number): number {
   return shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
 }
 
-/** 0 before a cell appears, 1 once it is full size: the cloud grows in from its outer cells. */
-export function composeIn(depth: number, t: number): number {
-  const start = (1 - Math.min(1, Math.max(0, depth))) * COMPOSE_MS * 0.6;
+/**
+ * 0 before a cell appears, 1 once it is full size: the cloud grows in from its outer cells, each one late by its own
+ * `jitter` (0-1), so cells of one depth never grow in step and draw the mask's contour round the text.
+ */
+export function composeIn(depth: number, t: number, jitter = 0): number {
+  const start = ((1 - Math.min(1, Math.max(0, depth))) * 0.3 + jitter * 0.3) * COMPOSE_MS;
   return Math.min(1, Math.max(0, (t - start) / (COMPOSE_MS * 0.4)));
 }
 

@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, addRipple, layout, levelUp } from './field';
+import { FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
 import { MotionPause } from '../motion/pause';
 import { Paint, glPaint } from './gl';
@@ -93,12 +93,23 @@ export class PixelField {
       canvas.height = Math.round(canvas.clientHeight * dpr());
       ctx?.setTransform(dpr(), 0, 0, dpr(), 0, 0);
       this.grid = layout(canvas.clientWidth, canvas.clientHeight);
-      const around = this.clear()?.getBoundingClientRect();
+      const around = this.clear();
       if (around) {
+        // the text's own line boxes (and the buttons), not its container: the clearing follows the words
         const c = canvas.getBoundingClientRect();
-        this.frame.clear = { x: around.x - c.x, y: around.y - c.y, w: around.width, h: around.height };
-        const { x, y, w, h } = this.frame.clear;
-        canvas.dataset['clear'] = [x, y, w, h].map(Math.round).join();
+        const rects: DOMRect[] = [...around.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+        const walker = document.createTreeWalker(around, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          range.selectNodeContents(n);
+          rects.push(...range.getClientRects());
+        }
+        const boxes = rects.filter((r) => r.width > 0 && r.height > 0).map((r) => ({ x: r.x - c.x, y: r.y - c.y, w: r.width, h: r.height }));
+        if (boxes.length) {
+          this.frame.clear = boxes;
+          const { x, y, w, h } = bounds(boxes);
+          canvas.dataset['clear'] = [x, y, w, h].map(Math.round).join();
+        }
       }
       this.render();
     };

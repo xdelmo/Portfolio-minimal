@@ -13,11 +13,12 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     <div class="thread" aria-hidden="true"><span class="line"></span></div>
   `,
   styles: `
-    // above the bands, which stack over the section after them (#side-quests over the stack)
+    // above the bands, which stack over the section after them (#side-quests over the stack), and above the About band,
+    // which sits at 2 on desktop so its pinned moai covers the sections after it (#270, issue #314); under the header (40)
     app-thread {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
     }
     // 24px left of the content column, or 4px from the screen edge when there is no room

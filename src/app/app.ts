@@ -5,11 +5,9 @@ import { filter } from 'rxjs';
 import { isNewPage } from './core/current-url';
 import { GameTrigger } from './game/game-trigger';
 import { BackToTop } from './layout/back-to-top';
-import { Ambient } from './layout/ambient';
 import { SiteFooter } from './layout/site-footer';
 import { PixelCursor } from './layout/pixel-cursor';
 import { SiteIntro } from './layout/site-intro';
-import { ambientEffect } from './motion/effects/ambient';
 import { cursorEffect } from './motion/effects/cursor';
 import { introEffect } from './motion/effects/intro';
 import { scrambleEffect } from './motion/effects/scramble';
@@ -18,12 +16,11 @@ import { SiteHeader } from './layout/site-header';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, Ambient, SiteIntro, PixelCursor, SiteHeader, SiteFooter, GameTrigger, BackToTop],
+  imports: [RouterOutlet, SiteIntro, PixelCursor, SiteHeader, SiteFooter, GameTrigger, BackToTop],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly ambient = [ambientEffect];
   protected readonly cursor = [cursorEffect, scrambleEffect];
   protected readonly intro = [introEffect];
 

@@ -21,7 +21,7 @@ export const CONTENT_EN: SiteContent = {
   hero: {
     headline: 'Engineer by method, curious by nature.',
     voice: 'curious by nature.',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
+    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build enterprise Angular apps where large tables stay responsive, and I\u00a0hide an easter egg here and there.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   aboutVoice: 'but always feel.',

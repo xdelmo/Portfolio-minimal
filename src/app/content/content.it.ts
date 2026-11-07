@@ -22,7 +22,7 @@ export const CONTENT_IT: SiteContent = {
   hero: {
     headline: 'Ingegnere per metodo, curioso per natura.',
     voice: 'curioso per natura.',
-    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., ad Aprilia. Costruisco interfacce Angular veloci e solide, e qua e là nascondo un easter egg.',
+    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. ad Aprilia. Costruisco app Angular enterprise in cui le tabelle grandi restano reattive, e qua e là nascondo un easter egg.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   aboutVoice: 'ma tutti sentono.',

@@ -2,7 +2,9 @@ import { type Locator, type Page, expect, test } from './fixtures';
 
 const ready = (page: Page) => expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
 // SplitText wraps each line in a masking element; the title is back to plain text once its reveal is over
-const isPlainText = (el: Locator) => el.evaluate((node) => node.children.length === 0);
+// (the headline's own two voice spans do not count)
+const isPlainText = (el: Locator) =>
+  el.evaluate((node) => [...node.children].every((child) => child.classList.contains('method') || child.classList.contains('voice')));
 
 test.describe('section titles', () => {
   test('rise line by line when they scroll in, then go back to plain text', async ({ page }) => {
@@ -55,23 +57,13 @@ test.describe('hero', () => {
     await expect.poll(() => page.locator('h1').evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
   });
 
-  test('on desktop the condensed headline widens as it scrolls away, and narrows back', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only: phones keep the headline at wdth 75');
+  test('the headline keeps its normal width while it scrolls away', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    const wdth = () => page.locator('h1').evaluate((el) => getComputedStyle(el).fontVariationSettings);
-    const heroHeight = () => page.locator('.hero').evaluate((el) => Math.round(el.getBoundingClientRect().height));
-    expect(await wdth()).toBe('"wdth" 75');
-    const height = await heroHeight();
+    const wdth = () => page.locator('.hero h1').evaluate((el) => getComputedStyle(el).fontVariationSettings);
+    expect(await wdth()).toContain('"wdth" 100');
     await page.evaluate(() => { window.scrollTo(0, 400); });
-    await expect.poll(async () => Number(/[\d.]+$/.exec(await wdth())?.[0])).toBeGreaterThan(75);
-    // whole steps only: a wdth that changed at every frame reshaped the giant headline at every frame and dropped
-    // about 40 frames between the hero and the work (issue #233)
-    expect(Number.isInteger(Number(/[\d.]+$/.exec(await wdth())?.[0]))).toBe(true);
-    // the wider headline breaks its lines where it did: the hero keeps its height and the page below stays put
-    expect(await heroHeight()).toBe(height);
-    await page.evaluate(() => { window.scrollTo(0, 0); });
-    await expect.poll(wdth).toBe('"wdth" 75');
+    expect(await wdth()).toContain('"wdth" 100');
   });
 
   test.describe('after the intro', () => {

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
+import { voices } from '../../content/voices';
 import { toLocale } from '../../core/i18n/locale';
 import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
@@ -40,7 +41,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
       <div class="copy" #copy>
-      <h1 id="hero-title">{{ content.hero.headline }}</h1>
+      <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
       <p class="lede">{{ content.hero.lede }}</p>
       <div class="actions">
         <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
@@ -62,7 +63,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="aboutSeam" grow="up" />
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
-        <p class="statement">{{ content.aboutStatement }}</p>
+        <p class="statement"><span class="method">{{ statement[0] }}</span>&ngsp;<span class="voice">{{ statement[1] }}</span></p>
         <div class="about-body">
           @for (paragraph of content.about; track $index) {
             <p>{{ paragraph }}</p>
@@ -143,8 +144,12 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       // and the short headline (issue #280) keeps lede and buttons above the fold, so the base h1 size applies
       // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
-      // the hero effect widens it as the hero scrolls away (desktop, issue #131)
-      font-variation-settings: 'wdth' var(--hero-wdth, 75);
+      font-variation-settings: 'wdth' 100;
+      // the two voices stand on their own lines: the method, then the voice (issue #304)
+      .method,
+      .voice {
+        display: block;
+      }
     }
     // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
     // centred, it keeps a readable measure under the wide headline (issue #270)
@@ -274,6 +279,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       font-variation-settings: 'wdth' 75;
       letter-spacing: -0.01em;
       text-wrap: balance;
+      // inline: the statement keeps its balanced wrap (the voice only changes typeface, issue #304)
+      .method,
+      .voice {
+        display: inline;
+      }
     }
 
     @include bp.up(lg) {
@@ -333,6 +343,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
+  protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
+  protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
   protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];

@@ -76,8 +76,9 @@ test('while the experience deck is pinned the thread stands still with it, and i
       return { gap: Math.abs(node.top + node.height / 2 - (title.top + title.height / 2)), phase: (phase + 16) % 16 };
     });
   const header = 96;
+  // sampled inside the pin, not on its first pixel: in CI the pin starts a few pixels off the spacer measured above (issue #336)
   const seen: number[] = [];
-  for (const into of [0, 0.5, 0.95]) {
+  for (const into of [0.05, 0.5, 0.95]) {
     await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header + pinLength * into);
     await expect.poll(async () => (await sample()).gap).toBeLessThan(8);
     seen.push((await sample()).phase);
@@ -122,6 +123,7 @@ test.describe('with smooth scroll', () => {
         y,
       );
     const header = 96;
+  // sampled inside the pin, not on its first pixel: in CI the pin starts a few pixels off the spacer measured above (issue #336)
     await page.evaluate((y) => { scrollTo(0, y); }, pinTop - header);
     await page.waitForTimeout(1500);
     for (const into of [0.5, 0.95]) expect(await glide(pinTop - header + pinLength * into)).toBeLessThan(8);

@@ -104,7 +104,7 @@ import { SeoService } from '../../core/seo/seo.service';
       border: 1px solid var(--rule);
       color: var(--fg-muted);
       font-size: var(--step--2);
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-family: var(--font-mono);
       font-weight: 600;
       text-decoration: none;
       text-transform: uppercase;

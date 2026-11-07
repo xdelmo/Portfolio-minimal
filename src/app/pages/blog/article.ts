@@ -241,7 +241,7 @@ import { CodeBlock } from './code-block';
     app-article .prose .run code {
       padding: 0 0.25em;
       background: var(--surface);
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-family: var(--font-mono);
       font-size: 0.875em;
     }
     app-article .prose blockquote {

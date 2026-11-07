@@ -31,7 +31,4 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
 
   const away = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
   gsap.to(title, { yPercent: -18, scale: 1.08, transformOrigin: '0% 100%', ease: 'none', scrollTrigger: away });
-  const field = hero.querySelector('.field');
-  // the field behind the text sinks a little slower than the page, on phones as on desktop
-  if (field) gsap.to(field, { y: 90, ease: 'none', scrollTrigger: away });
 };

@@ -20,6 +20,23 @@ for (const [width, height] of [[390, 844], [430, 932], [768, 1024], [1440, 900],
   });
 }
 
+// the cloud and its seam are one picture: a parallax on the cloud alone slid its last rows under the seam and over
+// the thread's start, off the 16px grid they share (issue #304)
+test('the hero cloud ends on its seam while the hero scrolls away', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/');
+  for (const y of [300, 600]) {
+    await page.evaluate((top) => { window.scrollTo(0, top); }, y);
+    await expect(async () => {
+      const bottoms = await page.evaluate(() => [
+        document.querySelector('.hero app-pixel-field canvas')?.getBoundingClientRect().bottom ?? NaN,
+        document.querySelector('.hero app-pixel-dissolve.seam')?.getBoundingClientRect().bottom ?? NaN,
+      ]);
+      expect(Math.abs(bottoms[0] - bottoms[1])).toBeLessThanOrEqual(1);
+    }).toPass();
+  }
+});
+
 // puts the top of a seam at a fraction of the viewport height
 const seamTopAt = (page: Page, where: string, fraction: number) =>
   seam(page, where).evaluate((el, f) => {

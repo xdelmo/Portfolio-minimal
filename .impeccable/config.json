@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "italic-serif-display",
+        "value": "*",
+        "files": [
+          "src/app/pages/home/home.ts"
+        ],
+        "createdAt": "2026-11-07T12:56:13.337Z",
+        "reason": "user confirmed 2026-11-07: half-italic split headline, issue #304"
+      }
+    ]
+  }
+}

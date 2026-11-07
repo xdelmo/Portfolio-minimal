@@ -1,4 +1,4 @@
-import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, vignette } from './field';
+import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
 
 describe('pixel field maths', () => {
   it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
@@ -17,9 +17,6 @@ describe('pixel field maths', () => {
       expect(w).toBeGreaterThanOrEqual(0);
       expect(w).toBeLessThanOrEqual(1);
     }
-    expect(vignette(20, 10, 41, 21)).toBe(1);
-    expect(vignette(0, 0, 41, 21)).toBe(0);
-    expect(vignette(0, 10, 41, 21)).toBeLessThan(0.2);
     expect(easeOutCubic(-1)).toBe(0);
     expect(easeOutCubic(2)).toBe(1);
   });
@@ -38,6 +35,48 @@ describe('pixel field maths', () => {
     expect(peakLate.indexOf(Math.max(...peakLate))).toBeGreaterThan(0);
     expect(ripple(0, RIPPLE_MS)).toBe(0);
     expect(ripple(0, -1)).toBe(0);
+  });
+});
+
+describe('the cloud mask', () => {
+  const l = layout(1200, 720);
+  const clear = { x: 400, y: 240, w: 400, h: 240 };
+
+  it('cloudDepth leaves the padded clearing empty', () => {
+    const pad = CLEAR_PAD * CELL;
+    for (let i = 0; i < l.cols * l.rows; i++) {
+      const col = i % l.cols;
+      const row = Math.floor(i / l.cols);
+      const x = l.x0 + col * CELL + CELL / 2;
+      const y = l.y0 + row * CELL + CELL / 2;
+      if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
+        expect(cloudDepth(col, row, l, clear)).toBeLessThanOrEqual(0);
+      }
+    }
+  });
+
+  it("cloudDepth is deepest at the hero's corners", () => {
+    for (const [c, r] of [[0, 0], [l.cols - 1, 0], [0, l.rows - 1], [l.cols - 1, l.rows - 1]]) {
+      expect(cloudDepth(c, r, l, clear)).toBeGreaterThan(0.75);
+    }
+    expect(cloudDepth(0, 0, l, null)).toBeGreaterThan(0.75);
+  });
+
+  it('cloudDepth is deterministic', () => {
+    expect(cloudDepth(7, 9, l, clear)).toBe(cloudDepth(7, 9, l, clear));
+  });
+
+  it('breathe drifts at most 0.08, and not at all when time is frozen', () => {
+    for (let i = 0; i < 200; i++) expect(Math.abs(breathe(0.5, 1.3, i * 997) - 0.5)).toBeLessThanOrEqual(0.08 + 1e-12);
+    expect(breathe(0.5, 1.3, 0)).toBe(0.5);
+  });
+
+  it('tone maps depth to the six tones', () => {
+    expect(tone(0.9, 0)).toBe(0);
+    expect(tone(0.6, 0)).toBe(1);
+    expect(tone(0.4, 0)).toBe(2);
+    expect(tone(0.1, 0.9)).toBe(5);
+    expect([3, 4]).toContain(tone(0.1, 0.2));
   });
 });
 

@@ -1,5 +1,5 @@
-import { CELL, COMPOSE_MS, DOT, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
-import { FrameState, PUSH, Palette, REST_ALPHA, cellsOf } from './render';
+import { BREATHE, CELL, COMPOSE_MS, DOT, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
+import { Cells, FrameState, PUSH, Palette, cellsOf } from './render';
 
 /**
  * The field in WebGL (issue #207): every dot is a point of one draw call, and the maths of `drawFrame` runs on the GPU.
@@ -7,16 +7,17 @@ import { FrameState, PUSH, Palette, REST_ALPHA, cellsOf } from './render';
  */
 const VERTEX = `
 attribute vec2 a_pos;
-attribute vec4 a_cell; // vignette, twinkle speed, twinkle phase, lit colour (0-1)
+attribute vec4 a_cell; // static cloud depth, twinkle speed, twinkle phase, shade (0-1)
 uniform vec2 u_size;
 uniform float u_dpr;
 uniform float u_t;
+uniform float u_breath; // the breathing clock, 0 when time is frozen
+uniform float u_alpha;
 uniform float u_wave;
 uniform vec3 u_pointer; // x, y, 1 when it counts
 uniform vec3 u_ripples[${String(MAX_RIPPLES)}]; // x, y, start
 uniform int u_count;
-uniform vec4 u_dot;
-uniform vec4 u_lit[5];
+uniform vec4 u_tones[6];
 varying vec4 v_color;
 
 float falloff(float d) {
@@ -41,16 +42,31 @@ void main() {
     if (i >= u_count) break;
     e = max(e, ripple(length(p - u_ripples[i].xy), u_t - u_ripples[i].z));
   }
-  if (u_wave > 0.0) e = max(e, 0.6 * pow((sin(u_t * a_cell.y + a_cell.z) + 1.0) / 2.0, 10.0) * u_wave);
-
-  vec4 c = u_dot;
-  if (e > 0.05) {
-    int lit = int(floor(a_cell.w * 5.0));
-    for (int i = 0; i < 5; i++) if (i == lit) c = u_lit[i];
+  float depth = a_cell.x;
+  float shade = a_cell.w;
+  if (depth > 0.0 && u_breath > 0.0) depth += ${BREATHE.toFixed(2)} * sin(u_breath * 0.0009 + a_cell.z);
+  bool cloud = depth > 0.0;
+  float size;
+  float alpha;
+  int ti;
+  if (cloud) {
+    if (u_wave > 0.0) e = max(e, 0.6 * pow((sin(u_t * a_cell.y + a_cell.z) + 1.0) / 2.0, 10.0) * u_wave);
+    float start = (1.0 - clamp(a_cell.x, 0.0, 1.0)) * ${(COMPOSE_MS * 0.6).toFixed(1)};
+    float grown = clamp((u_t - start) / ${(COMPOSE_MS * 0.4).toFixed(1)}, 0.0, 1.0);
+    size = ${DOT.toFixed(1)} * grown * (0.7 + 0.3 * e);
+    alpha = u_alpha + (1.0 - u_alpha) * e;
+    ti = depth > 0.75 ? 0 : depth > 0.5 ? 1 : depth > 0.3 ? 2 : shade > 0.85 ? 5 : shade > 0.45 ? 3 : 4;
+  } else {
+    // the clearing and the cloud's breathing holes show only the energy that crosses them
+    size = e > 0.05 ? ${DOT.toFixed(1)} * (0.25 + 0.75 * e) : 0.0;
+    alpha = e;
+    ti = shade > 0.85 ? 5 : shade > 0.45 ? 3 : 4;
   }
-  float alpha = (${REST_ALPHA.toFixed(2)} + ${(1 - REST_ALPHA).toFixed(2)} * e) * a_cell.x * c.a;
+  vec4 c = u_tones[0];
+  for (int i = 0; i < 6; i++) if (i == ti) c = u_tones[i];
+  alpha *= c.a;
   v_color = vec4(c.rgb * alpha, alpha);
-  gl_PointSize = ${DOT.toFixed(1)} * (0.25 + 0.75 * e) * u_dpr;
+  gl_PointSize = size * u_dpr;
   gl_Position = vec4(p / u_size * vec2(2.0, -2.0) + vec2(-1.0, 1.0), 0.0, 1.0);
 }
 `;
@@ -104,11 +120,12 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
     dpr: at('u_dpr'),
     t: at('u_t'),
     wave: at('u_wave'),
+    breath: at('u_breath'),
+    alpha: at('u_alpha'),
     pointer: at('u_pointer'),
     ripples: at('u_ripples'),
     count: at('u_count'),
-    dot: at('u_dot'),
-    lit: at('u_lit'),
+    tones: at('u_tones'),
   };
   const buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -119,24 +136,24 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
   gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 24, 0);
   gl.vertexAttribPointer(cell, 4, gl.FLOAT, false, 24, 8);
 
-  let layout: FieldLayout | null = null;
+  let built: Cells | null = null;
   let palette: Palette | null = null;
   const ripples = new Float32Array(MAX_RIPPLES * 3);
 
   return (l, p, f) => {
-    if (l !== layout) {
-      // what each dot keeps until the next resize: its place and the values `drawFrame` caches per cell
-      const cells = cellsOf(l);
+    const cells = cellsOf(l, f.clear);
+    if (cells !== built) {
+      // what each dot keeps until the layout or the clearing changes: its place and the values `drawFrame` caches per cell
       const data = new Float32Array(l.cols * l.rows * 6);
       for (let i = 0; i < l.cols * l.rows; i++) {
-        data.set([l.x0 + (i % l.cols) * CELL + CELL / 2, l.y0 + Math.floor(i / l.cols) * CELL + CELL / 2, cells.vignette[i], cells.speed[i], cells.phase[i], cells.lit[i]], i * 6);
+        data.set([l.x0 + (i % l.cols) * CELL + CELL / 2, l.y0 + Math.floor(i / l.cols) * CELL + CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i]], i * 6);
       }
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-      layout = l;
+      built = cells;
     }
     if (p !== palette) {
-      gl.uniform4fv(u.dot, rgba(probe, p.dot));
-      gl.uniform4fv(u.lit, p.lit.flatMap((c) => rgba(probe, c)));
+      gl.uniform4fv(u.tones, p.tones.flatMap((c) => rgba(probe, c)));
+      gl.uniform1f(u.alpha, p.alpha);
       palette = p;
     }
     const t = f.animate ? f.t : COMPOSE_MS * 2;
@@ -145,6 +162,7 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
     gl.uniform2f(u.size, canvas.width / scale, canvas.height / scale);
     gl.uniform1f(u.dpr, scale);
     gl.uniform1f(u.t, t);
+    gl.uniform1f(u.breath, f.animate ? f.t : 0);
     gl.uniform1f(u.wave, f.animate ? easeOutCubic((t - COMPOSE_MS) / 800) : 0);
     gl.uniform3f(u.pointer, f.pointer?.x ?? 0, f.pointer?.y ?? 0, f.animate && f.pointer ? 1 : 0);
     f.ripples.forEach((r, i) => {

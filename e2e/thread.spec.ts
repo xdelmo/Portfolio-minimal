@@ -30,6 +30,22 @@ test('the thread ends where the contact band begins: the finale is the arrival, 
   expect(threadBottom).toBeLessThanOrEqual(contactTop + 0.5); // sub-pixel rounding in Firefox
 });
 
+test('the thread stays in front of the About band on desktop (issue #314)', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the About band stacks above the thread only on desktop');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/');
+  await page.locator('#about').evaluate((el) => {
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY + 200);
+  });
+  await expect.poll(() => thread(page).evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    const host = el.closest<HTMLElement>('app-thread');
+    if (!host) return false;
+    host.style.pointerEvents = 'auto'; // hit testing skips what ignores the pointer
+    return host.contains(document.elementFromPoint(r.left + r.width / 2, innerHeight / 2));
+  })).toBe(true);
+});
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
   test('there is no thread', async ({ page }) => {

@@ -20,11 +20,15 @@ export interface FieldLayout {
   y0: number;
 }
 
+/**
+ * The cloud's grid, on the hero seam's grid (`app-pixel-dissolve`: 16px cells centred on the page, sitting on the
+ * hero's foot), so the cloud's squares run on into the seam's: an even number of columns puts a cell edge on the
+ * centre line, and the last row ends on the bottom edge (the top row is the one cropped).
+ */
 export function layout(width: number, height: number): FieldLayout {
-  // ceil: the cloud runs edge to edge, the outer cells cropped by half a cell at most
-  const cols = Math.max(1, Math.ceil(width / CLOUD_CELL));
+  const cols = Math.max(2, 2 * Math.ceil(width / (2 * CLOUD_CELL)));
   const rows = Math.max(1, Math.ceil(height / CLOUD_CELL));
-  return { cols, rows, x0: (width - cols * CLOUD_CELL) / 2, y0: (height - rows * CLOUD_CELL) / 2 };
+  return { cols, rows, x0: (width - cols * CLOUD_CELL) / 2, y0: height - rows * CLOUD_CELL };
 }
 
 /** Deterministic pseudo-random number in [0, 1). */
@@ -59,6 +63,16 @@ export const BREATHE = 0.08;
 export const PULL = 0.4;
 const BREATHE_SPEED = 0.0009;
 
+/** The wind: the cloud's noise crosses the hero's width in this many seconds, redrawn at most DRIFT_FPS times a second. */
+export const WIND_S = 40;
+export const DRIFT_FPS = 24;
+
+/** How many cells the cloud's noise has drifted after `t` ms on a grid `cols` wide, in DRIFT_FPS steps; 0 at rest. */
+export function drift(t: number, cols: number): number {
+  const step = Math.floor(Math.max(0, t) * DRIFT_FPS / 1000);
+  return (step / DRIFT_FPS) * (cols / WIND_S);
+}
+
 /** Smooth value noise in [0, 1) built on `hash`. */
 function noise(x: number, y: number): number {
   const ix = Math.floor(x);
@@ -81,40 +95,49 @@ function cloudNoise(col: number, row: number): number {
 /**
  * How deep in the cloud a cell is, as in the approved mockup: a soft, noisy ellipse (radii 40% of the hero, 46% by 40%
  * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
- * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse is joined with `clear` grown by CLEAR_PAD
- * cells, and that padded box is at most -2 * BREATHE, so breathing can never light it. `clear` null (not measured yet) is
- * a centred box of a quarter of the canvas.
+ * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse is joined with a rounded box around `clear`
+ * grown by CLEAR_PAD cells. Like andreas.vision's sky, the clearing is a soft mask, never a clip: the noise fades out over
+ * 2 * CLEAR_PAD cells before the padded box, so the drifting cloud thins towards the words instead of being cut by its
+ * straight edges, and the cells next to the box stay at most -BREATHE * 2.5, below anything breathing can light. `clear`
+ * null (not measured yet) is a centred box of a quarter of the canvas. `shift` (cells, see `drift`) slides the noise
+ * sideways: the cloud drifts with the wind while its clearing stays put.
  */
-export function cloudDepth(col: number, row: number, l: FieldLayout, clear: Box | null): number {
+export function cloudDepth(col: number, row: number, l: FieldLayout, clear: Box | null, shift = 0): number {
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
-  const h = l.y0 * 2 + l.rows * CLOUD_CELL;
+  const h = l.y0 + l.rows * CLOUD_CELL;
   const b = clear ?? { x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 };
   const pad = CLEAR_PAD * CLOUD_CELL;
   const mx = b.x + b.w / 2;
   const my = b.y + b.h / 2;
-  const hx = b.w / 2 + pad;
-  const hy = b.h / 2 + pad;
+  const tx = b.w / 2;
+  const ty = b.h / 2;
   const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
   const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
-  if (Math.abs(x - mx) <= hx && Math.abs(y - my) <= hy) return -0.2;
+  // signed distance (px) from a rounded box of half sizes hx, hy around the text's centre: negative inside
+  const box = (px: number, py: number, hx: number, hy: number, round: number): number => {
+    const qx = Math.abs(px - mx) - (hx - round);
+    const qy = Math.abs(py - my) - (hy - round);
+    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - round;
+  };
+  // the padded box: never lit, whatever the noise (the fade below keeps the cloud off its edges anyway)
+  const off = box(x, y, tx + pad, ty + pad, 0);
+  if (off <= 0) return -0.2;
   const tall = h > w;
   const rx0 = w * (tall ? 0.46 : 0.4);
   const ry0 = h * 0.4;
+  const round = 0.6 * Math.min(tx + pad, ty + pad);
   // the mockup's ellipse, joined with the padded box (which pokes out of it where the text is wide): whichever is nearer
-  const dist = (px: number, py: number): number => {
-    const ellipse = Math.hypot((px - mx) / rx0, (py - my) / ry0);
-    // a box with rounded corners, so the clearing does not look like a rectangle
-    const round = 0.35 * Math.min(hx, hy);
-    const outside = Math.hypot(Math.max(Math.abs(px - mx) - (hx - round), 0), Math.max(Math.abs(py - my) - (hy - round), 0)) - round;
-    return Math.min(ellipse, 1 + Math.max(outside, 0) / ry0);
-  };
+  const dist = (px: number, py: number): number =>
+    Math.min(Math.hypot((px - mx) / rx0, (py - my) / ry0), 1 + box(px, py, tx + pad, ty + pad, round) / ry0);
   // the mockup's hero corner sits at d = 1.77: where the box pushed the edge outwards, squeeze the band so the corners still get there
   const far = Math.max(dist(0, 0), dist(w, 0), dist(0, h), dist(w, h));
   const base = 1 + (dist(x, y) - 1) * Math.max(1, 0.77 / Math.max(far - 1, 0.01));
-  // the mockup's 0.7 noise, calmed far out so the corners are always solid blue
-  const d = base + (cloudNoise(col, row) - 0.5) * 0.7 * Math.min(1, Math.max(0, (2 - base) * 2));
+  // the mockup's 0.7 noise, calmed far out so the corners are always solid blue, and faded out towards the text
+  const near = Math.min(1, Math.max(0, off / (2 * pad)));
+  const amp = 0.7 * Math.min(1, Math.max(0, (2 - base) * 2)) * near * near * (3 - 2 * near);
+  const d = Math.min(base, 1 - 2.5 * BREATHE + (2.5 * BREATHE + 0.35) * off / (2 * pad)) + (cloudNoise(col - shift, row) - 0.5) * amp;
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
-  return d > 0.9 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
+  return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
 }
 
 /** `depth` plus a slow drift of at most BREATHE; unchanged when time is frozen (`t` 0). */

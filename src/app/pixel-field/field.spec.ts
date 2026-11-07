@@ -1,12 +1,16 @@
-import { CLOUD_CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
+import { CLOUD_CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, DRIFT_FPS, WIND_S, breathe, cloudDepth, drift, tone } from './field';
 
 describe('pixel field maths', () => {
-  it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
-    const l = layout(1000, 300);
-    expect(l.cols).toBe(Math.ceil(1000 / CLOUD_CELL));
-    expect(l.rows).toBe(Math.ceil(300 / CLOUD_CELL));
-    expect(l.x0).toBeCloseTo((1000 - l.cols * CLOUD_CELL) / 2);
-    expect(Object.keys(l).sort()).toEqual(['cols', 'rows', 'x0', 'y0']);
+  it('covers the canvas on the hero seam\'s grid: a cell edge on the centre line, the last row on the bottom edge', () => {
+    for (const [w, h] of [[1000, 300], [1440, 804], [390, 780], [375, 603], [1023, 777]]) {
+      const l = layout(w, h);
+      expect(l.x0).toBeLessThanOrEqual(0);
+      expect(l.x0 + l.cols * CLOUD_CELL).toBeGreaterThanOrEqual(w);
+      expect(l.y0).toBeLessThanOrEqual(0);
+      expect(l.y0 + l.rows * CLOUD_CELL).toBe(h);
+      expect((w / 2 - l.x0) % CLOUD_CELL).toBe(0);
+    }
+    expect(Object.keys(layout(1000, 300)).sort()).toEqual(['cols', 'rows', 'x0', 'y0']);
   });
 
   it('keeps hash, easing, compose and wave within [0, 1]', () => {
@@ -80,6 +84,39 @@ describe('the cloud mask', () => {
     expect(lit / (big.cols * big.rows)).toBeGreaterThanOrEqual(0.25);
     for (const n of Object.values(strips)) expect(n).toBeGreaterThan(0);
     expect(cloudDepth(0, 0, big, text)).toBeGreaterThan(0.75);
+  });
+
+  it('the drifting cloud never lights the padded clearing', () => {
+    const pad = CLEAR_PAD * CLOUD_CELL;
+    for (const shift of [0.37, 5.5, 41, 900]) {
+      for (let i = 0; i < l.cols * l.rows; i++) {
+        const col = i % l.cols;
+        const row = Math.floor(i / l.cols);
+        const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+        const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
+        if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
+          expect(cloudDepth(col, row, l, clear, shift)).toBeLessThanOrEqual(-2 * BREATHE);
+        }
+      }
+    }
+  });
+
+  it('the noise drifts with the wind: a shift moves the cloud sideways', () => {
+    let moved = 0;
+    for (let i = 0; i < l.cols * l.rows; i++) {
+      const col = i % l.cols;
+      const row = Math.floor(i / l.cols);
+      if (cloudDepth(col, row, l, clear, 3) !== cloudDepth(col, row, l, clear)) moved++;
+    }
+    expect(moved).toBeGreaterThan(0);
+  });
+
+  it('drift crosses the grid every WIND_S seconds, in DRIFT_FPS steps, and is 0 at rest', () => {
+    expect(drift(0, 90)).toBe(0);
+    expect(drift(WIND_S * 1000, 90)).toBeCloseTo(90);
+    expect(drift(1000 / DRIFT_FPS - 1, 90)).toBe(0);
+    expect(drift(1000 / DRIFT_FPS + 1, 90)).toBeGreaterThan(0);
+    expect(drift(-50, 90)).toBe(0);
   });
 
   it('cloudDepth is deterministic', () => {

@@ -143,13 +143,37 @@ test.describe('the abstract field', () => {
     expect(onTop).toBe(true);
   });
 
-  test('it is masked to fade out towards the edges (issue #287)', async ({ page }) => {
+  test('the cloud fills the hero without a mask', async ({ page }) => {
     await page.goto('/en/');
-    const mask = await page.locator('.hero app-pixel-field').evaluate((el) => {
+    const field = page.locator('.hero .field');
+    const mask = await field.evaluate((el) => {
       const style = getComputedStyle(el);
       return style.maskImage || style.getPropertyValue('-webkit-mask-image');
     });
-    expect(mask).toContain('radial-gradient');
-    expect(mask).toMatch(/transparent|rgba\(0,\s*0,\s*0,\s*0\)/);
+    expect(mask).toBe('none');
+    expect(await field.boundingBox()).toEqual(await page.locator('.hero').boundingBox());
+  });
+
+  test('the clearing follows the text block', async ({ page }) => {
+    const holdsCopy = async (): Promise<void> => {
+      await expect(async () => {
+        const data = await canvas(page).getAttribute('data-clear');
+        const [cx, cy, cw, ch] = (data ?? '').split(',').map(Number);
+        const c = await canvas(page).boundingBox();
+        const t = await page.locator('.hero .copy').boundingBox();
+        if (!c || !t || data === null) throw new Error('missing boxes');
+        expect(cx + c.x).toBeLessThanOrEqual(t.x + 1);
+        expect(cy + c.y).toBeLessThanOrEqual(t.y + 1);
+        expect(cx + cw + c.x).toBeGreaterThanOrEqual(t.x + t.width - 1);
+        expect(cy + ch + c.y).toBeGreaterThanOrEqual(t.y + t.height - 1);
+      }).toPass();
+    };
+    for (const [width, height] of [[1440, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/en/');
+      await holdsCopy();
+    }
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await holdsCopy();
   });
 });

@@ -52,7 +52,7 @@ export interface Cells {
 const cache = new WeakMap<FieldLayout, { key: string; cells: Cells }>();
 
 export function cellsOf(l: FieldLayout, clear: Box | null): Cells {
-  const key = clear ? `${String(clear.x)},${String(clear.y)},${String(clear.w)},${String(clear.h)}` : '';
+  const key = JSON.stringify(clear);
   const hit = cache.get(l);
   if (hit?.key === key) return hit.cells;
   const n = l.cols * l.rows;

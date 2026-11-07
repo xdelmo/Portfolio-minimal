@@ -7,6 +7,7 @@ import {
   afterNextRender,
   effect,
   inject,
+  input,
   signal,
   viewChild,
 } from '@angular/core';
@@ -28,7 +29,6 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
     :host {
       position: relative;
       display: block;
-      height: clamp(12rem, 32vw, 22rem);
     }
     // out of flow: its pixel size must never feed back into the height of the hero rows
     canvas {
@@ -41,6 +41,8 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
   `,
 })
 export class PixelField {
+  /** The element the cloud leaves clear (the hero text); without one, a box in the middle. */
+  readonly clear = input<HTMLElement | null>(null);
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly animated = signal(false);
   private readonly pause = inject(MotionPause);
@@ -91,10 +93,18 @@ export class PixelField {
       canvas.height = Math.round(canvas.clientHeight * dpr());
       ctx?.setTransform(dpr(), 0, 0, dpr(), 0, 0);
       this.grid = layout(canvas.clientWidth, canvas.clientHeight);
+      const around = this.clear()?.getBoundingClientRect();
+      if (around) {
+        const c = canvas.getBoundingClientRect();
+        this.frame.clear = { x: around.x - c.x, y: around.y - c.y, w: around.width, h: around.height };
+        canvas.dataset['clear'] = Object.values(this.frame.clear).map(Math.round).join();
+      }
       this.render();
     };
     const sizes = new ResizeObserver(resize);
     sizes.observe(canvas);
+    const watched = this.clear();
+    if (watched) sizes.observe(watched);
     this.cleanups.push(() => {
       sizes.disconnect();
     });

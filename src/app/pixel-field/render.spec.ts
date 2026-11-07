@@ -1,5 +1,5 @@
-import { COMPOSE_MS, DOT, cloudDepth, layout, tone } from './field';
-import { FrameState, Palette, drawFrame, readPalette } from './render';
+import { CELL, CLEAR_PAD, COMPOSE_MS, DOT, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
+import { FrameState, Palette, cellsOf, drawFrame, readPalette } from './render';
 
 interface Rect { x: number; y: number; size: number; alpha: number; color: string }
 
@@ -38,22 +38,69 @@ describe('drawFrame', () => {
     expect(rects[0].color).toBe(palette.tones[tone(cloudDepth(0, 0, grid, null), 0)]);
   });
 
-  it('draws nothing of the cloud at t = 0 and all of it by the end of the compose-in', () => {
+  it('draws nothing of the cloud at t = 0 and every lit cell at full size once composed', () => {
     const none = fakeContext();
     drawFrame(none.ctx, grid, palette, { ...still, animate: true, t: 0 });
     expect(none.rects).toHaveLength(0);
     const all = fakeContext();
     drawFrame(all.ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS });
-    expect(all.rects.filter((r) => r.size === DOT * 0.7).length).toBeGreaterThan(0);
-    expect(all.rects.length).toBeGreaterThanOrEqual(cells.filter(cloud).length - grid.cols * grid.rows * 0.1);
+    const c = cellsOf(grid, null);
+    expect(all.rects).toHaveLength(cells.filter((i) => breathe(c.depth[i], c.phase[i], COMPOSE_MS) > 0).length);
+    expect(all.rects.every((r) => r.size === DOT * 0.7)).toBe(true);
   });
 
-  it('lets pointer energy flash through the clearing', () => {
-    const { ctx, rects } = fakeContext();
-    const pointer = { x: 300, y: 120 };
-    drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, pointer });
-    const near = rects.filter((r) => Math.hypot(r.x - pointer.x, r.y - pointer.y) < 12);
-    expect(near.some((r) => r.alpha > 0.7)).toBe(true);
+  it('pulls the cloud back from the pointer instead of lighting it', () => {
+    const c = cellsOf(grid, null);
+    const i = cells.find((n) => c.depth[n] > 0.15 && c.depth[n] < 0.3) ?? -1;
+    expect(i).toBeGreaterThanOrEqual(0);
+    const cx = grid.x0 + (i % grid.cols) * CELL + CELL / 2;
+    const cy = grid.y0 + Math.floor(i / grid.cols) * CELL + CELL / 2;
+    const at = (pointer: { x: number; y: number } | null): Rect[] => {
+      const { ctx, rects } = fakeContext();
+      drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, pointer });
+      return rects.filter((r) => Math.abs(r.x + r.size / 2 - cx) < 1 && Math.abs(r.y + r.size / 2 - cy) < 1);
+    };
+    expect(at(null)).toHaveLength(1);
+    expect(at({ x: cx, y: cy })).toHaveLength(0);
+  });
+
+  it('never lights the padded text box, whatever the time', () => {
+    const clear = { x: 200, y: 60, w: 200, h: 120 };
+    const pad = CLEAR_PAD * CELL;
+    for (let t = 0; t < 14000; t += 500) {
+      const { ctx, rects } = fakeContext();
+      drawFrame(ctx, grid, palette, { ...still, animate: true, t, clear });
+      for (const r of rects) {
+        const x = r.x + r.size / 2;
+        const y = r.y + r.size / 2;
+        expect(x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad).toBe(false);
+      }
+    }
+  });
+
+  it('lets a ripple light a clearing cell, then fade', () => {
+    const col = 25;
+    const row = 10;
+    const cx = grid.x0 + col * CELL + CELL / 2;
+    const cy = grid.y0 + row * CELL + CELL / 2;
+    const draw = (start: number): Rect[] => {
+      const { ctx, rects } = fakeContext();
+      drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, ripples: [{ x: cx, y: cy, start }] });
+      return rects.filter((r) => Math.abs(r.x + r.size / 2 - cx) < 1 && Math.abs(r.y + r.size / 2 - cy) < 1);
+    };
+    expect(cloudDepth(col, row, grid, null)).toBeLessThanOrEqual(0);
+    const lit = draw(COMPOSE_MS * 3);
+    expect(lit).toHaveLength(1);
+    expect(lit[0].alpha).toBeGreaterThan(0.9);
+    expect(draw(COMPOSE_MS * 3 - RIPPLE_MS)).toHaveLength(0);
+  });
+
+  it('caches the cells per clearing', () => {
+    const a = cellsOf(grid, { x: 200, y: 60, w: 200, h: 120 });
+    expect(cellsOf(grid, { x: 200, y: 60, w: 200, h: 120 })).toBe(a);
+    const b = cellsOf(grid, { x: 100, y: 60, w: 200, h: 120 });
+    expect(b).not.toBe(a);
+    expect(b.depth).not.toEqual(a.depth);
   });
 
   it('ignores the pointer when the field is still', () => {
@@ -64,6 +111,11 @@ describe('drawFrame', () => {
 });
 
 describe('readPalette', () => {
+  it('falls back to a full-strength cloud when --cloud-alpha is missing or not a number', () => {
+    expect(readPalette({ getPropertyValue: () => '' }).alpha).toBe(1);
+    expect(readPalette({ getPropertyValue: () => 'abc' }).alpha).toBe(1);
+  });
+
   it('reads the pixel colours from CSS custom properties', () => {
     const values: Record<string, string> = { '--px-1': ' #0066d4', '--fg': '#1d1d1c', '--px-2': 'a', '--px-3': 'b', '--px-4': 'c', '--px-5': 'd', '--px-6': 'e', '--cloud-alpha': ' 0.78' };
     const p = readPalette({ getPropertyValue: (name: string) => values[name] });

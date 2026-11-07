@@ -1,4 +1,4 @@
-import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
+import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
 
 describe('pixel field maths', () => {
   it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
@@ -50,7 +50,7 @@ describe('the cloud mask', () => {
       const x = l.x0 + col * CELL + CELL / 2;
       const y = l.y0 + row * CELL + CELL / 2;
       if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
-        expect(cloudDepth(col, row, l, clear)).toBeLessThanOrEqual(0);
+        expect(cloudDepth(col, row, l, clear)).toBeLessThanOrEqual(-2 * BREATHE);
       }
     }
   });

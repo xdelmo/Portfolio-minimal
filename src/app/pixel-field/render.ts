@@ -1,4 +1,4 @@
-import { Box, CELL, COMPOSE_MS, DOT, FieldLayout, breathe, cloudDepth, composeIn, easeOutCubic, falloff, hash, ripple, tone } from './field';
+import { Box, CELL, COMPOSE_MS, DOT, PULL, FieldLayout, breathe, cloudDepth, composeIn, easeOutCubic, falloff, hash, ripple, tone } from './field';
 
 export interface Palette {
   dot: string;
@@ -27,7 +27,6 @@ export interface FrameState {
   clear: Box | null;
 }
 
-export const PUSH = 10; // px a pixel moves away from the pointer
 
 export function readPalette(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>): Palette {
   const read = (name: string): string => style.getPropertyValue(name).trim();
@@ -81,25 +80,14 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
   for (let row = 0; row < l.rows; row++) {
     for (let col = 0; col < l.cols; col++) {
       const i = row * l.cols + col;
-      let x = l.x0 + col * CELL + CELL / 2;
-      let y = l.y0 + row * CELL + CELL / 2;
+      const x = l.x0 + col * CELL + CELL / 2;
+      const y = l.y0 + row * CELL + CELL / 2;
       let energy = 0;
-
-      if (pointer) {
-        const dx = x - pointer.x;
-        const dy = y - pointer.y;
-        const d = Math.hypot(dx, dy);
-        const k = falloff(d);
-        if (k > 0 && d > 0) {
-          x += (dx / d) * k * PUSH;
-          y += (dy / d) * k * PUSH;
-        }
-        energy = k;
-      }
       for (const r of f.ripples) energy = Math.max(energy, ripple(Math.hypot(x - r.x, y - r.y), t - r.start));
 
-      // the clearing and the cloud's breathing holes show only the energy that crosses them
-      const depth = cells.depth[i] > 0 ? breathe(cells.depth[i], cells.phase[i], breath) : 0;
+      // the cloud breathes both ways and the pointer pulls it back; the clearing and the holes show only ripple energy
+      let depth = breathe(cells.depth[i], cells.phase[i], breath);
+      if (pointer) depth -= falloff(Math.hypot(x - pointer.x, y - pointer.y)) * PULL;
       let size: number;
       let alpha: number;
       let color: string;

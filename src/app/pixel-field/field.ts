@@ -54,6 +54,8 @@ export const CLEAR_PAD = 2;
 
 /** How far (in depth) the cloud's edge drifts as it breathes, and how fast (period about 7 s). */
 export const BREATHE = 0.08;
+/** How much depth the pointer takes off the cloud at its centre: the clearing seems to widen. */
+export const PULL = 0.4;
 const BREATHE_SPEED = 0.0009;
 
 /** Smooth value noise in [0, 1) built on `hash`. */
@@ -71,7 +73,7 @@ function noise(x: number, y: number): number {
 }
 
 /**
- * How deep in the cloud a cell is: at most 0 inside the clearing (the ellipse around `clear`, grown by CLEAR_PAD cells,
+ * How deep in the cloud a cell is: at most -2 * BREATHE inside the clearing (the ellipse around `clear`, grown by CLEAR_PAD cells,
  * which covers the padded box), rising to 1 towards the hero's corners, its edge roughened by noise. `clear` null (not
  * measured yet) is a centred box of half the canvas, so nothing lands on the centre.
  */
@@ -85,7 +87,8 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: Box 
   const ry = (b.h / 2 + CLEAR_PAD * CELL) * Math.SQRT2 * 1.001;
   const dist = (px: number, py: number): number => Math.hypot((px - mx) / rx, (py - my) / ry);
   const d = dist(l.x0 + col * CELL + CELL / 2, l.y0 + row * CELL + CELL / 2);
-  if (d <= 1) return d - 1;
+  // 2 * BREATHE below zero, so breathing can never light a cell of the padded box
+  if (d <= 1) return d - 1 - 2 * BREATHE;
   const far = Math.max(dist(0, 0), dist(w, 0), dist(0, h), dist(w, h));
   const base = (d - 1) / Math.max(far - 1, 0.01);
   return Math.min(1, base + (noise(col / 4, row / 4) - 0.5) * 0.3);

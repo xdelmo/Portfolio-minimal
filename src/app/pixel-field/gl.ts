@@ -1,5 +1,5 @@
-import { BREATHE, CELL, COMPOSE_MS, DOT, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
-import { Cells, FrameState, PUSH, Palette, cellsOf } from './render';
+import { BREATHE, CELL, PULL, COMPOSE_MS, DOT, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
+import { Cells, FrameState, Palette, cellsOf } from './render';
 
 /**
  * The field in WebGL (issue #207): every dot is a point of one draw call, and the maths of `drawFrame` runs on the GPU.
@@ -31,20 +31,14 @@ float ripple(float d, float age) {
 void main() {
   vec2 p = a_pos;
   float e = 0.0;
-  if (u_pointer.z > 0.5) {
-    vec2 away = p - u_pointer.xy;
-    float d = length(away);
-    float k = falloff(d);
-    if (k > 0.0 && d > 0.0) p += away / d * k * ${PUSH.toFixed(1)};
-    e = k;
-  }
   for (int i = 0; i < ${String(MAX_RIPPLES)}; i++) {
     if (i >= u_count) break;
     e = max(e, ripple(length(p - u_ripples[i].xy), u_t - u_ripples[i].z));
   }
   float depth = a_cell.x;
   float shade = a_cell.w;
-  if (depth > 0.0 && u_breath > 0.0) depth += ${BREATHE.toFixed(2)} * sin(u_breath * 0.0009 + a_cell.z);
+  if (u_breath > 0.0) depth += ${BREATHE.toFixed(2)} * sin(u_breath * 0.0009 + a_cell.z);
+  if (u_pointer.z > 0.5) depth -= falloff(length(p - u_pointer.xy)) * ${PULL.toFixed(2)};
   bool cloud = depth > 0.0;
   float size;
   float alpha;

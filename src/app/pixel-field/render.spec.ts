@@ -1,5 +1,5 @@
 import { CLOUD_CELL, CLEAR_PAD, COMPOSE_MS, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
-import { FrameState, Palette, cellsOf, drawFrame, readPalette } from './render';
+import { FrameState, Palette, cellsOf, drawFrame, frameCells, readPalette } from './render';
 
 interface Rect { x: number; y: number; size: number; alpha: number; color: string }
 
@@ -44,13 +44,13 @@ describe('drawFrame', () => {
     expect(none.rects).toHaveLength(0);
     const all = fakeContext();
     drawFrame(all.ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS });
-    const c = cellsOf(grid, null);
+    const c = frameCells(grid, { ...still, animate: true, t: COMPOSE_MS });
     expect(all.rects).toHaveLength(cells.filter((i) => breathe(c.depth[i], c.phase[i], COMPOSE_MS) > 0).length);
     expect(all.rects.every((r) => r.size === CLOUD_CELL)).toBe(true);
   });
 
   it('pulls the cloud back from the pointer instead of lighting it', () => {
-    const c = cellsOf(grid, null);
+    const c = frameCells(grid, { ...still, animate: true, t: COMPOSE_MS * 3 });
     const i = cells.find((n) => c.depth[n] > 0.15 && c.depth[n] < 0.3) ?? -1;
     expect(i).toBeGreaterThanOrEqual(0);
     const cx = grid.x0 + (i % grid.cols) * CLOUD_CELL + CLOUD_CELL / 2;
@@ -101,6 +101,13 @@ describe('drawFrame', () => {
     const b = cellsOf(grid, { x: 100, y: 60, w: 200, h: 120 });
     expect(b).not.toBe(a);
     expect(b.depth).not.toEqual(a.depth);
+  });
+
+  it('caches the cells per drift step too', () => {
+    const box = { x: 200, y: 60, w: 200, h: 120 };
+    const a = cellsOf(grid, box, 0);
+    expect(cellsOf(grid, box, 0)).toBe(a);
+    expect(cellsOf(grid, box, 1.5)).not.toBe(a);
   });
 
   it('ignores the pointer when the field is still', () => {

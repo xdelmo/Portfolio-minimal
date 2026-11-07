@@ -1,5 +1,5 @@
 import { BREATHE, CLOUD_CELL, PULL, COMPOSE_MS, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
-import { Cells, FrameState, Palette, cellsOf } from './render';
+import { Cells, FrameState, Palette, frameCells } from './render';
 
 /**
  * The field in WebGL (issue #207): every dot is a point of one draw call, and the maths of `drawFrame` runs on the GPU.
@@ -135,14 +135,14 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
   const ripples = new Float32Array(MAX_RIPPLES * 3);
 
   return (l, p, f) => {
-    const cells = cellsOf(l, f.clear);
+    const cells = frameCells(l, f);
     if (cells !== built) {
-      // what each dot keeps until the layout or the clearing changes: its place and the values `drawFrame` caches per cell
+      // what each dot keeps until the layout, the clearing or the drift step changes: its place and the values `drawFrame` caches per cell
       const data = new Float32Array(l.cols * l.rows * 6);
       for (let i = 0; i < l.cols * l.rows; i++) {
         data.set([l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2, l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i]], i * 6);
       }
-      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
       built = cells;
     }
     if (p !== palette) {

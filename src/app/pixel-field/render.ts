@@ -1,4 +1,4 @@
-import { Box, CLOUD_CELL, COMPOSE_MS, PULL, FieldLayout, breathe, cloudDepth, composeIn, easeOutCubic, falloff, hash, ripple, tone } from './field';
+import { Box, CLOUD_CELL, COMPOSE_MS, PULL, FieldLayout, breathe, cloudDepth, composeIn, drift, easeOutCubic, falloff, hash, ripple, tone } from './field';
 
 export interface Palette {
   dot: string;
@@ -38,7 +38,12 @@ export function readPalette(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>
   };
 }
 
-/** What each cell keeps from frame to frame: computed once per layout and clearing, since only those change it (issue #150). */
+/** The cells of frame `f`: the noise drifts only while the field animates. */
+export function frameCells(l: FieldLayout, f: FrameState): Cells {
+  return cellsOf(l, f.clear, f.animate ? drift(f.t, l.cols) : 0);
+}
+
+/** What each cell keeps from frame to frame: computed once per layout, clearing and drift step (issue #150). */
 export interface Cells {
   /** Static cloud depth: at most 0 in the clearing. */
   depth: Float64Array;
@@ -51,14 +56,14 @@ export interface Cells {
 
 const cache = new WeakMap<FieldLayout, { key: string; cells: Cells }>();
 
-export function cellsOf(l: FieldLayout, clear: Box | null): Cells {
-  const key = JSON.stringify(clear);
+export function cellsOf(l: FieldLayout, clear: Box | null, shift = 0): Cells {
+  const key = `${JSON.stringify(clear)}@${String(shift)}`;
   const hit = cache.get(l);
   if (hit?.key === key) return hit.cells;
   const n = l.cols * l.rows;
   const cells: Cells = { depth: new Float64Array(n), speed: new Float64Array(n), phase: new Float64Array(n), shade: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
-    cells.depth[i] = cloudDepth(i % l.cols, Math.floor(i / l.cols), l, clear);
+    cells.depth[i] = cloudDepth(i % l.cols, Math.floor(i / l.cols), l, clear, shift);
     cells.speed[i] = 0.0006 + hash(i + 21) * 0.0018;
     cells.phase[i] = hash(i + 29) * Math.PI * 2;
     cells.shade[i] = hash(i + 3);
@@ -73,7 +78,7 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
   const breath = f.animate ? f.t : 0;
   const pointer = f.animate ? f.pointer : null;
   const waveIn = f.animate ? easeOutCubic((t - COMPOSE_MS) / 800) : 0;
-  const cells = cellsOf(l, f.clear);
+  const cells = frameCells(l, f);
   // the browser parses fillStyle at every assignment: set it only when the colour changes
   let fill = '';
 

@@ -103,7 +103,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       <div class="contact-text">
         <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</p>
         <h2 id="contact-title">
-          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
+          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>

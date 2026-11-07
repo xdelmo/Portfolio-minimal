@@ -280,7 +280,7 @@ test.describe('bands and finale', () => {
       }, { timeout: 8000 })
       // the scrub can stop a hair short of the end on slow devices: under a pixel is full bleed
       .toBeLessThan(0.5);
-    await expect(page.locator('#contact h2')).toHaveAccessibleName('Get in touch');
+    await expect(page.locator('#contact h2')).toHaveAccessibleName('Let’s talk');
     // the last line of the giant title has fully risen, even though the page ends before the trigger's end
     await expect
       .poll(() => page.locator('#contact .contact-label').evaluate((el) => {

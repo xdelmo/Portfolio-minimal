@@ -65,3 +65,18 @@ test.describe('with reduced motion', () => {
     expect(await animatesOut(page)).toBe(false);
   });
 });
+
+// issue #326: at the foot of the page the footer has its own link, and the button would cover the footer's links
+test('on phones the button steps aside while the footer shows', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'phones');
+  await page.goto('/en/');
+  const button = page.getByRole('button', { name: 'Back to top' });
+  await page.evaluate(() => {
+    window.scrollTo(0, innerHeight * 3);
+  });
+  await expect(button).toBeVisible();
+  await page.evaluate(() => {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+  await expect(button).toHaveCount(0);
+});

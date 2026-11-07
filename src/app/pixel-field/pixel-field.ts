@@ -97,7 +97,8 @@ export class PixelField {
       if (around) {
         const c = canvas.getBoundingClientRect();
         this.frame.clear = { x: around.x - c.x, y: around.y - c.y, w: around.width, h: around.height };
-        canvas.dataset['clear'] = Object.values(this.frame.clear).map(Math.round).join();
+        const { x, y, w, h } = this.frame.clear;
+        canvas.dataset['clear'] = [x, y, w, h].map(Math.round).join();
       }
       this.render();
     };

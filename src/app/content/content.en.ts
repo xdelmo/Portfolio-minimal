@@ -16,12 +16,12 @@ export const CONTENT_EN: SiteContent = {
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
     description:
-      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
+      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Aprilia, Italy.',
   },
   hero: {
     headline: 'Engineer by method, curious by nature.',
     voice: 'curious by nature.',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
+    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
   aboutVoice: 'but always feel.',

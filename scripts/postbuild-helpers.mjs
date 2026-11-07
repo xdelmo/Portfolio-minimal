@@ -6,6 +6,11 @@ export function withFontPreload(html, href) {
   return at === -1 ? html.replace('</head>', `${link}</head>`) : html.slice(0, at) + link + html.slice(at);
 }
 
+/** The fonts a page preloads: the sans always, the serif only where a `.voice` span uses it. */
+export function fontPreloads(html, { sans, serif }) {
+  return /class="(?:[^"]*\s)?voice(?:\s[^"]*)?"/.test(html) ? [sans, serif] : [sans];
+}
+
 /** Initial JavaScript of a page: the module entry points plus what the page preloads. */
 export const INITIAL_JS_BUDGET = 151 * 1024; // gzip bytes, spec §12 says 150; +1 KB for the pixel cloud (issue #304), to win back
 

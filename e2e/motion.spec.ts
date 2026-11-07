@@ -50,6 +50,14 @@ test.describe('hero', () => {
     expect(await isPlainText(page.locator('h1'))).toBe(true);
   });
 
+  test('the curious half is the italic serif', async ({ page }) => {
+    await page.goto('/en/');
+    const voice = page.locator('.hero h1 .voice');
+    expect(await voice.evaluate((el) => getComputedStyle(el).fontStyle)).toBe('italic');
+    expect(await voice.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/^"?Instrument Serif"?/);
+    await expect(page.locator('head link[rel="preload"][href*="instrument-serif-latin-400-italic"]')).toHaveCount(1);
+  });
+
   test('the headline drifts as the page scrolls', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);

@@ -183,15 +183,25 @@ test.describe('the abstract field', () => {
         const data = await canvas(page).getAttribute('data-clear');
         const [cx, cy, cw, ch] = (data ?? '').split(',').map(Number);
         const c = await canvas(page).boundingBox();
-        const t = await page.locator('.hero .copy').boundingBox();
-        if (!c || !t || data === null) throw new Error('missing boxes');
-        expect(cx + c.x).toBeLessThanOrEqual(t.x + 1);
-        expect(cy + c.y).toBeLessThanOrEqual(t.y + 1);
-        expect(cx + cw + c.x).toBeGreaterThanOrEqual(t.x + t.width - 1);
-        expect(cy + ch + c.y).toBeGreaterThanOrEqual(t.y + t.height - 1);
-        // it hugs the text: no wider than the widest of headline, lede and buttons, plus a margin of two cells
-        const widths = await page.locator('.hero .copy > *').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width));
-        expect(cw).toBeLessThanOrEqual(Math.max(...widths) + 24);
+        // the text's own line boxes and the buttons, as the field measures them, not the .copy container
+        const t = await page.locator('.hero .copy').evaluate((copy) => {
+          const rects = [...copy.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+          const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT);
+          const range = document.createRange();
+          for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+            range.selectNodeContents(n);
+            rects.push(...range.getClientRects());
+          }
+          const lit = rects.filter((r) => r.width > 0 && r.height > 0);
+          const x = Math.min(...lit.map((r) => r.x));
+          const y = Math.min(...lit.map((r) => r.y));
+          return { x, y, width: Math.max(...lit.map((r) => r.right)) - x, height: Math.max(...lit.map((r) => r.bottom)) - y };
+        });
+        if (!c || data === null) throw new Error('missing boxes');
+        expect(Math.abs(cx + c.x - t.x)).toBeLessThanOrEqual(1);
+        expect(Math.abs(cy + c.y - t.y)).toBeLessThanOrEqual(1);
+        expect(Math.abs(cw - t.width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(ch - t.height)).toBeLessThanOrEqual(1);
       }).toPass();
     };
     for (const [width, height] of [[1440, 900], [390, 844]]) {

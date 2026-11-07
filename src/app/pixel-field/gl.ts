@@ -45,7 +45,7 @@ void main() {
   int ti;
   if (cloud) {
     if (u_wave > 0.0) e = max(e, 0.6 * pow((sin(u_t * a_cell.y + a_cell.z) + 1.0) / 2.0, 10.0) * u_wave);
-    float start = (1.0 - clamp(a_cell.x, 0.0, 1.0)) * ${(COMPOSE_MS * 0.6).toFixed(1)};
+    float start = ((1.0 - clamp(a_cell.x, 0.0, 1.0)) * 0.3 + a_cell.z / 6.2831853 * 0.3) * ${COMPOSE_MS.toFixed(1)};
     float grown = clamp((u_t - start) / ${(COMPOSE_MS * 0.4).toFixed(1)}, 0.0, 1.0);
     size = ${CLOUD_CELL.toFixed(1)} * grown;
     alpha = u_alpha + (1.0 - u_alpha) * e;

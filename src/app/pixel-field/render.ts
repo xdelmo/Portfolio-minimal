@@ -23,8 +23,8 @@ export interface FrameState {
   animate: boolean;
   pointer: Point | null;
   ripples: readonly Ripple[];
-  /** The text's clearing; null until measured. */
-  clear: Box | null;
+  /** The text's line boxes, which the cloud leaves clear; null until measured. */
+  clear: readonly Box[] | null;
 }
 
 
@@ -56,7 +56,7 @@ export interface Cells {
 
 const cache = new WeakMap<FieldLayout, { key: string; cells: Cells }>();
 
-export function cellsOf(l: FieldLayout, clear: Box | null, shift = 0): Cells {
+export function cellsOf(l: FieldLayout, clear: readonly Box[] | null, shift = 0): Cells {
   const key = `${JSON.stringify(clear)}@${String(shift)}`;
   const hit = cache.get(l);
   if (hit?.key === key) return hit.cells;
@@ -99,7 +99,7 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
       if (depth > 0) {
         // twinkle(i, t), from the cached speed and phase
         const e = waveIn > 0 ? Math.max(energy, 0.6 * ((Math.sin(t * cells.speed[i] + cells.phase[i]) + 1) / 2) ** 10 * waveIn) : energy;
-        const grown = composeIn(cells.depth[i], t);
+        const grown = composeIn(cells.depth[i], t, cells.phase[i] / (Math.PI * 2));
         if (grown <= 0) continue;
         size = CLOUD_CELL * grown;
         alpha = p.alpha + (1 - p.alpha) * e;

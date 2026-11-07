@@ -20,8 +20,7 @@ export const CONTENT_IT: SiteContent = {
       'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
   },
   hero: {
-    headline: 'Ingegnere per metodo, curioso per natura.',
-    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Costruisco interfacce Angular veloci e solide, e qua e là nascondo un easter egg.',
+    lede: 'Frontend Engineer in IPS S.p.A. a Latina. Costruisco interfacce Angular che restano veloci anche con molti dati.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
   about: [

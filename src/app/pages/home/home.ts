@@ -39,7 +39,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero container" aria-labelledby="hero-title">
-      <h1 id="hero-title">{{ content.hero.headline }}</h1>
+      <h1 id="hero-title">{{ content.person.name }}</h1>
       <p class="lede">{{ content.hero.lede }}</p>
       <div class="actions">
         <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>

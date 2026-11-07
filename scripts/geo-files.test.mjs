@@ -13,7 +13,7 @@ const project = {
 };
 const content = {
   person: { name: 'Ada', role: 'Frontend Engineer', location: 'Latina, Italy', email: 'a@x.it', linkedin: 'https://li/ada', github: 'https://gh/ada', summary: 'Ada builds Angular front ends.' },
-  hero: { headline: 'Headline.', lede: 'Lede.' },
+  hero: { lede: 'Lede.' },
   aboutStatement: 'I care.',
   about: ['About.'],
   glance: [{ label: 'Role', value: 'FE' }],
@@ -29,7 +29,7 @@ const content = {
 
 test('home markdown starts with the person and lists every section as plain text', () => {
   const md = homeMarkdown(content, 'en');
-  assert.match(md, /^# Ada — Frontend Engineer\n\nHeadline\.\n\nLede\./);
+  assert.match(md, /^# Ada — Frontend Engineer\n\nLede\./);
   for (const part of ['- Role: FE', '- [Demo](https://www.emanueledelmonte.it/en/work/demo): A demo project.', '- 2026 — Engineer, IPS: Work. Tables. Signals.', '- Front end: Angular', 'Email: a@x.it', '- [Quest](https://github.com/x/quest): Fun.', 'I care.\n\nAbout.']) {
     assert.ok(md.includes(part), part);
   }

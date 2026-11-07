@@ -128,7 +128,7 @@ export interface SiteContent {
   person: Person;
   /** The home page's <title> and meta description: what a search result shows. */
   seo: { title: string; description: string };
-  hero: { headline: string; lede: string };
+  hero: { lede: string };
   /** One sentence that opens the About section, in large type. */
   aboutStatement: string;
   /** One string per paragraph. */

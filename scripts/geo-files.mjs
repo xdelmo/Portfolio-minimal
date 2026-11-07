@@ -12,7 +12,6 @@ export function homeMarkdown(c, locale) {
   const l = LABELS[locale];
   return `${[
     `# ${c.person.name} — ${c.person.role}`,
-    c.hero.headline,
     c.hero.lede,
     list(c.glance, (g) => `- ${g.label}: ${g.value}`),
     `## ${l.work}`,
@@ -74,7 +73,7 @@ export function llmsTxt(contents, blog = {}) {
     [
       `## ${locale === 'it' ? 'Italiano' : 'English'}`,
       '',
-      `- [${c.person.name} — ${c.person.role}](${url(locale, 'index.md')}): ${c.hero.headline}`,
+      `- [${c.person.name} — ${c.person.role}](${url(locale, 'index.md')}): ${c.hero.lede}`,
       ...c.projects.map((p) => `- [${p.title}](${url(locale, `work/${p.slug}.md`)}): ${p.summary}`),
       ...(blog[locale] ?? []).map((a) => `- [${a.title}](${url(locale, `blog/${a.slug}.md`)}): ${a.description}`),
     ].join('\n'),

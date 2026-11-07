@@ -55,7 +55,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 for (const [locale, c] of [['en', CONTENT_EN], ['it', CONTENT_IT]]) {
   const cards = [
-    ['home', c.person.name, c.hero.headline],
+    ['home', c.person.name, c.hero.lede],
     ...c.projects.map((p) => [p.slug, p.title, p.summary]),
     ['blog', 'Blog', locale === 'it' ? 'Appunti su Angular, Signals, RxJS e Spring Boot.' : 'Notes on Angular, Signals, RxJS and Spring Boot.'],
     ...BLOG[locale].map((a) => [`blog-${a.slug}`, a.title, a.description]),

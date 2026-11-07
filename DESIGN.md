@@ -59,6 +59,11 @@ typography:
     fontWeight: 400
     lineHeight: 1.55
     fontVariation: "'wdth' 100"
+  micro:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.72rem"
+    fontWeight: 600
+    lineHeight: 1.3
   label:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9rem"
@@ -165,8 +170,9 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Title** (600, 22.5 → 28px, 1.1, `wdth` 85): project names, card titles, case study subsections (`h3`).
 - **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 58ch (about 75 characters a line).
 - **Label** (600, 14.4px): repository tags, small meta.
+- **Micro** (600, 11.5px / 0.72rem): code tags, small indicators, header name subline.
 
-The scale is modular, 1.25 on 18px (`--step--1` … `--step-5`). The contact title is the one oversized exception (up to 9rem).
+The scale is modular, 1.25 on 18px (`--step--2` … `--step-5`). The contact title is the one oversized exception (up to 9rem).
 
 ### Named Rules
 **The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.

@@ -96,6 +96,7 @@
   --space-16: 128px;
 
   /* modular scale 1.25 on 18px */
+  --step--2: 0.72rem;    /* 11.5px: micro-labels, code tags, header subline */
   --step--1: 0.9rem;     /* 14.4px: rem counts from the root's 16px, not the body's 18px */
   --step-0: 1.125rem;    /* 18px   */
   --step-1: 1.406rem;    /* 22.5px */
@@ -107,6 +108,7 @@
 
   --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-voice: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   /* in ch of Instrument Sans the zero is wider than the average letter: 58ch is about 75 characters a line (issue #229) */
   --measure: 58ch;
   --container: 1200px;

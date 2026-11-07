@@ -62,7 +62,7 @@ export const COPIED_MS = 2000;
       border-bottom: 0;
       background: var(--surface);
       color: var(--fg-muted);
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-family: var(--font-mono);
       font-size: var(--step--2);
       font-weight: 600;
       text-transform: uppercase;
@@ -79,7 +79,7 @@ export const COPIED_MS = 2000;
       tab-size: 2;
     }
     code {
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-family: var(--font-mono);
       font-size: var(--step--1);
     }
     // a tab on the frame's top right edge: it never covers the first line of code

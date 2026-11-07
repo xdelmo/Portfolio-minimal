@@ -12,8 +12,13 @@ export const introEffect: Effect = (root, { gsap }) => {
     endIntro();
     return undefined;
   }
+  let deadline = 0;
+  const complete = () => {
+    window.clearTimeout(deadline);
+    endIntro();
+  };
   const intro = gsap
-    .timeline({ paused: true, onComplete: endIntro })
+    .timeline({ paused: true, onComplete: complete })
     .to(root.querySelectorAll('.letter'), { opacity: 1, duration: 0.35, stagger: 0.035, ease: 'power2.out' })
     .fromTo(
       root.querySelectorAll('.px'),
@@ -26,7 +31,10 @@ export const introEffect: Effect = (root, { gsap }) => {
   // the motion script came late (a slow phone, a busy CI): replaying the intro now would hold the page past the
   // CSS fallback, so the fallback finishes the lift
   // the CSS animation starts with the first render, not with the navigation: its own start time is the reference
-  const cssStart = Number(panel.getAnimations()[0]?.startTime ?? 0);
+  const [anim] = panel.getAnimations() as (Animation | undefined)[];
+  const animStart = typeof anim?.startTime === 'number' ? anim.startTime : null;
+  const currentTime = typeof anim?.currentTime === 'number' ? anim.currentTime : 0;
+  const cssStart = animStart ?? (performance.now() - currentTime);
   if (!introFits(performance.now(), intro.duration(), cssStart)) {
     if (getComputedStyle(panel).visibility === 'hidden') {
       intro.revert();
@@ -44,9 +52,10 @@ export const introEffect: Effect = (root, { gsap }) => {
   intro.play();
   // a busy main thread stretches the timeline (GSAP's lag smoothing slows its clock down), so the CSS fallback's
   // deadline still holds: the page is never covered for longer than the fallback would have covered it
-  const deadline = window.setTimeout(() => {
+  const remainingDeadline = Math.max(intro.duration() * 1000, cssStart + INTRO_CSS_MS - performance.now());
+  deadline = window.setTimeout(() => {
     intro.progress(1);
-  }, cssStart + INTRO_CSS_MS - performance.now());
+  }, remainingDeadline);
   // a revert (reduced motion switched on, a resize across the desktop query) kills the timeline: end the intro
   // anyway, or the opaque panel would stay put with its CSS fallback turned off
   return () => {

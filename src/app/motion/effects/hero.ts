@@ -14,7 +14,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
     const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
     // the buttons stay put at full contrast: fading in after the headline they were the last thing readable, and
     // mid-fade too faint to pass contrast (issue #231)
-    const rest = hero.querySelectorAll(':scope > p');
+    const rest = hero.querySelectorAll('.copy > p');
     const entrance = gsap
       .timeline({
         paused: true,

@@ -1,4 +1,4 @@
-import { CELL, CLEAR_PAD, COMPOSE_MS, DOT, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
+import { CLOUD_CELL, CLEAR_PAD, COMPOSE_MS, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
 import { FrameState, Palette, cellsOf, drawFrame, readPalette } from './render';
 
 interface Rect { x: number; y: number; size: number; alpha: number; color: string }
@@ -33,7 +33,7 @@ describe('drawFrame', () => {
     drawFrame(ctx, grid, palette, { ...still, t: 50 });
     expect(rects).toHaveLength(cells.filter(cloud).length);
     expect(rects.length).toBeLessThan(grid.cols * grid.rows);
-    expect(rects.every((r) => r.alpha === palette.alpha && r.size === DOT * 0.7)).toBe(true);
+    expect(rects.every((r) => r.alpha === palette.alpha && r.size === CLOUD_CELL)).toBe(true);
     // the first cell is a corner: the deepest blue
     expect(rects[0].color).toBe(palette.tones[tone(cloudDepth(0, 0, grid, null), 0)]);
   });
@@ -46,15 +46,15 @@ describe('drawFrame', () => {
     drawFrame(all.ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS });
     const c = cellsOf(grid, null);
     expect(all.rects).toHaveLength(cells.filter((i) => breathe(c.depth[i], c.phase[i], COMPOSE_MS) > 0).length);
-    expect(all.rects.every((r) => r.size === DOT * 0.7)).toBe(true);
+    expect(all.rects.every((r) => r.size === CLOUD_CELL)).toBe(true);
   });
 
   it('pulls the cloud back from the pointer instead of lighting it', () => {
     const c = cellsOf(grid, null);
     const i = cells.find((n) => c.depth[n] > 0.15 && c.depth[n] < 0.3) ?? -1;
     expect(i).toBeGreaterThanOrEqual(0);
-    const cx = grid.x0 + (i % grid.cols) * CELL + CELL / 2;
-    const cy = grid.y0 + Math.floor(i / grid.cols) * CELL + CELL / 2;
+    const cx = grid.x0 + (i % grid.cols) * CLOUD_CELL + CLOUD_CELL / 2;
+    const cy = grid.y0 + Math.floor(i / grid.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const at = (pointer: { x: number; y: number } | null): Rect[] => {
       const { ctx, rects } = fakeContext();
       drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, pointer });
@@ -66,7 +66,7 @@ describe('drawFrame', () => {
 
   it('never lights the padded text box, whatever the time', () => {
     const clear = { x: 200, y: 60, w: 200, h: 120 };
-    const pad = CLEAR_PAD * CELL;
+    const pad = CLEAR_PAD * CLOUD_CELL;
     for (let t = 0; t < 14000; t += 500) {
       const { ctx, rects } = fakeContext();
       drawFrame(ctx, grid, palette, { ...still, animate: true, t, clear });
@@ -81,8 +81,8 @@ describe('drawFrame', () => {
   it('lets a ripple light a clearing cell, then fade', () => {
     const col = 25;
     const row = 10;
-    const cx = grid.x0 + col * CELL + CELL / 2;
-    const cy = grid.y0 + row * CELL + CELL / 2;
+    const cx = grid.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+    const cy = grid.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
     const draw = (start: number): Rect[] => {
       const { ctx, rects } = fakeContext();
       drawFrame(ctx, grid, palette, { ...still, animate: true, t: COMPOSE_MS * 3, ripples: [{ x: cx, y: cy, start }] });

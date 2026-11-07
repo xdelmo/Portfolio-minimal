@@ -1,11 +1,11 @@
-import { CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
+import { CLOUD_CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, breathe, cloudDepth, tone } from './field';
 
 describe('pixel field maths', () => {
   it('fits a grid of cells to the canvas and centres it, with no figure on it', () => {
     const l = layout(1000, 300);
-    expect(l.cols).toBe(Math.floor(1000 / CELL));
-    expect(l.rows).toBe(Math.floor(300 / CELL));
-    expect(l.x0).toBeCloseTo((1000 - l.cols * CELL) / 2);
+    expect(l.cols).toBe(Math.ceil(1000 / CLOUD_CELL));
+    expect(l.rows).toBe(Math.ceil(300 / CLOUD_CELL));
+    expect(l.x0).toBeCloseTo((1000 - l.cols * CLOUD_CELL) / 2);
     expect(Object.keys(l).sort()).toEqual(['cols', 'rows', 'x0', 'y0']);
   });
 
@@ -43,12 +43,12 @@ describe('the cloud mask', () => {
   const clear = { x: 400, y: 240, w: 400, h: 240 };
 
   it('cloudDepth leaves the padded clearing empty', () => {
-    const pad = CLEAR_PAD * CELL;
+    const pad = CLEAR_PAD * CLOUD_CELL;
     for (let i = 0; i < l.cols * l.rows; i++) {
       const col = i % l.cols;
       const row = Math.floor(i / l.cols);
-      const x = l.x0 + col * CELL + CELL / 2;
-      const y = l.y0 + row * CELL + CELL / 2;
+      const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+      const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
       if (x >= clear.x - pad && x <= clear.x + clear.w + pad && y >= clear.y - pad && y <= clear.y + clear.h + pad) {
         expect(cloudDepth(col, row, l, clear)).toBeLessThanOrEqual(-2 * BREATHE);
       }
@@ -60,6 +60,26 @@ describe('the cloud mask', () => {
       expect(cloudDepth(c, r, l, clear)).toBeGreaterThan(0.75);
     }
     expect(cloudDepth(0, 0, l, null)).toBeGreaterThan(0.75);
+  });
+
+  it('lights a wide share of a desktop hero, with cloud on all four sides', () => {
+    const big = layout(1440, 900);
+    const text = { x: 340, y: 290, w: 760, h: 320 };
+    let lit = 0;
+    const strips = { left: 0, right: 0, top: 0, bottom: 0 };
+    for (let i = 0; i < big.cols * big.rows; i++) {
+      const col = i % big.cols;
+      const row = Math.floor(i / big.cols);
+      if (cloudDepth(col, row, big, text) <= 0) continue;
+      lit++;
+      if (col < big.cols * 0.1) strips.left++;
+      if (col >= big.cols * 0.9) strips.right++;
+      if (row < big.rows * 0.1) strips.top++;
+      if (row >= big.rows * 0.9) strips.bottom++;
+    }
+    expect(lit / (big.cols * big.rows)).toBeGreaterThanOrEqual(0.25);
+    for (const n of Object.values(strips)) expect(n).toBeGreaterThan(0);
+    expect(cloudDepth(0, 0, big, text)).toBeGreaterThan(0.75);
   });
 
   it('cloudDepth is deterministic', () => {
@@ -75,7 +95,7 @@ describe('the cloud mask', () => {
     expect(tone(0.9, 0)).toBe(0);
     expect(tone(0.6, 0)).toBe(1);
     expect(tone(0.4, 0)).toBe(2);
-    expect(tone(0.1, 0.9)).toBe(5);
+    expect(tone(0.1, 0.97)).toBe(5);
     expect([3, 4]).toContain(tone(0.1, 0.2));
   });
 });

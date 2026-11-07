@@ -39,7 +39,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
   imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
-    <section class="hero container" aria-labelledby="hero-title">
+    <section class="hero" aria-labelledby="hero-title">
       <div class="copy" #copy>
       <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
       <p class="lede">{{ content.hero.lede }}</p>
@@ -137,7 +137,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       align-content: center;
       text-align: center;
       min-height: calc(100svh - var(--header-h));
-      padding-block: var(--space-8) var(--space-12);
+      // full bleed: the cloud runs edge to edge, so the text keeps the container's gutters itself
+      padding: var(--space-8) var(--gutter) var(--space-12);
+    }
+    .copy {
+      max-width: var(--container);
     }
     .hero h1 {
       // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),

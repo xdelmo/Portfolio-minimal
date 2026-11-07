@@ -101,8 +101,8 @@ export function bounds(boxes: readonly Box[]): Box {
 
 /** How far (px) the text's boxes melt into one shape where they come close (a smooth minimum). */
 const MELT = 48;
-/** Over how many cells past the margin the rim's noise turns from outward only to the mockup's both ways. */
-const REACH = 8;
+/** Over how much depth past the ellipse the rim's noise turns from outward only to the mockup's both ways. */
+const REACH = 0.3;
 
 /** The part of the mask that does not drift: per cell, its base depth (NaN in the padded text) and how far it is from the text (0-1). */
 interface Shape {
@@ -150,7 +150,8 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const g = gap(x, y);
     shape.base[i] = g <= pad ? NaN : 1 + (dist(x, y) - 1) * squeeze;
-    shape.near[i] = Math.min(1, Math.max(0, (g - pad) / (REACH * CLOUD_CELL)));
+    // how far past the ellipse, not past the text: inside it the push keeps every cell dark, so the text's outline never shows
+    shape.near[i] = Math.min(1, Math.max(0, (shape.base[i] - 1) / REACH));
   }
   return shape;
 }
@@ -160,8 +161,8 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
  * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
  * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse grows until the text's own line boxes
  * (`clear`, melted together, plus CLEAR_PAD cells) fit inside it, and those are never lit. Like andreas.vision's sky
- * the rim is noise, never the text's outline: next to the text the noise only pushes the cloud away (by up to REACH
- * cells), and further out it swings both ways as in the mockup. `clear` null
+ * the rim is noise, never the text's outline: inside the ellipse the noise only pushes the cloud away (up to REACH
+ * depth past it), and further out it swings both ways as in the mockup. `clear` null
  * (not measured yet) is a centred box of a quarter of the canvas. `shift` (cells, see `drift`) slides the noise
  * sideways: the cloud drifts with the wind while its clearing stays put.
  */

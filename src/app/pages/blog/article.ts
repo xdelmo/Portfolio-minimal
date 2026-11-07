@@ -361,6 +361,7 @@ export class ArticlePage {
   constructor() {
     const seo = inject(SeoService);
     const locale = toLocale(inject(LOCALE_ID));
+    const destroyRef = inject(DestroyRef);
     effect(() => {
       const a = this.article();
       seo.setJsonLd('ld-page', a ? articleJsonLd(a, this.content.person, locale) : null);
@@ -384,7 +385,7 @@ export class ArticlePage {
         this.progress.set(Math.round(p));
       };
       window.addEventListener('scroll', updateProgress, { passive: true });
-      inject(DestroyRef).onDestroy(() => {
+      destroyRef.onDestroy(() => {
         window.removeEventListener('scroll', updateProgress);
         clearTimeout(this.copyTimer);
       });

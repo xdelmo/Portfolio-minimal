@@ -33,6 +33,14 @@ module.exports = defineConfig([
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       // Angular components and services are decorated classes, often without members.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+      // inject() inside a render hook's callback runs outside the injection context: NG0203 at runtime (issue #330).
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.name=/^after(Next)?Render(Effect)?$/] CallExpression[callee.name='inject']",
+          message: 'inject() runs outside the injection context here (NG0203): inject in the constructor and use the value in the callback.',
+        },
+      ],
     },
   },
   {

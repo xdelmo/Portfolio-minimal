@@ -154,6 +154,29 @@ test.describe('the abstract field', () => {
     expect(await field.boundingBox()).toEqual(await page.locator('.hero').boundingBox());
   });
 
+  for (const [width, height] of [[1440, 900], [390, 844]]) {
+    test(`the cloud runs edge to edge without a horizontal scroll at ${String(width)}×${String(height)}`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/en/');
+      const field = await page.locator('.hero app-pixel-field').boundingBox();
+      const view = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+      if (!field) throw new Error('missing field box');
+      expect(field.x).toBeCloseTo(0, 0);
+      expect(Math.abs(field.width - view.client)).toBeLessThanOrEqual(1);
+      expect(view.scroll).toBeLessThanOrEqual(view.client);
+    });
+  }
+
+  test('the clearing leaves the cloud room on a wide hero', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/');
+    await expect(canvas(page)).toHaveAttribute('data-clear', /.+/);
+    const clearW = Number((await canvas(page).getAttribute('data-clear'))?.split(',')[2]);
+    const hero = await page.locator('.hero').boundingBox();
+    if (!hero) throw new Error('missing hero box');
+    expect(clearW).toBeLessThan(hero.width * 0.9);
+  });
+
   test('the clearing follows the text block', async ({ page }) => {
     const holdsCopy = async (): Promise<void> => {
       await expect(async () => {

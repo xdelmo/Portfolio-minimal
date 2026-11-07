@@ -1,4 +1,4 @@
-import { BREATHE, CELL, PULL, COMPOSE_MS, DOT, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
+import { BREATHE, CLOUD_CELL, PULL, COMPOSE_MS, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
 import { Cells, FrameState, Palette, cellsOf } from './render';
 
 /**
@@ -47,14 +47,14 @@ void main() {
     if (u_wave > 0.0) e = max(e, 0.6 * pow((sin(u_t * a_cell.y + a_cell.z) + 1.0) / 2.0, 10.0) * u_wave);
     float start = (1.0 - clamp(a_cell.x, 0.0, 1.0)) * ${(COMPOSE_MS * 0.6).toFixed(1)};
     float grown = clamp((u_t - start) / ${(COMPOSE_MS * 0.4).toFixed(1)}, 0.0, 1.0);
-    size = ${DOT.toFixed(1)} * grown * (0.7 + 0.3 * e);
+    size = ${CLOUD_CELL.toFixed(1)} * grown;
     alpha = u_alpha + (1.0 - u_alpha) * e;
-    ti = depth > 0.75 ? 0 : depth > 0.5 ? 1 : depth > 0.3 ? 2 : shade > 0.85 ? 5 : shade > 0.45 ? 3 : 4;
+    ti = depth > 0.75 ? 0 : depth > 0.5 ? 1 : depth > 0.3 ? 2 : shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
   } else {
     // the clearing and the cloud's breathing holes show only the energy that crosses them
-    size = e > 0.05 ? ${DOT.toFixed(1)} * (0.25 + 0.75 * e) : 0.0;
+    size = e > 0.05 ? ${CLOUD_CELL.toFixed(1)} : 0.0;
     alpha = e;
-    ti = shade > 0.85 ? 5 : shade > 0.45 ? 3 : 4;
+    ti = shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
   }
   vec4 c = u_tones[0];
   for (int i = 0; i < 6; i++) if (i == ti) c = u_tones[i];
@@ -140,7 +140,7 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
       // what each dot keeps until the layout or the clearing changes: its place and the values `drawFrame` caches per cell
       const data = new Float32Array(l.cols * l.rows * 6);
       for (let i = 0; i < l.cols * l.rows; i++) {
-        data.set([l.x0 + (i % l.cols) * CELL + CELL / 2, l.y0 + Math.floor(i / l.cols) * CELL + CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i]], i * 6);
+        data.set([l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2, l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i]], i * 6);
       }
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
       built = cells;

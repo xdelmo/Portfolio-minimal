@@ -1,7 +1,7 @@
 /** Pure maths for the hero pixel field. Sizes are CSS pixels, times are milliseconds. */
 
-export const CELL = 12;
-export const DOT = 8;
+/** A cloud cell: a solid square this many CSS px wide, touching its neighbours (the approved mockup's look). */
+export const CLOUD_CELL = 16;
 export const COMPOSE_MS = 1400;
 export const POINTER_RADIUS = 96;
 export const RIPPLE_MS = 1600;
@@ -21,9 +21,10 @@ export interface FieldLayout {
 }
 
 export function layout(width: number, height: number): FieldLayout {
-  const cols = Math.max(1, Math.floor(width / CELL));
-  const rows = Math.max(1, Math.floor(height / CELL));
-  return { cols, rows, x0: (width - cols * CELL) / 2, y0: (height - rows * CELL) / 2 };
+  // ceil: the cloud runs edge to edge, the outer cells cropped by half a cell at most
+  const cols = Math.max(1, Math.ceil(width / CLOUD_CELL));
+  const rows = Math.max(1, Math.ceil(height / CLOUD_CELL));
+  return { cols, rows, x0: (width - cols * CLOUD_CELL) / 2, y0: (height - rows * CLOUD_CELL) / 2 };
 }
 
 /** Deterministic pseudo-random number in [0, 1). */
@@ -72,26 +73,48 @@ function noise(x: number, y: number): number {
   return top * (1 - sy) + bottom * sy;
 }
 
+/** The mockup's two-scale noise in [0, 1), in cell units. */
+function cloudNoise(col: number, row: number): number {
+  return 0.6 * noise(col / 9, row / 9) + 0.4 * noise((col + 50) / 4, (row + 50) / 4);
+}
+
 /**
- * How deep in the cloud a cell is: at most -2 * BREATHE inside the clearing (the ellipse around `clear`, grown by CLEAR_PAD cells,
- * which covers the padded box), rising to 1 towards the hero's corners, its edge roughened by noise. `clear` null (not
- * measured yet) is a centred box of half the canvas, so nothing lands on the centre.
+ * How deep in the cloud a cell is, as in the approved mockup: a soft, noisy ellipse (radii 40% of the hero, 46% by 40%
+ * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
+ * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse is joined with `clear` grown by CLEAR_PAD
+ * cells, and that padded box is at most -2 * BREATHE, so breathing can never light it. `clear` null (not measured yet) is
+ * a centred box of a quarter of the canvas.
  */
 export function cloudDepth(col: number, row: number, l: FieldLayout, clear: Box | null): number {
-  const w = l.x0 * 2 + l.cols * CELL;
-  const h = l.y0 * 2 + l.rows * CELL;
-  const b = clear ?? { x: w / 4, y: h / 4, w: w / 2, h: h / 2 };
+  const w = l.x0 * 2 + l.cols * CLOUD_CELL;
+  const h = l.y0 * 2 + l.rows * CLOUD_CELL;
+  const b = clear ?? { x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 };
+  const pad = CLEAR_PAD * CLOUD_CELL;
   const mx = b.x + b.w / 2;
   const my = b.y + b.h / 2;
-  const rx = (b.w / 2 + CLEAR_PAD * CELL) * Math.SQRT2 * 1.001;
-  const ry = (b.h / 2 + CLEAR_PAD * CELL) * Math.SQRT2 * 1.001;
-  const dist = (px: number, py: number): number => Math.hypot((px - mx) / rx, (py - my) / ry);
-  const d = dist(l.x0 + col * CELL + CELL / 2, l.y0 + row * CELL + CELL / 2);
-  // 2 * BREATHE below zero, so breathing can never light a cell of the padded box
-  if (d <= 1) return d - 1 - 2 * BREATHE;
+  const hx = b.w / 2 + pad;
+  const hy = b.h / 2 + pad;
+  const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+  const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
+  if (Math.abs(x - mx) <= hx && Math.abs(y - my) <= hy) return -0.2;
+  const tall = h > w;
+  const rx0 = w * (tall ? 0.46 : 0.4);
+  const ry0 = h * 0.4;
+  // the mockup's ellipse, joined with the padded box (which pokes out of it where the text is wide): whichever is nearer
+  const dist = (px: number, py: number): number => {
+    const ellipse = Math.hypot((px - mx) / rx0, (py - my) / ry0);
+    // a box with rounded corners, so the clearing does not look like a rectangle
+    const round = 0.35 * Math.min(hx, hy);
+    const outside = Math.hypot(Math.max(Math.abs(px - mx) - (hx - round), 0), Math.max(Math.abs(py - my) - (hy - round), 0)) - round;
+    return Math.min(ellipse, 1 + Math.max(outside, 0) / ry0);
+  };
+  // the mockup's hero corner sits at d = 1.77: where the box pushed the edge outwards, squeeze the band so the corners still get there
   const far = Math.max(dist(0, 0), dist(w, 0), dist(0, h), dist(w, h));
-  const base = (d - 1) / Math.max(far - 1, 0.01);
-  return Math.min(1, base + (noise(col / 4, row / 4) - 0.5) * 0.3);
+  const base = 1 + (dist(x, y) - 1) * Math.max(1, 0.77 / Math.max(far - 1, 0.01));
+  // the mockup's 0.7 noise, calmed far out so the corners are always solid blue
+  const d = base + (cloudNoise(col, row) - 0.5) * 0.7 * Math.min(1, Math.max(0, (2 - base) * 2));
+  if (d > 1) return Math.min(1, (d - 1) * 1.6);
+  return d > 0.9 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
 }
 
 /** `depth` plus a slow drift of at most BREATHE; unchanged when time is frozen (`t` 0). */
@@ -104,7 +127,7 @@ export function tone(depth: number, shade: number): number {
   if (depth > 0.75) return 0;
   if (depth > 0.5) return 1;
   if (depth > 0.3) return 2;
-  return shade > 0.85 ? 5 : shade > 0.45 ? 3 : 4;
+  return shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
 }
 
 /** 0 before a cell appears, 1 once it is full size: the cloud grows in from its outer cells. */

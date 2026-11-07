@@ -1,4 +1,4 @@
-import { Box, CELL, COMPOSE_MS, DOT, PULL, FieldLayout, breathe, cloudDepth, composeIn, easeOutCubic, falloff, hash, ripple, tone } from './field';
+import { Box, CLOUD_CELL, COMPOSE_MS, PULL, FieldLayout, breathe, cloudDepth, composeIn, easeOutCubic, falloff, hash, ripple, tone } from './field';
 
 export interface Palette {
   dot: string;
@@ -68,7 +68,7 @@ export function cellsOf(l: FieldLayout, clear: Box | null): Cells {
 }
 
 export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Palette, f: FrameState): void {
-  ctx.clearRect(0, 0, l.x0 * 2 + l.cols * CELL, l.y0 * 2 + l.rows * CELL);
+  ctx.clearRect(0, 0, l.x0 * 2 + l.cols * CLOUD_CELL, l.y0 * 2 + l.rows * CLOUD_CELL);
   const t = f.animate ? f.t : COMPOSE_MS * 2;
   const breath = f.animate ? f.t : 0;
   const pointer = f.animate ? f.pointer : null;
@@ -80,8 +80,8 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
   for (let row = 0; row < l.rows; row++) {
     for (let col = 0; col < l.cols; col++) {
       const i = row * l.cols + col;
-      const x = l.x0 + col * CELL + CELL / 2;
-      const y = l.y0 + row * CELL + CELL / 2;
+      const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+      const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
       let energy = 0;
       for (const r of f.ripples) energy = Math.max(energy, ripple(Math.hypot(x - r.x, y - r.y), t - r.start));
 
@@ -96,12 +96,12 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
         const e = waveIn > 0 ? Math.max(energy, 0.6 * ((Math.sin(t * cells.speed[i] + cells.phase[i]) + 1) / 2) ** 10 * waveIn) : energy;
         const grown = composeIn(cells.depth[i], t);
         if (grown <= 0) continue;
-        size = DOT * grown * (0.7 + 0.3 * e);
+        size = CLOUD_CELL * grown;
         alpha = p.alpha + (1 - p.alpha) * e;
         color = p.tones[tone(depth, cells.shade[i])];
       } else {
         if (energy <= 0.05) continue;
-        size = DOT * (0.25 + 0.75 * energy);
+        size = CLOUD_CELL;
         alpha = energy;
         color = p.tones[tone(0, cells.shade[i])];
       }

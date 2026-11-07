@@ -56,7 +56,7 @@ test.describe('the phone menu', () => {
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
     await menu.getByRole('link', { name: 'Blog' }).focus();
-    await page.getByRole('link', { name: 'See my work' }).focus();
+    await page.locator('#work a').first().focus();
     await expect(menu).toBeHidden();
   });
 

@@ -40,8 +40,8 @@ test.describe('intro', () => {
 
   test('never blocks a click', async ({ page }) => {
     await page.goto('/en/');
-    await page.getByRole('link', { name: 'See my work' }).click();
-    await expect(page).toHaveURL(/#work$/);
+    await page.locator('app-site-header .cta').click();
+    await expect(page).toHaveURL(/#contact$/);
   });
 
   test('is shown once per session', async ({ page }) => {

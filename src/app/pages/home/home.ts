@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
 import { voices } from '../../content/voices';
 import { toLocale } from '../../core/i18n/locale';
@@ -36,17 +35,13 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero" aria-labelledby="hero-title">
       <div class="copy" #copy>
       <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
       <p class="lede">{{ content.hero.lede }}</p>
-      <div class="actions">
-        <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
-        <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
-      </div>
       </div>
       <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
@@ -129,7 +124,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       display: grid;
       // centred both ways, a poster on the first screen (issue #270)
       justify-items: center;
-      // the headline's descenders need room above the lede; the buttons stand apart as their own group
+      // the headline's descenders need room above the lede
       gap: var(--space-4);
     }
     .hero {
@@ -138,14 +133,15 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       text-align: center;
       min-height: calc(100svh - var(--header-h));
       // full bleed: the cloud runs edge to edge, so the text keeps the container's gutters itself
-      padding: var(--space-8) var(--gutter) var(--space-12);
+      // even padding now the buttons are gone: the text sits lower, so more cloud shows above it (issue #339)
+      padding: var(--space-8) var(--gutter);
     }
     .copy {
       max-width: var(--container);
     }
     .hero h1 {
       // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),
-      // and the short headline (issue #280) keeps lede and buttons above the fold, so the base h1 size applies
+      // and the short headline (issue #280) keeps the lede above the fold, so the base h1 size applies
       // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
       font-variation-settings: 'wdth' 100;
@@ -171,13 +167,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     .muted {
       color: var(--fg-muted);
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: var(--space-2);
-      margin-top: var(--space-3);
     }
     // the field sits behind the hero text: a cloud around a clearing for it (issue #304)
     .hero {

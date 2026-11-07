@@ -77,11 +77,11 @@ for (const [width, height] of [
   [1280, 800],
   [1440, 900],
 ] as const) {
-  test(`keeps the hero buttons in the first screen at ${String(width)}×${String(height)}`, async ({ page, isMobile }) => {
+  test(`keeps the hero content in the first screen at ${String(width)}×${String(height)}`, async ({ page, isMobile }) => {
     test.skip(isMobile, 'laptop sizes');
     await page.setViewportSize({ width, height });
     await page.goto('/en/');
-    await expect(page.getByRole('link', { name: 'See my work' })).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('.hero .lede')).toBeInViewport({ ratio: 1 });
   });
 }
 

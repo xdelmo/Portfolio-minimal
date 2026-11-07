@@ -12,8 +12,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
 
   if (document.documentElement.classList.contains('intro-on')) {
     const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
-    // the buttons stay put at full contrast: fading in after the headline they were the last thing readable, and
-    // mid-fade too faint to pass contrast (issue #231)
+    // the lede paragraph fades in right after the headline lines rise (issue #231, #339)
     const rest = hero.querySelectorAll('.copy > p');
     const entrance = gsap
       .timeline({

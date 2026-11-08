@@ -3,7 +3,6 @@ import type { Effect } from '../motion-host';
 
 const INTERACTIVE = 'a, button, summary, [role="button"]';
 const MAGNET = 8; // px an element can lean towards the pointer
-const SNAP = 56; // px around a `data-snap` button where the cursor lets go of the pointer and settles on the button
 const FRAME = 8; // px the snapped frame is larger than the button (4 each side), so it rings it
 // the contact title is a link already, and the biggest words on the page: no arrow needed to find it
 const TITLES = 'main h2:not(#contact-title)';
@@ -15,8 +14,9 @@ const GROW_S = 0.16;
 
 /**
  * Desktop: a pixel trails the pointer and opens into a frame over links and buttons; elements marked
- * `data-magnetic` lean a few pixels towards it, and one marked `data-snap` draws the pixel in: within reach the pixel
- * becomes a frame around the button and the button leans towards the pointer even before it is on it. Near a section title the pixel becomes an arrow pointing at the
+ * `data-magnetic` lean a few pixels towards it, and over a `data-snap-zone` the pixel becomes a frame around the
+ * zone's `data-snap` button, which leans towards the pointer from anywhere in the zone. Near a section title the pixel
+ * becomes an arrow pointing at the
  * title's centre. One delegated listener, so every route is covered.
  */
 export const cursorEffect: Effect = (root, { gsap, desktop }) => {
@@ -91,13 +91,16 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     gsap.to(el, { '--mx': `${String(x)}px`, '--my': `${String(y)}px`, duration: 0.4, ease: 'power3.out', overwrite: 'auto' });
   };
   let magnet: HTMLElement | null = null;
-  // the snap button whose box, grown by SNAP on every side, holds the pointer
-  const snapTarget = (x: number, y: number): HTMLElement | null => {
-    for (const el of document.querySelectorAll<HTMLElement>('[data-snap]')) {
-      const b = el.getBoundingClientRect();
-      if (x > b.left - SNAP && x < b.right + SNAP && y > b.top - SNAP && y < b.bottom + SNAP) return el;
-    }
-    return null;
+  let snapped: HTMLElement | null = null;
+  // every frame while snapped: the button grows into its pill and leans, and the frame follows it without a move
+  const frame = (): void => {
+    if (!snapped) return;
+    const b = snapped.getBoundingClientRect();
+    dot.style.width = `${String(b.width + FRAME)}px`;
+    dot.style.height = `${String(b.height + FRAME)}px`;
+    dot.style.margin = `${String(-(b.height + FRAME) / 2)}px 0 0 ${String(-(b.width + FRAME) / 2)}px`;
+    toX(b.left + b.width / 2);
+    toY(b.top + b.height / 2);
   };
 
   const onMove = (e: PointerEvent): void => {
@@ -108,17 +111,17 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
       shown = true;
     }
     const target = e.target instanceof Element ? e.target : null;
-    // a snap button in reach wins over whatever the pointer is on; the frame wraps the button, not the pointer
-    const snap = snapTarget(e.clientX, e.clientY);
-    if (snap) {
-      const b = snap.getBoundingClientRect();
-      dot.style.width = `${String(b.width + FRAME)}px`;
-      dot.style.height = `${String(b.height + FRAME)}px`;
-      dot.style.margin = `${String(-(b.height + FRAME) / 2)}px 0 0 ${String(-(b.width + FRAME) / 2)}px`;
-      toX(b.left + b.width / 2);
-      toY(b.top + b.height / 2);
-    } else {
-      dot.style.width = dot.style.height = dot.style.margin = '';
+    // over a snap zone (a project's picture) the pixel leaves the pointer and frames the zone's button
+    const snap = target?.closest('[data-snap-zone]')?.querySelector<HTMLElement>('[data-snap]') ?? null;
+    if (snap !== snapped) {
+      snapped = snap;
+      if (snap) gsap.ticker.add(frame);
+      else {
+        gsap.ticker.remove(frame);
+        dot.style.width = dot.style.height = dot.style.margin = '';
+      }
+    }
+    if (!snap) {
       toX(e.clientX);
       toY(e.clientY);
     }
@@ -138,6 +141,8 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     }
   };
   const onLeave = (): void => {
+    gsap.ticker.remove(frame);
+    snapped = null;
     gsap.killTweensOf(grow);
     gsap.set([dot, arrow], { display: 'none' });
     dot.style.visibility = '';
@@ -149,6 +154,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   document.documentElement.addEventListener('pointerleave', onLeave);
 
   return () => {
+    gsap.ticker.remove(frame);
     gsap.killTweensOf(grow);
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);

@@ -43,7 +43,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             </div>
           </div>
           <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
-          <a class="media" [routerLink]="['/work', project.slug]" tabindex="-1" aria-hidden="true">
+          <a class="media" data-snap-zone [routerLink]="['/work', project.slug]" tabindex="-1" aria-hidden="true">
             @if (project.image; as image) {
               <img
                 appDepixelate
@@ -191,9 +191,13 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
     .media-arrow-label {
-      display: none;
+      max-width: 0;
+      overflow: hidden;
+      margin-right: calc(-1 * var(--space-1)); // cancels the gap while folded
+      opacity: 0;
       font-size: 14px;
       line-height: 1;
+      white-space: nowrap;
     }
     .media-arrow app-pixel-arrow {
       width: 16px;
@@ -201,7 +205,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     @media (hover: hover) {
       .media:hover .media-arrow-label {
-        display: block;
+        max-width: 5em;
+        margin-right: 0;
+        opacity: 1;
       }
       .media:hover .media-arrow {
         border-color: var(--accent);
@@ -215,6 +221,12 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       }
       .media-arrow app-pixel-arrow {
         transition: transform 160ms steps(2);
+      }
+      .media-arrow-label {
+        transition:
+          max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          margin-right 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 200ms ease 80ms;
       }
       .media:hover .media-arrow app-pixel-arrow {
         transform: translate(2px, -2px);

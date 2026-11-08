@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
-import { headerHidden } from './header-reveal';
 import { PauseToggle } from './pause-toggle';
 import { SiteMenu } from './site-menu';
 
@@ -11,7 +10,6 @@ import { SiteMenu } from './site-menu';
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
-  host: { '[class.away]': 'away()', '(focusin)': 'away.set(false)' },
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
@@ -37,9 +35,7 @@ import { SiteMenu } from './site-menu';
   styles: `
     @use 'styles/breakpoints' as bp;
 
-    /* sticky over the page, under the intro (z 100); it steps away while the page scrolls down and back as soon as it
-       scrolls up (issue #324). Only while away does it carry a transform: one at rest would make it the containing block
-       of the menu's fixed panel. */
+    /* always on screen: sticky over the page, under the intro (z 100) */
     :host {
       position: sticky;
       top: 0;
@@ -47,15 +43,6 @@ import { SiteMenu } from './site-menu';
       display: block;
       background: var(--bg);
       box-shadow: 0 1px 0 var(--rule);
-    }
-    :host(.away) {
-      transform: translateY(-100%);
-      box-shadow: none;
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      :host {
-        transition: transform 160ms steps(4);
-      }
     }
     .site-header {
       display: flex;
@@ -198,28 +185,7 @@ import { SiteMenu } from './site-menu';
 })
 export class SiteHeader {
   private readonly url = currentUrl();
-  /** Scrolled away (issue #324): never while the keyboard focus or an open menu is in it. */
-  protected readonly away = signal(false);
   protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
-
-  constructor() {
-    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    const destroy = inject(DestroyRef);
-    afterNextRender(() => {
-      let last = scrollY;
-      const onScroll = (): void => {
-        const y = scrollY;
-        // a click leaves the focus on a link, so only a keyboard focus holds the bar
-        const held = host.querySelector(':focus-visible, details[open]') !== null;
-        this.away.set(!held && headerHidden(this.away(), y, y - last, host.offsetHeight));
-        last = y;
-      };
-      addEventListener('scroll', onScroll, { passive: true });
-      destroy.onDestroy(() => {
-        removeEventListener('scroll', onScroll);
-      });
-    });
-  }
 
   // with JavaScript, move the focus in place
 

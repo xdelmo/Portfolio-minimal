@@ -143,11 +143,6 @@ test.describe('the phone menu', () => {
     await page.evaluate(() => {
       scrollTo(0, 4000);
     });
-    // the header stepped away on the way down (issue #324): scroll up a little to bring it back, as a visitor would
-    await page.evaluate(() => {
-      scrollBy(0, -100);
-    });
-    await expect.poll(() => page.locator('app-site-header').evaluate((el) => el.getBoundingClientRect().top)).toBe(0);
     const y = () => page.evaluate(() => Math.round(scrollY));
     const before = await y();
     await page.locator('.site-menu summary').click();
@@ -164,11 +159,6 @@ test.describe('the phone menu', () => {
     await page.evaluate(() => {
       scrollTo(0, 3000);
     });
-    // the header stepped away on the way down (issue #324): scroll up a little to bring it back, as a visitor would
-    await page.evaluate(() => {
-      scrollBy(0, -100);
-    });
-    await expect.poll(() => page.locator('app-site-header').evaluate((el) => el.getBoundingClientRect().top)).toBe(0);
     const before = await page.evaluate(() => Math.round(scrollY));
     await page.locator('.language-menu summary').click();
     await page.keyboard.press('Escape');

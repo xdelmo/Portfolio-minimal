@@ -98,7 +98,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       <div class="contact-text">
         <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role?</p>
         <h2 id="contact-title">
-          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
+          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><span class="contact-arrow-mask"><app-pixel-arrow class="contact-arrow" /></span></a>
         </h2>
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
@@ -192,22 +192,36 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       max-width: 40ch;
       font-size: var(--step-1);
     }
-    // the giant title is the action, as in the references: the whole line writes an email
+    // the giant title is the action, as in the references: the whole line writes an email; the arrow stays inline
     .contact-link {
       display: inline-flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
+      align-items: baseline;
       gap: 0 0.12em;
+      max-width: 100%;
+      white-space: nowrap;
       color: inherit;
       text-decoration: none;
     }
     .contact-label {
-      display: block;
+      display: inline-block;
+      padding-inline-end: 0.12em;
+    }
+    // ensure SplitText's line mask never clips the italic swash of the last letter (issue #345)
+    .contact-label > div {
+      overflow: visible !important;
+      clip-path: inset(-0.2em -0.5em 0 -0.2em);
+    }
+    .contact-arrow-mask {
+      display: inline-flex;
+      align-items: baseline;
+      overflow: hidden;
+      flex-shrink: 0;
+      clip-path: inset(-0.2em -0.5em 0 -0.2em);
     }
     .contact-arrow {
+      flex-shrink: 0;
       width: 0.5em;
       height: 0.5em;
-      margin-bottom: 0.16em;
       color: var(--link);
     }
     .contact-link:hover .contact-label {
@@ -251,8 +265,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         width: 256px;
       }
     }
+    // clamped to scale comfortably from phones to wide screens without letting the title and arrow wrap (issue #345)
     #contact h2 {
-      font-size: clamp(3rem, 1rem + 8vw, 9rem);
+      font-size: clamp(2rem, 1.25rem + 3.5vw, 4.5rem);
       line-height: 0.95;
     }
     // below the text on phones and tablets: centred, not stranded on the left of an empty band

@@ -19,8 +19,8 @@ export const CONTENT_EN: SiteContent = {
       'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Aprilia, Italy.',
   },
   hero: {
-    headline: 'Engineer by method, curious by nature.',
-    voice: 'curious by nature.',
+    headline: 'Engineer by method, curious by nature',
+    voice: 'curious by nature',
     lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build enterprise Angular apps whose large tables stay responsive, and I\u00a0leave an easter egg for whoever looks closely.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',

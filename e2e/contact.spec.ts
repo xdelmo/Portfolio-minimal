@@ -28,7 +28,8 @@ test.describe('contact finale', () => {
     // the split ran: the label's lines are wrapped in masks
     await expect(label.locator('div').first()).toBeAttached();
     await expect(label).not.toHaveAttribute('aria-label');
-    await expect(page.locator('#contact').getByRole('link', { name: 'Get in touch', exact: true })).toBeVisible();
+    const text = ((await label.textContent()) ?? '').replace(/\s+/g, ' ').trim();
+    await expect(page.locator('#contact .contact-link')).toHaveAccessibleName(text);
   });
 
   // without a mail program the title's mailto does nothing: a button copies the address (issue #231)

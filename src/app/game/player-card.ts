@@ -75,23 +75,37 @@ export const MAX_LEVEL = 99;
     </dialog>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
     .card {
       width: min(100% - 2 * var(--gutter), 32rem);
       max-height: calc(100svh - 2 * var(--space-2));
       // scrolled to its end, the card does not hand the scroll to the page behind (issue #135)
       overscroll-behavior: contain;
-      padding: var(--space-4);
+      // 24px a side on phones leaves the stats room; 32px from md up (issue #383)
+      padding: var(--space-3);
       border: 4px solid var(--fg);
       outline: 4px solid var(--band-ink-bg);
       background: var(--band-ink-bg);
       color: var(--fg);
       overflow: auto;
+      @include bp.up(md) {
+        padding: var(--space-4);
+      }
     }
     .card::backdrop {
-      background: rgb(0 0 0 / 0.6);
+      background: var(--scrim);
     }
+    // the rhythm by proximity (issue #383): blocks 24px apart, a new section (the achievements, the action) 32px,
+    // a heading 16px from the list it names
     .card > * + * {
       margin-top: var(--space-3);
+    }
+    .card > h3,
+    .card > form {
+      margin-top: var(--space-4);
+    }
+    .card > h3 + .achievements {
+      margin-top: var(--space-2);
     }
     h2 {
       font-size: var(--step-5);
@@ -101,11 +115,11 @@ export const MAX_LEVEL = 99;
     h3 {
       font-size: var(--step-1);
     }
+    // a long class wraps the level to the next row on a narrow screen, instead of squeezing every column
     .stats {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      justify-content: start;
-      gap: var(--space-3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2) var(--space-3);
       margin: 0;
     }
     dt {
@@ -167,6 +181,14 @@ export const MAX_LEVEL = 99;
     // not earned yet: the drawing waits faded, the text keeps its contrast
     .locked .sprite {
       opacity: 0.35;
+    }
+    // the one action, a full-width target on phones; its own size from md up
+    form .button {
+      width: 100%;
+      justify-content: center;
+      @include bp.up(md) {
+        width: auto;
+      }
     }
     @media (prefers-reduced-motion: no-preference) {
       .card[open] {

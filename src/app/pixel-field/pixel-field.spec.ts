@@ -36,7 +36,7 @@ describe('PixelField', () => {
     vi.unstubAllGlobals();
   });
 
-  it('composes the cloud when the intro uncovers it, not under the panel (issue #369)', async () => {
+  async function renderUnderIntro() {
     const ctx = new Proxy({}, { get: () => () => undefined }) as CanvasRenderingContext2D;
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((id: string) => (id === '2d' ? ctx : null)) as never);
     const Observer = class {
@@ -45,16 +45,41 @@ describe('PixelField', () => {
     };
     vi.stubGlobal('ResizeObserver', Observer);
     vi.stubGlobal('IntersectionObserver', Observer);
-    vi.stubGlobal('matchMedia',() => ({ matches: true, addEventListener: () => undefined, removeEventListener: () => undefined }));
+    vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener: () => undefined, removeEventListener: () => undefined }));
+    vi.stubGlobal('requestAnimationFrame', () => 1);
     document.documentElement.classList.add('intro-on');
     const fixture = TestBed.createComponent(PixelField);
     await fixture.whenStable();
-    const frame = (fixture.componentInstance as unknown as { frame: { t: number } }).frame;
-    frame.t = 3000; // the cloud's clock ran on under the panel
-    endIntro();
-    expect(frame.t).toBe(0);
-    fixture.destroy();
+    const field = fixture.componentInstance as unknown as { frame: { t: number }; last: number; tick: (now: number) => void };
+    const frames = () => {
+      for (let i = 1; i <= 3; i++) field.tick(field.last + 50);
+      return field.frame.t;
+    };
+    return { fixture, frames };
+  }
+
+  afterEach(() => {
+    document.documentElement.classList.remove('intro-on');
     vi.unstubAllGlobals();
+  });
+
+  // the cloud stays empty under the panel and composes once, with the headline (issues #369, #374)
+  it('holds the cloud empty under the intro and composes it once the intro has gone', async () => {
+    const { fixture, frames } = await renderUnderIntro();
+    expect(frames()).toBe(0);
+    endIntro();
+    expect(frames()).toBe(150);
+    fixture.destroy();
+  });
+
+  it('composes it when the CSS fallback lifts the panel, without the motion script', async () => {
+    const { fixture, frames } = await renderUnderIntro();
+    const panel = document.body.appendChild(document.createElement('div'));
+    panel.className = 'site-intro';
+    panel.dispatchEvent(new Event('animationend', { bubbles: true }));
+    expect(frames()).toBe(150);
+    panel.remove();
+    fixture.destroy();
   });
 
   it('can be destroyed where requestAnimationFrame does not exist, as on the server', async () => {

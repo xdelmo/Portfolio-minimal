@@ -45,18 +45,40 @@ export async function publicRepos(urls, fetchImpl = globalThis.fetch) {
   return urls.filter((url) => open.has(url.toLowerCase()));
 }
 
+// what the live site published at its last build (scripts/postbuild.mjs writes it from this same check)
+const LIVE = 'https://www.emanueledelmonte.it/repos.json';
+
+/** The live site's list, kept to the URLs the content still links; throws if it does not answer a JSON array. */
+export async function liveList(urls, fetchImpl = globalThis.fetch) {
+  const res = await fetchImpl(LIVE, { signal: globalThis.AbortSignal?.timeout(10000) });
+  if (res.status !== 200) throw new Error(`${LIVE}: HTTP ${String(res.status)}`);
+  const list = await res.json();
+  if (!Array.isArray(list)) throw new Error(`${LIVE}: not a list`);
+  return urls.filter((url) => list.includes(url));
+}
+
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const urls = repoUrls(await Promise.all(SOURCES.map((f) => readFile(f, 'utf8'))));
   let found;
+  let failure;
   try {
     found = await publicRepos(urls);
   } catch (error) {
-    // a deploy must not guess: it could link a private repository, or drop public ones
+    failure = error;
+    // a deploy must not guess: when GitHub is down (issue #350, 503s on Netlify) it takes the list the live site was
+    // last built with, which was checked against GitHub then; repos.yml rebuilds once GitHub answers differently
     if (process.env['CI'] || process.env['NETLIFY']) {
-      console.error(`public-repos: GitHub did not answer, stopping (${error.message})`);
-      process.exit(1);
+      try {
+        found = await liveList(urls);
+        console.warn(`public-repos: GitHub did not answer (${error.message}), using the live site's list`);
+      } catch (liveError) {
+        console.error(`public-repos: GitHub did not answer, nor did the live site, stopping (${error.message}; ${liveError.message})`);
+        process.exit(1);
+      }
     }
-    console.warn(`public-repos: GitHub did not answer, keeping the last list (${error.message})`);
+  }
+  if (!found) {
+    console.warn(`public-repos: GitHub did not answer, keeping the last list (${failure.message})`);
     const kept = await readFile(OUT, 'utf8').catch(() => moduleSource([]));
     await writeFile(OUT, kept);
     process.exit(0);

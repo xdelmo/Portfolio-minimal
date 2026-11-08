@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { moduleSource, publicList, publicRepos, repoUrls } from './public-repos.mjs';
+import { liveList, moduleSource, publicList, publicRepos, repoUrls } from './public-repos.mjs';
 
 const repo = (name) => ({ html_url: `https://github.com/xdelmo/${name}` });
 // the API's answers in order: a status, or a 200 with this list of repositories
@@ -33,4 +33,14 @@ test('keeps only the public ones, in order, as a TypeScript module', async () =>
   const urls = await publicRepos([u('a'), u('B'), u('c')], answer([[repo('a'), repo('b')]]));
   assert.deepEqual(urls, [u('a'), u('B')]);
   assert.match(moduleSource(['a', 'c']), /export const PUBLIC_REPOS: readonly string\[\] = \[\n {2}"a",\n {2}"c"\n\];/);
+});
+
+test('falls back to the live list, only for URLs the content still links', async () => {
+  const u = (n) => `https://github.com/xdelmo/${n}`;
+  assert.deepEqual(await liveList([u('a'), u('b')], answer([[u('b'), u('gone')]])), [u('b')]);
+});
+
+test('a live site that does not answer a list stops the build', async () => {
+  await assert.rejects(liveList([], answer([503])), /HTTP 503/);
+  await assert.rejects(liveList([], answer([{}])), /not a list/);
 });

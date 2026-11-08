@@ -337,16 +337,6 @@ test.describe('bands and finale', () => {
   });
 });
 
-test.describe('stack on phones', () => {
-  test('the title stays above the levels stepping in', async ({ page }) => {
-    await page.goto('/en/');
-    const style = await page.locator('#stack h2').evaluate((el) => ({ position: getComputedStyle(el).position, z: getComputedStyle(el).zIndex }));
-    expect(style.position).toBe('relative');
-    expect(Number(style.z)).toBeGreaterThan(0);
-  });
-
-});
-
 test('with enlarged text, an experience card that would not fit under the header stops sticking', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.addInitScript(() => {

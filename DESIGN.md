@@ -28,6 +28,7 @@ colors:
   band-lavender-muted: "#4a3d6b"
   band-ink-muted: "#b8b8b2"
   band-ink-link: "#9ccaff"
+  scrim: "rgb(0 0 0 / 0.6)"
 typography:
   display:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
@@ -36,6 +37,23 @@ typography:
     lineHeight: 1.02
     letterSpacing: "-0.01em"
     fontVariation: "'wdth' 100"
+  poster:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(3rem, 1rem + 8vw, 9rem)"
+    fontWeight: 600
+    lineHeight: 0.95
+  statement:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.2rem, 1.2rem + 4vw, 3.433rem)"
+    fontWeight: 600
+    lineHeight: 1.05
+    letterSpacing: "-0.01em"
+    fontVariation: "'wdth' 75"
+  curtain:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 10vw, 7rem)"
+    fontWeight: 600
+    letterSpacing: "-0.03em"
   headline:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2rem, 1.4rem + 2.5vw, 2.747rem)"
@@ -168,11 +186,13 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Voice** (Instrument Serif italic, 400, about 1.14× the sans size): the curious half of a display sentence, never a paragraph, label or button. For now the second half of the hero headline ("curious by nature.") and of the About statement ("but always feel."). Loaded latin only, `font-display: optional`, preloaded.
 - **Headline** (600, 32 → 44px, 1.1, `wdth` 85): section titles (`h2`).
 - **Title** (600, 22.5 → 28px, 1.1, `wdth` 85): project names, card titles, case study subsections (`h3`).
-- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 58ch (about 75 characters a line).
+- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 53ch (about 75 characters a line).
 - **Label** (600, 14.4px): repository tags, small meta.
 - **Micro** (600, 11.5px / 0.72rem): code tags, small indicators, header name subline.
 
-The scale is modular, 1.25 on 18px (`--step--2` … `--step-5`). The contact title is the one oversized exception (up to 9rem).
+The scale is modular, 1.25 on 18px (`--step--2` … `--step-5`). Three display roles sit outside it, one use each: **Poster** (48 → 144px, 0.95), the giant contact title; **Statement** (35 → 55px, 1.05, `wdth` 75), the About's sentence lit by the scroll; **Curtain** (40 → 112px), the new language's name on the language switch's panel, white on `signal-blue`.
+
+Prose wraps `pretty` (paragraphs and list items: no word alone on the last line), headings `balance`.
 
 ### Named Rules
 **The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.
@@ -189,7 +209,7 @@ Spacing comes only from the 8px scale (`space-1` … `space-16`). Home sections 
 
 ## Elevation & Depth
 
-Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
+Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
 
 **The Hard Shadow Rule.** No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.
 

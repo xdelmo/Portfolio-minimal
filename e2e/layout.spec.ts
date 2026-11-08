@@ -54,26 +54,14 @@ test('a link to a spot on the same page keeps the focus where it is (issue #181)
   await expect(outcome).toBeFocused();
 });
 
-// issue #324: the header steps away while the page scrolls down and comes back as soon as it scrolls up
-test('the header hides while the page scrolls down and returns when it scrolls up', async ({ page }) => {
+test('the header stays at the top while the page scrolls', async ({ page }) => {
   await page.goto('/en/');
-  const header = page.locator('app-site-header header');
-  const top = () => header.evaluate((el) => Math.round(el.getBoundingClientRect().top));
   await page.evaluate(() => {
     window.scrollTo(0, document.documentElement.scrollHeight / 2);
   });
-  await expect.poll(top).toBeLessThan(-40);
-  await page.evaluate(() => {
-    window.scrollBy(0, -200);
-  });
-  await expect.poll(top).toBe(0);
-  // a keyboard focus in the bar brings it back too
-  await page.evaluate(() => {
-    window.scrollBy(0, 600);
-  });
-  await expect.poll(top).toBeLessThan(-40);
-  await page.locator('app-site-header .logo').focus();
-  await expect.poll(top).toBe(0);
+  const header = page.locator('app-site-header header');
+  await expect(header).toBeInViewport();
+  expect((await header.boundingBox())?.y).toBe(0);
   // an anchor lands below the header, not under it
   await page.goto('/en/#experience');
   const [headerBottom, titleTop] = await page.evaluate(() => [

@@ -20,10 +20,10 @@ export function moduleSource(urls) {
 }
 
 /** 200 is public; 404 private (or gone); anything else is not an answer, and is retried. */
-export async function isPublic(url, fetchImpl = globalThis.fetch, tries = 3) {
+export async function isPublic(url, fetchImpl = globalThis.fetch, tries = 5) {
   for (let i = 1; ; i++) {
     try {
-      const res = await fetchImpl(url, { method: 'HEAD', redirect: 'follow', signal: globalThis.AbortSignal?.timeout(3000) });
+      const res = await fetchImpl(url, { method: 'HEAD', redirect: 'follow', signal: globalThis.AbortSignal?.timeout(10000) });
       if (res.status === 200) return true;
       if (res.status === 404) return false;
       throw new Error(`HTTP ${String(res.status)}`);

@@ -106,7 +106,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
           <li><app-copy-email /></li>
         </ul>
       </div>
-      <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
+      <img appDepixelate class="contact-photo" src="images/emanuele.webp" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
     </div>
   `,

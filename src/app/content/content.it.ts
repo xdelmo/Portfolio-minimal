@@ -48,7 +48,7 @@ export const CONTENT_IT: SiteContent = {
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
       image: {
-        src: 'images/work/apexflow.jpg',
+        src: 'images/work/apexflow.webp',
         alt: 'La pagina ordini della dashboard di ApexFlow: una tabella con ID ordine, data, cliente, tipo di servizio, totale e stato del pagamento, con ordinamento, filtri e paginazione, accanto alla barra di navigazione',
         width: 1536,
         height: 1024,
@@ -87,7 +87,7 @@ export const CONTENT_IT: SiteContent = {
       summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {
-        src: 'images/work/pokeverba.jpg',
+        src: 'images/work/pokeverba.webp',
         alt: 'Il cruciverba Pokémon del giorno di PokèVerba con due parole inserite: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
         width: 1536,
         height: 1024,
@@ -126,7 +126,7 @@ export const CONTENT_IT: SiteContent = {
         'Un invito di nozze digitale pensato per il telefono: una busta di pizzo in Three.js che si apre al tocco, poi la giornata raccontata in undici slide, con RSVP e funzionamento offline.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
       image: {
-        src: 'images/work/wedding-invite.jpg',
+        src: 'images/work/wedding-invite.webp',
         alt: "L'invito chiuso da vicino: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L",
         width: 1536,
         height: 1024,

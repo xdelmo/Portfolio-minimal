@@ -138,6 +138,8 @@ for (const locale of ['en', 'it']) {
     await page.goto(`/${locale}/`);
     const images = page.locator('#work img.shot');
     await expect(images).toHaveCount(3);
+    // WebP, about a third of the JPEG (issue #353)
+    for (const img of await images.all()) await expect(img).toHaveAttribute('src', /\.webp$/);
     // query the live DOM on every attempt: WebKit can replace the elements while hydrating
     await expect
       .poll(() =>

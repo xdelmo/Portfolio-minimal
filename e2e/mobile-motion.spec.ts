@@ -38,7 +38,7 @@ test.describe('phones', () => {
 
 test('a button gives way under the finger, like a key', async ({ page }) => {
   await page.goto('/en/');
-  const button = page.locator('.hero .button').last();
+  const button = page.locator('#work .button').first();
   await button.scrollIntoViewIfNeeded();
   const box = await button.boundingBox();
   if (!box) throw new Error('no button');

@@ -148,6 +148,14 @@ export function generateReleaseNotes({
 /**
  * Updates version in package.json and package-lock.json strings.
  */
+/**
+ * The release commit's message. No [skip ci] or [skip netlify]: Netlify skips those commits, so production stayed
+ * on the previous version (issue #386); Actions need no marker, since GITHUB_TOKEN pushes start no workflow.
+ */
+export function releaseCommitMessage(tag) {
+  return `chore(release): ${tag}`;
+}
+
 export function updatePackageJsonVersion(pkgJsonContent, newVersion) {
   const data = JSON.parse(pkgJsonContent);
   data.version = newVersion;
@@ -290,7 +298,7 @@ export async function main(argv = process.argv.slice(2)) {
 
   // 9. Git commit & tag
   execFileSync('git', ['add', PACKAGE_JSON, PACKAGE_LOCK_JSON]);
-  execFileSync('git', ['commit', '-m', `chore(release): ${nextTag} [skip ci]`]);
+  execFileSync('git', ['commit', '-m', releaseCommitMessage(nextTag)]);
   execFileSync('git', ['tag', '-a', nextTag, '-m', `Release ${nextTag}`]);
 
   // 10. Push to remote

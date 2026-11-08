@@ -8,6 +8,7 @@ import {
   incrementVersion,
   isBreakingChange,
   parseSemVer,
+  releaseCommitMessage,
   updatePackageJsonVersion,
   updatePackageLockVersion,
 } from './release.mjs';
@@ -132,4 +133,10 @@ test('updatePackageJsonVersion and updatePackageLockVersion update version prope
   const parsedLock = JSON.parse(updatedLock);
   assert.equal(parsedLock.version, '2.2.0');
   assert.equal(parsedLock.packages[''].version, '2.2.0');
+});
+
+test('releaseCommitMessage never asks Netlify to skip the deploy (issue #386)', () => {
+  const message = releaseCommitMessage('v2.3.1');
+  assert.equal(message, 'chore(release): v2.3.1');
+  assert.doesNotMatch(message, /\[(skip|ci skip|no ci)[^\]]*\]/i);
 });

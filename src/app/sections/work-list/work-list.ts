@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
+import { PixelArrow } from '../../layout/pixel-arrow';
 import { QuestSprite } from '../side-quests/quest-sprite';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate, PixelArrow],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug) {
@@ -42,7 +43,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             </div>
           </div>
           <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
-          <div class="media">
+          <a class="media" [routerLink]="['/work', project.slug]" tabindex="-1" aria-hidden="true">
             @if (project.image; as image) {
               <img
                 appDepixelate
@@ -58,7 +59,10 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             } @else if (project.sprite; as sprite) {
               <app-quest-sprite class="item" [name]="sprite" />
             }
-          </div>
+            <span class="media-arrow" data-magnetic aria-hidden="true">
+              <app-pixel-arrow />
+            </span>
+          </a>
         </li>
       }
     </ul>
@@ -132,6 +136,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     // one 3:2 window for every project: a desktop screenshot fills it, a phone one stands in it whole, a pixel item sits
     // in its middle
     .media {
+      position: relative;
       display: grid;
       // one row as tall as the frame, so a phone picture's percentage height resolves against it: with an auto row the
       // picture kept its own height and the frame cut it (issue #229)
@@ -141,6 +146,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       overflow: hidden;
       border: 1px solid var(--rule);
       background: var(--surface);
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
     }
     .shot {
       display: block;
@@ -158,6 +166,48 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .item {
       width: 36%;
       aspect-ratio: 1;
+    }
+    .media-arrow {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      color: var(--fg);
+      @media (pointer: coarse) {
+        width: 44px;
+        height: 44px;
+      }
+    }
+    .media-arrow app-pixel-arrow {
+      width: 16px;
+      height: 16px;
+    }
+    @media (hover: hover) {
+      .media:hover .media-arrow {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .media-arrow {
+        transition: background-color 120ms steps(2), color 120ms steps(2), border-color 120ms steps(2);
+      }
+      .media-arrow app-pixel-arrow {
+        transition: transform 160ms steps(2);
+      }
+      .media:hover .media-arrow app-pixel-arrow {
+        transform: translate(2px, -2px);
+      }
+    }
+    .media:active .media-arrow {
+      transform: translate(2px, 2px);
     }
     @include bp.up(md) {
       // the text sits level with the middle of its picture, so a short description leaves no hole below it

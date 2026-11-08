@@ -201,3 +201,35 @@ test('the card contains its scroll and counts on tabular digits; links and butto
   expect(await pause.evaluate((el) => getComputedStyle(el).overscrollBehaviorY)).toBe('contain');
   expect(await pause.locator('.level').evaluate((el) => getComputedStyle(el).fontVariantNumeric)).toBe('tabular-nums');
 });
+
+// issue #383: on a small phone the card keeps 24px a side, nothing runs off it, the stats wrap instead of colliding,
+// the heading sits closer to its list than to the block before, and Continue spans the card
+test.describe('on a 360px phone', () => {
+  test.use({ viewport: { width: 360, height: 740 } });
+  test('the card fits, its stats wrap without overlapping, and its rhythm groups by proximity', async ({ page }) => {
+    await page.goto('/it/');
+    await page.locator('app-site-footer').getByRole('button', { name: 'Press start' }).click();
+    const pause = page.getByRole('dialog', { name: 'Pausa' });
+    await expect(pause).toBeVisible();
+    const m = await pause.evaluate((card) => {
+      const box = (el: Element | null) => el?.getBoundingClientRect() ?? new DOMRect();
+      const stats = [...card.querySelectorAll('.stats > div')].map((el) => el.getBoundingClientRect());
+      const overlap = stats.some((a, i) => stats.some((b, j) => i < j && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom));
+      const h3 = box(card.querySelector('h3'));
+      return {
+        padding: getComputedStyle(card).paddingLeft,
+        overflow: card.scrollWidth - card.clientWidth,
+        overlap,
+        beforeHeading: h3.top - box(card.querySelector('.xp')).bottom,
+        afterHeading: box(card.querySelector('.achievements')).top - h3.bottom,
+        button: box(card.querySelector('form .button')).width,
+        inner: card.clientWidth - 2 * parseFloat(getComputedStyle(card).paddingLeft),
+      };
+    });
+    expect(m.padding).toBe('24px');
+    expect(m.overflow).toBe(0);
+    expect(m.overlap).toBe(false);
+    expect(m.afterHeading).toBeLessThan(m.beforeHeading);
+    expect(Math.round(m.button)).toBe(Math.round(m.inner));
+  });
+});

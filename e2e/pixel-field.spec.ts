@@ -77,11 +77,11 @@ for (const [width, height] of [
   [1280, 800],
   [1440, 900],
 ] as const) {
-  test(`keeps the hero buttons in the first screen at ${String(width)}×${String(height)}`, async ({ page, isMobile }) => {
+  test(`keeps the hero content in the first screen at ${String(width)}×${String(height)}`, async ({ page, isMobile }) => {
     test.skip(isMobile, 'laptop sizes');
     await page.setViewportSize({ width, height });
     await page.goto('/en/');
-    await expect(page.getByRole('link', { name: 'See my work' })).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('.hero .lede')).toBeInViewport({ ratio: 1 });
   });
 }
 
@@ -143,13 +143,109 @@ test.describe('the abstract field', () => {
     expect(onTop).toBe(true);
   });
 
-  test('it is masked to fade out towards the edges (issue #287)', async ({ page }) => {
+  test('the cloud fills the hero without a mask', async ({ page }) => {
     await page.goto('/en/');
-    const mask = await page.locator('.hero app-pixel-field').evaluate((el) => {
+    const field = page.locator('.hero .field');
+    const mask = await field.evaluate((el) => {
       const style = getComputedStyle(el);
       return style.maskImage || style.getPropertyValue('-webkit-mask-image');
     });
-    expect(mask).toContain('radial-gradient');
-    expect(mask).toMatch(/transparent|rgba\(0,\s*0,\s*0,\s*0\)/);
+    expect(mask).toBe('none');
+    expect(await field.boundingBox()).toEqual(await page.locator('.hero').boundingBox());
+  });
+
+  for (const [width, height] of [[1440, 900], [390, 844]]) {
+    test(`the cloud runs edge to edge without a horizontal scroll at ${String(width)}×${String(height)}`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/en/');
+      const field = await page.locator('.hero app-pixel-field').boundingBox();
+      const view = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+      if (!field) throw new Error('missing field box');
+      expect(field.x).toBeCloseTo(0, 0);
+      expect(Math.abs(field.width - view.client)).toBeLessThanOrEqual(1);
+      expect(view.scroll).toBeLessThanOrEqual(view.client);
+    });
+  }
+
+  test('the clearing leaves the cloud room on a wide hero', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/');
+    await expect(canvas(page)).toHaveAttribute('data-clear', /.+/);
+    const clearW = Number((await canvas(page).getAttribute('data-clear'))?.split(',')[2]);
+    const hero = await page.locator('.hero').boundingBox();
+    if (!hero) throw new Error('missing hero box');
+    expect(clearW).toBeLessThan(hero.width * 0.9);
+  });
+
+  test('the clearing follows the text block', async ({ page }) => {
+    const holdsCopy = async (): Promise<void> => {
+      await expect(async () => {
+        const data = await canvas(page).getAttribute('data-clear');
+        const [cx, cy, cw, ch] = (data ?? '').split(',').map(Number);
+        const c = await canvas(page).boundingBox();
+        // the text's own line boxes and the buttons, as the field measures them, not the .copy container
+        const t = await page.locator('.hero .copy').evaluate((copy) => {
+          const rects = [...copy.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+          const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT);
+          const range = document.createRange();
+          for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+            range.selectNodeContents(n);
+            rects.push(...range.getClientRects());
+          }
+          const lit = rects.filter((r) => r.width > 0 && r.height > 0);
+          const x = Math.min(...lit.map((r) => r.x));
+          const y = Math.min(...lit.map((r) => r.y));
+          return { x, y, width: Math.max(...lit.map((r) => r.right)) - x, height: Math.max(...lit.map((r) => r.bottom)) - y };
+        });
+        if (!c || data === null) throw new Error('missing boxes');
+        expect(Math.abs(cx + c.x - t.x)).toBeLessThanOrEqual(1);
+        expect(Math.abs(cy + c.y - t.y)).toBeLessThanOrEqual(1);
+        expect(Math.abs(cw - t.width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(ch - t.height)).toBeLessThanOrEqual(1);
+      }).toPass();
+    };
+    for (const [width, height] of [[1440, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/en/');
+      await holdsCopy();
+    }
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await holdsCopy();
+  });
+
+  test('the cloud surrounds the text on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/en/');
+    await expect(canvas(page)).toHaveAttribute('data-clear', /.+/);
+    // read the pixels of the canvas copy: lit cells left, right, above and below the clearing, none inside it
+    const lit = await canvas(page).evaluate((c) => {
+      const el = c as HTMLCanvasElement;
+      const [cx, cy, cw, ch] = (el.dataset['clear'] ?? '').split(',').map(Number);
+      const k = el.width / el.clientWidth;
+      const copy = document.createElement('canvas');
+      copy.width = el.width;
+      copy.height = el.height;
+      const ctx = copy.getContext('2d');
+      if (!ctx) throw new Error('no 2d context');
+      ctx.drawImage(el, 0, 0);
+      const count = (x: number, y: number, w: number, h: number): number => {
+        const data = ctx.getImageData(Math.max(0, x * k), Math.max(0, y * k), Math.max(1, w * k), Math.max(1, h * k)).data;
+        let n = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] > 0) n++;
+        return n;
+      };
+      return {
+        left: count(0, 0, cx, el.clientHeight),
+        right: count(cx + cw, 0, el.clientWidth - cx - cw, el.clientHeight),
+        above: count(0, 0, el.clientWidth, cy),
+        below: count(0, cy + ch, el.clientWidth, el.clientHeight - cy - ch),
+        inside: count(cx, cy, cw, ch),
+      };
+    });
+    expect(lit.left).toBeGreaterThan(0);
+    expect(lit.right).toBeGreaterThan(0);
+    expect(lit.above).toBeGreaterThan(0);
+    expect(lit.below).toBeGreaterThan(0);
+    expect(lit.inside).toBe(0);
   });
 });

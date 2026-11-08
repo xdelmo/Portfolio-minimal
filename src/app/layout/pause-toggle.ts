@@ -14,7 +14,7 @@ import { MotionPause } from '../motion/pause';
       i18n-aria-label="@@motion.pause"
       aria-label="Pause animations"
     >
-      <svg viewBox="0 0 8 8" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+      <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
         @if (motion.paused()) {
           <path fill="currentColor" d="M2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4zM5 3.5h1v1H5z" />
         } @else {

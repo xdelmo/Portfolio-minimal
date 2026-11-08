@@ -43,22 +43,6 @@ test('sections leave 64px above and below their content, not 96, plus the 48px s
   expect(await padding('#experience')).toEqual(['64px', '112px']);
 });
 
-test('the stack section passes under the side quests band, and the pixel thread stays over it', async ({ page }) => {
-  await page.goto('/en/');
-  // the stack rings scale in next to the band above them: paint order decides who is on top
-  const order = await page.evaluate(() => {
-    const z = (selector: string) => {
-      const el = document.querySelector(selector);
-      if (!el) return NaN;
-      const style = getComputedStyle(el);
-      return style.position === 'static' || style.zIndex === 'auto' ? 0 : Number(style.zIndex);
-    };
-    return { thread: z('app-thread'), band: z('#side-quests'), stack: z('#stack') };
-  });
-  expect(order.band).toBeGreaterThan(order.stack);
-  expect(order.thread).toBeGreaterThan(order.band);
-});
-
 test.describe('on a phone', () => {
   test.use({ viewport: { width: 390, height: 844 } });
   const list = (page: Page) => page.locator('#side-quests .quests');

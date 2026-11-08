@@ -13,22 +13,23 @@ import { SiteMenu } from './site-menu';
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
+      <!-- phones: the menu button right before the mark, one brand and navigation corner (issue #324) -->
+      <app-site-menu class="menu" />
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
         ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
-        <a data-magnetic routerLink="/" fragment="about" i18n="@@nav.about">About</a>
         <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
         <a data-magnetic routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" i18n="@@nav.blog">Blog</a>
-        <a data-magnetic routerLink="/" fragment="contact" i18n="@@nav.contact">Contact</a>
       </nav>
       <div class="controls">
         <app-language-switch />
         <app-pause-toggle />
         <app-theme-toggle />
-        <app-site-menu class="menu" />
       </div>
+      <!-- the bar's one action, on every width and page; outside the nav so the menu's letter scramble leaves it alone -->
+      <a class="button button--primary cta" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
     </header>
   `,
   styles: `
@@ -46,7 +47,7 @@ import { SiteMenu } from './site-menu';
     .site-header {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
+      gap: var(--space-1);
       min-height: var(--header-h);
     }
     // the mark, a rule, then the full name on two lines: the site signed like a letterhead
@@ -72,8 +73,8 @@ import { SiteMenu } from './site-menu';
       display: none;
       padding-left: var(--space-1);
       border-left: 1px solid var(--rule);
-      font-size: 0.75rem;
-      font-weight: 500;
+      font-size: var(--step--2);
+      font-weight: 600;
       line-height: 1.3;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -81,37 +82,68 @@ import { SiteMenu } from './site-menu';
     }
     nav {
       display: none;
-      gap: var(--space-3);
+      gap: var(--space-2);
     }
     nav a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
       color: var(--fg);
       text-decoration: none;
-      // a two-word item ("Chi sono") must stay on one line, also while its letters scramble
+      // an item stays on one line, also while its letters scramble
       white-space: nowrap;
     }
-    nav a:hover {
-      text-decoration: underline;
+    // one underline for hover and for the section you are in (issue #229): a hard 2px line that draws itself in steps
+    nav a::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      bottom: var(--space-1);
+      height: 2px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
     }
-    // the section you are in (issue #229): the other items lead back to the home
-    nav a[aria-current] {
-      text-decoration: underline;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 0.3em;
+    nav a:hover::after,
+    nav a[aria-current]::after {
+      transform: scaleX(1);
     }
-    .controls {
-      display: flex;
-      align-items: center;
-    }
-    // phones: the bar keeps the mark and the menu button; language, pause and theme are in the menu (issue #193). Only
-    // hidden below 768px, never shown by force above it: the pause button hides itself with reduced motion
-    @media (max-width: 767.98px) {
-      .controls > :not(.menu) {
-        display: none;
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      nav a::after {
+        transition: transform 120ms steps(4);
       }
     }
+    .controls {
+      display: none;
+      align-items: center;
+    }
+    // phones: a compact key, a repository tag's size in the primary colours, between the mark and the menu button
+    .cta {
+      flex: none;
+      min-height: 40px;
+      padding-inline: var(--space-2);
+      font-size: var(--step--1);
+      white-space: nowrap;
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
+    }
+    // the menu button's bars line up with the gutter; its 48px target runs on to the edge of the screen, and the mark
+    // follows close, so the pair reads as one corner
+    .menu {
+      margin-left: calc(-1 * var(--space-2));
+      margin-right: calc(-1 * var(--space-1));
+    }
     @include bp.up(md) {
-      nav {
+      nav,
+      .controls {
         display: flex;
+      }
+      // the settings, set apart from the links by a hairline: one quiet group, so the links and the call to action lead
+      .controls {
+        padding-left: var(--space-1);
+        border-left: 1px solid var(--rule);
       }
       // the links and the controls are in the header itself from here
       .menu {
@@ -122,16 +154,31 @@ import { SiteMenu } from './site-menu';
         gap: var(--space-2);
       }
       .site-header {
-        gap: var(--space-3);
+        gap: var(--space-2);
       }
       .name {
         padding-left: var(--space-2);
         letter-spacing: 0.12em;
       }
+      .cta {
+        min-height: 48px;
+        font-size: inherit;
+      }
     }
     @include bp.up(lg) {
       .name {
         display: grid;
+      }
+      nav,
+      .site-header {
+        gap: var(--space-3);
+      }
+      .controls {
+        padding-left: var(--space-2);
+      }
+      // the full button of the design system once the bar has room for it
+      .cta {
+        padding-inline: var(--space-3);
       }
     }
   `,

@@ -52,8 +52,8 @@ import { SeoService } from '../../core/seo/seo.service';
     }
     .intro {
       font-size: var(--step-1);
-      // the larger size would stretch the body's measure: 58ch ÷ 1.25 (issues #93, #229)
-      max-width: 46ch;
+      // the larger size would stretch the body's measure: 53ch ÷ 1.25 (issues #93, #229, #371)
+      max-width: 42ch;
     }
   `,
 })

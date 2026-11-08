@@ -16,13 +16,15 @@ export const CONTENT_EN: SiteContent = {
   seo: {
     title: 'Emanuele Del Monte — Angular Frontend Engineer',
     description:
-      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Latina, Italy.',
+      'I build Angular interfaces that stay fast when the data gets big. Frontend Engineer at IPS S.p.A. in Aprilia, Italy.',
   },
   hero: {
-    headline: 'Engineer by method, curious by nature.',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Latina. I\u00a0build fast, solid Angular interfaces, and I\u00a0hide an easter egg here and there.",
+    headline: 'Engineer by method, curious by nature',
+    voice: 'curious by nature',
+    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build enterprise Angular apps whose large tables stay responsive, and I\u00a0leave an easter egg for whoever looks closely.",
   },
   aboutStatement: 'I care about the parts users never see but always feel.',
+  aboutVoice: 'but always feel.',
   about: [
     "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise frontends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular frontend and a Spring Boot backend.",
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
@@ -48,10 +50,10 @@ export const CONTENT_EN: SiteContent = {
       ],
       demoUrl: 'https://dashboard-tesi.vercel.app/welcome',
       image: {
-        src: 'images/work/apexflow.jpg',
-        alt: 'ApexFlow dashboard with total revenue, pending orders, active and total customers, the yearly revenue chart and the navigation sidebar',
-        width: 1600,
-        height: 1011,
+        src: 'images/work/apexflow.webp',
+        alt: 'The orders page of the ApexFlow dashboard: a table of order IDs, dates, customers, service types, totals and payment statuses, with sorting, filters and pagination, beside the navigation sidebar',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -91,10 +93,10 @@ export const CONTENT_EN: SiteContent = {
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       demoUrl: 'https://sbustiamobro.it',
       image: {
-        src: 'images/work/pokeverba.jpg',
-        alt: "PokèVerba's daily Pokémon crossword: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
-        width: 1600,
-        height: 1011,
+        src: 'images/work/pokeverba.webp',
+        alt: "PokèVerba's daily Pokémon crossword with two words filled in: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -132,10 +134,10 @@ export const CONTENT_EN: SiteContent = {
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
       demoUrl: 'https://wedding-3d-invite-demo-five.vercel.app/',
       image: {
-        src: 'images/work/wedding-invite.jpg',
-        alt: 'The closed invitation: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L, above the hint to tap and open it',
-        width: 1600,
-        height: 1011,
+        src: 'images/work/wedding-invite.webp',
+        alt: 'The closed invitation up close: a lace envelope scattered with pearls, sealed with a burgundy wax seal engraved G&L',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:

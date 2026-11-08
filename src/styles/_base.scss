@@ -45,6 +45,22 @@ h3 {
   text-wrap: balance;
 }
 
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+// the curious half of a headline: the serif italic (src/styles/_fonts.scss), a little larger to match the sans' x-height
+.voice {
+  font-family: var(--font-voice);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.14em;
+  letter-spacing: -0.01em;
+  font-variation-settings: normal;
+}
+
 h1 {
   font-size: var(--step-hero);
   line-height: 1.02;
@@ -65,6 +81,19 @@ p {
   margin: 0;
   max-width: var(--measure);
   text-wrap: pretty;
+}
+
+/* list items, the experience highlights and the case studies' bullets, are prose too: no word alone on the last line */
+li,
+dd,
+blockquote,
+figcaption {
+  text-wrap: pretty;
+}
+
+/* the system's one emphasis weight, not the browser's 700 */
+strong {
+  font-weight: 600;
 }
 
 a {
@@ -302,7 +331,7 @@ html[data-lang-swap]::after {
   display: grid;
   place-items: center;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-family: var(--font-sans);
   font-size: clamp(2.5rem, 10vw, 7rem);
   font-weight: 600;

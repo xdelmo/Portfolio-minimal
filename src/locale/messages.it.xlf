@@ -74,14 +74,6 @@
           <context context-type="linenumber">16,17</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="nav.contact" datatype="html">
-        <source>Contact</source>
-        <target>Contatti</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
-          <context context-type="linenumber">17,19</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="case.stack" datatype="html">
         <source>Technologies</source>
         <target>Tecnologie</target>
@@ -118,14 +110,6 @@
           <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="home.cta.work" datatype="html">
-        <source>See my work</source>
-        <target>Guarda i progetti</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pages/home/home.ts</context>
-          <context context-type="linenumber">15,16</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="home.cta.contact" datatype="html">
         <source>Contact me</source>
         <target>Scrivimi</target>
@@ -151,8 +135,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="home.contact.title" datatype="html">
-        <source>Get in touch</source>
-        <target>Contatti</target>
+        <source>Let’s talk</source>
+        <target>Parliamone</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/home/home.ts</context>
           <context context-type="linenumber">38,40</context>
@@ -411,8 +395,8 @@
         <target>Press start</target>
       </trans-unit>
       <trans-unit id="home.contact.lede" datatype="html">
-        <source>Building something with Angular, or hiring for a frontend role? Write to me.</source>
-        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.</target>
+        <source>Building something with Angular, or hiring for a frontend role?</source>
+        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="home.stack.lede" datatype="html">
         <source>Three levels: what I use every day, what runs in production, what I try in my side projects.</source>
@@ -490,6 +474,38 @@
         <source>Notes on Angular, Signals, RxJS and Spring Boot by <x id="name" equiv-text="person.name"/>.</source>
         <target>Appunti su Angular, Signals, RxJS e Spring Boot di <x id="name" equiv-text="person.name"/>.</target>
       </trans-unit>
+      <trans-unit id="blog.readMore" datatype="html">
+        <source>Read article</source>
+        <target>Leggi l'articolo</target>
+      </trans-unit>
+      <trans-unit id="blog.backToAll" datatype="html">
+        <source>All posts</source>
+        <target>Tutti gli articoli</target>
+      </trans-unit>
+      <trans-unit id="blog.copyLink" datatype="html">
+        <source>Copy link</source>
+        <target>Copia link</target>
+      </trans-unit>
+      <trans-unit id="blog.linkCopied" datatype="html">
+        <source>Copied</source>
+        <target>Copiato</target>
+      </trans-unit>
+      <trans-unit id="blog.linkCopiedStatus" datatype="html">
+        <source>Article link copied to clipboard</source>
+        <target>Link dell'articolo copiato negli appunti</target>
+      </trans-unit>
+      <trans-unit id="blog.adjacent" datatype="html">
+        <source>Adjacent articles</source>
+        <target>Articoli adiacenti</target>
+      </trans-unit>
+      <trans-unit id="blog.prevPost" datatype="html">
+        <source>Previous post</source>
+        <target>Articolo precedente</target>
+      </trans-unit>
+      <trans-unit id="blog.nextPost" datatype="html">
+        <source>Next post</source>
+        <target>Articolo successivo</target>
+      </trans-unit>
       <trans-unit id="case.posts" datatype="html">
         <source>I wrote about it</source>
         <target>Ne ho scritto</target>
@@ -517,6 +533,10 @@
       <trans-unit id="contact.copiedStatus" datatype="html">
         <source>Email address copied</source>
         <target>Indirizzo email copiato</target>
+      </trans-unit>
+      <trans-unit id="work.view" datatype="html">
+        <source>View</source>
+        <target>Vedi</target>
       </trans-unit>
     </body>
   </file>

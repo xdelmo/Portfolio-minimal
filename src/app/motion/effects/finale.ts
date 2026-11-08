@@ -23,8 +23,16 @@ export const finaleEffect: Effect = (root, { gsap, SplitText }) => {
   });
 
   if (title.getBoundingClientRect().top < innerHeight) return undefined;
-  // the title holds a link: split its label, so the link and its arrow stay whole
-  const split = SplitText.create(title.querySelector('.contact-label') ?? title, { type: 'lines', mask: 'lines' });
+  // the title holds a link: split its label, so the link and its arrow stay whole. aria: 'none' because SplitText's
+  // default puts an aria-label on the split element, not allowed on a <span> (issue #354); the text stays readable
+  const split = SplitText.create(title.querySelector('.contact-label') ?? title, {
+    type: 'lines',
+    mask: 'lines',
+    aria: 'none',
+  });
+  // the masks clip only below, where the lines rise from: their overflow would cut the italic swash of the last letter
+  // (issue #352). Set here, not in the component's styles: emulated encapsulation never matches SplitText's divs
+  gsap.set(split.masks, { overflow: 'visible', clipPath: 'inset(-0.5em -0.5em 0 -0.5em)' });
   gsap.set(split.lines, { yPercent: 105 });
   gsap.to(split.lines, {
     yPercent: 0,

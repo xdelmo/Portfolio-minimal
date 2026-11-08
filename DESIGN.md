@@ -28,6 +28,7 @@ colors:
   band-lavender-muted: "#4a3d6b"
   band-ink-muted: "#b8b8b2"
   band-ink-link: "#9ccaff"
+  scrim: "rgb(0 0 0 / 0.6)"
 typography:
   display:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
@@ -35,7 +36,24 @@ typography:
     fontWeight: 600
     lineHeight: 1.02
     letterSpacing: "-0.01em"
+    fontVariation: "'wdth' 100"
+  poster:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(3rem, 1rem + 8vw, 9rem)"
+    fontWeight: 600
+    lineHeight: 0.95
+  statement:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.2rem, 1.2rem + 4vw, 3.433rem)"
+    fontWeight: 600
+    lineHeight: 1.05
+    letterSpacing: "-0.01em"
     fontVariation: "'wdth' 75"
+  curtain:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "clamp(2.5rem, 10vw, 7rem)"
+    fontWeight: 600
+    letterSpacing: "-0.03em"
   headline:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(2rem, 1.4rem + 2.5vw, 2.747rem)"
@@ -48,12 +66,22 @@ typography:
     fontWeight: 600
     lineHeight: 1.1
     fontVariation: "'wdth' 85"
+  voice:
+    fontFamily: "Instrument Serif, ui-serif, Georgia, serif"
+    fontSize: "1.14em"
+    fontWeight: 400
+    fontStyle: "italic"
   body:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.55
     fontVariation: "'wdth' 100"
+  micro:
+    fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.72rem"
+    fontWeight: 600
+    lineHeight: 1.3
   label:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9rem"
@@ -112,7 +140,7 @@ A sober page, a game inside. What a recruiter meets first is plain and calm: a c
 Density is low and text-first. Sections alternate with full-bleed bands (pastel, lavender, ink) that change the mood without changing the type. Edges are hard and stepped, never soft: no rounded cards, no blur, no decorative gradients. Boldness is spent on a few named living objects; everything else stays out of their way.
 
 **Key Characteristics:**
-- One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body).
+- One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body), plus one italic serif voice, Instrument Serif, for the curious half of a display sentence.
 - One accent, Signal Blue, for actions, focus and pixels; pastels only in decoration.
 - 8px grid for every space, icon, cell and image size.
 - Stepped shapes and `steps()` transitions instead of curves.
@@ -133,7 +161,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Ink Muted** (`ink-muted`) and **Night Muted** (`night-muted`): secondary text, dates, captions.
 
 ### Decorative pixels
-- **Pixel Sky, Mist, Lavender, Lilac, Peach** (`pixel-*`): dots of the hero field, sprites, seams, ambient orbs. Brighter variants in dark theme (`--px-1` … `--px-6`).
+- **Pixel Sky, Mist, Lavender, Lilac, Peach** (`pixel-*`): dots of the hero field, sprites, seams. Brighter variants in dark theme (`--px-1` … `--px-6`).
 
 ### Bands
 - **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus` and `--rule` to its own AA-checked set (`band-link` on the pastel bands; `band-pastel-muted`, `band-lavender-muted`, `band-ink-muted` for secondary text and `band-ink-link` for links on ink), so its content follows by itself. In dark theme the bands turn deep navy and violet.
@@ -151,21 +179,25 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 **Body Font:** Instrument Sans Variable
 **Code Font:** the system monospace (ui-monospace, SFMono-Regular, Menlo, Consolas), only inside code in blog posts
 
-**Character:** One variable family carries the whole system; its width axis does the work a second typeface would. Headings are condensed and weighty, the body is open and even, so the page reads as one voice at different volumes.
+**Character:** One variable family carries the system, with a single italic serif voice for the curious half of a display sentence. Headings are weighty, the body is open and even, so the page reads as one voice at different volumes.
 
 ### Hierarchy
-- **Display** (600, 44 → 96px fluid, 1.02, `wdth` 75): the hero headline only, the page's main graphic element; on desktop it widens to `wdth` 85 as the hero scrolls away.
+- **Display** (600, 44 → 96px fluid, 1.02, `wdth` 100): the hero headline only, the page's main graphic element, at normal width (it no longer widens on scroll).
+- **Voice** (Instrument Serif italic, 400, about 1.14× the sans size): the curious half of a display sentence, never a paragraph, label or button. For now the second half of the hero headline ("curious by nature.") and of the About statement ("but always feel."). Loaded latin only, `font-display: optional`, preloaded.
 - **Headline** (600, 32 → 44px, 1.1, `wdth` 85): section titles (`h2`).
 - **Title** (600, 22.5 → 28px, 1.1, `wdth` 85): project names, card titles, case study subsections (`h3`).
-- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 58ch (about 75 characters a line).
+- **Body** (400, 18px, 1.55, `wdth` 100): all running text, never wider than 53ch (about 75 characters a line).
 - **Label** (600, 14.4px): repository tags, small meta.
+- **Micro** (600, 11.5px / 0.72rem): code tags, small indicators, header name subline.
 
-The scale is modular, 1.25 on 18px (`--step--1` … `--step-5`). The contact title is the one oversized exception (up to 9rem).
+The scale is modular, 1.25 on 18px (`--step--2` … `--step-5`). Three display roles sit outside it, one use each: **Poster** (48 → 144px, 0.95), the giant contact title; **Statement** (35 → 55px, 1.05, `wdth` 75), the About's sentence lit by the scroll; **Curtain** (40 → 112px), the new language's name on the language switch's panel, white on `signal-blue`.
+
+Prose wraps `pretty` (paragraphs and list items: no word alone on the last line), headings `balance`.
 
 ### Named Rules
 **The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.
 
-**The Width Not Weight Rule.** Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights or a second family for emphasis.
+**The Width Not Weight Rule.** Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights for emphasis. The one second face is the `voice` role: the sans is the method, the italic serif is the curiosity.
 
 ## Layout
 
@@ -177,7 +209,7 @@ Spacing comes only from the 8px scale (`space-1` … `space-16`). Home sections 
 
 ## Elevation & Depth
 
-Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. Soft round shapes appear only as light: the glow inside the tool rings and the ambient orbs, made with radial gradients, never `filter: blur`.
+Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
 
 **The Hard Shadow Rule.** No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.
 
@@ -206,10 +238,10 @@ A hard-edged tag holding the pixel GitHub mark and the repository name.
 Full-bleed coloured backgrounds behind a section (see Colors). On desktop a band grows from an inset block with a hard clip; its top and bottom meet the page through a seam of crumbling pixels.
 
 ### Navigation
-A fixed header outside the scrolling content: the `edm.` mark (with the full name in tracked capitals from 1024px), section links, language switch, theme toggle and the single motion pause button. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
+A fixed header outside the scrolling content: the `edm.` mark (with the full name in tracked capitals from 1024px), three section links (Work, Experience, Blog; About is one scroll below the hero, so only the phone menu lists it), the language switch showing its code (`EN`), the single motion pause button, theme toggle and, last, the bar's one filled element: the primary "Contact me" button, on every width (on phones a compact key between the mark and the menu button, 40px tall, 44px on touch screens; the other links and the controls are in the menu). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
 
 ### The living objects
-The hero pixel field, the voxel moai, the tool rings, the ambient orbs, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
+The hero pixel field, the voxel moai, the tool levels, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
 
 ## Do's and Don'ts
 
@@ -226,5 +258,5 @@ The hero pixel field, the voxel moai, the tool rings, the ambient orbs, the pixe
 - **Don't** use rounded cards, soft drop shadows, blur or gradients as decoration.
 - **Don't** set text in a `pixel-*` colour.
 - **Don't** use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.
-- **Don't** add a second typeface or extra weights for emphasis.
+- **Don't** add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.
 - **Don't** add hover-only behaviour on phones, or block vertical scrolling on anything swipeable.

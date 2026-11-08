@@ -46,7 +46,6 @@ const SHOWN = 'inset(0 0 0% 0)';
           <a routerLink="/" fragment="about" (click)="close(false)" i18n="@@nav.about">About</a>
           <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
           <a routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" (click)="close(false)" i18n="@@nav.blog">Blog</a>
-          <a routerLink="/" fragment="contact" (click)="close(false)" i18n="@@nav.contact">Contact</a>
         </nav>
         <div class="settings">
           <app-language-switch [inline]="true" />
@@ -60,7 +59,7 @@ const SHOWN = 'inset(0 0 0% 0)';
     summary {
       display: grid;
       place-items: center;
-      width: 44px;
+      width: 48px;
       height: 48px;
       color: var(--fg);
       list-style: none;
@@ -103,6 +102,10 @@ const SHOWN = 'inset(0 0 0% 0)';
     .settings app-language-switch {
       margin-right: auto;
     }
+    // the theme icon ends on the rows' right edge, as the language square starts on their left one
+    .settings app-theme-toggle {
+      margin-right: calc(-1 * var(--space-2));
+    }
     nav a {
       display: flex;
       align-items: center;
@@ -116,7 +119,8 @@ const SHOWN = 'inset(0 0 0% 0)';
     nav a + a {
       border-top: 1px solid var(--rule);
     }
-    nav a[aria-current] {
+    nav a[aria-current],
+    nav a:hover {
       text-decoration: underline;
       text-decoration-thickness: 2px;
       text-underline-offset: 0.2em;

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { SW_KILL_SWITCH, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
+import { SW_KILL_SWITCH, fontPreloads, initialScripts, withFontPreload } from './postbuild-helpers.mjs';
 
 const html = '<html><head><base href="/en/"><link rel="stylesheet" href="styles.css"></head><body></body></html>';
 
@@ -47,4 +47,11 @@ test('the /sw.js kill switch empties the caches, unregisters itself and reloads 
   listeners.activate({ waitUntil: (p) => (work = p) });
   await work;
   assert.deepEqual(done, ['skipWaiting', 'delete a', 'delete b', 'unregister', 'navigate https://x/']);
+});
+
+test('preloads the serif only where a voice is used', () => {
+  const fonts = { sans: 'media/sans.woff2', serif: 'media/serif.woff2' };
+  assert.deepEqual(fontPreloads('<h1><span class="voice">x</span></h1>', fonts), [fonts.sans, fonts.serif]);
+  assert.deepEqual(fontPreloads('<span class="statement voice">x</span>', fonts), [fonts.sans, fonts.serif]);
+  assert.deepEqual(fontPreloads('<h1>plain</h1>', fonts), [fonts.sans]);
 });

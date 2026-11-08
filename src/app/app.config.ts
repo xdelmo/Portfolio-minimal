@@ -8,6 +8,7 @@ import {
   withViewTransitions,
 } from '@angular/router';
 import { routes } from './app.routes';
+import { provideContent } from './content/content';
 import { workImageLoader } from './content/image-loader';
 import { smoother } from './motion/smoother';
 
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),
+    provideContent(),
     { provide: IMAGE_LOADER, useValue: workImageLoader },
     // The router reaches an anchor with window.scrollTo: an instant jump that ignores the sticky header's scroll-margin.
     // scrollIntoView honours scroll-margin.

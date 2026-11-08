@@ -114,3 +114,13 @@ Dopo aver completato un rilascio, verificare:
 2. `git show HEAD` (il commit di release contiene `chore(release): vX.Y.Z [skip ci]`).
 3. `gh release view vX.Y.Z` (la release è visibile con note e changelog comparativo su GitHub).
 4. `npm run test:scripts` (i test degli script rimangono al 100% verdi).
+5. Le info della repo erano già aggiornate prima del merge (vedi sotto).
+
+---
+
+## 📝 Aggiornare le Info della Repo (prima di ogni rilascio)
+
+Prima di fare il merge della PR di release in `master`, aggiorna ciò che descrive la repo, così entra già nella versione rilasciata. Confronta le note in anteprima (`node scripts/release.mjs --dry-run`) con lo stato attuale:
+1. **GitHub**: `gh repo view --json description,homepageUrl,repositoryTopics`; se descrizione, homepage o topic non descrivono più il progetto (stack, funzionalità aggiunte o tolte), correggili con `gh repo edit --description … --homepage … --add-topic … --remove-topic …`.
+2. **README.md** (e `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md` se toccati): togli ciò che la release ha rimosso, aggiungi ciò che ha introdotto, aggiorna versioni e stack citati. Le modifiche ai file passano da un branch `docs/<topic>` e da una PR in `devel` come ogni altra modifica, mai da un commit diretto su `master`; la PR di release ripete la sua CI dopo quel merge, e solo allora si fa il merge in `master`.
+3. Il branch di release (`devel`) non si elimina mai da origin: merge della PR di release senza `--delete-branch`.

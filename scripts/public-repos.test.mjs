@@ -1,27 +1,46 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { isPublic, moduleSource, publicRepos, repoUrls } from './public-repos.mjs';
+import { liveList, moduleSource, publicList, publicRepos, repoUrls } from './public-repos.mjs';
 
-const answer = (codes) => async (url) => ({ status: codes[url].shift() });
+const repo = (name) => ({ html_url: `https://github.com/xdelmo/${name}` });
+// the API's answers in order: a status, or a 200 with this list of repositories
+const answer = (replies) => async () => {
+  const r = replies.shift();
+  return typeof r === 'number' ? { status: r, json: async () => ({}) } : { status: 200, json: async () => r };
+};
 
 test('finds every repository URL once, sorted, and not the profile', () => {
   const urls = repoUrls(["url: 'https://github.com/xdelmo/b-repo'", "'https://github.com/xdelmo/a.repo' 'https://github.com/xdelmo/b-repo'", "github: 'https://github.com/xdelmo',"]);
   assert.deepEqual(urls, ['https://github.com/xdelmo/a.repo', 'https://github.com/xdelmo/b-repo']);
 });
 
-test('200 is public, 404 is private, anything else is asked again', async () => {
-  const codes = { a: [200], b: [404], c: [503, 200] };
-  assert.equal(await isPublic('a', answer(codes)), true);
-  assert.equal(await isPublic('b', answer(codes)), false);
-  assert.equal(await isPublic('c', answer(codes), 3), true);
+test('a failed answer is asked again', async () => {
+  const open = await publicList(answer([503, [repo('A')]]), 3, '');
+  assert.deepEqual([...open], ['https://github.com/xdelmo/a']);
 });
 
 test('gives up after its tries, so a build never guesses', async () => {
-  await assert.rejects(isPublic('x', answer({ x: [500, 500] }), 2), /x: HTTP 500/);
+  await assert.rejects(publicList(answer([500, 403]), 2, ''), /HTTP 403/);
+});
+
+test('refuses a full page rather than miss the repositories on the next one', async () => {
+  const page = Array.from({ length: 100 }, (_, i) => repo(String(i)));
+  await assert.rejects(publicList(answer([page]), 1, ''), /paging/);
 });
 
 test('keeps only the public ones, in order, as a TypeScript module', async () => {
-  const urls = await publicRepos(['a', 'b', 'c'], answer({ a: [200], b: [404], c: [200] }));
-  assert.deepEqual(urls, ['a', 'c']);
-  assert.match(moduleSource(urls), /export const PUBLIC_REPOS: readonly string\[\] = \[\n {2}"a",\n {2}"c"\n\];/);
+  const u = (n) => `https://github.com/xdelmo/${n}`;
+  const urls = await publicRepos([u('a'), u('B'), u('c')], answer([[repo('a'), repo('b')]]));
+  assert.deepEqual(urls, [u('a'), u('B')]);
+  assert.match(moduleSource(['a', 'c']), /export const PUBLIC_REPOS: readonly string\[\] = \[\n {2}"a",\n {2}"c"\n\];/);
+});
+
+test('falls back to the live list, only for URLs the content still links', async () => {
+  const u = (n) => `https://github.com/xdelmo/${n}`;
+  assert.deepEqual(await liveList([u('a'), u('b')], answer([[u('b'), u('gone')]])), [u('b')]);
+});
+
+test('a live site that does not answer a list stops the build', async () => {
+  await assert.rejects(liveList([], answer([503])), /HTTP 503/);
+  await assert.rejects(liveList([], answer([{}])), /not a list/);
 });

@@ -21,7 +21,10 @@ export const threadEffect: Effect = (root, { ScrollTrigger }) => {
   // the dashes follow the scroll the pin uses up, or they would run away from a title that does not move
   // `pin` is set at runtime on pinning triggers but missing from GSAP's types
   type Pin = Trigger & { pin?: Element };
-  const pinsIn = (): Pin[] => (ScrollTrigger.getAll() as Pin[]).filter((t) => t.pin && trail.contains(t.pin));
+  // only pins that take up scroll: one without pin spacing (the moai, `data-sticky`) rides along while the page moves on,
+  // and counted it slid the dashes twice as fast as the scroll (issue #336)
+  const pinsIn = (): Pin[] =>
+    (ScrollTrigger.getAll() as Pin[]).filter((t) => t.pin && t.vars.pinSpacing !== false && trail.contains(t.pin));
   // measured from the scroll ScrollTrigger is at in this tick, not scrollY nor the pin's progress: under smooth scroll
   // the content trails the native scroll, and the thread updates before the pin, so the pin's progress is a frame old
   // (hundreds of pixels in the first frames of a glide: the node ran away from its title, issue #172)

@@ -26,8 +26,9 @@
       "display": { "displayName": "Display", "purpose": "The hero headline only, condensed (wdth 75)." },
       "headline": { "displayName": "Headline", "purpose": "Section titles (h2), wdth 85." },
       "title": { "displayName": "Title", "purpose": "Project names, card titles, case study subsections (h3)." },
-      "body": { "displayName": "Body", "purpose": "Running text, 58ch max (about 75 characters)." },
-      "label": { "displayName": "Label", "purpose": "Repository tags and small meta." }
+      "body": { "displayName": "Body", "purpose": "Running text, 53ch max (about 75 characters)." },
+      "label": { "displayName": "Label", "purpose": "Repository tags and small meta." },
+      "voice": { "displayName": "Voice", "purpose": "Instrument Serif italic 400, about 1.14× the sans size: only the curious half of a display sentence (hero headline, About statement), never a paragraph, label or button." }
     },
     "shadows": [
       { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "The primary button on hover, with translate(-4px, -4px). The only shadow in the system." }
@@ -72,14 +73,14 @@
       "refersTo": "band-ink",
       "description": "A full-bleed section band that re-points the text, link and focus colours for its content.",
       "html": "<section class=\"ds-band-ink\"><h2>Let's talk</h2><p>Email, LinkedIn or GitHub. <a href=\"#\">Email</a></p></section>",
-      "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 58ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
+      "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 53ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
     }
   ],
   "narrative": {
     "northStar": "The Quiet Arcade",
     "overview": "A sober page, a game inside. What a recruiter meets first is plain and calm: a concrete grey page, ink text in one sans family, one Signal Blue, everything snapped to an 8px grid. Under that surface the site plays: a field of pastel pixels in the hero, a voxel moai that breathes and blows gum, side quests kept like items in an inventory, a player card behind the Konami code. The calm is what makes the play read as craft rather than noise.\n\nDensity is low and text-first. Sections alternate with full-bleed bands (pastel, lavender, ink) that change the mood without changing the type. Edges are hard and stepped, never soft: no rounded cards, no blur, no decorative gradients. Boldness is spent on a few named living objects; everything else stays out of their way.",
     "keyCharacteristics": [
-      "One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body).",
+      "One family, Instrument Sans Variable, with width doing the expressive work (condensed headings, full-width body), plus one italic serif voice, Instrument Serif, for the curious half of a display sentence.",
       "One accent, Signal Blue, for actions, focus and pixels; pastels only in decoration.",
       "8px grid for every space, icon, cell and image size.",
       "Stepped shapes and `steps()` transitions instead of curves.",
@@ -90,7 +91,7 @@
       { "name": "The Silent Pastel Rule", "body": "The `pixel-*` colours never carry text or a control's state; text on a pastel band uses that band's own ink tokens.", "section": "colors" },
       { "name": "The Two Themes Rule", "body": "Every new colour ships with a light and a dark value, both checked for AA; a token that is light in one theme can turn black in the other.", "section": "colors" },
       { "name": "The Sentence Case Rule", "body": "Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. The one exception: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px.", "section": "typography" },
-      { "name": "The Width Not Weight Rule", "body": "Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights or a second family for emphasis.", "section": "typography" },
+      { "name": "The Width Not Weight Rule", "body": "Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights for emphasis. The one second face is the `voice` role: the sans is the method, the italic serif is the curiosity.", "section": "typography" },
       { "name": "The Eight Rule", "body": "Every space, icon, cell and image dimension is a multiple of 8px.", "section": "layout" },
       { "name": "The Hard Shadow Rule", "body": "No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.", "section": "elevation" },
       { "name": "The Stepped Edge Rule", "body": "If a shape would be smooth, draw it in pixels instead.", "section": "shapes" }
@@ -108,7 +109,7 @@
       "Don't use rounded cards, soft drop shadows, blur or gradients as decoration.",
       "Don't set text in a `pixel-*` colour.",
       "Don't use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.",
-      "Don't add a second typeface or extra weights for emphasis.",
+      "Don't add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.",
       "Don't add hover-only behaviour on phones, or block vertical scrolling on anything swipeable."
     ]
   }

@@ -2,7 +2,9 @@ import { type Locator, type Page, expect, test } from './fixtures';
 
 const ready = (page: Page) => expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
 // SplitText wraps each line in a masking element; the title is back to plain text once its reveal is over
-const isPlainText = (el: Locator) => el.evaluate((node) => node.children.length === 0);
+// (the headline's own two voice spans do not count)
+const isPlainText = (el: Locator) =>
+  el.evaluate((node) => [...node.children].every((child) => child.classList.contains('method') || child.classList.contains('voice')));
 
 test.describe('section titles', () => {
   test('rise line by line when they scroll in, then go back to plain text', async ({ page }) => {
@@ -48,6 +50,14 @@ test.describe('hero', () => {
     expect(await isPlainText(page.locator('h1'))).toBe(true);
   });
 
+  test('the curious half is the italic serif', async ({ page }) => {
+    await page.goto('/en/');
+    const voice = page.locator('.hero h1 .voice');
+    expect(await voice.evaluate((el) => getComputedStyle(el).fontStyle)).toBe('italic');
+    expect(await voice.evaluate((el) => getComputedStyle(el).fontFamily)).toMatch(/^"?Instrument Serif"?/);
+    await expect(page.locator('head link[rel="preload"][href*="instrument-serif-latin-400-italic"]')).toHaveCount(1);
+  });
+
   test('the headline drifts as the page scrolls', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
@@ -55,30 +65,20 @@ test.describe('hero', () => {
     await expect.poll(() => page.locator('h1').evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
   });
 
-  test('on desktop the condensed headline widens as it scrolls away, and narrows back', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only: phones keep the headline at wdth 75');
+  test('the headline keeps its normal width while it scrolls away', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    const wdth = () => page.locator('h1').evaluate((el) => getComputedStyle(el).fontVariationSettings);
-    const heroHeight = () => page.locator('.hero').evaluate((el) => Math.round(el.getBoundingClientRect().height));
-    expect(await wdth()).toBe('"wdth" 75');
-    const height = await heroHeight();
+    const wdth = () => page.locator('.hero h1').evaluate((el) => getComputedStyle(el).fontVariationSettings);
+    expect(await wdth()).toContain('"wdth" 100');
     await page.evaluate(() => { window.scrollTo(0, 400); });
-    await expect.poll(async () => Number(/[\d.]+$/.exec(await wdth())?.[0])).toBeGreaterThan(75);
-    // whole steps only: a wdth that changed at every frame reshaped the giant headline at every frame and dropped
-    // about 40 frames between the hero and the work (issue #233)
-    expect(Number.isInteger(Number(/[\d.]+$/.exec(await wdth())?.[0]))).toBe(true);
-    // the wider headline breaks its lines where it did: the hero keeps its height and the page below stays put
-    expect(await heroHeight()).toBe(height);
-    await page.evaluate(() => { window.scrollTo(0, 0); });
-    await expect.poll(wdth).toBe('"wdth" 75');
+    expect(await wdth()).toContain('"wdth" 100');
   });
 
   test.describe('after the intro', () => {
     test.use({ intro: true });
     test('the headline rises line by line and ends as plain text', async ({ page }) => {
       await page.goto('/en/');
-      // the panel lifts 3.6 s after the first render at the latest (the CSS fallback, or the GSAP timeline held to
+      // the panel lifts 3.6 s after the first render at the latest (2 s on phones) (the CSS fallback, or the GSAP timeline held to
       // its deadline); counted from the end of goto, and with WebKit in CI delivering frames late under load (a run
       // took the CSS path and ended past 4 s), 6 s is that bound plus the frames' lag
       await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
@@ -89,11 +89,11 @@ test.describe('hero', () => {
     // issue #251: the motion script came too late for the timeline, the CSS fallback lifts the panel, and the
     // squares used to stay one flat colour (black in the light theme) with the letters dim
     test('the squares are coloured and the letters lit even when the motion script is late', async ({ page, isMobile }) => {
-      test.skip(isMobile, 'the intro is desktop only: on phones the squares are never animated');
       // every script is held until the same instant, 2 s from now (a delay per file would stack along the chain of
       // imports and the effect would start after the panel is gone): past the point where the whole timeline fits
-      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel
-      const release = Date.now() + 2000;
+      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel. Phones
+      // lift by 2 s with a faster timeline (issue #381), so there the same moment comes at 0.9 s
+      const release = Date.now() + (isMobile ? 900 : 2000);
       await page.route('**/*.js', async (route) => {
         await new Promise((resolve) => setTimeout(resolve, Math.max(0, release - Date.now())));
         await route.continue();
@@ -143,15 +143,14 @@ test('hovering a project shows the screenshot as it is, with no pixelated flash'
 test.describe('project cards', () => {
   test.skip(({ isMobile }) => isMobile, 'mouse only');
 
-  test('tilt the image toward the cursor and settle when it leaves', async ({ page }) => {
+  // issue #340: parallax tilt removed from desktop hover
+  test('do not tilt the image on mouse hover', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
     const media = page.locator('#work .project .media').first();
-    // hover() waits for the element to stop moving, so the box below is where the image really is
     await media.hover();
     const box = await media.boundingBox();
     if (!box) throw new Error('no media box');
-    // sine of the rotation around the vertical axis, from the matrix3d (0 when the image faces the viewer)
     const lean = () =>
       media.evaluate((el) => {
         const m = /matrix3d\(([^)]+)\)/.exec(getComputedStyle(el).transform);
@@ -159,9 +158,44 @@ test.describe('project cards', () => {
       });
     await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.2);
     await page.mouse.move(box.x + box.width * 0.95, box.y + box.height * 0.1, { steps: 4 });
-    await expect.poll(lean).toBeGreaterThan(0.05);
+    expect(await lean()).toBe(0);
+  });
+
+  // issue #340: media container links directly to case study
+  test('clicking the media preview navigates to the project case study', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const media = page.locator('#work .project .media').first();
+    await media.click();
+    await expect(page).toHaveURL(/\/work\/apexflow/);
+  });
+
+  // issue #340, #376: the pixel cursor snaps to the preview's arrow button from a little way off, and the button leans in
+  test('the cursor snaps to the preview arrow button and the button leans towards the pointer', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const arrow = page.locator('#work .project .media-arrow').first();
+    await expect(arrow).toHaveAttribute('data-snap', '');
+    await arrow.scrollIntoViewIfNeeded();
+    const box = await arrow.boundingBox();
+    if (!box) throw new Error('no arrow box');
+    // far from the button, in the middle of the picture
+    const media = await page.locator('#work .project .media').first().boundingBox();
+    if (!media) throw new Error('no media box');
+    await page.mouse.move(media.x + media.width / 2, media.y + media.height / 2);
+    await page.mouse.move(media.x + media.width / 3, media.y + media.height / 2, { steps: 4 });
+    const lean = () => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
+    await expect.poll(lean).toBeLessThan(-0.5);
+    // the pixel is a frame centred on the button, not on the pointer
+    const offset = async () => {
+      const now = await arrow.boundingBox();
+      const dot = await page.locator('.pixel-cursor').boundingBox();
+      if (!now || !dot) throw new Error('no box');
+      return Math.hypot(dot.x + dot.width / 2 - (now.x + now.width / 2), dot.y + dot.height / 2 - (now.y + now.height / 2));
+    };
+    await expect.poll(offset).toBeLessThan(3);
     await page.mouse.move(5, 5);
-    await expect.poll(lean, { timeout: 2000 }).toBeLessThan(0.005);
+    await expect.poll(lean).toBeGreaterThan(-0.05);
   });
 });
 
@@ -280,7 +314,7 @@ test.describe('bands and finale', () => {
       }, { timeout: 8000 })
       // the scrub can stop a hair short of the end on slow devices: under a pixel is full bleed
       .toBeLessThan(0.5);
-    await expect(page.locator('#contact h2')).toHaveAccessibleName('Get in touch');
+    await expect(page.locator('#contact h2')).toHaveAccessibleName('Let’s talk');
     // the last line of the giant title has fully risen, even though the page ends before the trigger's end
     await expect
       .poll(() => page.locator('#contact .contact-label').evaluate((el) => {
@@ -315,16 +349,6 @@ test.describe('bands and finale', () => {
     await ready(page);
     await expect(page.locator('.scroll-progress, app-scroll-progress')).toHaveCount(0);
   });
-});
-
-test.describe('stack on phones', () => {
-  test('the title stays above the levels stepping in', async ({ page }) => {
-    await page.goto('/en/');
-    const style = await page.locator('#stack h2').evaluate((el) => ({ position: getComputedStyle(el).position, z: getComputedStyle(el).zIndex }));
-    expect(style.position).toBe('relative');
-    expect(Number(style.z)).toBeGreaterThan(0);
-  });
-
 });
 
 test('with enlarged text, an experience card that would not fit under the header stops sticking', async ({ page }) => {

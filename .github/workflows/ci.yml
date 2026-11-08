@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master, devel]
 
+# scripts/public-repos.mjs (run by npm ci) asks GitHub's API; with the token it is not rate-limited by the runner's shared IP
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
 jobs:
   check:
     name: Lint & Unit Tests

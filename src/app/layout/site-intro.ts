@@ -10,8 +10,16 @@ import { MotionHost } from '../motion/motion-host';
   template: `
     <div class="site-intro" aria-hidden="true">
       <p class="name">
-        @for (char of letters; track $index) {
-          <span class="letter">{{ char }}</span>
+        <!-- a narrow screen wraps the name between words, never inside one (issue #381) -->
+        @for (word of words; track $index) {
+          <span class="word">
+            @for (char of word; track $index) {
+              <span class="letter">{{ char }}</span>
+            }
+          </span>
+          @if (!$last) {
+            {{ ' ' }}
+          }
         }
       </p>
       <p class="pixels">
@@ -36,20 +44,28 @@ import { MotionHost } from '../motion/motion-host';
       background: var(--intro-bg);
       color: var(--intro-fg);
       pointer-events: none;
-      // lifts the panel even if the motion script never arrives
-      animation: intro-out 0.6s 3s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+      // lifts the panel even if the motion script never arrives: by 2s on phones, where a longer cover cost the
+      // Speed Index (issue #381), by 3.6s on desktop. effects/intro.ts reads these timings back
+      animation: intro-out 0.6s 1.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+      @media (min-width: 1024px) and (hover: hover) {
+        animation-delay: 3s;
+      }
     }
     .name {
       margin: 0;
-      font-size: clamp(2.5rem, 1rem + 6vw, 6rem);
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.03em;
+      // the same type as the hero's h1, which shows this name right after
+      font-size: clamp(2.747rem, 5.3vw, 6rem);
+      font-weight: 600;
+      font-variation-settings: 'wdth' 100;
+      line-height: 0.98;
+      letter-spacing: -0.025em;
       text-align: center;
+    }
+    .word {
+      white-space: nowrap;
     }
     .letter {
       opacity: 0.18;
-      white-space: pre;
     }
     .pixels {
       display: flex;
@@ -74,6 +90,6 @@ import { MotionHost } from '../motion/motion-host';
   `,
 })
 export class SiteIntro {
-  protected readonly letters = Array.from(inject(CONTENT).person.name);
+  protected readonly words = inject(CONTENT).person.name.split(' ').map((word) => Array.from(word));
   protected readonly pixels = Array.from({ length: 12 });
 }

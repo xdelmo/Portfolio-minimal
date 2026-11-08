@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Project } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
+import { PixelArrow } from '../../layout/pixel-arrow';
 import { QuestSprite } from '../side-quests/quest-sprite';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-work-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate],
+  imports: [RouterLink, NgOptimizedImage, GithubMark, QuestSprite, Depixelate, PixelArrow],
   template: `
     <ul class="projects">
       @for (project of projects(); track project.slug) {
@@ -42,7 +43,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             </div>
           </div>
           <!-- every project gets the same frame: its screenshot, or its pixel item that builds itself on scroll -->
-          <div class="media">
+          <a class="media" data-snap-zone [routerLink]="['/work', project.slug]" tabindex="-1" aria-hidden="true">
             @if (project.image; as image) {
               <img
                 appDepixelate
@@ -58,7 +59,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             } @else if (project.sprite; as sprite) {
               <app-quest-sprite class="item" [name]="sprite" />
             }
-          </div>
+            <span class="media-arrow" data-magnetic data-snap aria-hidden="true">
+              <span class="media-arrow-label" i18n="@@work.view">View</span>
+              <app-pixel-arrow />
+            </span>
+          </a>
         </li>
       }
     </ul>
@@ -132,6 +137,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     // one 3:2 window for every project: a desktop screenshot fills it, a phone one stands in it whole, a pixel item sits
     // in its middle
     .media {
+      position: relative;
       display: grid;
       // one row as tall as the frame, so a phone picture's percentage height resolves against it: with an auto row the
       // picture kept its own height and the frame cut it (issue #229)
@@ -141,6 +147,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       overflow: hidden;
       border: 1px solid var(--rule);
       background: var(--surface);
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
     }
     .shot {
       display: block;
@@ -158,6 +167,73 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .item {
       width: 36%;
       aspect-ratio: 1;
+    }
+    .media-arrow {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      min-width: 40px;
+      height: 40px;
+      padding-inline: 11px; // 16px arrow + 2 * 11 + 2 * 1 border = the 40px square
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      color: var(--fg);
+      @media (pointer: coarse) {
+        min-width: 44px;
+        height: 44px;
+        padding-inline: 13px;
+      }
+    }
+    // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
+    .media-arrow-label {
+      max-width: 0;
+      overflow: hidden;
+      margin-right: calc(-1 * var(--space-1)); // cancels the gap while folded
+      opacity: 0;
+      font-size: 14px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .media-arrow app-pixel-arrow {
+      width: 16px;
+      height: 16px;
+    }
+    @media (hover: hover) {
+      .media:hover .media-arrow-label {
+        max-width: 5em;
+        margin-right: 0;
+        opacity: 1;
+      }
+      .media:hover .media-arrow {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .media-arrow {
+        transition: background-color 120ms steps(2), color 120ms steps(2), border-color 120ms steps(2);
+      }
+      .media-arrow app-pixel-arrow {
+        transition: transform 160ms steps(2);
+      }
+      .media-arrow-label {
+        transition:
+          max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          margin-right 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 200ms ease 80ms;
+      }
+      .media:hover .media-arrow app-pixel-arrow {
+        transform: translate(2px, -2px);
+      }
+    }
+    .media:active .media-arrow {
+      transform: translate(2px, 2px);
     }
     @include bp.up(md) {
       // the text sits level with the middle of its picture, so a short description leaves no hole below it

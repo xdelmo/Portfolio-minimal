@@ -7,11 +7,13 @@ import {
   afterNextRender,
   effect,
   inject,
+  input,
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, addRipple, layout, levelUp } from './field';
+import { FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
+import { afterIntro } from '../motion/intro-state';
 import { MotionPause } from '../motion/pause';
 import { Paint, glPaint } from './gl';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
@@ -28,7 +30,6 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
     :host {
       position: relative;
       display: block;
-      height: clamp(12rem, 32vw, 22rem);
     }
     // out of flow: its pixel size must never feed back into the height of the hero rows
     canvas {
@@ -41,15 +42,18 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
   `,
 })
 export class PixelField {
+  /** The element the cloud leaves clear (the hero text); without one, a box in the middle. */
+  readonly clear = input<HTMLElement | null>(null);
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly animated = signal(false);
   private readonly pause = inject(MotionPause);
 
   private paint: Paint | null = null;
   private grid: FieldLayout | null = null;
-  private palette: Palette = { dot: '', lit: [] };
-  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [] };
+  private palette: Palette = { dot: '', tones: [], alpha: 1 };
+  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null };
   private visible = true;
+  private covered = false;
   private raf = 0;
   private last = 0;
   private readonly cleanups: (() => void)[] = [];
@@ -91,10 +95,30 @@ export class PixelField {
       canvas.height = Math.round(canvas.clientHeight * dpr());
       ctx?.setTransform(dpr(), 0, 0, dpr(), 0, 0);
       this.grid = layout(canvas.clientWidth, canvas.clientHeight);
+      const around = this.clear();
+      if (around) {
+        // the text's own line boxes (and the buttons), not its container: the clearing follows the words
+        const c = canvas.getBoundingClientRect();
+        const rects: DOMRect[] = [...around.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+        const walker = document.createTreeWalker(around, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          range.selectNodeContents(n);
+          rects.push(...range.getClientRects());
+        }
+        const boxes = rects.filter((r) => r.width > 0 && r.height > 0).map((r) => ({ x: r.x - c.x, y: r.y - c.y, w: r.width, h: r.height }));
+        if (boxes.length) {
+          this.frame.clear = boxes;
+          const { x, y, w, h } = bounds(boxes);
+          canvas.dataset['clear'] = [x, y, w, h].map(Math.round).join();
+        }
+      }
       this.render();
     };
     const sizes = new ResizeObserver(resize);
     sizes.observe(canvas);
+    const watched = this.clear();
+    if (watched) sizes.observe(watched);
     this.cleanups.push(() => {
       sizes.disconnect();
     });
@@ -162,6 +186,21 @@ export class PixelField {
       canvas.removeEventListener('pointerdown', onDown);
     });
 
+    // the first visit's intro covers the hero for 2-3.6s, longer than the cloud takes to compose: its clock waits at 0
+    // (nothing drawn) until the panel has gone, so the cloud composes once, with the headline (issues #369, #374).
+    // The motion script ends the intro; without it, the CSS fallback's lift does
+    this.covered = root.classList.contains('intro-on');
+    const uncover = (): void => {
+      this.covered = false;
+    };
+    const onLift = (e: Event): void => {
+      if (e.target instanceof Element && e.target.classList.contains('site-intro')) uncover();
+    };
+    document.addEventListener('animationend', onLift);
+    this.cleanups.push(afterIntro(uncover), () => {
+      document.removeEventListener('animationend', onLift);
+    });
+
     this.paint = paint;
     this.palette = readPalette(win.getComputedStyle(root));
     resize();
@@ -191,7 +230,7 @@ export class PixelField {
   }
 
   private readonly tick = (now: number): void => {
-    this.frame.t += Math.min(MAX_STEP_MS, Math.max(0, now - this.last));
+    if (!this.covered) this.frame.t += Math.min(MAX_STEP_MS, Math.max(0, now - this.last));
     this.last = now;
     this.frame.ripples = this.frame.ripples.filter((r) => this.frame.t - r.start < RIPPLE_MS);
     this.render();

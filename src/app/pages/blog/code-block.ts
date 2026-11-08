@@ -4,29 +4,37 @@ import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, inject
 export const COPIED_MS = 2000;
 
 /**
- * A code block of a blog post (issue #191): ink on paper in a hard frame, scrolling sideways inside itself (focusable,
- * so the keyboard scrolls it too), with a copy button on the frame's top edge. The button appears once the page runs and
- * the browser offers a clipboard, so it never sits there doing nothing; copied, its icon steps into a tick.
+ * A code block of a blog post (issue #191, issue #315): ink on paper in a hard frame, scrolling sideways inside itself
+ * (focusable, so the keyboard scrolls it too), with a language indicator tag and a copy button on the frame's top edge.
+ * The button appears once the page runs and the browser offers a clipboard, so it never sits there doing nothing;
+ * copied, its icon steps into a tick.
  */
 @Component({
   selector: 'app-code-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (canCopy()) {
-      <button type="button" class="copy" [class.is-copied]="copied()" (click)="copy()">
-        @if (copied()) {
-          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d="M7 1h1v2H7zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4zM3 6h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" />
-          </svg>
-          <span i18n="@@blog.copied">Copied</span>
-        } @else {
-          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" fill-rule="evenodd" d="M0 0h6v1H1v5H0zM2 2h6v6H2zM3 3v4h4V3z" />
-          </svg>
-          <span i18n="@@blog.copy">Copy code</span>
-        }
-      </button>
-    }
+    <div class="code-bar">
+      @if (lang(); as l) {
+        <span class="lang-tag">{{ l }}</span>
+      } @else {
+        <span class="lang-tag">code</span>
+      }
+      @if (canCopy()) {
+        <button type="button" class="copy" [class.is-copied]="copied()" (click)="copy()">
+          @if (copied()) {
+            <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+              <path fill="currentColor" d="M7 1h1v2H7zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4zM3 6h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" />
+            </svg>
+            <span i18n="@@blog.copied">Copied</span>
+          } @else {
+            <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+              <path fill="currentColor" fill-rule="evenodd" d="M0 0h6v1H1v5H0zM2 2h6v6H2zM3 3v4h4V3z" />
+            </svg>
+            <span i18n="@@blog.copy">Copy code</span>
+          }
+        </button>
+      }
+    </div>
     <pre tabindex="0"><code [class]="lang() ? 'language-' + lang() : null">{{ code() }}</code></pre>
     <span class="visually-hidden" role="status">
       @if (copied()) {
@@ -39,6 +47,27 @@ export const COPIED_MS = 2000;
       display: grid;
       min-width: 0;
     }
+    .code-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      min-height: 32px;
+      margin-bottom: -2px;
+    }
+    .lang-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 var(--space-1);
+      border: 2px solid var(--fg);
+      border-bottom: 0;
+      background: var(--surface);
+      color: var(--fg-muted);
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
     pre {
       max-width: 100%;
       margin: 0;
@@ -50,17 +79,15 @@ export const COPIED_MS = 2000;
       tab-size: 2;
     }
     code {
-      font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      font-family: var(--font-mono);
       font-size: var(--step--1);
     }
     // a tab on the frame's top right edge: it never covers the first line of code
     .copy {
-      justify-self: end;
       display: inline-flex;
       align-items: center;
       gap: var(--space-1);
       min-height: 32px;
-      margin-bottom: -2px;
       padding: 0 var(--space-1);
       border: 2px solid var(--fg);
       border-bottom: 0;

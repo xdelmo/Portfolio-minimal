@@ -4,7 +4,8 @@ const cursor = (page: Page) => page.locator('app-pixel-cursor .pixel-cursor');
 const ready = (page: Page) => expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
 // the lean lives in the `translate` property, apart from hover transforms
 const translate = (page: Page, selector: string) =>
-  page.locator(selector).first().evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
+  // strict on purpose: a selector that starts matching a second element fails here, instead of measuring the wrong one (issue #305)
+  page.locator(selector).evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
 
 // a title's words, not its full-width block (SplitText wraps them in lines as wide as the column)
 const words = (title: Locator) =>
@@ -41,7 +42,7 @@ test.describe('on a desktop with a mouse', () => {
   test('it opens into a frame over links and buttons', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    await page.getByRole('link', { name: 'See my work' }).hover();
+    await page.locator('app-site-header .cta').hover();
     await expect(cursor(page)).toHaveClass(/is-over/);
     // an empty spot under the header, beside the headline
     await page.mouse.move(700, 130);
@@ -102,13 +103,13 @@ test.describe('on a desktop with a mouse', () => {
   test('buttons lean towards the pointer and settle back when it leaves', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    const button = page.getByRole('link', { name: 'See my work' });
+    const button = page.locator('app-site-header .cta');
     const box = await button.boundingBox();
     if (!box) throw new Error('no button');
     await button.hover({ position: { x: box.width - 4, y: box.height / 2 } });
-    await expect.poll(() => translate(page, 'a.button--primary')).toBeGreaterThan(1);
+    await expect.poll(() => translate(page, 'app-site-header .cta')).toBeGreaterThan(1);
     await page.getByRole('heading', { level: 1 }).hover();
-    await expect.poll(() => translate(page, 'a.button--primary')).toBeCloseTo(0, 0);
+    await expect.poll(() => translate(page, 'app-site-header .cta')).toBeCloseTo(0, 0);
   });
 });
 

@@ -6,8 +6,8 @@ const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { versio
 
 test.describe('contact finale', () => {
   for (const [lang, name, lede] of [
-    ['en', 'Get in touch', 'Building something with Angular, or hiring for a frontend role? Write to me.'],
-    ['it', 'Contatti', 'Stai costruendo qualcosa con Angular o cerchi chi segua il frontend? Scrivimi.'],
+    ['en', 'Let’s talk', 'Building something with Angular, or hiring for a frontend role?'],
+    ['it', 'Parliamone', 'Stai costruendo qualcosa con Angular o cerchi chi segua il frontend?'],
   ] as const) {
     test(`${lang}: the giant title is the email link, under one sentence on what to write about`, async ({ page }) => {
       await page.goto(`/${lang}/`);
@@ -20,6 +20,21 @@ test.describe('contact finale', () => {
       await expect(contact).not.toContainText(EMAIL);
     });
   }
+
+  // SplitText's default aria-label on the split <span> is not allowed on its role: Lighthouse flagged it (issue #354)
+  test('the split title label carries no aria-label, and the link keeps its name', async ({ page }) => {
+    await page.goto('/en/');
+    const label = page.locator('#contact .contact-label');
+    // the split ran: the label's lines are wrapped in masks
+    await expect(label.locator('div').first()).toBeAttached();
+    await expect(label).not.toHaveAttribute('aria-label');
+    // the masks clip only below: sideways they would cut the italic last letter (issue #352)
+    const mask = label.locator('div').first();
+    await expect(mask).toHaveCSS('overflow-x', 'visible');
+    await expect(mask).toHaveCSS('clip-path', /inset/);
+    const text = ((await label.textContent()) ?? '').replace(/\s+/g, ' ').trim();
+    await expect(page.locator('#contact .contact-link')).toHaveAccessibleName(text);
+  });
 
   // without a mail program the title's mailto does nothing: a button copies the address (issue #231)
   test('a button copies the email address without printing it', async ({ page, context, browserName }) => {

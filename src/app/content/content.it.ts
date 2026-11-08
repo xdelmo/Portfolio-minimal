@@ -17,13 +17,15 @@ export const CONTENT_IT: SiteContent = {
   seo: {
     title: 'Emanuele Del Monte — Frontend Engineer Angular',
     description:
-      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. a Latina.',
+      'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. ad Aprilia.',
   },
   hero: {
-    headline: 'Ingegnere per metodo, curioso per natura.',
-    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A., a Latina. Costruisco interfacce Angular veloci e solide, e qua e là nascondo un easter egg.',
+    headline: 'Ingegnere per metodo, curioso per natura',
+    voice: 'curioso per natura',
+    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. ad Aprilia. Costruisco app Angular enterprise con tabelle grandi che restano reattive, e lascio un easter egg a chi guarda bene.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
+  aboutVoice: 'ma tutti sentono.',
   about: [
     "Sono Emanuele Del Monte, Frontend Engineer a Latina. Costruisco frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
@@ -46,10 +48,10 @@ export const CONTENT_IT: SiteContent = {
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
       image: {
-        src: 'images/work/apexflow.jpg',
-        alt: 'La dashboard di ApexFlow con fatturato totale, ordini in attesa, clienti attivi e totali, il grafico annuale del fatturato e la barra di navigazione',
-        width: 1600,
-        height: 1011,
+        src: 'images/work/apexflow.webp',
+        alt: 'La pagina ordini della dashboard di ApexFlow: una tabella con ID ordine, data, cliente, tipo di servizio, totale e stato del pagamento, con ordinamento, filtri e paginazione, accanto alla barra di navigazione',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -85,10 +87,10 @@ export const CONTENT_IT: SiteContent = {
       summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {
-        src: 'images/work/pokeverba.jpg',
-        alt: 'Il cruciverba Pokémon del giorno di PokèVerba: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
-        width: 1600,
-        height: 1011,
+        src: 'images/work/pokeverba.webp',
+        alt: 'Il cruciverba Pokémon del giorno di PokèVerba con due parole inserite: la griglia, le definizioni orizzontali e verticali, le schede delle regioni e i contatori di serie, catture e gettoni',
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:
@@ -124,10 +126,10 @@ export const CONTENT_IT: SiteContent = {
         'Un invito di nozze digitale pensato per il telefono: una busta di pizzo in Three.js che si apre al tocco, poi la giornata raccontata in undici slide, con RSVP e funzionamento offline.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
       image: {
-        src: 'images/work/wedding-invite.jpg',
-        alt: "L'invito chiuso: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L, sopra l'invito a toccarla per aprirla",
-        width: 1600,
-        height: 1011,
+        src: 'images/work/wedding-invite.webp',
+        alt: "L'invito chiuso da vicino: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L",
+        width: 1536,
+        height: 1024,
       },
       caseStudy: {
         context:

@@ -21,7 +21,7 @@ test('a scrambling menu link never wraps onto two lines', async ({ page, isMobil
   test.skip(isMobile, 'the menu is hidden on phones');
   await page.goto('/it/');
   await expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
-  const link = page.getByRole('navigation').getByRole('link', { name: 'Chi sono' });
+  const link = page.getByRole('navigation').getByRole('link', { name: 'Esperienza' });
   const height = (await link.boundingBox())?.height ?? 0;
   // force wide letters: every scramble frame draws "m"
   await page.evaluate(() => {

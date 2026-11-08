@@ -14,7 +14,7 @@ test('the language menu points to the same page in the other language', async ({
 test('the language menu is a dropdown that says what it does', async ({ page, isMobile }) => {
   test.skip(isMobile, 'on phones the languages are a row in the menu panel (menu.spec)');
   await page.goto('/en/');
-  // the summary is named "Language: English" everywhere; phones show only "EN", so it is opened by the summary
+  // the summary is named "Language: English" everywhere; it shows only "EN", so it is opened by the summary
   await expect(page.getByText('Language: English')).toBeAttached();
   const toggle = page.locator('.language-menu summary');
   await expect(toggle).toBeVisible();

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CONTENT } from '../../content/content';
+import { voices } from '../../content/voices';
 import { toLocale } from '../../core/i18n/locale';
 import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
@@ -35,17 +35,15 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
-    <section class="hero container" aria-labelledby="hero-title">
-      <h1 id="hero-title">{{ content.hero.headline }}</h1>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="copy" #copy>
+      <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
       <p class="lede">{{ content.hero.lede }}</p>
-      <div class="actions">
-        <a class="button button--primary" data-magnetic routerLink="/" fragment="work" i18n="@@home.cta.work">See my work</a>
-        <a class="button" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
       </div>
-      <app-pixel-field class="field" />
+      <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
     </section>
 
@@ -60,7 +58,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="aboutSeam" grow="up" />
       <div class="about-text">
         <h2 id="about-title" i18n="@@home.about.title">About</h2>
-        <p class="statement">{{ content.aboutStatement }}</p>
+        <p class="statement"><span class="method">{{ statement[0] }}</span>&ngsp;<span class="voice">{{ statement[1] }}</span></p>
         <div class="about-body">
           @for (paragraph of content.about; track $index) {
             <p>{{ paragraph }}</p>
@@ -98,9 +96,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role? Write to me.</p>
+        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role?</p>
         <h2 id="contact-title">
-          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label" i18n="@@home.contact.title">Get in touch</span><app-pixel-arrow class="contact-arrow" /></a>
+          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
@@ -108,7 +106,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
           <li><app-copy-email /></li>
         </ul>
       </div>
-      <img appDepixelate class="contact-photo" src="images/emanuele.jpg" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
+      <img appDepixelate class="contact-photo" src="images/emanuele.webp" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />
     </section>
     </div>
   `,
@@ -121,30 +119,63 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 
     // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport on every
     // screen (issue #104: on phones it used to end with the text); svh: the screen with Safari's bars showing
-    .hero {
-      position: relative;
+    .hero,
+    .copy {
       display: grid;
-      align-content: center;
       // centred both ways, a poster on the first screen (issue #270)
       justify-items: center;
-      text-align: center;
-      // the headline's descenders need room above the lede; the buttons stand apart as their own group
+      // the headline's descenders need room above the lede
       gap: var(--space-4);
+    }
+    .hero {
+      position: relative;
+      align-content: center;
+      text-align: center;
       min-height: calc(100svh - var(--header-h));
-      padding-block: var(--space-8) var(--space-12);
+      // full bleed: the cloud runs edge to edge, so the text keeps the container's gutters itself
+      // even padding now the buttons are gone: the text sits lower, so more cloud shows above it (issue #339)
+      padding: var(--space-8) var(--gutter);
+    }
+    .copy {
+      max-width: var(--container);
+    }
+    // GSAP came after the intro's CSS fallback lifted the panel (a slow network): heroEffect never ran under the
+    // intro, so the copy rises right after the lift on the same first-render clock (2s on phones, 3.6s on desktop, site-intro.ts) instead
+    // of being already there (issue #329). endIntro() removes the class, so GSAP's own entrance wins when it is in time.
+    // Moved, never transparent: under the opaque panel the copy still paints at first render, so it is the LCP then
+    // and not 3.6s later (issue #381, mobile Lighthouse 0.88 with the intro on phones)
+    :host-context(.intro-on) .copy {
+      animation: hero-in 0.8s 2s ease-out backwards;
+      @media (min-width: 1024px) and (hover: hover) {
+        animation-delay: 3.6s;
+      }
+    }
+    @keyframes hero-in {
+      from {
+        translate: 0 var(--space-3);
+      }
     }
     .hero h1 {
       // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),
-      // and the short headline (issue #280) keeps lede and buttons above the fold, so the base h1 size applies
+      // and the short headline (issue #280) keeps the lede above the fold, so the base h1 size applies
       // balanced lines read as one centred block, without a short last line (issue #270)
       text-wrap: balance;
-      // the hero effect widens it as the hero scrolls away (desktop, issue #131)
-      font-variation-settings: 'wdth' var(--hero-wdth, 75);
+      font-variation-settings: 'wdth' 100;
+      // the approved mockup's proportion (issue #304): the headline about 55% of the hero's width, so the cloud's
+      // clearing stays an ellipse around it instead of a box (44px on phones, 96px on wide screens)
+      font-size: clamp(2.747rem, 5.3vw, 6rem);
+      line-height: 0.98;
+      letter-spacing: -0.025em;
+      // the two voices stand on their own lines: the method, then the voice (issue #304)
+      .method,
+      .voice {
+        display: block;
+      }
     }
     // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
     // centred, it keeps a readable measure under the wide headline (issue #270)
     .lede {
-      max-width: 60ch;
+      max-width: 44ch;
       text-wrap: balance;
       @include bp.up(md) {
         font-size: var(--step-1);
@@ -153,14 +184,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .muted {
       color: var(--fg-muted);
     }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: var(--space-2);
-      margin-top: var(--space-3);
-    }
-    // the field sits behind the hero text, fading out towards the edges (issue #287)
+    // the field sits behind the hero text: a cloud around a clearing for it (issue #304)
     .hero {
       isolation: isolate;
     }
@@ -168,10 +192,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       position: absolute;
       inset: 0;
       z-index: -1;
-      height: auto;
-      // appears around the centred hero text, fading to transparent towards the edges
-      mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse 50% 45% at 50% 50%, #000 0%, rgb(0 0 0 / 0.6) 45%, transparent 75%);
     }
     .contact {
       display: grid;
@@ -188,22 +208,23 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       max-width: 40ch;
       font-size: var(--step-1);
     }
-    // the giant title is the action, as in the references: the whole line writes an email
+    // the giant title is the action, as in the references: the whole line writes an email; the arrow stays inline
     .contact-link {
       display: inline-flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 0 0.12em;
+      align-items: baseline;
+      gap: 0 0.16em;
+      min-height: 44px; // touch target (WCAG 2.5.8, e2e/touch.spec.ts)
       color: inherit;
       text-decoration: none;
     }
     .contact-label {
-      display: block;
+      display: inline-block;
+      padding-inline-end: 0.16em;
     }
     .contact-arrow {
+      flex-shrink: 0;
       width: 0.5em;
       height: 0.5em;
-      margin-bottom: 0.16em;
       color: var(--link);
     }
     .contact-link:hover .contact-label {
@@ -273,6 +294,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       font-variation-settings: 'wdth' 75;
       letter-spacing: -0.01em;
       text-wrap: balance;
+      // inline: the statement keeps its balanced wrap (the voice only changes typeface, issue #304)
+      .method,
+      .voice {
+        display: inline;
+      }
     }
 
     @include bp.up(lg) {
@@ -304,14 +330,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .trail {
       position: relative;
     }
-    // the tool rings turn in under the side quests band above, and under the title
-    #side-quests {
-      z-index: 1;
-    }
-    #stack h2 {
-      position: relative;
-      z-index: 1;
-    }
     .section,
     .deck {
       display: grid;
@@ -332,6 +350,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 })
 export class Home {
   protected readonly content = inject(CONTENT);
+  protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
+  protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
   protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];

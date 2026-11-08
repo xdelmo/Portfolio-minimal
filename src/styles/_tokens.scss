@@ -19,6 +19,7 @@
   --px-4: #c9b8f5;
   --px-5: #dccff8;
   --px-6: #ffc9a8;
+  --cloud-alpha: 1;
   --stone: #a3a39d;
   --stone-dark: #85857f;
   --stone-light: #bdbdb6;
@@ -26,8 +27,6 @@
   /* intro panel: opaque, so nothing of the page shows through */
   --intro-bg: #1d1d1c;
   --intro-fg: #e5e5e5;
-  /* strength of the ambient orbs behind the page (layout/ambient.ts) */
-  --ambient-alpha: 0.12;
   /* section bands (.band in _base.scss): pastel for About, lavender for the side quests, ink for the contact finale;
      AA-checked */
   /* the moai's bubble gum (voxel/moai-scene.ts), decoration only */
@@ -63,13 +62,13 @@
   --px-4: #9d8cf0;
   --px-5: #c2b4f5;
   --px-6: #f0a982;
+  --cloud-alpha: 0.78;
   --stone: #7d7d78;
   --stone-dark: #62625e;
   --stone-light: #9a9a94;
   --moai-eye-white: #d9d9d4;
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
-  --ambient-alpha: 0.18;
   --gum: #ef86b6;
   --band-pastel-bg: #14243b;
   --band-pastel-fg: #e8f0fa;
@@ -96,7 +95,11 @@
   --space-12: 96px;
   --space-16: 128px;
 
+  /* the one overlay (DESIGN.md scrim): black at 60% behind the player card, in both themes */
+  --scrim: rgb(0 0 0 / 0.6);
+
   /* modular scale 1.25 on 18px */
+  --step--2: 0.72rem;    /* 11.5px: micro-labels, code tags, header subline */
   --step--1: 0.9rem;     /* 14.4px: rem counts from the root's 16px, not the body's 18px */
   --step-0: 1.125rem;    /* 18px   */
   --step-1: 1.406rem;    /* 22.5px */
@@ -107,8 +110,10 @@
   --step-hero: clamp(2.747rem, 1.6rem + 5.2vw, 6rem); /* 44px → 96px */
 
   --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
-  /* in ch of Instrument Sans the zero is wider than the average letter: 58ch is about 75 characters a line (issue #229) */
-  --measure: 58ch;
+  --font-voice: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  /* in ch of Instrument Sans the zero is wider than the average letter: 53ch is about 75 characters a line (measured 82 at 58ch, issues #229, #371) */
+  --measure: 53ch;
   --container: 1200px;
   --gutter: 16px;
   /* the sticky header (site-header.ts); anchors and the experience pin start below it */

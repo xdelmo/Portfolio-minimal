@@ -23,8 +23,13 @@ export const finaleEffect: Effect = (root, { gsap, SplitText }) => {
   });
 
   if (title.getBoundingClientRect().top < innerHeight) return undefined;
-  // the title holds a link: split its label, so the link and its arrow stay whole
-  const split = SplitText.create(title.querySelector('.contact-label') ?? title, { type: 'lines', mask: 'lines' });
+  // the title holds a link: split its label, so the link and its arrow stay whole. aria: 'none' because SplitText's
+  // default puts an aria-label on the split element, not allowed on a <span> (issue #354); the text stays readable
+  const split = SplitText.create(title.querySelector('.contact-label') ?? title, {
+    type: 'lines',
+    mask: 'lines',
+    aria: 'none',
+  });
   gsap.set(split.lines, { yPercent: 105 });
   gsap.to(split.lines, {
     yPercent: 0,

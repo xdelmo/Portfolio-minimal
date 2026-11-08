@@ -21,6 +21,16 @@ test.describe('contact finale', () => {
     });
   }
 
+  // SplitText's default aria-label on the split <span> is not allowed on its role: Lighthouse flagged it (issue #354)
+  test('the split title label carries no aria-label, and the link keeps its name', async ({ page }) => {
+    await page.goto('/en/');
+    const label = page.locator('#contact .contact-label');
+    // the split ran: the label's lines are wrapped in masks
+    await expect(label.locator('div').first()).toBeAttached();
+    await expect(label).not.toHaveAttribute('aria-label');
+    await expect(page.locator('#contact').getByRole('link', { name: 'Get in touch', exact: true })).toBeVisible();
+  });
+
   // without a mail program the title's mailto does nothing: a button copies the address (issue #231)
   test('a button copies the email address without printing it', async ({ page, context, browserName }) => {
     test.skip(browserName !== 'chromium', 'clipboard permissions are granted in Chromium only');

@@ -1,10 +1,10 @@
 import { workImageLoader } from './image-loader';
 
 describe('workImageLoader', () => {
-  const src = 'images/work/apexflow.jpg';
+  const src = 'images/work/apexflow.webp';
 
   it('points smaller widths at their resized file', () => {
-    expect(workImageLoader({ src, width: 800, loaderParams: { full: 1600 } })).toBe('images/work/apexflow-800.jpg');
+    expect(workImageLoader({ src, width: 800, loaderParams: { full: 1600 } })).toBe('images/work/apexflow-800.webp');
   });
 
   it('uses the original file for the full width and when no width is asked', () => {

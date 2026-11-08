@@ -53,6 +53,7 @@ export class PixelField {
   private palette: Palette = { dot: '', tones: [], alpha: 1 };
   private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null };
   private visible = true;
+  private covered = false;
   private raf = 0;
   private last = 0;
   private readonly cleanups: (() => void)[] = [];
@@ -185,14 +186,20 @@ export class PixelField {
       canvas.removeEventListener('pointerdown', onDown);
     });
 
-    // the first visit's intro covers the hero for ~3.6s, longer than the cloud takes to compose: its clock starts over
-    // when the panel has gone, or the entrance plays unseen (issue #369)
-    this.cleanups.push(
-      afterIntro(() => {
-        this.frame.t = 0;
-        this.frame.ripples = [];
-      }),
-    );
+    // the first visit's intro covers the hero for ~3.6s, longer than the cloud takes to compose: its clock waits at 0
+    // (nothing drawn) until the panel has gone, so the cloud composes once, with the headline (issues #369, #374).
+    // The motion script ends the intro; without it, the CSS fallback's lift does
+    this.covered = root.classList.contains('intro-on');
+    const uncover = (): void => {
+      this.covered = false;
+    };
+    const onLift = (e: Event): void => {
+      if (e.target instanceof Element && e.target.classList.contains('site-intro')) uncover();
+    };
+    document.addEventListener('animationend', onLift);
+    this.cleanups.push(afterIntro(uncover), () => {
+      document.removeEventListener('animationend', onLift);
+    });
 
     this.paint = paint;
     this.palette = readPalette(win.getComputedStyle(root));
@@ -223,7 +230,7 @@ export class PixelField {
   }
 
   private readonly tick = (now: number): void => {
-    this.frame.t += Math.min(MAX_STEP_MS, Math.max(0, now - this.last));
+    if (!this.covered) this.frame.t += Math.min(MAX_STEP_MS, Math.max(0, now - this.last));
     this.last = now;
     this.frame.ripples = this.frame.ripples.filter((r) => this.frame.t - r.start < RIPPLE_MS);
     this.render();

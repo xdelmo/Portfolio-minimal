@@ -192,23 +192,28 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       max-width: 40ch;
       font-size: var(--step-1);
     }
-    // the giant title is the action, as in the references: the whole line writes an email
+    // the giant title is the action, as in the references: the whole line writes an email; the arrow stays inline
     .contact-link {
       display: inline-flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 0 0.12em;
-      min-height: 44px; // touch target (WCAG 2.5.8, e2e/touch.spec.ts) now the title is smaller
+      align-items: baseline;
+      gap: 0 0.16em;
+      min-height: 44px; // touch target (WCAG 2.5.8, e2e/touch.spec.ts)
       color: inherit;
       text-decoration: none;
     }
     .contact-label {
-      display: block;
+      display: inline-block;
+      padding-inline-end: 0.16em;
+    }
+    // ensure SplitText's line mask never clips the italic swash of the last letter (issue #352)
+    .contact-label > div {
+      overflow: visible !important;
+      clip-path: inset(-0.2em -0.5em 0 -0.2em);
     }
     .contact-arrow {
+      flex-shrink: 0;
       width: 0.5em;
       height: 0.5em;
-      margin-bottom: 0.16em;
       color: var(--link);
     }
     .contact-link:hover .contact-label {

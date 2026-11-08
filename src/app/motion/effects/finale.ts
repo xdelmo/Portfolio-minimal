@@ -30,6 +30,9 @@ export const finaleEffect: Effect = (root, { gsap, SplitText }) => {
     mask: 'lines',
     aria: 'none',
   });
+  // the masks clip only below, where the lines rise from: their overflow would cut the italic swash of the last letter
+  // (issue #352). Set here, not in the component's styles: emulated encapsulation never matches SplitText's divs
+  gsap.set(split.masks, { overflow: 'visible', clipPath: 'inset(-0.5em -0.5em 0 -0.5em)' });
   gsap.set(split.lines, { yPercent: 105 });
   gsap.to(split.lines, {
     yPercent: 0,

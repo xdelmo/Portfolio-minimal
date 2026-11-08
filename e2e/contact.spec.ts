@@ -28,6 +28,10 @@ test.describe('contact finale', () => {
     // the split ran: the label's lines are wrapped in masks
     await expect(label.locator('div').first()).toBeAttached();
     await expect(label).not.toHaveAttribute('aria-label');
+    // the masks clip only below: sideways they would cut the italic last letter (issue #352)
+    const mask = label.locator('div').first();
+    await expect(mask).toHaveCSS('overflow-x', 'visible');
+    await expect(mask).toHaveCSS('clip-path', /inset/);
     const text = ((await label.textContent()) ?? '').replace(/\s+/g, ' ').trim();
     await expect(page.locator('#contact .contact-link')).toHaveAccessibleName(text);
   });

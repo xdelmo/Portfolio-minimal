@@ -205,11 +205,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       display: inline-block;
       padding-inline-end: 0.16em;
     }
-    // ensure SplitText's line mask never clips the italic swash of the last letter (issue #352)
-    .contact-label > div {
-      overflow: visible !important;
-      clip-path: inset(-0.2em -0.5em 0 -0.2em);
-    }
     .contact-arrow {
       flex-shrink: 0;
       width: 0.5em;

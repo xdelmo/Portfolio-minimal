@@ -199,6 +199,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       gap: 0 0.12em;
       max-width: 100%;
       white-space: nowrap;
+      min-height: 44px; // touch target (WCAG 2.5.8, e2e/touch.spec.ts) now the title is smaller
       color: inherit;
       text-decoration: none;
     }

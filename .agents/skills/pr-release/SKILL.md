@@ -46,7 +46,7 @@ flowchart TD
     G --> I["Bump package.json + lock"]
     H --> I
     I --> J["Aggiorna version.generated.ts"]
-    J --> K["Commit chore(release): vX.Y.Z [skip ci]"]
+    J --> K["Commit chore(release): vX.Y.Z (senza [skip ci]: Netlify salterebbe il deploy)"]
     K --> L["Crea Tag Annotato Git vX.Y.Z"]
     L --> M["Push su origin/master e Push Tag"]
     M --> N["gh release create con Note Categorizzate"]
@@ -111,9 +111,10 @@ Il workflow su GitHub Actions monitora ogni pull request chiusa su `master`:
 
 Dopo aver completato un rilascio, verificare:
 1. `git tag -l "v*" --sort=-v:refname` (il nuovo tag è presente localmente e su origin).
-2. `git show HEAD` (il commit di release contiene `chore(release): vX.Y.Z [skip ci]`).
+2. `git show HEAD` (il commit di release è `chore(release): vX.Y.Z`, **mai** con `[skip ci]`/`[skip netlify]`: Netlify salterebbe il deploy e il footer resterebbe sulla versione precedente, issue #386).
 3. `gh release view vX.Y.Z` (la release è visibile con note e changelog comparativo su GitHub).
-4. `npm run test:scripts` (i test degli script rimangono al 100% verdi).
+4. Il sito live mostra la nuova versione nel footer, a deploy Netlify concluso: `curl -s https://www.emanueledelmonte.it/en/ | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -1`.
+5. `npm run test:scripts` (i test degli script rimangono al 100% verdi).
 5. Le info della repo erano già aggiornate prima del merge (vedi sotto).
 
 ---

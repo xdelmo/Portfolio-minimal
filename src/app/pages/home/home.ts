@@ -139,6 +139,17 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .copy {
       max-width: var(--container);
     }
+    // GSAP came after the intro's CSS fallback lifted the panel (a slow network): heroEffect never ran under the
+    // intro, so the copy fades in right after the lift on the same first-render clock (3.6s, site-intro.ts) instead
+    // of being already there (issue #329). endIntro() removes the class, so GSAP's own entrance wins when it is in time.
+    :host-context(.intro-on) .copy {
+      animation: hero-in 0.8s 3.6s ease-out backwards;
+    }
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+      }
+    }
     .hero h1 {
       // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),
       // and the short headline (issue #280) keeps the lede above the fold, so the base h1 size applies

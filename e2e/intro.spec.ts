@@ -6,8 +6,7 @@ test.describe('intro', () => {
   // so a test read the lift, or the empty page after it, instead of the intro (#213)
   test.use({ motionReady: false });
 
-  test('covers the first view, then lifts away by itself', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
+  test('covers the first view, then lifts away by itself', async ({ page }) => {
     await page.goto('/en/');
     const intro = page.locator('.site-intro');
     await expect(intro).toBeVisible();
@@ -16,8 +15,7 @@ test.describe('intro', () => {
     await expect(intro).toBeHidden({ timeout: 6000 });
   });
 
-  test('centres the pixel row under the name', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
+  test('centres the pixel row under the name', async ({ page }) => {
     await page.goto('/en/');
     // the global measure on <p> once left the row narrower than the name, off the centre (issue #234)
     const offset = await page.evaluate(() => {
@@ -28,9 +26,8 @@ test.describe('intro', () => {
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {
-    test(`hides the page completely in the ${colorScheme} theme`, async ({ page, isMobile }) => {
-      test.skip(isMobile, 'desktop only');
-      await page.emulateMedia({ colorScheme });
+    test(`hides the page completely in the ${colorScheme} theme`, async ({ page }) => {
+        await page.emulateMedia({ colorScheme });
       await page.goto('/en/');
       const background = await page.locator('.site-intro').evaluate((el) => getComputedStyle(el).backgroundColor);
       // rgb() is opaque; rgba() or "rgb(... / a)" would let the page show through
@@ -51,8 +48,7 @@ test.describe('intro', () => {
     await expect(page.locator('.site-intro')).toBeHidden();
   });
 
-  test('lifts away even if reduced motion is switched on while it plays', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
+  test('lifts away even if reduced motion is switched on while it plays', async ({ page }) => {
     await page.goto('/en/');
     await expect(page.locator('.site-intro')).toBeVisible();
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -61,8 +57,7 @@ test.describe('intro', () => {
 
   // a slow phone or a busy CI: the motion script arrives about 2.4s in, too late to replay the 2s intro without holding
   // the page past the CSS fallback, which then finishes the lift
-  test('leaves the lift to the CSS when the motion script comes too late to replay it', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
+  test('leaves the lift to the CSS when the motion script comes too late to replay it', async ({ page }) => {
     // only the chunk that carries GSAP comes late, whenever it is asked for
     await page.route('**/*.js', async (route) => {
       const response = await route.fetch();
@@ -84,8 +79,7 @@ test.describe('intro', () => {
 
   // a slow network: GSAP arrives after the CSS lift, too late for heroEffect's entrance, so the CSS one shows the
   // hero copy coming in after the panel has gone instead of already in place (issue #329)
-  test('fades the hero in after the CSS lift when the motion script comes after it', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'desktop only');
+  test('raises the hero in after the CSS lift when the motion script comes after it', async ({ page }) => {
     await page.route('**/*.js', async (route) => {
       const response = await route.fetch();
       if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
@@ -93,7 +87,8 @@ test.describe('intro', () => {
     });
     await page.goto('/en/');
     const copy = page.locator('.hero .copy');
-    // under the panel the copy waits hidden, so its entrance is still to come when the panel has lifted
+    // under the panel the copy waits lowered (never transparent: it is the LCP, issue #381), so its entrance is
+    // still to come when the panel has lifted
     await page.waitForFunction(
       () => {
         const panel = document.querySelector('.site-intro');
@@ -102,17 +97,30 @@ test.describe('intro', () => {
       null,
       { timeout: 8000 },
     );
-    expect(Number(await copy.evaluate((el) => getComputedStyle(el).opacity))).toBeLessThan(1);
-    await expect(copy).toHaveCSS('opacity', '1');
+    expect(await copy.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    expect(await copy.evaluate((el) => getComputedStyle(el).translate)).not.toBe('none');
+    await expect(copy).toHaveCSS('translate', 'none');
   });
 
-  // phones skip it: it would delay the first paint, and the page is the point there
+  // phones get the intro too (issue #381): the name wraps between its words and nothing runs off the screen
   test.describe('on a phone-sized screen', () => {
-    test.use({ viewport: { width: 390, height: 844 } });
-    test('does not appear', async ({ page }) => {
+    test.use({ viewport: { width: 360, height: 740 } });
+    test('appears, and the name fits the screen without breaking a word', async ({ page }) => {
       await page.goto('/en/');
-      // checked at once: waiting would only see the intro after it lifted away
-      expect(await page.locator('.site-intro').isVisible()).toBe(false);
+      await expect(page.locator('.site-intro')).toBeVisible();
+      const fit = await page.evaluate(() => {
+        const words = [...document.querySelectorAll('.site-intro .word')].map((el) => el.getBoundingClientRect());
+        const letterTops = [...document.querySelectorAll('.site-intro .word')].map((word) =>
+          new Set([...word.querySelectorAll('.letter')].map((el) => Math.round(el.getBoundingClientRect().top))).size,
+        );
+        return {
+          inside: words.every((r) => r.left >= 0 && r.right <= innerWidth),
+          whole: letterTops.every((lines) => lines === 1),
+          overflow: document.documentElement.scrollWidth - innerWidth,
+        };
+      });
+      expect(fit).toEqual({ inside: true, whole: true, overflow: 0 });
+      await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
     });
   });
 

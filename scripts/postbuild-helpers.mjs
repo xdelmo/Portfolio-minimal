@@ -12,7 +12,9 @@ export function fontPreloads(html, { sans, serif }) {
 }
 
 /** Initial JavaScript of a page: the module entry points plus what the page preloads. */
-export const INITIAL_JS_BUDGET = 151 * 1024; // gzip bytes, spec §12 says 150; +1 KB for the pixel cloud (issue #304), to win back
+// gzip bytes, under spec §12's 150: the home was 138.7 KB once each language's content became its own chunk (issue
+// #359); importing both again (about +6 KB) must fail here
+export const INITIAL_JS_BUDGET = 141 * 1024;
 
 export function initialScripts(html) {
   const found = new Set();

@@ -534,6 +534,10 @@
         <source>Email address copied</source>
         <target>Indirizzo email copiato</target>
       </trans-unit>
+      <trans-unit id="work.view" datatype="html">
+        <source>View</source>
+        <target>Vedi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

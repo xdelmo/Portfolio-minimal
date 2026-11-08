@@ -170,18 +170,30 @@ test.describe('project cards', () => {
     await expect(page).toHaveURL(/\/work\/apexflow/);
   });
 
-  // issue #340: magnetic arrow button snaps toward pointer
-  test('the preview arrow button has data-magnetic and leans towards pointer', async ({ page }) => {
+  // issue #340, #376: the pixel cursor snaps to the preview's arrow button from a little way off, and the button leans in
+  test('the cursor snaps to the preview arrow button and the button leans towards the pointer', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
     const arrow = page.locator('#work .project .media-arrow').first();
-    await expect(arrow).toHaveAttribute('data-magnetic', '');
+    await expect(arrow).toHaveAttribute('data-snap', '');
+    await arrow.scrollIntoViewIfNeeded();
     const box = await arrow.boundingBox();
     if (!box) throw new Error('no arrow box');
-    await arrow.hover({ position: { x: box.width - 4, y: box.height / 2 } });
-    await expect
-      .poll(() => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0))
-      .toBeGreaterThan(0.5);
+    // 30px left of the button: on the picture, not on the button
+    await page.mouse.move(box.x - 60, box.y + box.height / 2);
+    await page.mouse.move(box.x - 30, box.y + box.height / 2, { steps: 4 });
+    const lean = () => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
+    await expect.poll(lean).toBeLessThan(-0.5);
+    // the pixel is a frame centred on the button, not on the pointer
+    const offset = async () => {
+      const now = await arrow.boundingBox();
+      const dot = await page.locator('.pixel-cursor').boundingBox();
+      if (!now || !dot) throw new Error('no box');
+      return Math.hypot(dot.x + dot.width / 2 - (now.x + now.width / 2), dot.y + dot.height / 2 - (now.y + now.height / 2));
+    };
+    await expect.poll(offset).toBeLessThan(3);
+    await page.mouse.move(5, 5);
+    await expect.poll(lean).toBeGreaterThan(-0.05);
   });
 });
 

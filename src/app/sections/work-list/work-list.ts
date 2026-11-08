@@ -59,7 +59,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             } @else if (project.sprite; as sprite) {
               <app-quest-sprite class="item" [name]="sprite" />
             }
-            <span class="media-arrow" data-magnetic aria-hidden="true">
+            <span class="media-arrow" data-magnetic data-snap aria-hidden="true">
+              <span class="media-arrow-label" i18n="@@work.view">View</span>
               <app-pixel-arrow />
             </span>
           </a>
@@ -172,23 +173,36 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       top: var(--space-2);
       right: var(--space-2);
       z-index: 2;
-      display: grid;
-      place-items: center;
-      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      min-width: 40px;
       height: 40px;
+      padding-inline: 11px; // 16px arrow + 2 * 11 + 2 * 1 border = the 40px square
       border: 1px solid var(--rule);
       background: var(--bg);
       color: var(--fg);
       @media (pointer: coarse) {
-        width: 44px;
+        min-width: 44px;
         height: 44px;
+        padding-inline: 13px;
       }
+    }
+    // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
+    .media-arrow-label {
+      display: none;
+      font-size: 14px;
+      line-height: 1;
     }
     .media-arrow app-pixel-arrow {
       width: 16px;
       height: 16px;
     }
     @media (hover: hover) {
+      .media:hover .media-arrow-label {
+        display: block;
+      }
       .media:hover .media-arrow {
         border-color: var(--accent);
         background: var(--accent);

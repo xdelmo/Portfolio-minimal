@@ -189,7 +189,7 @@ Spacing comes only from the 8px scale (`space-1` … `space-16`). Home sections 
 
 ## Elevation & Depth
 
-Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. Soft round shapes appear only as light: the glow inside the tool rings, made with radial gradients, never `filter: blur`.
+Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the primary button's hard offset on hover (`4px 4px 0` in ink), a pixel-art lift rather than a soft one. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
 
 **The Hard Shadow Rule.** No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.
 
@@ -221,7 +221,7 @@ Full-bleed coloured backgrounds behind a section (see Colors). On desktop a band
 A fixed header outside the scrolling content: the `edm.` mark (with the full name in tracked capitals from 1024px), three section links (Work, Experience, Blog; About is one scroll below the hero, so only the phone menu lists it), the language switch showing its code (`EN`), the single motion pause button, theme toggle and, last, the bar's one filled element: the primary "Contact me" button, on every width (on phones a compact key between the mark and the menu button, 40px tall, 44px on touch screens; the other links and the controls are in the menu). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
 
 ### The living objects
-The hero pixel field, the voxel moai, the tool rings, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
+The hero pixel field, the voxel moai, the tool levels, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
 
 ## Do's and Don'ts
 

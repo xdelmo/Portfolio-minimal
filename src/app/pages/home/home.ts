@@ -325,14 +325,6 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .trail {
       position: relative;
     }
-    // the tool rings turn in under the side quests band above, and under the title
-    #side-quests {
-      z-index: 1;
-    }
-    #stack h2 {
-      position: relative;
-      z-index: 1;
-    }
     .section,
     .deck {
       display: grid;

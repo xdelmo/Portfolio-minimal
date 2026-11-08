@@ -51,6 +51,8 @@ describe('PixelField', () => {
     const fixture = TestBed.createComponent(PixelField);
     await fixture.whenStable();
     const field = fixture.componentInstance as unknown as { frame: { t: number }; last: number; tick: (now: number) => void };
+    // performance.now() has a fraction, and (last + 50) - last is not always 50 in floating point (issue #380)
+    field.last = 0;
     const frames = () => {
       for (let i = 1; i <= 3; i++) field.tick(field.last + 50);
       return field.frame.t;

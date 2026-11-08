@@ -20,8 +20,8 @@ export const CONTENT_IT: SiteContent = {
       'Sviluppo interfacce Angular che restano veloci anche con molti dati. Frontend Engineer in IPS S.p.A. ad Aprilia.',
   },
   hero: {
-    headline: 'Ingegnere per metodo, curioso per natura.',
-    voice: 'curioso per natura.',
+    headline: 'Ingegnere per metodo, curioso per natura',
+    voice: 'curioso per natura',
     lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. ad Aprilia. Costruisco app Angular enterprise con tabelle grandi che restano reattive, e lascio un easter egg a chi guarda bene.',
   },
   aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',

@@ -1,6 +1,7 @@
 import { ErrorHandler } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { PixelField } from './pixel-field';
+import { endIntro } from '../motion/intro-state';
 
 describe('PixelField', () => {
   afterEach(() => vi.restoreAllMocks());
@@ -32,6 +33,27 @@ describe('PixelField', () => {
     const { el, handleError } = await render();
     expect(handleError).toHaveBeenCalledOnce();
     expect(el.querySelector('button')).toBeNull();
+    vi.unstubAllGlobals();
+  });
+
+  it('composes the cloud when the intro uncovers it, not under the panel (issue #369)', async () => {
+    const ctx = new Proxy({}, { get: () => () => undefined }) as CanvasRenderingContext2D;
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((id: string) => (id === '2d' ? ctx : null)) as never);
+    const Observer = class {
+      observe = () => undefined;
+      disconnect = () => undefined;
+    };
+    vi.stubGlobal('ResizeObserver', Observer);
+    vi.stubGlobal('IntersectionObserver', Observer);
+    vi.stubGlobal('matchMedia',() => ({ matches: true, addEventListener: () => undefined, removeEventListener: () => undefined }));
+    document.documentElement.classList.add('intro-on');
+    const fixture = TestBed.createComponent(PixelField);
+    await fixture.whenStable();
+    const frame = (fixture.componentInstance as unknown as { frame: { t: number } }).frame;
+    frame.t = 3000; // the cloud's clock ran on under the panel
+    endIntro();
+    expect(frame.t).toBe(0);
+    fixture.destroy();
     vi.unstubAllGlobals();
   });
 

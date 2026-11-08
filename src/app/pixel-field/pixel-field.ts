@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
+import { afterIntro } from '../motion/intro-state';
 import { MotionPause } from '../motion/pause';
 import { Paint, glPaint } from './gl';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
@@ -183,6 +184,15 @@ export class PixelField {
       canvas.removeEventListener('pointerleave', onLeave);
       canvas.removeEventListener('pointerdown', onDown);
     });
+
+    // the first visit's intro covers the hero for ~3.6s, longer than the cloud takes to compose: its clock starts over
+    // when the panel has gone, or the entrance plays unseen (issue #369)
+    this.cleanups.push(
+      afterIntro(() => {
+        this.frame.t = 0;
+        this.frame.ripples = [];
+      }),
+    );
 
     this.paint = paint;
     this.palette = readPalette(win.getComputedStyle(root));

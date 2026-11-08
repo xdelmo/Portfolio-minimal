@@ -10,8 +10,16 @@ import { MotionHost } from '../motion/motion-host';
   template: `
     <div class="site-intro" aria-hidden="true">
       <p class="name">
-        @for (char of letters; track $index) {
-          <span class="letter">{{ char }}</span>
+        <!-- a narrow screen wraps the name between words, never inside one (issue #381) -->
+        @for (word of words; track $index) {
+          <span class="word">
+            @for (char of word; track $index) {
+              <span class="letter">{{ char }}</span>
+            }
+          </span>
+          @if (!$last) {
+            {{ ' ' }}
+          }
         }
       </p>
       <p class="pixels">
@@ -49,9 +57,11 @@ import { MotionHost } from '../motion/motion-host';
       letter-spacing: -0.025em;
       text-align: center;
     }
+    .word {
+      white-space: nowrap;
+    }
     .letter {
       opacity: 0.18;
-      white-space: pre;
     }
     .pixels {
       display: flex;
@@ -76,6 +86,6 @@ import { MotionHost } from '../motion/motion-host';
   `,
 })
 export class SiteIntro {
-  protected readonly letters = Array.from(inject(CONTENT).person.name);
+  protected readonly words = inject(CONTENT).person.name.split(' ').map((word) => Array.from(word));
   protected readonly pixels = Array.from({ length: 12 });
 }

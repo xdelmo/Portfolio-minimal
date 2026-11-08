@@ -179,9 +179,11 @@ test.describe('project cards', () => {
     await arrow.scrollIntoViewIfNeeded();
     const box = await arrow.boundingBox();
     if (!box) throw new Error('no arrow box');
-    // 30px left of the button: on the picture, not on the button
-    await page.mouse.move(box.x - 60, box.y + box.height / 2);
-    await page.mouse.move(box.x - 30, box.y + box.height / 2, { steps: 4 });
+    // far from the button, in the middle of the picture
+    const media = await page.locator('#work .project .media').first().boundingBox();
+    if (!media) throw new Error('no media box');
+    await page.mouse.move(media.x + media.width / 2, media.y + media.height / 2);
+    await page.mouse.move(media.x + media.width / 3, media.y + media.height / 2, { steps: 4 });
     const lean = () => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
     await expect.poll(lean).toBeLessThan(-0.5);
     // the pixel is a frame centred on the button, not on the pointer

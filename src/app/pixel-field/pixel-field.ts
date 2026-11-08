@@ -186,7 +186,7 @@ export class PixelField {
       canvas.removeEventListener('pointerdown', onDown);
     });
 
-    // the first visit's intro covers the hero for ~3.6s, longer than the cloud takes to compose: its clock waits at 0
+    // the first visit's intro covers the hero for 2-3.6s, longer than the cloud takes to compose: its clock waits at 0
     // (nothing drawn) until the panel has gone, so the cloud composes once, with the headline (issues #369, #374).
     // The motion script ends the intro; without it, the CSS fallback's lift does
     this.covered = root.classList.contains('intro-on');

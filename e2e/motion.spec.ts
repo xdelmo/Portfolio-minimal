@@ -78,7 +78,7 @@ test.describe('hero', () => {
     test.use({ intro: true });
     test('the headline rises line by line and ends as plain text', async ({ page }) => {
       await page.goto('/en/');
-      // the panel lifts 3.6 s after the first render at the latest (the CSS fallback, or the GSAP timeline held to
+      // the panel lifts 3.6 s after the first render at the latest (2 s on phones) (the CSS fallback, or the GSAP timeline held to
       // its deadline); counted from the end of goto, and with WebKit in CI delivering frames late under load (a run
       // took the CSS path and ended past 4 s), 6 s is that bound plus the frames' lag
       await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });
@@ -88,11 +88,12 @@ test.describe('hero', () => {
 
     // issue #251: the motion script came too late for the timeline, the CSS fallback lifts the panel, and the
     // squares used to stay one flat colour (black in the light theme) with the letters dim
-    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page }) => {
+    test('the squares are coloured and the letters lit even when the motion script is late', async ({ page, isMobile }) => {
       // every script is held until the same instant, 2 s from now (a delay per file would stack along the chain of
       // imports and the effect would start after the panel is gone): past the point where the whole timeline fits
-      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel
-      const release = Date.now() + 2000;
+      // before the fallback (3.6 s), so the letters and squares get their end state under the lifting panel. Phones
+      // lift by 2 s with a faster timeline (issue #381), so there the same moment comes at 0.9 s
+      const release = Date.now() + (isMobile ? 900 : 2000);
       await page.route('**/*.js', async (route) => {
         await new Promise((resolve) => setTimeout(resolve, Math.max(0, release - Date.now())));
         await route.continue();

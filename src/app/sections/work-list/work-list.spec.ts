@@ -39,4 +39,25 @@ describe('WorkList', () => {
       expect(demo?.getAttribute('href') ?? undefined).toBe(project.demoUrl);
     });
   });
+
+  // issue #340: media container links to case study and holds magnetic arrow
+  it('renders a media link to the case study with aria-hidden and tabindex -1', async () => {
+    const el = await render();
+    const mediaLinks = [...el.querySelectorAll('a.media')];
+    expect(mediaLinks.map((a) => a.getAttribute('href'))).toEqual(['/work/apexflow', '/work/pokeverba', '/work/wedding-3d-invite']);
+    for (const a of mediaLinks) {
+      expect(a.getAttribute('tabindex')).toBe('-1');
+      expect(a.getAttribute('aria-hidden')).toBe('true');
+    }
+  });
+
+  it('renders an arrow button with data-magnetic on each media frame', async () => {
+    const el = await render();
+    const arrows = [...el.querySelectorAll('.media .media-arrow')];
+    expect(arrows.length).toBe(3);
+    for (const arrow of arrows) {
+      expect(arrow.hasAttribute('data-magnetic')).toBe(true);
+      expect(arrow.querySelector('app-pixel-arrow')).not.toBeNull();
+    }
+  });
 });

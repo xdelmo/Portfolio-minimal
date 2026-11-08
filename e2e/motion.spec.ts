@@ -143,15 +143,14 @@ test('hovering a project shows the screenshot as it is, with no pixelated flash'
 test.describe('project cards', () => {
   test.skip(({ isMobile }) => isMobile, 'mouse only');
 
-  test('tilt the image toward the cursor and settle when it leaves', async ({ page }) => {
+  // issue #340: parallax tilt removed from desktop hover
+  test('do not tilt the image on mouse hover', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
     const media = page.locator('#work .project .media').first();
-    // hover() waits for the element to stop moving, so the box below is where the image really is
     await media.hover();
     const box = await media.boundingBox();
     if (!box) throw new Error('no media box');
-    // sine of the rotation around the vertical axis, from the matrix3d (0 when the image faces the viewer)
     const lean = () =>
       media.evaluate((el) => {
         const m = /matrix3d\(([^)]+)\)/.exec(getComputedStyle(el).transform);
@@ -159,9 +158,30 @@ test.describe('project cards', () => {
       });
     await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.2);
     await page.mouse.move(box.x + box.width * 0.95, box.y + box.height * 0.1, { steps: 4 });
-    await expect.poll(lean).toBeGreaterThan(0.05);
-    await page.mouse.move(5, 5);
-    await expect.poll(lean, { timeout: 2000 }).toBeLessThan(0.005);
+    expect(await lean()).toBe(0);
+  });
+
+  // issue #340: media container links directly to case study
+  test('clicking the media preview navigates to the project case study', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const media = page.locator('#work .project .media').first();
+    await media.click();
+    await expect(page).toHaveURL(/\/work\/apexflow/);
+  });
+
+  // issue #340: magnetic arrow button snaps toward pointer
+  test('the preview arrow button has data-magnetic and leans towards pointer', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const arrow = page.locator('#work .project .media-arrow').first();
+    await expect(arrow).toHaveAttribute('data-magnetic', '');
+    const box = await arrow.boundingBox();
+    if (!box) throw new Error('no arrow box');
+    await arrow.hover({ position: { x: box.width - 4, y: box.height / 2 } });
+    await expect
+      .poll(() => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0))
+      .toBeGreaterThan(0.5);
   });
 });
 

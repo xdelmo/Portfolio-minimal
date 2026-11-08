@@ -23,7 +23,7 @@ export function moduleSource(urls) {
 export async function isPublic(url, fetchImpl = globalThis.fetch, tries = 3) {
   for (let i = 1; ; i++) {
     try {
-      const res = await fetchImpl(url, { method: 'HEAD', redirect: 'follow' });
+      const res = await fetchImpl(url, { method: 'HEAD', redirect: 'follow', signal: globalThis.AbortSignal?.timeout(3000) });
       if (res.status === 200) return true;
       if (res.status === 404) return false;
       throw new Error(`HTTP ${String(res.status)}`);

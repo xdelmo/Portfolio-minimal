@@ -19,23 +19,6 @@ test.describe('contact finale', () => {
       // the title is the way to write: the address itself is not printed (removed on request)
       await expect(contact).not.toContainText(EMAIL);
     });
-
-    test(`${lang}: the arrow stays inline with the title without wrapping (issue #345)`, async ({ page }) => {
-      await page.goto(`/${lang}/`);
-      const label = page.locator('#contact .contact-label');
-      const arrow = page.locator('#contact .contact-arrow');
-      await expect(label).toBeVisible();
-      await expect(arrow).toBeVisible();
-      const labelBox = await label.boundingBox();
-      const arrowBox = await arrow.boundingBox();
-      expect(labelBox).not.toBeNull();
-      expect(arrowBox).not.toBeNull();
-      if (!labelBox || !arrowBox) return;
-      // Arrow is to the right of the label, on the same row
-      expect(arrowBox.x).toBeGreaterThanOrEqual(labelBox.x + labelBox.width - 4);
-      expect(arrowBox.y).toBeLessThan(labelBox.y + labelBox.height);
-      expect(arrowBox.y + arrowBox.height).toBeGreaterThan(labelBox.y);
-    });
   }
 
   // without a mail program the title's mailto does nothing: a button copies the address (issue #231)

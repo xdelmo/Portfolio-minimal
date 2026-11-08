@@ -44,8 +44,12 @@ import { MotionHost } from '../motion/motion-host';
       background: var(--intro-bg);
       color: var(--intro-fg);
       pointer-events: none;
-      // lifts the panel even if the motion script never arrives
-      animation: intro-out 0.6s 3s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+      // lifts the panel even if the motion script never arrives: by 2s on phones, where a longer cover cost the
+      // Speed Index (issue #381), by 3.6s on desktop. effects/intro.ts reads these timings back
+      animation: intro-out 0.6s 1.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+      @media (min-width: 1024px) and (hover: hover) {
+        animation-delay: 3s;
+      }
     }
     .name {
       margin: 0;

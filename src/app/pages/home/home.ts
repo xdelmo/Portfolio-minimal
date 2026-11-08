@@ -140,12 +140,15 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       max-width: var(--container);
     }
     // GSAP came after the intro's CSS fallback lifted the panel (a slow network): heroEffect never ran under the
-    // intro, so the copy rises right after the lift on the same first-render clock (3.6s, site-intro.ts) instead
+    // intro, so the copy rises right after the lift on the same first-render clock (2s on phones, 3.6s on desktop, site-intro.ts) instead
     // of being already there (issue #329). endIntro() removes the class, so GSAP's own entrance wins when it is in time.
     // Moved, never transparent: under the opaque panel the copy still paints at first render, so it is the LCP then
     // and not 3.6s later (issue #381, mobile Lighthouse 0.88 with the intro on phones)
     :host-context(.intro-on) .copy {
-      animation: hero-in 0.8s 3.6s ease-out backwards;
+      animation: hero-in 0.8s 2s ease-out backwards;
+      @media (min-width: 1024px) and (hover: hover) {
+        animation-delay: 3.6s;
+      }
     }
     @keyframes hero-in {
       from {

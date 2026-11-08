@@ -82,6 +82,30 @@ test.describe('intro', () => {
     expect(await page.evaluate(() => 'replayed' in window)).toBe(false);
   });
 
+  // a slow network: GSAP arrives after the CSS lift, too late for heroEffect's entrance, so the CSS one shows the
+  // hero copy coming in after the panel has gone instead of already in place (issue #329)
+  test('fades the hero in after the CSS lift when the motion script comes after it', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.route('**/*.js', async (route) => {
+      const response = await route.fetch();
+      if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
+      await route.fulfill({ response });
+    });
+    await page.goto('/en/');
+    const copy = page.locator('.hero .copy');
+    // under the panel the copy waits hidden, so its entrance is still to come when the panel has lifted
+    await page.waitForFunction(
+      () => {
+        const panel = document.querySelector('.site-intro');
+        return panel !== null && getComputedStyle(panel).visibility === 'hidden';
+      },
+      null,
+      { timeout: 8000 },
+    );
+    expect(Number(await copy.evaluate((el) => getComputedStyle(el).opacity))).toBeLessThan(1);
+    await expect(copy).toHaveCSS('opacity', '1');
+  });
+
   // phones skip it: it would delay the first paint, and the page is the point there
   test.describe('on a phone-sized screen', () => {
     test.use({ viewport: { width: 390, height: 844 } });

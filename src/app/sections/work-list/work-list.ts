@@ -157,6 +157,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       height: 100%;
       object-fit: cover;
     }
+    // under smooth scroll the picture drifts inside its frame (effects/parallax.ts, speed 0.95): a screenshot that fills
+    // the frame is grown by 12% so the drift never shows the frame's edge (issue #408)
+    :host-context(html.smooth) .project:not(.project--tall) .shot {
+      scale: 1.12;
+    }
     // keep in step with the 280px in the image's sizes
     .project--tall .shot {
       width: auto;

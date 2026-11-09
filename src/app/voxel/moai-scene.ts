@@ -5,6 +5,7 @@ import {
   ElementRef,
   afterNextRender,
   inject,
+  input,
   output,
   signal,
   viewChild,
@@ -125,6 +126,8 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   `,
 })
 export class MoaiScene {
+  /** Whether it waves once the intro is over: only on the home (issue #393). */
+  readonly greet = input(true);
   readonly failed = output();
   /** Fires after the first frame, so the still image can stay underneath until then. */
   readonly drawn = output();
@@ -471,6 +474,7 @@ export class MoaiScene {
     for (const type of WAKE_EVENTS) addEventListener(type, onInput, { passive: true });
     addEventListener('scroll', onScroll, { passive: true });
     const cancelIntro = afterIntro(() => {
+      if (!this.greet()) return;
       waveT = 0;
       this.waving.set(true);
     });

@@ -203,6 +203,11 @@ test('horizontal touchmove prevents default to stop page scroll, vertical does n
   expect(preventedVertical).toBe(false);
 });
 
+/** Input the moai wakes to, sent in the page: under an installed clock WebKit's page.mouse.move can hang for tens of seconds. */
+async function nudge(page: Page): Promise<void> {
+  await page.evaluate(() => window.dispatchEvent(new PointerEvent('pointermove', { clientX: 200, clientY: 200 })));
+}
+
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
@@ -409,7 +414,7 @@ test.describe('sleep', () => {
     await page.clock.fastForward('00:12');
     await expect(host).toHaveAttribute('data-asleep', '');
     await expect(host.locator('.zzz')).toBeAttached();
-    await page.mouse.move(200, 200);
+    await nudge(page);
     await expect(host).not.toHaveAttribute('data-asleep');
     await expect(host.locator('.zzz')).toHaveCount(0);
   });
@@ -421,9 +426,13 @@ test.describe('sleep', () => {
     await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
     await expect(scene(page)).toBeVisible();
     const host = page.locator('app-moai-scene');
-    await page.clock.fastForward('00:22');
+    // the idle gum comes only once the moai knows it is in view (WebKit's IntersectionObserver can lag): it must fall
+    // asleep in view to grumble
+    await page.clock.fastForward('00:11');
+    await expect(host).toHaveAttribute('data-gum', '');
+    await page.clock.fastForward('00:11');
     await expect(host).toHaveAttribute('data-asleep', '');
-    await page.mouse.move(200, 200);
+    await nudge(page);
     await expect(host.locator('.moai-line')).toHaveText('Five more minutes…');
   });
 
@@ -435,7 +444,7 @@ test.describe('sleep', () => {
     await expect(scene(page)).toBeVisible();
     const host = page.locator('app-moai-scene');
     await page.clock.fastForward('00:08');
-    await page.mouse.move(200, 200);
+    await nudge(page);
     await page.clock.fastForward('00:08');
     await expect(host).not.toHaveAttribute('data-gum');
     await page.clock.fastForward('00:03');
@@ -807,6 +816,8 @@ test.describe('the gags', () => {
     await ready(page, study);
     await page.getByRole('button', { name: 'Switch to dark theme' }).click();
     await expect(line(page)).toHaveText("Lights off. I'll keep watch.");
+    // the real seconds of the test plus these 11 would put it to sleep, and its wake line would take the morning's turn
+    await nudge(page);
     await page.clock.fastForward('00:11');
     await page.getByRole('button', { name: 'Switch to light theme' }).click();
     await expect(line(page)).toHaveText('Morning already?');

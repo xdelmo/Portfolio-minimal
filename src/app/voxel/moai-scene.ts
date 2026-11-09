@@ -52,6 +52,13 @@ const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   moss: '--stone-light',
 };
 
+/**
+ * Canvases whose WebGL context a destroyed scene left alive, for the next scene to take over. WebKit counts a lost context
+ * as active until it is garbage collected and, past 16, loses the oldest one, also a live one: with the About's moai and
+ * the corner's coming and going on every page change (issue #393), a few round trips were enough. Two, one for each.
+ */
+const spare: HTMLCanvasElement[] = [];
+
 @Component({
   selector: 'app-moai-scene',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -172,7 +179,12 @@ export class MoaiScene {
   }
 
   private start(): void {
-    const canvas = this.canvas().nativeElement;
+    let canvas = this.canvas().nativeElement;
+    const reused = spare.pop();
+    if (reused) {
+      canvas.replaceWith(reused);
+      canvas = reused;
+    }
     const root = document.documentElement;
     const desktopQuery = matchMedia('(min-width: 1024px) and (pointer: fine)');
     this.desktop.set(desktopQuery.matches);
@@ -189,7 +201,12 @@ export class MoaiScene {
     renderer.setClearColor(0x000000, 0);
     this.cleanups.push(() => {
       renderer.dispose();
-      renderer.forceContextLoss();
+      if (context.isContextLost() || spare.length >= 2) {
+        renderer.forceContextLoss();
+        return;
+      }
+      canvas.remove();
+      spare.push(canvas);
     });
 
     // model, centred like the still image

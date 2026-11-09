@@ -16,12 +16,13 @@ const DESKTOP = '(min-width: 1024px) and (pointer: fine)';
   selector: 'app-moai-guest',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MoaiFigure],
-  host: { '[class.container]': "place() === 'peek'", '[attr.data-place]': 'place()', '[style.--corner-px.px]': 'cornerPx', '[style.--corner-gap.px]': 'cornerGap' },
+  host: { '[class.container]': "shown() && place() === 'peek'", '[attr.data-place]': 'shown() ? place() : null', '[style.--corner-px.px]': 'cornerPx', '[style.--corner-gap.px]': 'cornerGap' },
   template: `
     @if (shown()) {
       <app-moai-figure [greet]="false" [attr.data-corner]="place() === 'corner' ? '' : null" />
     }
   `,
+  // the host takes its place only while it shows a moai: on the home the peek's empty box would push the footer down
   styles: `
     :host([data-place='corner']) {
       position: fixed;
@@ -43,8 +44,10 @@ const DESKTOP = '(min-width: 1024px) and (pointer: fine)';
       margin-top: var(--space-8);
       overflow-y: clip;
     }
+    // its own height (aspect-ratio), not stretched to the box: the clip cuts it, the still image keeps its proportions
     :host([data-place='peek']) app-moai-figure {
       flex: none;
+      align-self: flex-start;
       width: 8rem;
       margin-right: var(--space-4);
     }

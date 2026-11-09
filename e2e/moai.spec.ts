@@ -1,5 +1,5 @@
 import { expect, test, type Page } from './fixtures';
-import { press } from './site';
+import { SLUGS, openLanguages, press } from './site';
 
 const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
 const scene = (page: Page) => page.locator('app-moai-scene canvas');
@@ -729,5 +729,98 @@ test.describe('on other pages', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(1);
     await expect(guest(page)).toHaveCount(1);
+  });
+});
+
+// issue #393: the gags, desktop only; on a case study the moai stands in the corner, in view from the start
+test.describe('the gags', () => {
+  test.beforeEach(({ isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+  });
+
+  const ready = async (page: Page, path = '/en/') => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(path);
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    if (path === '/en/') await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const box = await scene(page).boundingBox();
+    if (!box) throw new Error('no moai');
+    return { host: page.locator('app-moai-scene'), x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  };
+  const line = (page: Page) => page.locator('app-moai-scene .moai-line');
+  const study = `/en/work/${SLUGS[0]}`;
+
+  test('shaken, its pukao falls and comes back', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (const dx of [60, -60, 60, -60, 60, 0]) await page.mouse.move(x + dx, y);
+    await page.mouse.up();
+    await expect(host).toHaveAttribute('data-pukao', 'off');
+    await expect(line(page)).toHaveText('My pukao!');
+    await expect(host).not.toHaveAttribute('data-pukao', { timeout: 6000 });
+  });
+
+  test('spun round twice, it gets dizzy', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (const to of [100, 1180, 100]) await page.mouse.move(to, y, { steps: 10 });
+    await page.mouse.up();
+    await expect(host).toHaveAttribute('data-dizzy', '');
+    await expect(line(page)).toHaveText('Eight hundred years still, and now this.');
+  });
+
+  test('tickled with six quick clicks, it turns its back', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    for (let i = 0; i < 6; i++) await page.mouse.click(x + (i % 2 ? 30 : -30), y + i * 4);
+    await expect(host).toHaveAttribute('data-sulking', '');
+    await expect(line(page)).toHaveText('Hmph. Not talking to you.');
+  });
+
+  test('a gust of the wheel makes it sneeze', async ({ page }) => {
+    const { host } = await ready(page, study);
+    await page.mouse.move(200, 400);
+    await page.mouse.wheel(0, 1500);
+    await page.mouse.wheel(0, 1500);
+    await expect(host).toHaveAttribute('data-sneeze', '');
+    await expect(line(page)).toHaveText('Ah… ah… Achoo!');
+  });
+
+  test('says goodnight when the lights go off and good morning when they come back', async ({ page }) => {
+    await page.clock.install();
+    await ready(page, study);
+    await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+    await expect(line(page)).toHaveText("Lights off. I'll keep watch.");
+    await page.clock.fastForward('00:11');
+    await page.getByRole('button', { name: 'Switch to light theme' }).click();
+    await expect(line(page)).toHaveText('Morning already?');
+  });
+
+  test('says hello in the new language after the switch, once', async ({ page }) => {
+    await ready(page, study);
+    await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
+    await expect(page).toHaveURL(/\/it\//);
+    await expect(scene(page)).toBeVisible();
+    await expect(line(page)).toHaveText('Ciao!');
+    await page.reload();
+    await expect(scene(page)).toBeVisible();
+    await expect(line(page)).toHaveCount(0);
+  });
+
+  test('knew you would find the Konami code', async ({ page }) => {
+    await ready(page, study);
+    for (const key of ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']) await page.keyboard.press(key);
+    await expect(line(page)).toHaveText("I knew you'd find it.");
+  });
+
+  test('pays its respects when the last case study is read', async ({ page }) => {
+    await page.addInitScript((read) => {
+      localStorage.setItem('explored', JSON.stringify(read));
+    }, SLUGS.slice(1));
+    await ready(page, study);
+    await expect(page.getByRole('status')).toHaveText('Achievement unlocked: Explorer');
+    await expect(line(page)).toHaveText('You read them all. Respect.');
   });
 });

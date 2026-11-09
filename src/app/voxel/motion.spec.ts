@@ -1,4 +1,5 @@
 import { HOP_MS, STRETCH_MS, hop, stretch } from './motion';
+import { DIZZY_MS, PUKAO_MS, SNEEZE_MS, pukaoFall, sneeze, wobble } from './motion';
 import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SLEEP_MS, WAVE_MS, breath, follow, gaze, glance, isPupil, wave } from './motion';
 import { moaiCell } from './moai.model';
 
@@ -142,5 +143,25 @@ describe('hop and stretch', () => {
   it('lifts the hop off the ground and lands it', () => {
     expect(hop(HOP_MS / 4)?.y).toBeGreaterThan(0);
     expect(hop(HOP_MS - 1)?.y).toBe(0);
+  });
+});
+
+describe('the gags', () => {
+  it('drops the pukao beside the moai, holds it there and puts it back in steps', () => {
+    expect(pukaoFall(-1)).toBeNull();
+    expect(pukaoFall(0)).toEqual({ x: 1, y: -2 });
+    expect(pukaoFall(1000)).toEqual({ x: 8, y: -22 });
+    expect(pukaoFall(PUKAO_MS - 1)).toEqual({ x: 0, y: 0 });
+    expect(pukaoFall(PUKAO_MS)).toBeNull();
+    // it never sinks below the ground it lands on
+    for (let t = 0; t < PUKAO_MS; t += 50) expect(pukaoFall(t)?.y).toBeGreaterThanOrEqual(-22);
+  });
+
+  it('sneezes back then forward, and wobbles in held steps, ending still', () => {
+    expect(sneeze(0)).toBeLessThan(0);
+    expect(sneeze(350)).toBeGreaterThan(0);
+    expect(sneeze(SNEEZE_MS)).toBe(0);
+    expect(new Set(Array.from({ length: 10 }, (_, i) => wobble(i * 150)))).toEqual(new Set([0.08, 0, -0.08]));
+    expect(wobble(DIZZY_MS)).toBe(0);
   });
 });

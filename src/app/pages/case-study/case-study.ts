@@ -10,6 +10,7 @@ import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
 import { recordVisit } from '../../game/explorer';
+import { MoaiCues } from '../../voxel/moai-cues';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { stickyEffect } from '../../motion/effects/sticky';
@@ -341,6 +342,7 @@ export class CaseStudy {
     return i < 0 || n.slug === this.slug() ? undefined : n;
   });
   private readonly seo = inject(SeoService);
+  private readonly cues = inject(MoaiCues);
   private readonly locale = toLocale(inject(LOCALE_ID));
 
   /** The section being read, for the index (#96). */
@@ -387,6 +389,8 @@ export class CaseStudy {
     afterRenderEffect(() => {
       if (!this.project() || !recordVisit(this.slug(), this.content.projects.map((p) => p.slug))) return;
       this.unlocked.set(true);
+      // the moai, in the corner, tips its pukao; it may still be loading, so the cue waits for it
+      this.cues.cue('explorer', true);
       const timer = setTimeout(() => {
         this.unlocked.set(false);
       }, UNLOCK_NOTICE_MS);

@@ -1,7 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { CONTENT_EN } from './content.en';
 import { CONTENT_IT } from './content.it';
-import { voices } from './voices';
+import { around, voices } from './voices';
+
+describe('around', () => {
+  it('splits a sentence around the last occurrence of a word', () => {
+    expect(around('look well, look well.', 'well')).toEqual(['look well, look ', 'well', '.']);
+  });
+
+  it('throws when the word is missing', () => {
+    expect(() => around('look closely.', 'well')).toThrow('word must be in the sentence');
+  });
+
+  it.each([
+    ['en', CONTENT_EN],
+    ['it', CONTENT_IT],
+  ])('the %s lede holds its peek word', (_name, c) => {
+    expect(around(c.hero.lede, c.hero.peek).join('')).toBe(c.hero.lede);
+  });
+});
 
 describe('voices', () => {
   it('splits a sentence into its method and its voice', () => {

@@ -23,6 +23,7 @@ export const CONTENT_IT: SiteContent = {
     headline: 'Ingegnere per metodo, curioso per natura',
     voice: 'curioso per natura',
     lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. Costruisco interfacce Angular che restano veloci quando i dati diventano tanti, e lascio un easter egg a chi guarda bene.',
+    peek: 'bene',
   },
   aboutStatement: 'Una tabella con migliaia di righe deve sembrare una con dieci.',
   aboutVoice: 'una con dieci.',

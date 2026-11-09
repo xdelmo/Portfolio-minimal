@@ -584,6 +584,12 @@ test.describe('on other pages', () => {
     await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(0);
     const [p, f] = await Promise.all([rect(page, 'app-moai-guest[data-place=peek]'), rect(page, 'app-site-footer')]);
     expect(Math.abs(p.bottom - f.top)).toBeLessThanOrEqual(1);
+    // the clip cuts the figure, never squashes it: Lighthouse fails a still image drawn out of its proportions
+    const ratio = await peek.locator('app-moai-figure').evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return r.width / r.height;
+    });
+    expect(ratio).toBeCloseTo(288 / 655, 2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await expect(page.locator('.moai-line')).toHaveCount(0);
   });

@@ -816,6 +816,11 @@ test.describe('the gags', () => {
     await ready(page, study);
     await page.getByRole('button', { name: 'Switch to dark theme' }).click();
     await expect(line(page)).toHaveText("Lights off. I'll keep watch.");
+    // the bubble and its tail sit on the moai's left (issue #405)
+    const bubble = await line(page).boundingBox();
+    const moai = await scene(page).boundingBox();
+    if (!bubble || !moai) throw new Error('no bubble');
+    expect(bubble.x + bubble.width).toBeLessThan(moai.x + moai.width / 2 - 8);
     // the real seconds of the test plus these 11 would put it to sleep, and its wake line would take the morning's turn
     await nudge(page);
     await page.clock.fastForward('00:11');

@@ -136,11 +136,12 @@ const spare: HTMLCanvasElement[] = [];
       animation-play-state: paused;
     }
     // what it says: a pixel bubble above its head, the corners cut out of its outline and a tail of two steps down to the
-    // face. It opens left and up, so in the corner it stays inside the window, and takes no clicks. In the corner the moai
-    // is the About's one scaled down (effects/moai.ts): the bubble scales back up to keep its text readable
+    // left side of the head, never the right. It opens left and up, so in the corner it stays inside the window, and takes
+    // no clicks. In the corner the moai is the About's one scaled down (effects/moai.ts): the bubble scales back up to keep
+    // its text readable
     .moai-line {
       position: absolute;
-      right: 50%;
+      right: 66%;
       bottom: 98%;
       width: max-content;
       max-width: 14rem;

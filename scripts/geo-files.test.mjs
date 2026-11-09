@@ -5,6 +5,7 @@ import { geoFiles, homeMarkdown, llmsTxt, projectMarkdown } from './geo-files.mj
 const project = {
   slug: 'demo',
   title: 'Demo',
+  result: 'One call per filter.',
   summary: 'A demo project.',
   stack: ['Angular', 'RxJS'],
   repos: [{ label: 'Code', url: 'https://github.com/x/demo' }],
@@ -42,7 +43,7 @@ test('home markdown starts with the person and lists every section as plain text
 
 test('project markdown has the case-study sections in the page language', () => {
   const md = projectMarkdown(project, content, 'it');
-  assert.match(md, /^# Demo\n\nA demo project\.\n\nStack: Angular, RxJS/);
+  assert.match(md, /^# Demo\n\nOne call per filter\.\n\nA demo project\.\n\nStack: Angular, RxJS/);
   for (const part of ['## Contesto', '- One', '### Pick A', '## Risultato', '- [Code](https://github.com/x/demo)', 'Demo: https://demo.example']) {
     assert.ok(md.includes(part), part);
   }

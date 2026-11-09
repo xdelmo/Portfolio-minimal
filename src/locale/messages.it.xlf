@@ -395,8 +395,8 @@
         <target>Press start</target>
       </trans-unit>
       <trans-unit id="home.contact.lede" datatype="html">
-        <source>Building something with Angular, or hiring for a frontend role?</source>
-        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend?</target>
+        <source>Hiring for a frontend role?</source>
+        <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="home.stack.lede" datatype="html">
         <source>Three levels: what I use every day, what runs in production, what I try in my side projects.</source>
@@ -511,8 +511,8 @@
         <target>Ne ho scritto</target>
       </trans-unit>
       <trans-unit id="contactPrompt.lead" datatype="html">
-        <source>Looking for a frontend engineer?</source>
-        <target>Cerchi un frontend engineer?</target>
+        <source>Hiring for a frontend role?</source>
+        <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">
         <source>Email me</source>

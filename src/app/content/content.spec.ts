@@ -11,9 +11,10 @@ describe('content', () => {
   });
 
   it('writes the About paragraph in the first person, like the rest of the site', () => {
-    expect(CONTENT_EN.about[0]).toMatch(/^I'm Emanuele Del Monte/);
+    // the name and role are in the hero; the About opens on the path so far (#389)
+    expect(CONTENT_EN.about[0]).toMatch(/^I started /);
     expect(CONTENT_EN.about.join(' ')).not.toMatch(/Emanuele Del Monte is /);
-    expect(CONTENT_IT.about[0]).toMatch(/^Sono Emanuele Del Monte/);
+    expect(CONTENT_IT.about[0]).toMatch(/^Ho iniziato /);
     expect(CONTENT_IT.about.join(' ')).not.toMatch(/Emanuele Del Monte è /);
   });
 

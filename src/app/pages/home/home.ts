@@ -96,7 +96,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role?</p>
+        <p class="contact-lede" i18n="@@home.contact.lede">Hiring for a frontend role?</p>
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>

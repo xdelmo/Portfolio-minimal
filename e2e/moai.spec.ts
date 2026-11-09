@@ -755,7 +755,12 @@ test.describe('the gags', () => {
     const { host, x, y } = await ready(page);
     await page.mouse.move(x, y);
     await page.mouse.down();
-    for (const dx of [60, -60, 60, -60, 60, 0]) await page.mouse.move(x + dx, y);
+    // the shake is bound to 1200 ms, and each page.mouse.move takes over 100 ms (more on a busy machine): the moves go
+    // in one task in the page, to the pointer page.mouse holds down
+    await scene(page).evaluate((canvas, { x, y }) => {
+      for (const dx of [60, -60, 60, -60, 60, -60, 0])
+        canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 1, clientX: x + dx, clientY: y }));
+    }, { x, y });
     await page.mouse.up();
     await expect(host).toHaveAttribute('data-pukao', 'off');
     await expect(line(page)).toHaveText('My pukao!');
@@ -774,16 +779,25 @@ test.describe('the gags', () => {
 
   test('tickled with six quick clicks, it turns its back', async ({ page }) => {
     const { host, x, y } = await ready(page);
-    for (let i = 0; i < 6; i++) await page.mouse.click(x + (i % 2 ? 30 : -30), y + i * 4);
+    // six clicks within 2 s, and page.mouse.click takes up to 400 ms on a busy machine: they go in one task in the page
+    const errors: Error[] = [];
+    page.on('pageerror', (error) => errors.push(error));
+    await scene(page).evaluate((canvas, { x, y }) => {
+      for (let i = 0; i < 6; i++)
+        for (const type of ['pointerdown', 'pointerup'])
+          canvas.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, clientX: x + (i % 2 ? 30 : -30), clientY: y + i * 4 }));
+    }, { x, y });
+    expect(errors).toEqual([]);
     await expect(host).toHaveAttribute('data-sulking', '');
     await expect(line(page)).toHaveText('Hmph. Not talking to you.');
   });
 
   test('a gust of the wheel makes it sneeze', async ({ page }) => {
     const { host } = await ready(page, study);
-    await page.mouse.move(200, 400);
-    await page.mouse.wheel(0, 1500);
-    await page.mouse.wheel(0, 1500);
+    // a gust is bound to 400 ms, longer than two page.mouse.wheel take on a busy machine: the wheel goes in the page
+    await page.evaluate(() => {
+      for (let i = 0; i < 2; i++) document.body.dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 1500 }));
+    });
     await expect(host).toHaveAttribute('data-sneeze', '');
     await expect(line(page)).toHaveText('Ah… ah… Achoo!');
   });

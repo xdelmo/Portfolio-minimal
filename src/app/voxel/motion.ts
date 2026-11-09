@@ -136,3 +136,47 @@ export function hop(t: number): Squash | null {
 export function stretch(t: number): Squash | null {
   return steps(STRETCH, STRETCH_MS, t);
 }
+
+/** Shaken, the pukao falls beside the moai, bounces twice, lies there, then hops back on (issue #393). */
+export const PUKAO_MS = 3000;
+// voxels it moves from its place, every 100 ms of the fall: stone falls in steps too
+const PUKAO_FALL: readonly { x: number; y: number }[] = [
+  { x: 1, y: -2 },
+  { x: 3, y: -8 },
+  { x: 5, y: -22 },
+  { x: 6, y: -17 },
+  { x: 7, y: -22 },
+  { x: 8, y: -20 },
+];
+const PUKAO_DOWN = { x: 8, y: -22 };
+const PUKAO_GROUND_MS = 2000;
+
+/** How far the pukao is from its place `t` ms after the shake, in voxels, or null once it is back on. */
+export function pukaoFall(t: number): { x: number; y: number } | null {
+  if (t < 0 || t >= PUKAO_MS) return null;
+  const fall = PUKAO_FALL.length * 100;
+  if (t < fall) return PUKAO_FALL[Math.floor(t / 100)];
+  if (t < fall + PUKAO_GROUND_MS) return PUKAO_DOWN;
+  // back up in four steps
+  const left = 1 - (Math.floor(((t - fall - PUKAO_GROUND_MS) / (PUKAO_MS - fall - PUKAO_GROUND_MS)) * 4) + 1) / 4;
+  return { x: Math.round(PUKAO_DOWN.x * left) || 0, y: Math.round(PUKAO_DOWN.y * left) || 0 };
+}
+
+/** Tickled, it turns its back for this long and takes no clicks. */
+export const SULK_MS = 4000;
+/** Spun round, its eyes roll and its head wobbles for this long. */
+export const DIZZY_MS = 1500;
+/** The sneeze a gust of scroll raises, in milliseconds. */
+export const SNEEZE_MS = 600;
+
+/** Extra pitch `t` ms into a sneeze, in radians: it leans back (ah…), jolts forward (achoo!), then is still. */
+export function sneeze(t: number): number {
+  if (t < 0 || t >= SNEEZE_MS) return 0;
+  return t < 300 ? -0.12 : t < 450 ? 0.3 : 0;
+}
+
+/** Roll of the dizzy head `t` ms in, in radians: it wobbles in held steps, never smoothly. */
+export function wobble(t: number): number {
+  if (t < 0 || t >= DIZZY_MS) return 0;
+  return [0.08, 0, -0.08, 0][Math.floor(t / 150) % 4];
+}

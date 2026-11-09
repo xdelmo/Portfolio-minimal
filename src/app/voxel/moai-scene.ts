@@ -1,4 +1,5 @@
 import {
+  type WritableSignal,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -28,10 +29,11 @@ import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
 import { afterIntro } from '../motion/intro-state';
-import { BUBBLE_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, stretch, wave } from './motion';
+import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from './motion';
+import { Sample, isDizzy, isShake, isSneeze, isTickle } from './gestures';
 import { LINE_MS, QUIET, Reaction, VoiceState, speak } from './voice';
 import { LINES } from './lines';
-import { MOAI_DESKTOP, MoaiCues } from './moai-cues';
+import { HELLO_KEY, MOAI_DESKTOP, MoaiCues } from './moai-cues';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
@@ -46,6 +48,9 @@ const DOUBLE_TAP_MS = 350;
 const DOUBLE_TAP_PX = 12;
 /** Pixels a touch or pointer moves before locking into horizontal swipe or vertical page scroll. */
 const SWIPE_LOCK_PX = 8;
+/** The eyes roll round while it is dizzy, one corner every 150 ms. */
+const ROLL: readonly Gaze[] = ['left-up', 'right-up', 'right-down', 'left-down'];
+
 const CSS_COLORS: Readonly<Record<VoxelColor, string>> = {
   stone: '--stone',
   stoneDark: '--stone-dark',
@@ -73,6 +78,10 @@ const spare: HTMLCanvasElement[] = [];
     '[attr.data-asleep]': 'asleep() ? "" : null',
     '[attr.data-hop]': 'hopping() ? "" : null',
     '[attr.data-line]': 'line()?.reaction ?? null',
+    '[attr.data-pukao]': 'pukaoOff() ? "off" : null',
+    '[attr.data-sulking]': 'sulking() ? "" : null',
+    '[attr.data-dizzy]': 'dizzy() ? "" : null',
+    '[attr.data-sneeze]': 'sneezing() ? "" : null',
   },
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
@@ -82,6 +91,9 @@ const spare: HTMLCanvasElement[] = [];
           <svg viewBox="0 0 3 3"><path d="M0 0h3v1H0zM1 1h1v1H1zM0 2h3v1H0z" /></svg>
         }
       </span>
+    }
+    @if (sneezing()) {
+      <span class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     }
     @if (line(); as said) {
       <p class="moai-line" aria-hidden="true">{{ said.text }}</p>
@@ -154,6 +166,38 @@ const spare: HTMLCanvasElement[] = [];
       background: var(--fg);
       box-shadow: 8px 8px var(--fg);
     }
+    // the sneeze blows a puff of stone dust from the nose: four pixel squares that fly apart and fade
+    .dust {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      pointer-events: none;
+    }
+    .dust i {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--stone-light);
+      animation: dust 600ms steps(4) both;
+    }
+    .dust i:nth-child(1) {
+      --to: -24px -16px;
+    }
+    .dust i:nth-child(2) {
+      --to: 24px -8px;
+    }
+    .dust i:nth-child(3) {
+      --to: -16px 16px;
+    }
+    .dust i:nth-child(4) {
+      --to: 32px 16px;
+    }
+    @keyframes dust {
+      to {
+        opacity: 0;
+        translate: var(--to);
+      }
+    }
     @keyframes line-in {
       from {
         opacity: 0;
@@ -201,6 +245,14 @@ export class MoaiScene {
   protected readonly hopping = signal(false);
   /** The open speech bubble, for LINE_MS (issue #393). */
   protected readonly line = signal<{ reaction: Reaction; text: string } | null>(null);
+  /** Shaken: the pukao is off its head (issue #393). */
+  protected readonly pukaoOff = signal(false);
+  /** Tickled: its back turned, it takes no clicks. */
+  protected readonly sulking = signal(false);
+  /** Spun round twice in one drag. */
+  protected readonly dizzy = signal(false);
+  /** A gust of scroll went by. */
+  protected readonly sneezing = signal(false);
   private voice: VoiceState = QUIET;
   private lineTimer = 0;
   private introDone = false;
@@ -345,7 +397,7 @@ export class MoaiScene {
       const asleep = this.asleep() || blink;
       const looking = this.gaze();
       // while the page scrolls the pupils drop to the bottom of the eyes
-      const g = this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking;
+      const g = rolling ?? (this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking);
       voxels.forEach((v, i) => {
         const eye = v.color === 'eye';
         const token = eye && asleep ? LIDS : eye && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
@@ -360,6 +412,40 @@ export class MoaiScene {
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
     });
+    // shaken, the pukao's voxels move off the head together (motion.ts pukaoFall)
+    const pukao = voxels.flatMap((v, i) => (v.y >= 22 ? [i] : []));
+    let pukaoAt = '0,0';
+    const placePukao = (off: { x: number; y: number } | null): void => {
+      const at = off ? `${String(off.x)},${String(off.y)}` : '0,0';
+      if (at === pukaoAt) return;
+      pukaoAt = at;
+      for (const i of pukao) {
+        dummy.position.copy(base[i]).add(new Vector3(off?.x ?? 0, off?.y ?? 0, 0));
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+    };
+    // the gags (issue #393): each one a state held on a timer, like the bubble; the frame loop reads when it started
+    const gagTimers: number[] = [];
+    const act = (state: WritableSignal<boolean>, ms: number): number => {
+      state.set(true);
+      gagTimers.push(
+        window.setTimeout(() => {
+          state.set(false);
+        }, ms),
+      );
+      return performance.now();
+    };
+    let pukaoStart = 0;
+    let dizzyStart = 0;
+    let sneezeStart = 0;
+    let rolling: Gaze | null = null;
+    this.cleanups.push(() => {
+      gagTimers.forEach((t) => {
+        clearTimeout(t);
+      });
+    });
     paint();
 
     const resize = (): void => {
@@ -369,10 +455,30 @@ export class MoaiScene {
     };
     const sizes = new ResizeObserver(resize);
     sizes.observe(canvas);
+    // on arrival (after the intro, once it can be seen) it says what the site kept for it, or hello after a change of
+    // language; the hello is read once, so a reload does not repeat it, and dropped if the moai starts out of sight
+    let hello = false;
+    try {
+      hello = sessionStorage.getItem(HELLO_KEY) !== null;
+      sessionStorage.removeItem(HELLO_KEY);
+    } catch {
+      // no storage: no hello
+    }
+    let firstView = true;
+    let arrived = false;
+    const arrive = (): void => {
+      if (arrived || !this.introDone || !this.visible) return;
+      arrived = true;
+      const reaction = this.cues.take() ?? (hello ? 'hello' : null);
+      if (reaction) this.say(reaction);
+    };
     const views = new IntersectionObserver(([entry]) => {
       this.visible = entry.isIntersecting;
+      if (firstView && !this.visible) hello = false;
+      firstView = false;
       if (this.visible && this.asleep()) sleptInView = true;
       this.sync();
+      arrive();
     });
     views.observe(canvas);
     const themes = new MutationObserver(paint);
@@ -411,9 +517,16 @@ export class MoaiScene {
         // back to rest after a pause past ten seconds (issue #203)
         look = this.desktop() ? follow(look, lookTarget, elapsed) : follow(look, paused ? 0 : glance(idle), elapsed, 700);
         down = follow(down, scrolling ? LOOK_DOWN : 0, elapsed);
-        pivot.rotation.x = breath(idle) + down;
-        pivot.rotation.y = this.drag + look;
-        pivot.rotation.z = wave(waveT);
+        pivot.rotation.x = breath(idle) + down + (this.sneezing() ? sneeze(now - sneezeStart) : 0);
+        // sulking it turns its back, and holds still
+        pivot.rotation.y = this.drag + (this.sulking() ? Math.PI : look);
+        pivot.rotation.z = wave(waveT) + (this.dizzy() ? wobble(now - dizzyStart) : 0);
+        placePukao(this.pukaoOff() ? pukaoFall(now - pukaoStart) : null);
+        const roll = this.dizzy() ? ROLL[Math.floor((now - dizzyStart) / 150) % ROLL.length] : null;
+        if (roll !== rolling) {
+          rolling = roll;
+          paint();
+        }
         const pose = (hopStart === null ? null : hop(now - hopStart)) ?? (stretchStart === null ? null : stretch(now - stretchStart));
         pivot.scale.y = pose?.sy ?? 1;
         pivot.position.y = pose?.y ?? 0;
@@ -452,6 +565,9 @@ export class MoaiScene {
     let pointerDir: 'x' | 'y' | null = null;
     // a press that moved is a drag (or a page scroll), not a click
     let moved = false;
+    // the drag's pointer positions, for a shake, and how far it turned the moai in all, for a spin
+    let strokes: Sample[] = [];
+    let spun = 0;
     const onDown = (e: PointerEvent): void => {
       const mouse = this.desktop() && e.pointerType === 'mouse';
       const finger = !this.desktop() && e.pointerType === 'touch';
@@ -461,6 +577,8 @@ export class MoaiScene {
       pointerStartY = e.clientY;
       pointerDir = mouse ? 'x' : null;
       moved = false;
+      strokes = [{ t: performance.now(), v: e.clientX }];
+      spun = 0;
       if (mouse) canvas.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent): void => {
@@ -481,10 +599,23 @@ export class MoaiScene {
       }
       if (pointerDir === 'y') return;
       this.drag += (e.clientX - pointerX) * 0.01;
+      spun += Math.abs(e.clientX - pointerX) * 0.01;
       pointerX = e.clientX;
+      // a fast shake comes as fewer moves than it made, merged one per frame: its turns are in the merged ones
+      const now = performance.now();
+      const merged = typeof e.getCoalescedEvents === 'function' ? e.getCoalescedEvents() : [];
+      for (const c of merged.length ? merged : [e]) strokes.push({ t: now, v: c.clientX });
+      while (strokes.length > 1 && now - strokes[0].t > 1200) strokes.shift();
     };
     let lastTap: { time: number; x: number; y: number } | null = null;
-    let beforeHop = this.voice;
+    // the clicks of the current series, and the voice before its first one: a gag at the end of the series takes the
+    // place of the hop's or the gum's line and the cooldown it took
+    let taps: number[] = [];
+    let seriesVoice = this.voice;
+    const replaceTapLine = (): void => {
+      const open = this.line()?.reaction;
+      if (open === 'hop' || open === 'gum') this.voice = seriesVoice;
+    };
     const startHop = (): void => {
       if (this.pause.paused()) return;
       hopStart = performance.now();
@@ -504,7 +635,31 @@ export class MoaiScene {
       // the end of a drag: it speaks once the gesture is over, never during it
       if (dragged) {
         lastTap = null;
-        if (turned) this.say('drag');
+        if (!turned) return;
+        // shaken, the pukao falls; spun round twice, it gets dizzy; otherwise it just complains
+        const gags = this.desktop() && !this.pause.paused();
+        if (gags && isShake(strokes) && !this.pukaoOff()) {
+          pukaoStart = act(this.pukaoOff, PUKAO_MS);
+          this.say('shake');
+        } else if (gags && isDizzy(spun) && !this.dizzy()) {
+          dizzyStart = act(this.dizzy, DIZZY_MS);
+          this.say('dizzy');
+        } else this.say('drag');
+        return;
+      }
+      // sulking, it takes no clicks
+      if (this.sulking()) return;
+      const now = performance.now();
+      taps = taps.filter((t) => now - t <= 2000);
+      if (!taps.length) seriesVoice = this.voice;
+      taps.push(now);
+      // tickled with six quick clicks, it turns its back
+      if (this.desktop() && !this.pause.paused() && isTickle(taps, now)) {
+        taps = [];
+        lastTap = null;
+        replaceTapLine();
+        act(this.sulking, SULK_MS);
+        this.say('sulk');
         return;
       }
       const tap = { time: e.timeStamp, x: e.clientX, y: e.clientY };
@@ -513,12 +668,11 @@ export class MoaiScene {
       // the first click hops at once, without waiting to see whether a second one comes; the second blows the gum, and
       // its line takes the place of the first one's, whose cooldown it takes back
       if (!double) {
-        beforeHop = this.voice;
         startHop();
         this.say('hop');
       } else if (gumStart === null) {
         blowGum();
-        if (this.line()?.reaction === 'hop') this.voice = beforeHop;
+        replaceTapLine();
         this.say('gum');
       }
     };
@@ -582,6 +736,19 @@ export class MoaiScene {
       this.scrolling.set(true);
       paint();
     };
+    // a gust of the wheel (or a trackpad's flick) makes it sneeze: the wheel, not the scroll, so a jump to an anchor never does
+    let wheeled = 0;
+    let gust: Sample[] = [{ t: performance.now(), v: 0 }];
+    const onWheel = (e: WheelEvent): void => {
+      const now = performance.now();
+      wheeled += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1);
+      gust.push({ t: now, v: wheeled });
+      while (gust.length > 2 && now - gust[1].t > 400) gust.shift();
+      if (!this.desktop() || !this.visible || this.pause.paused() || this.sneezing() || !isSneeze(gust)) return;
+      gust = [{ t: now, v: wheeled }];
+      sneezeStart = act(this.sneezing, SNEEZE_MS);
+      this.say('sneeze');
+    };
     let lastInput = performance.now();
     // one bubble per wait: the next comes only after some input
     let idleGum = false;
@@ -610,8 +777,10 @@ export class MoaiScene {
     }, 1000);
     for (const type of WAKE_EVENTS) addEventListener(type, onInput, { passive: true });
     addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('wheel', onWheel, { passive: true });
     const cancelIntro = afterIntro(() => {
       this.introDone = true;
+      arrive();
       if (!this.greet()) return;
       waveT = 0;
       this.waving.set(true);
@@ -647,6 +816,7 @@ export class MoaiScene {
       document.removeEventListener('visibilitychange', onVisibility);
       for (const type of WAKE_EVENTS) removeEventListener(type, onInput);
       removeEventListener('scroll', onScroll);
+      removeEventListener('wheel', onWheel);
       clearInterval(sleepTimer);
       cancelIntro();
       unlisten();

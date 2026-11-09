@@ -22,6 +22,7 @@ export const CONTENT_EN: SiteContent = {
     headline: 'Engineer by method, curious by nature',
     voice: 'curious by nature',
     lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. I\u00a0build Angular interfaces that stay fast when the data gets big, and I\u00a0leave an easter egg for whoever looks closely.",
+    peek: 'closely',
   },
   aboutStatement: 'A table with thousands of rows should feel like one with ten.',
   aboutVoice: 'like one with ten.',

@@ -130,7 +130,8 @@ export interface SiteContent {
   person: Person;
   /** The home page's <title> and meta description: what a search result shows. */
   seo: { title: string; description: string };
-  hero: { headline: string; voice: string; lede: string };
+  /** `peek`: the word of the lede the moai peeks out from behind on hover (issue #394). */
+  hero: { headline: string; voice: string; lede: string; peek: string };
   /** One sentence that opens the About section, in large type. */
   aboutStatement: string;
   aboutVoice: string;

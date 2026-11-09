@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { CONTENT } from '../../content/content';
-import { voices } from '../../content/voices';
+import { around, voices } from '../../content/voices';
 import { toLocale } from '../../core/i18n/locale';
 import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
@@ -26,6 +26,7 @@ import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
+import { MoaiPeek } from '../../voxel/moai-peek';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { CopyEmail } from '../../layout/copy-email';
@@ -35,13 +36,13 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero" aria-labelledby="hero-title">
       <div class="copy" #copy>
       <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
-      <p class="lede">{{ content.hero.lede }}</p>
+      <p class="lede">{{ lede[0] }}<app-moai-peek [word]="lede[1]" />{{ lede[2] }}</p>
       </div>
       <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
@@ -177,6 +178,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .lede {
       max-width: 44ch;
       text-wrap: balance;
+      isolation: isolate; // the peeking moai (z-index -1) stays behind every line of it
       @include bp.up(md) {
         font-size: var(--step-1);
       }
@@ -352,6 +354,7 @@ export class Home {
   protected readonly content = inject(CONTENT);
   protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
   protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
+  protected readonly lede = around(this.content.hero.lede, this.content.hero.peek);
   protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];

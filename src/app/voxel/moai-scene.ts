@@ -28,7 +28,7 @@ import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
 import { afterIntro } from '../motion/intro-state';
-import { BUBBLE_MS, GUM_LIPS, Gaze, HOP_MS, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, stretch, wave } from './motion';
+import { BUBBLE_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, stretch, wave } from './motion';
 import { LINE_MS, QUIET, Reaction, VoiceState, speak } from './voice';
 import { LINES } from './lines';
 import { MOAI_DESKTOP, MoaiCues } from './moai-cues';
@@ -583,8 +583,11 @@ export class MoaiScene {
       paint();
     };
     let lastInput = performance.now();
+    // one bubble per wait: the next comes only after some input
+    let idleGum = false;
     const onInput = (): void => {
       lastInput = performance.now();
+      idleGum = false;
       if (!this.asleep()) return;
       this.asleep.set(false);
       paint();
@@ -596,7 +599,10 @@ export class MoaiScene {
     const sleepTimer = window.setInterval(() => {
       const now = performance.now();
       if (this.pause.paused()) lastInput = now;
-      else if (!this.asleep() && now - lastInput > SLEEP_MS) {
+      else if (!idleGum && gumStart === null && this.visible && !this.scrolling() && now - lastInput >= IDLE_GUM_MS) {
+        idleGum = true;
+        blowGum();
+      } else if (!this.asleep() && now - lastInput > SLEEP_MS) {
         this.asleep.set(true);
         sleptInView = this.visible;
         paint();

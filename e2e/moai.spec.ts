@@ -427,6 +427,40 @@ test.describe('sleep', () => {
     await expect(host.locator('.moai-line')).toHaveText('Five more minutes…');
   });
 
+  // issue #393: waiting, it blows one silent bubble of gum at 10 s, then sleeps at 20 s
+  test('after 10 s without input it blows one bubble of gum, without a word, and input puts the next one off', async ({ page }) => {
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const host = page.locator('app-moai-scene');
+    await page.clock.fastForward('00:08');
+    await page.mouse.move(200, 200);
+    await page.clock.fastForward('00:08');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward('00:03');
+    await expect(host).toHaveAttribute('data-gum', '');
+    await expect(host.locator('.moai-line')).toHaveCount(0);
+    await page.clock.fastForward('00:05');
+    await expect(host).not.toHaveAttribute('data-gum');
+    // one per wait: no second bubble before it falls asleep
+    await page.clock.fastForward('00:05');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward('00:03');
+    await expect(host).toHaveAttribute('data-asleep', '');
+    await expect(host).not.toHaveAttribute('data-gum');
+  });
+
+  test('blows no bubble of gum while the animations are paused', async ({ page }) => {
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    await press(page, 'Pause animations');
+    await page.clock.fastForward('00:12');
+    await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-gum');
+  });
+
   test('does not fall asleep while the animations are paused', async ({ page }) => {
     await page.goto('/en/');
     test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');

@@ -9,6 +9,8 @@ export function wave(t: number): number {
 
 /** How long without any input before the moai falls asleep, in milliseconds. */
 export const SLEEP_MS = 20_000;
+/** After this long without input, before it sleeps, it blows one bubble of gum while it waits, without a word (issue #393). */
+export const IDLE_GUM_MS = 10_000;
 
 // radians the moai bows its head while the page scrolls: it looks down at what passes by
 export const LOOK_DOWN = 0.18;

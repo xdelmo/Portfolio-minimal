@@ -77,6 +77,20 @@ test.describe('intro', () => {
     expect(await page.evaluate(() => 'replayed' in window)).toBe(false);
   });
 
+  // GSAP missed the whole intro: the CSS lifted a dim panel, which does not count as seen (issue #404)
+  test('plays again on the next load when the motion script came after the CSS lift', async ({ page }) => {
+    await page.route('**/*.js', async (route) => {
+      const response = await route.fetch();
+      if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
+      await route.fulfill({ response });
+    });
+    await page.goto('/en/');
+    await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 15000 });
+    await page.unroute('**/*.js');
+    await page.goto('/en/work/apexflow');
+    await expect(page.locator('.site-intro')).toBeVisible();
+  });
+
   // a slow network: GSAP arrives after the CSS lift, too late for heroEffect's entrance, so the CSS one shows the
   // hero copy coming in after the panel has gone instead of already in place (issue #329)
   test('raises the hero in after the CSS lift when the motion script comes after it', async ({ page }) => {

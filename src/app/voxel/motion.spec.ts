@@ -1,3 +1,4 @@
+import { HOP_MS, STRETCH_MS, hop, stretch } from './motion';
 import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SLEEP_MS, WAVE_MS, breath, follow, gaze, glance, isPupil, wave } from './motion';
 import { moaiCell } from './moai.model';
 
@@ -125,5 +126,21 @@ describe('GUM_LIPS', () => {
 
   it('keeps the bubble in front of the nose tip, never inside it', () => {
     for (const c of bubbleCells()) expect(moaiCell(c.x, GUM_LIPS.y + c.y, GUM_LIPS.z + 1 + c.z)).toBeNull();
+  });
+});
+
+describe('hop and stretch', () => {
+  for (const [name, move, ms] of [['hop', hop, HOP_MS], ['stretch', stretch, STRETCH_MS]] as const) {
+    it(`${name}: four held poses, then still`, () => {
+      const poses = new Set<string>();
+      for (let t = 0; t < ms; t += 5) poses.add(JSON.stringify(move(t)));
+      expect(poses.size).toBe(4);
+      expect(move(-1)).toBeNull();
+      expect(move(ms)).toBeNull();
+    });
+  }
+  it('lifts the hop off the ground and lands it', () => {
+    expect(hop(HOP_MS / 4)?.y).toBeGreaterThan(0);
+    expect(hop(HOP_MS - 1)?.y).toBe(0);
   });
 });

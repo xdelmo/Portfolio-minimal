@@ -28,7 +28,10 @@ import { COS30, isoBounds, isoFaces } from './iso';
 import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
 import { afterIntro } from '../motion/intro-state';
-import { BUBBLE_MS, GUM_LIPS, Gaze, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, isPupil, wave } from './motion';
+import { BUBBLE_MS, GUM_LIPS, Gaze, HOP_MS, LOOK_DOWN, PHONE_GAZE, SLEEP_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, stretch, wave } from './motion';
+import { LINE_MS, QUIET, Reaction, VoiceState, speak } from './voice';
+import { LINES } from './lines';
+import { MOAI_DESKTOP, MoaiCues } from './moai-cues';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
@@ -68,6 +71,8 @@ const spare: HTMLCanvasElement[] = [];
     '[attr.data-waving]': 'waving() ? "" : null',
     '[attr.data-scrolling]': 'scrolling() ? "" : null',
     '[attr.data-asleep]': 'asleep() ? "" : null',
+    '[attr.data-hop]': 'hopping() ? "" : null',
+    '[attr.data-line]': 'line()?.reaction ?? null',
   },
   template: `
     <canvas #canvas aria-hidden="true"></canvas>
@@ -77,6 +82,9 @@ const spare: HTMLCanvasElement[] = [];
           <svg viewBox="0 0 3 3"><path d="M0 0h3v1H0zM1 1h1v1H1zM0 2h3v1H0z" /></svg>
         }
       </span>
+    }
+    @if (line(); as said) {
+      <p class="moai-line" aria-hidden="true">{{ said.text }}</p>
     }
   `,
   styles: `
@@ -115,6 +123,43 @@ const spare: HTMLCanvasElement[] = [];
     :host-context(html[data-motion-paused]) svg {
       animation-play-state: paused;
     }
+    // what it says: a pixel bubble above its head, the corners cut out of its outline and a tail of two steps down to the
+    // face. It opens left and up, so in the corner it stays inside the window, and takes no clicks. In the corner the moai
+    // is the About's one scaled down (effects/moai.ts): the bubble scales back up to keep its text readable
+    .moai-line {
+      position: absolute;
+      right: 50%;
+      bottom: 98%;
+      width: max-content;
+      max-width: 14rem;
+      margin: 0;
+      padding: var(--space-1) var(--space-2);
+      background: var(--surface);
+      color: var(--fg);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      box-shadow: 0 -4px var(--fg), 0 4px var(--fg), -4px 0 var(--fg), 4px 0 var(--fg);
+      pointer-events: none;
+      transform-origin: 100% 100%;
+      scale: calc(1 / var(--moai-s, 1));
+      animation: line-in 160ms steps(2) both;
+    }
+    .moai-line::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      bottom: -12px;
+      width: 8px;
+      height: 8px;
+      background: var(--fg);
+      box-shadow: 8px 8px var(--fg);
+    }
+    @keyframes line-in {
+      from {
+        opacity: 0;
+        translate: 0 8px;
+      }
+    }
     @keyframes zzz {
       0% {
         opacity: 0;
@@ -152,8 +197,16 @@ export class MoaiScene {
   /** After SLEEP_MS without input: eyes closed, slower breath, pixel z's. Any input wakes it. */
   protected readonly asleep = signal(false);
   protected readonly zs = [0, 1, 2];
+  /** While a single click's hop lasts. */
+  protected readonly hopping = signal(false);
+  /** The open speech bubble, for LINE_MS (issue #393). */
+  protected readonly line = signal<{ reaction: Reaction; text: string } | null>(null);
+  private voice: VoiceState = QUIET;
+  private lineTimer = 0;
+  private introDone = false;
   // its idle life (breath, the phones' glances) stops with the one header pause button (WCAG 2.2.2)
   private readonly pause = inject(MotionPause);
+  private readonly cues = inject(MoaiCues);
 
   private readonly cleanups: (() => void)[] = [];
   private raf = 0;
@@ -186,7 +239,7 @@ export class MoaiScene {
       canvas = reused;
     }
     const root = document.documentElement;
-    const desktopQuery = matchMedia('(min-width: 1024px) and (pointer: fine)');
+    const desktopQuery = matchMedia(MOAI_DESKTOP);
     this.desktop.set(desktopQuery.matches);
     // no pointer to follow on phones: the eyes stay open, looking where the face points
     this.gaze.set(desktopQuery.matches ? null : PHONE_GAZE);
@@ -251,8 +304,22 @@ export class MoaiScene {
       gumBall.visible = false;
       this.gum.set(false);
     };
+    const blowGum = (): void => {
+      gumStart = performance.now();
+      this.gum.set(true);
+      gumTimer = window.setTimeout(endGum, BUBBLE_MS);
+    };
+    // a single click's hop and the stretch on waking up: held poses on timers, like the bubble
+    let hopStart: number | null = null;
+    let stretchStart: number | null = null;
+    let hopTimer = 0;
+    let blink = false;
+    // whether it fell asleep, or lay asleep, where it could be seen: only then does it grumble on waking up
+    let sleptInView = false;
     this.cleanups.push(() => {
       clearTimeout(gumTimer);
+      clearTimeout(hopTimer);
+      clearTimeout(this.lineTimer);
     });
 
     const scene = new Scene();
@@ -275,7 +342,7 @@ export class MoaiScene {
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
-      const asleep = this.asleep();
+      const asleep = this.asleep() || blink;
       const looking = this.gaze();
       // while the page scrolls the pupils drop to the bottom of the eyes
       const g = this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking;
@@ -304,6 +371,7 @@ export class MoaiScene {
     sizes.observe(canvas);
     const views = new IntersectionObserver(([entry]) => {
       this.visible = entry.isIntersecting;
+      if (this.visible && this.asleep()) sleptInView = true;
       this.sync();
     });
     views.observe(canvas);
@@ -326,6 +394,8 @@ export class MoaiScene {
         const dt = Math.min(100, elapsed);
         last = now;
         const paused = this.pause.paused();
+        // the pause button silences it
+        if (paused && this.line()) this.line.set(null);
         // asleep it breathes at half speed
         if (!paused) idle += dt * (this.asleep() ? 0.5 : 1);
         const scrolling = !paused && now - lastScroll < SCROLL_REST_MS;
@@ -344,6 +414,15 @@ export class MoaiScene {
         pivot.rotation.x = breath(idle) + down;
         pivot.rotation.y = this.drag + look;
         pivot.rotation.z = wave(waveT);
+        const pose = (hopStart === null ? null : hop(now - hopStart)) ?? (stretchStart === null ? null : stretch(now - stretchStart));
+        pivot.scale.y = pose?.sy ?? 1;
+        pivot.position.y = pose?.y ?? 0;
+        // it blinks as it crouches for the hop
+        const blinking = hopStart !== null && now - hopStart < HOP_MS / 2;
+        if (blinking !== blink) {
+          blink = blinking;
+          paint();
+        }
         // no fly-in: the scene replaces a still image that is already on screen
         const size = gumStart === null ? null : bubble(now - gumStart);
         gumBall.visible = size !== null && size > 0;
@@ -371,6 +450,8 @@ export class MoaiScene {
     let pointerStartX = 0;
     let pointerStartY = 0;
     let pointerDir: 'x' | 'y' | null = null;
+    // a press that moved is a drag (or a page scroll), not a click
+    let moved = false;
     const onDown = (e: PointerEvent): void => {
       const mouse = this.desktop() && e.pointerType === 'mouse';
       const finger = !this.desktop() && e.pointerType === 'touch';
@@ -379,10 +460,12 @@ export class MoaiScene {
       pointerStartX = e.clientX;
       pointerStartY = e.clientY;
       pointerDir = mouse ? 'x' : null;
+      moved = false;
       if (mouse) canvas.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent): void => {
       if (pointerX === null) return;
+      if (Math.abs(e.clientX - pointerStartX) >= SWIPE_LOCK_PX || Math.abs(e.clientY - pointerStartY) >= SWIPE_LOCK_PX) moved = true;
       if (pointerDir === null) {
         const dx = e.clientX - pointerStartX;
         const dy = e.clientY - pointerStartY;
@@ -401,21 +484,48 @@ export class MoaiScene {
       pointerX = e.clientX;
     };
     let lastTap: { time: number; x: number; y: number } | null = null;
+    let beforeHop = this.voice;
+    const startHop = (): void => {
+      if (this.pause.paused()) return;
+      hopStart = performance.now();
+      this.hopping.set(true);
+      clearTimeout(hopTimer);
+      hopTimer = window.setTimeout(() => {
+        hopStart = null;
+        this.hopping.set(false);
+      }, HOP_MS);
+    };
     const onUp = (e: PointerEvent): void => {
+      const turned = moved && pointerDir === 'x';
+      const dragged = moved;
       pointerX = null;
       pointerDir = null;
+      moved = false;
+      // the end of a drag: it speaks once the gesture is over, never during it
+      if (dragged) {
+        lastTap = null;
+        if (turned) this.say('drag');
+        return;
+      }
       const tap = { time: e.timeStamp, x: e.clientX, y: e.clientY };
       const double = lastTap !== null && tap.time - lastTap.time < DOUBLE_TAP_MS && Math.hypot(tap.x - lastTap.x, tap.y - lastTap.y) < DOUBLE_TAP_PX;
       lastTap = double ? null : tap;
-      if (double && gumStart === null) {
-        gumStart = performance.now();
-        this.gum.set(true);
-        gumTimer = window.setTimeout(endGum, BUBBLE_MS);
+      // the first click hops at once, without waiting to see whether a second one comes; the second blows the gum, and
+      // its line takes the place of the first one's, whose cooldown it takes back
+      if (!double) {
+        beforeHop = this.voice;
+        startHop();
+        this.say('hop');
+      } else if (gumStart === null) {
+        blowGum();
+        if (this.line()?.reaction === 'hop') this.voice = beforeHop;
+        this.say('gum');
       }
     };
     const onCancel = (): void => {
       pointerX = null;
       pointerDir = null;
+      moved = false;
     };
 
     // on phones, cancel vertical scrolling only when the gesture is locked to horizontal swipe
@@ -478,6 +588,9 @@ export class MoaiScene {
       if (!this.asleep()) return;
       this.asleep.set(false);
       paint();
+      if (this.pause.paused()) return;
+      stretchStart = performance.now();
+      if (sleptInView) this.say('wake');
     };
     // the paused moai neither falls asleep nor wakes by itself: its clock starts again from the pause
     const sleepTimer = window.setInterval(() => {
@@ -485,12 +598,14 @@ export class MoaiScene {
       if (this.pause.paused()) lastInput = now;
       else if (!this.asleep() && now - lastInput > SLEEP_MS) {
         this.asleep.set(true);
+        sleptInView = this.visible;
         paint();
       }
     }, 1000);
     for (const type of WAKE_EVENTS) addEventListener(type, onInput, { passive: true });
     addEventListener('scroll', onScroll, { passive: true });
     const cancelIntro = afterIntro(() => {
+      this.introDone = true;
       if (!this.greet()) return;
       waveT = 0;
       this.waving.set(true);
@@ -507,6 +622,7 @@ export class MoaiScene {
     addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
+    const unlisten = this.cues.listen((reaction) => this.say(reaction));
     this.cleanups.push(() => {
       sizes.disconnect();
       views.disconnect();
@@ -527,6 +643,7 @@ export class MoaiScene {
       removeEventListener('scroll', onScroll);
       clearInterval(sleepTimer);
       cancelIntro();
+      unlisten();
     });
 
     resize();
@@ -535,6 +652,24 @@ export class MoaiScene {
   }
 
   private loop: () => void = () => undefined;
+
+  /**
+   * Opens a speech bubble for `reaction`, or keeps quiet: only where it can be seen and follows the pointer (desktop),
+   * after the intro, not while paused, and at most once per COOLDOWN_MS (voice.ts). A line it cannot say now is dropped; it answers whether it spoke.
+   */
+  private say(reaction: Reaction): boolean {
+    if (!this.visible || document.hidden || !this.desktop() || !this.introDone || this.pause.paused()) return false;
+    const lines = LINES[reaction];
+    const spoken = speak(this.voice, reaction, lines.length, performance.now(), Math.random);
+    if (!spoken) return false;
+    this.voice = spoken.state;
+    this.line.set({ reaction, text: lines[spoken.variant] });
+    clearTimeout(this.lineTimer);
+    this.lineTimer = window.setTimeout(() => {
+      this.line.set(null);
+    }, LINE_MS);
+    return true;
+  }
 
   /** Draws only while the moai can be seen. */
   private sync(): void {

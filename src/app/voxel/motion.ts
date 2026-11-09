@@ -93,3 +93,44 @@ export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
   }
   return cells;
 }
+
+export interface Squash {
+  /** Vertical scale of the moai. */
+  readonly sy: number;
+  /** Lift, in voxels. */
+  readonly y: number;
+}
+
+// four held poses each: stone moves in steps, never with an elastic bounce (issue #393)
+const HOP: readonly Squash[] = [
+  { sy: 0.9, y: 0 },
+  { sy: 1.06, y: 1.5 },
+  { sy: 1, y: 0.75 },
+  { sy: 0.94, y: 0 },
+];
+const STRETCH: readonly Squash[] = [
+  { sy: 0.94, y: 0 },
+  { sy: 1.04, y: 0 },
+  { sy: 1.08, y: 0 },
+  { sy: 1.02, y: 0 },
+];
+
+/** A single click's hop, in milliseconds. */
+export const HOP_MS = 300;
+/** The stretch on waking up. */
+export const STRETCH_MS = 600;
+
+function steps(poses: readonly Squash[], duration: number, t: number): Squash | null {
+  if (t < 0 || t >= duration) return null;
+  return poses[Math.floor((t / duration) * poses.length)];
+}
+
+/** The pose `t` ms into a hop, or null once it has landed. */
+export function hop(t: number): Squash | null {
+  return steps(HOP, HOP_MS, t);
+}
+
+/** The pose `t` ms into the stretch on waking up, or null once it is over. */
+export function stretch(t: number): Squash | null {
+  return steps(STRETCH, STRETCH_MS, t);
+}

@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, comput
 import { currentUrl } from '../core/current-url';
 import { CORNER_GAP, CORNER_PX } from '../motion/effects/moai';
 import { MoaiFigure } from './moai-figure';
-
-/** The moai scene's own desktop query (moai-scene.ts): pointer effects and, later, its voice. */
-const DESKTOP = '(min-width: 1024px) and (pointer: fine)';
+import { MOAI_DESKTOP } from './moai-cues';
 
 /**
  * The moai on every page but the home, which has its own in the About (issue #393). On desktop it stands in the bottom-right
@@ -75,7 +73,7 @@ export class MoaiGuest {
   constructor() {
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
-      const query = matchMedia(DESKTOP);
+      const query = matchMedia(MOAI_DESKTOP);
       const update = () => {
         this.desktop.set(query.matches);
       };

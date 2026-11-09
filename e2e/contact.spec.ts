@@ -48,6 +48,29 @@ test.describe('contact finale', () => {
     await expect(page.locator('#contact')).not.toContainText(EMAIL);
   });
 
+  // issue #393: on desktop the moai in the corner says goodbye; where it keeps quiet, the button does
+  test('copying, the moai says "Talk soon." on desktop and the button on a phone, the status unchanged', async ({ page, context, browserName, isMobile }) => {
+    test.skip(browserName !== 'chromium', 'clipboard permissions are granted in Chromium only');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/en/');
+    const copy = page.locator('#contact').getByRole('button', { name: 'Copy my email address' });
+    await copy.scrollIntoViewIfNeeded();
+    const scene = page.locator('app-moai-scene canvas');
+    const webgl = await page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl')));
+    if (!isMobile && webgl) await expect(scene).toBeVisible();
+    await copy.click();
+    await expect(page.locator('#contact').getByRole('status')).toHaveText('Email address copied');
+    // while copied the button is named after what it says, so it is found by its state
+    const copied = page.locator('#contact button.is-copied');
+    if (!isMobile && webgl) {
+      await expect(page.locator('app-moai-scene .moai-line')).toHaveText('Talk soon.');
+      await expect(copied).toHaveText('Copied');
+    } else {
+      await expect(page.locator('.moai-line')).toHaveCount(0);
+      await expect(copied).toHaveText('Copied. Talk soon.');
+    }
+  });
+
   test.describe('without JavaScript', () => {
     test.use({ javaScriptEnabled: false });
     test('there is no copy button that would do nothing, nor an empty item in the list', async ({ page }) => {

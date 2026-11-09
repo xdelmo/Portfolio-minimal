@@ -414,6 +414,19 @@ test.describe('sleep', () => {
     await expect(host.locator('.zzz')).toHaveCount(0);
   });
 
+  test('woken in view on desktop, it asks for five more minutes', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'it speaks on desktop only');
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const host = page.locator('app-moai-scene');
+    await page.clock.fastForward('00:22');
+    await expect(host).toHaveAttribute('data-asleep', '');
+    await page.mouse.move(200, 200);
+    await expect(host.locator('.moai-line')).toHaveText('Five more minutes…');
+  });
+
   test('does not fall asleep while the animations are paused', async ({ page }) => {
     await page.goto('/en/');
     test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
@@ -423,6 +436,67 @@ test.describe('sleep', () => {
     await page.clock.fastForward('00:25');
     await page.clock.fastForward('00:25');
     await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-asleep');
+  });
+});
+
+// issue #393: a few words in a pixel bubble, on desktop, at most one line every 10 s
+test.describe('voice', () => {
+  test.beforeEach(async ({ page, isMobile }) => {
+    test.skip(isMobile, 'it speaks on desktop only');
+    await page.clock.install();
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+    await expect(scene(page)).toBeVisible();
+  });
+  const line = (page: Page) => page.locator('app-moai-scene .moai-line');
+  /** A point on the canvas, `dx` px right of its centre: clicks far enough apart never make a double click. */
+  const at = async (page: Page, dx = 0) => {
+    const box = await scene(page).boundingBox();
+    if (!box) throw new Error('no canvas');
+    return [box.x + box.width / 2 + dx, box.y + box.height / 2] as const;
+  };
+
+  test('says nothing until asked; a click makes it hop and say a word, hidden from screen readers, for 3 s', async ({ page }) => {
+    await expect(line(page)).toHaveCount(0);
+    const host = page.locator('app-moai-scene');
+    await page.mouse.click(...(await at(page)));
+    await expect(host).toHaveAttribute('data-hop', '');
+    await expect(host).toHaveAttribute('data-line', 'hop');
+    await expect(line(page)).toHaveText(/^(Hey\.|Yes\?)$/);
+    await expect(line(page)).toHaveAttribute('aria-hidden', 'true');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward(3100);
+    await expect(line(page)).toHaveCount(0);
+  });
+
+  test('keeps quiet for 10 s after a line, then speaks again', async ({ page }) => {
+    const host = page.locator('app-moai-scene');
+    await page.mouse.click(...(await at(page, -40)));
+    await expect(line(page)).toHaveCount(1);
+    await page.clock.fastForward(3100);
+    await expect(host).not.toHaveAttribute('data-hop');
+    await page.mouse.click(...(await at(page)));
+    await expect(host).toHaveAttribute('data-hop', '');
+    await expect(line(page)).toHaveCount(0);
+    await page.clock.fastForward(7000);
+    await page.mouse.click(...(await at(page, 40)));
+    await expect(line(page)).toHaveCount(1);
+  });
+
+  test('a double click blows the gum and says so', async ({ page }) => {
+    const host = page.locator('app-moai-scene');
+    await page.mouse.dblclick(...(await at(page)));
+    await expect(host).toHaveAttribute('data-gum', '');
+    await expect(host).toHaveAttribute('data-line', 'gum');
+    await expect(line(page)).toHaveText('Gum gum.');
+  });
+
+  test('says nothing while the animations are paused', async ({ page }) => {
+    await press(page, 'Pause animations');
+    await page.mouse.click(...(await at(page)));
+    await page.clock.fastForward(500);
+    await expect(line(page)).toHaveCount(0);
   });
 });
 

@@ -103,9 +103,10 @@ test('releases WebGL when leaving and coming back many times', async ({ page }) 
   const errors = collectErrors(page);
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  // the home's own moai: on the case study the corner has one too (issue #393), so both scenes come and go
   for (let i = 0; i < 8; i++) {
-    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
-    await expect(scene(page)).toBeVisible();
+    await page.locator('app-moai-figure.about-moai').scrollIntoViewIfNeeded();
+    await expect(page.locator('.about-moai app-moai-scene canvas')).toBeVisible();
     await page.getByRole('link', { name: 'ApexFlow' }).first().click();
     await expect(page.locator('h1')).toHaveText('ApexFlow');
     await page.goBack();
@@ -538,4 +539,81 @@ test('back in the About on a narrow window after a resize from the corner', asyn
     const [moai, about] = await Promise.all([rect(page), rect(page, '#about')]);
     return moai.top >= about.top && moai.bottom <= about.bottom && moai.left >= about.left && moai.right <= about.right && moai.height > 140;
   }).toBe(true);
+});
+
+// issue #393: the moai on every page, one scene at a time
+test.describe('on other pages', () => {
+  const pages = ['/en/work/apexflow/', '/en/blog/signals-in-production/', '/en/404'];
+  const guest = (page: Page) => page.locator('app-moai-guest app-moai-figure');
+
+  for (const path of pages) {
+    test(`on desktop it stands in the corner of ${path} and covers no link or button`, async ({ page, isMobile }) => {
+      test.skip(isMobile, 'desktop only');
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(path);
+      await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure[data-corner]')).toHaveCount(1);
+      await expect(page.locator('app-moai-guest[data-place=peek] app-moai-figure')).toHaveCount(0);
+      const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
+      const box = await rect(page, 'app-moai-guest .body');
+      expect([Math.round(box.height), Math.round(w - box.right), Math.round(h - box.bottom)]).toEqual([140, 16, 16]);
+      // scrolled to every height, what is under the corner is never a link or a button
+      const covered = await page.evaluate(async (b) => {
+        const hits: string[] = [];
+        const step = window.innerHeight / 2;
+        for (let y = 0; ; y += step) {
+          window.scrollTo(0, y);
+          await new Promise(requestAnimationFrame);
+          for (const el of document.querySelectorAll<HTMLElement>('a, button')) {
+            if (el.closest('app-moai-guest')) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width && r.height && r.right > b.left && r.left < b.right && r.bottom > b.top && r.top < b.bottom) hits.push(el.outerHTML.slice(0, 80));
+          }
+          if (y >= document.documentElement.scrollHeight - window.innerHeight) break;
+        }
+        return [...new Set(hits)];
+      }, box);
+      expect(covered).toEqual([]);
+    });
+  }
+
+  test('on a phone its head peeks above the footer, with no speech bubble', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/work/apexflow/');
+    const peek = page.locator('app-moai-guest[data-place=peek]');
+    await expect(peek.locator('app-moai-figure')).toHaveCount(1);
+    await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(0);
+    const [p, f] = await Promise.all([rect(page, 'app-moai-guest[data-place=peek]'), rect(page, 'app-site-footer')]);
+    expect(Math.abs(p.bottom - f.top)).toBeLessThanOrEqual(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    await expect(page.locator('.moai-line')).toHaveCount(0);
+  });
+
+  test('the home has only its own moai, also after going to a case study and back', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/en/');
+    await expect(guest(page)).toHaveCount(0);
+    await page.locator('a[href*="work/"]').first().evaluate((a) => { (a as HTMLAnchorElement).click(); });
+    await expect(page).toHaveURL(/work\//);
+    await expect(guest(page)).toHaveCount(1);
+    await expect(page.locator('app-moai-figure')).toHaveCount(1);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/en\/$/);
+    await expect(guest(page)).toHaveCount(0);
+    await expect(page.locator('app-moai-figure')).toHaveCount(1);
+    expect(await page.locator('app-moai-scene').count()).toBeLessThanOrEqual(1);
+  });
+
+  test('crossing 1024px it moves between the corner and the footer, never in both', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/en/work/apexflow/');
+    await expect(guest(page)).toHaveCount(1);
+    await page.setViewportSize({ width: 800, height: 800 });
+    await expect(page.locator('app-moai-guest[data-place=peek] app-moai-figure')).toHaveCount(1);
+    await expect(guest(page)).toHaveCount(1);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(1);
+    await expect(guest(page)).toHaveCount(1);
+  });
 });

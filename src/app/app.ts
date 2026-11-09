@@ -12,11 +12,12 @@ import { cursorEffect } from './motion/effects/cursor';
 import { introEffect } from './motion/effects/intro';
 import { scrambleEffect } from './motion/effects/scramble';
 import { SiteHeader } from './layout/site-header';
+import { MoaiGuest } from './voxel/moai-guest';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, SiteIntro, PixelCursor, SiteHeader, SiteFooter, GameTrigger, BackToTop],
+  imports: [RouterOutlet, SiteIntro, PixelCursor, SiteHeader, SiteFooter, GameTrigger, BackToTop, MoaiGuest],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

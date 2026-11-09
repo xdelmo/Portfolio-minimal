@@ -22,12 +22,12 @@ export const CONTENT_IT: SiteContent = {
   hero: {
     headline: 'Ingegnere per metodo, curioso per natura',
     voice: 'curioso per natura',
-    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. ad Aprilia. Costruisco app Angular enterprise con tabelle grandi che restano reattive, e lascio un easter egg a chi guarda bene.',
+    lede: 'Sono Emanuele, Frontend Engineer in IPS S.p.A. Costruisco interfacce Angular che restano veloci quando i dati diventano tanti, e lascio un easter egg a chi guarda bene.',
   },
-  aboutStatement: 'Curo le parti che nessuno vede ma tutti sentono.',
-  aboutVoice: 'ma tutti sentono.',
+  aboutStatement: 'Una tabella con migliaia di righe deve sembrare una con dieci.',
+  aboutVoice: 'una con dieci.',
   about: [
-    "Sono Emanuele Del Monte, Frontend Engineer a Latina. Costruisco frontend enterprise con Angular, Signals e RxJS: tabelle grandi che restano reattive, filtri che lavorano sul server, uno stato che resta prevedibile quando l'applicazione cresce. Prima di IPS ho lavorato circa due anni in una web agency su CRM, e-commerce e un configuratore di prodotto B2B. La mia tesi, ApexFlow, è una dashboard CRM full-stack con frontend Angular e backend Spring Boot.",
+    'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di cybersecurity. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
   ],
   glance: [
@@ -42,8 +42,9 @@ export const CONTENT_IT: SiteContent = {
     {
       ...en('apexflow'),
       role: 'La mia tesi in Ingegneria Informatica, costruita durante il tirocinio in IPS S.p.A. nel 2026.',
+      result: 'Una sola chiamata API per ogni cambio di filtro, su ogni tabella.',
       summary:
-        'Una dashboard CRM e di analytics: Angular 19 con Signals e RxJS nel frontend, Spring Boot 3 e PostgreSQL nel backend.',
+        'Una dashboard CRM e di analisi con tabelle che ordinano, filtrano e paginano sul server, e ogni vista salvata nell\'URL.',
       repos: [
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
@@ -84,6 +85,7 @@ export const CONTENT_IT: SiteContent = {
     {
       ...en('pokeverba'),
       role: 'Un progetto con un amico che scrive i contenuti; io costruisco e gestisco il sito. 2026.',
+      result: 'Un cruciverba quotidiano le cui risposte non arrivano mai al browser.',
       summary: 'Un cruciverba quotidiano sui Pokémon, con la collezione dei Pokémon catturati e un blog, in italiano e in inglese.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
       image: {
@@ -122,6 +124,7 @@ export const CONTENT_IT: SiteContent = {
       ...en('wedding-3d-invite'),
       title: 'Invito di nozze 3D',
       role: 'Progettato e costruito da solo nel 2026, per il matrimonio di due amici.',
+      result: 'Un invito di nozze che si apre come una busta vera, poi smette di usare la GPU.',
       summary:
         'Un invito di nozze digitale pensato per il telefono: una busta di pizzo in Three.js che si apre al tocco, poi la giornata raccontata in undici slide, con RSVP e funzionamento offline.',
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
@@ -179,7 +182,7 @@ export const CONTENT_IT: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Sono entrato nel team frontend mentre finivo la laurea.',
       highlights: [
-        'Ho costruito ApexFlow, una dashboard per dati complessi, in Angular 19 con Signals.',
+        'Ho costruito ApexFlow, una dashboard CRM con tabelle lato server, in Angular 19 con Signals.',
         'Ho aggiunto filtri e paginazione lato server su grandi dataset, permessi per ruolo e unit test.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],

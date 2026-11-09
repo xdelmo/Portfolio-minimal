@@ -17,6 +17,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         <li class="project" [class.project--tall]="project.image && project.image.height > project.image.width">
           <div class="text">
             <h3 [style.view-transition-name]="'title-' + project.slug"><a class="touch-line" [routerLink]="['/work', project.slug]">{{ project.title }}</a></h3>
+            <p class="result">{{ project.result }}</p>
             <p>{{ project.summary }}</p>
             <p class="role">{{ project.role }}</p>
             <ul class="stack" i18n-aria-label="@@work.stack" aria-label="Technologies">
@@ -89,6 +90,9 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     }
     h3 a {
       color: var(--fg);
+    }
+    .result {
+      font-weight: 600;
     }
     .role {
       color: var(--fg-muted);

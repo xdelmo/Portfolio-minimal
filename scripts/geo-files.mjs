@@ -37,6 +37,7 @@ export function projectMarkdown(p, c, locale) {
   const l = LABELS[locale];
   return `${[
     `# ${p.title}`,
+    p.result,
     p.summary,
     `Stack: ${p.stack.join(', ')}`,
     `## ${l.links}`,

@@ -7,7 +7,7 @@ const lit = (page: Page) =>
 
 test('the About opens with a statement whose words light up as it scrolls by', async ({ page }) => {
   await page.goto('/en/');
-  await expect(statement(page)).toHaveText('I care about the parts users never see but always feel.');
+  await expect(statement(page)).toHaveText('A table with thousands of rows should feel like one with ten.');
   await expect.poll(async () => (await lit(page)).length).toBeGreaterThan(5);
   expect((await lit(page)).some((v) => v < 1)).toBe(true);
   await statement(page).evaluate((el) => {
@@ -26,7 +26,7 @@ test.describe('with reduced motion', () => {
   test('the statement is plain text in full colour', async ({ page }) => {
     await page.goto('/it/');
     await page.waitForTimeout(500);
-    await expect(statement(page)).toHaveText('Curo le parti che nessuno vede ma tutti sentono.');
+    await expect(statement(page)).toHaveText('Una tabella con migliaia di righe deve sembrare una con dieci.');
     expect(await lit(page)).toHaveLength(0);
   });
 });

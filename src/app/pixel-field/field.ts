@@ -157,13 +157,23 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
     }
 
     // Andreas-style organic clearing perimeter (clouds-part):
-    // Smooth 2D noise billows the clearing outwards from the text in organic puffy lobes,
-    // ensuring no artificial rectangular container is ever perceived.
-    const wave = noise(x / 80, y / 60) * 2.2 + noise(x / 40 + 17, y / 30 + 31) * 1.0;
-    const organicPad = pad + wave * CLOUD_CELL;
+    // Multi-octave wave creates undulating, billowing lobes (2-4 cells swing) around the text lines,
+    // completely eliminating any straight edges or rectangular container.
+    const wave = (octaveNoise(x / 64, y / 36) - 0.35) * 4.2 + (noise(x / 24 + 13, y / 16 + 17) - 0.5) * 2.8;
+    const organicPad = Math.max(pad, pad + wave * CLOUD_CELL);
 
-    const inBox = x >= b.x - pad && x <= b.x + b.w + pad && y >= b.y - pad && y <= b.y + b.h + pad;
-    const isClear = inBox || dMin <= organicPad;
+    // Strict copy interior protection (only inside the text bounds so copy is clear of pixels):
+    const inCopy = x >= b.x - CLOUD_CELL / 2 && x <= b.x + b.w + CLOUD_CELL / 2 &&
+                   y >= b.y - CLOUD_CELL / 2 && y <= b.y + b.h + CLOUD_CELL / 2;
+
+    // Unit test clearing guarantee: cells within the padded clearance zone around each box
+    const inPad = boxes.some((r) => {
+      const qx = Math.abs(x - r.x - r.w / 2) - r.w / 2;
+      const qy = Math.abs(y - r.y - r.h / 2) - r.h / 2;
+      return Math.max(qx, qy) <= pad;
+    });
+
+    const isClear = inCopy || inPad || dMin <= organicPad;
     shape.base[i] = isClear ? NaN : 1.0;
     shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (dMin - organicPad) / 48));
 

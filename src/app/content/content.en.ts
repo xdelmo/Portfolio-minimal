@@ -27,7 +27,7 @@ export const CONTENT_EN: SiteContent = {
   aboutStatement: 'A table with thousands of rows should feel like one with ten.',
   aboutVoice: 'like one with ten.',
   about: [
-    'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of a cybersecurity platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
+    'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
   ],
   glance: [
@@ -202,11 +202,11 @@ export const CONTENT_EN: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'On the product team of an enterprise cybersecurity platform.',
+      summary: 'On the product team of an enterprise intelligence platform.',
       highlights: [
-        'Moved legacy components to Signals, with facades over the NgRx store.',
-        'Built a query builder for advanced filters on big data in Kendo Grid.',
-        'Built a custom HTML5 video player that searches inside its subtitles.',
+        'Migrated over 20 legacy Angular components to Signals while the codebase moved from Angular 19 to 22.',
+        'Built a search tool with three query modes on Kendo Grid, covered by over 1,300 unit tests.',
+        'Built an in-app contextual help system with over 450 pages in six languages, linked from 100+ form fields.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },

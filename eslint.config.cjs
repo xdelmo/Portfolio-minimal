@@ -48,7 +48,7 @@ module.exports = defineConfig([
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
   },
   {
-    files: ['**/*.mjs', '**/*.js'],
+    files: ['**/*.mjs', '**/*.js', '**/*.cjs'],
     extends: [eslint.configs.recommended, tseslint.configs.disableTypeChecked],
     languageOptions: {
       globals: { console: 'readonly', process: 'readonly', __dirname: 'readonly', require: 'readonly', module: 'writable' },

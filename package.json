@@ -22,6 +22,7 @@
     "verify": "node scripts/env-check.mjs && npm run generate && npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e -- --max-failures=1 && npm run e2e:webkit -- --max-failures=1 && npm run e2e:changed"
   },
   "private": true,
+  "type": "module",
   "packageManager": "npm@11.19.0",
   "dependencies": {
     "@angular/common": "^22.2.0",

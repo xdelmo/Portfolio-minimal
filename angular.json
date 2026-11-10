@@ -128,7 +128,7 @@
               "e2e/**/*.ts",
               "scripts/**/*.mjs",
               "playwright.config.ts",
-              "eslint.config.js"
+              "eslint.config.cjs"
             ]
           }
         }

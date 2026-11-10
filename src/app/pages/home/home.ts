@@ -325,8 +325,12 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .figure-label {
       max-width: 24ch;
       color: var(--fg-muted);
-      font-size: var(--step--1);
-      line-height: 1.4;
+      font-size: var(--step-0);
+      line-height: 1.35;
+    }
+    // the proof and the facts are two blocks: the facts sit a full step lower, so the two grids do not read as one
+    .about-text app-at-a-glance {
+      margin-top: var(--space-4);
     }
     // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
     .statement {

@@ -196,9 +196,9 @@ export const CONTENT_IT: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Nel team di una piattaforma enterprise di intelligence.',
       highlights: [
-        'Ho migrato oltre 20 componenti Angular legacy a Signals mentre il codice passava da Angular 19 a 22.',
-        'Ho sviluppato uno strumento di ricerca con tre modalità di query su Kendo Grid, coperto da oltre 1.300 test unitari.',
-        'Ho realizzato una guida contestuale in-app con oltre 450 pagine in sei lingue, collegate a più di 100 campi.',
+        'Ho portato oltre 20 componenti legacy su Signals, nel passaggio ad Angular 22.',
+        'Ho creato una ricerca su Kendo Grid con oltre 1.300 test.',
+        'Ho creato una guida in-app: oltre 450 pagine in sei lingue, da più di 100 campi.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },

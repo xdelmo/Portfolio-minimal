@@ -45,6 +45,11 @@ Thumbs.db
 
 # brainstorming companion
 .superpowers
+
+# worktrees
+.worktrees/
+worktrees/
+
 # lighthouse
 .lighthouseci
 # playwright

@@ -65,6 +65,12 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             <p>{{ paragraph }}</p>
           }
         </div>
+        <!-- the proof under the statement (issue #392): big numbers, each read as one sentence with its label -->
+        <ul class="figures" role="list">
+          @for (figure of content.figures; track figure.value) {
+            <li><span class="figure">{{ figure.value }}<span class="plus">+</span></span>&ngsp;<span class="figure-label">{{ figure.label }}</span></li>
+          }
+        </ul>
         <app-at-a-glance [items]="content.glance" />
       </div>
       <app-moai-figure class="about-moai" />
@@ -286,6 +292,40 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     .about-body {
       display: grid;
       gap: var(--space-2);
+    }
+    // big numbers under one rule, labels below them (after matteovincenti.com's "14." row, issue #392); the plus in
+    // the band's link blue, which keeps 3:1 on the dark band where the accent does not
+    .figures {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4) var(--space-3);
+      margin: var(--space-2) 0 0;
+      padding: var(--space-4) 0 0;
+      border-top: 1px solid var(--rule);
+      list-style: none;
+      li {
+        display: grid;
+        align-content: start;
+        gap: var(--space-2);
+      }
+    }
+    .figure {
+      font-size: clamp(3rem, 1.5rem + 4vw, 6rem);
+      font-weight: 600;
+      line-height: 0.8;
+      font-variation-settings: 'wdth' 85;
+      letter-spacing: -0.04em;
+      font-variant-numeric: lining-nums;
+      white-space: nowrap;
+    }
+    .plus {
+      color: var(--link);
+    }
+    .figure-label {
+      max-width: 24ch;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+      line-height: 1.4;
     }
     // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
     .statement {

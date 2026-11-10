@@ -30,6 +30,12 @@ export const CONTENT_EN: SiteContent = {
     'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
   ],
+  figures: [
+    { value: '€1M', label: 'in orders placed through the Flexie configurator I built' },
+    { value: '20', label: 'legacy components moved to Signals' },
+    { value: '450', label: 'pages in six languages, in the in-app help I built' },
+    { value: '40', label: 'countries using the IPS platform I work on' },
+  ],
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
     { label: 'Based in', value: 'Latina, Italy (remote-friendly)' },
@@ -205,7 +211,6 @@ export const CONTENT_EN: SiteContent = {
       summary: 'On the product team of an enterprise intelligence platform.',
       highlights: [
         'Moved over 20 legacy components to Signals during the upgrade to Angular 22.',
-        'Built a search tool on Kendo Grid, covered by over 1,300 unit tests.',
         'Built in-app help: over 450 pages in six languages, linked from 100+ fields.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],

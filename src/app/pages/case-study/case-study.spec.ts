@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
+import { testProviders } from '../../../testing/test-providers';
 import { Title } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
-import { CONTENT } from '../../content/content';
 import { CONTENT_EN } from '../../content/content.en';
 import { CaseStudy, sectionBeingRead } from './case-study';
 
 describe('CaseStudy', () => {
   async function render(slug: string) {
     // every link, whatever GitHub answers today: the page is under test, not which repositories are public
-    TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: CONTENT, useValue: CONTENT_EN }] });
+    TestBed.configureTestingModule({ providers: testProviders() });
     const fixture = TestBed.createComponent(CaseStudy);
     fixture.componentRef.setInput('slug', slug);
     await fixture.whenStable();
@@ -78,11 +77,8 @@ describe('CaseStudy', () => {
 
   it('leads with the demo when no code is public, and drops the row when there is neither', async () => {
     TestBed.configureTestingModule({
-      providers: [
-        provideRouter([]),
-        // no public code anywhere, and PokèVerba without its demo either (nor screenshots: only the links are under test)
-        { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [], image: undefined, demoUrl: p.slug === 'pokeverba' ? undefined : p.demoUrl })) } },
-      ],
+      // no public code anywhere, and PokèVerba without its demo either (nor screenshots: only the links are under test)
+      providers: testProviders({ ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, repos: [], image: undefined, demoUrl: p.slug === 'pokeverba' ? undefined : p.demoUrl })) }),
     });
     const fixture = TestBed.createComponent(CaseStudy);
     fixture.componentRef.setInput('slug', 'apexflow');
@@ -96,7 +92,7 @@ describe('CaseStudy', () => {
 
   it('shows the pixel item for a project without a screenshot', async () => {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: CONTENT, useValue: { ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, image: undefined })) } }],
+      providers: testProviders({ ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, image: undefined })) }),
     });
     const fixture = TestBed.createComponent(CaseStudy);
     fixture.componentRef.setInput('slug', 'pokeverba');

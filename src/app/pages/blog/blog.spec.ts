@@ -1,8 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { testProviders } from '../../../testing/test-providers';
 import { Title } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
-import { CONTENT } from '../../content/content';
-import { CONTENT_EN } from '../../content/content.en';
 import { ArticlePage } from './article';
 import { BlogIndex } from './blog-index';
 import { CodeBlock } from './code-block';
@@ -10,10 +8,7 @@ import { CodeBlock } from './code-block';
 describe('BlogIndex', () => {
   it('renders all blog articles with dates, reading time and read-link', async () => {
     TestBed.configureTestingModule({
-      providers: [
-        provideRouter([]),
-        { provide: CONTENT, useValue: CONTENT_EN },
-      ],
+      providers: testProviders(),
     });
     const fixture = TestBed.createComponent(BlogIndex);
     await fixture.whenStable();
@@ -30,10 +25,7 @@ describe('BlogIndex', () => {
 describe('ArticlePage', () => {
   async function render(slug: string) {
     TestBed.configureTestingModule({
-      providers: [
-        provideRouter([]),
-        { provide: CONTENT, useValue: CONTENT_EN },
-      ],
+      providers: testProviders(),
     });
     const fixture = TestBed.createComponent(ArticlePage);
     fixture.componentRef.setInput('slug', slug);

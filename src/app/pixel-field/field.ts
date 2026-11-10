@@ -105,6 +105,11 @@ function cloudNoise(col: number, row: number): number {
   return octaveNoise(qx, qy);
 }
 
+/** Macro breaks between cloud masses, creating open sky channels like andreas.vision instead of one single mask. */
+function cloudBreak(col: number, row: number): number {
+  return noise((col + 120) / 20, (row + 60) / 10);
+}
+
 /** The box around all of `boxes`. */
 export function bounds(boxes: readonly Box[]): Box {
   const x = Math.min(...boxes.map((b) => b.x));
@@ -114,15 +119,14 @@ export function bounds(boxes: readonly Box[]): Box {
 
 /** How far (px) the text's boxes melt into one shape where they come close (a smooth minimum). */
 const MELT = 48;
-/** Over how much depth past the ellipse the rim's noise turns from outward only to the mockup's both ways. */
-const REACH = 0.3;
 
-/** The part of the mask that does not drift: per cell, its base depth (NaN in the padded text) and how far it is from the text (0-1). */
+/** The part of the mask that does not drift: base clearing status, distance from text (0-1), and corner proximity (0-1). */
 interface Shape {
   l: FieldLayout;
   clear: readonly Box[] | null;
   base: Float64Array;
   near: Float64Array;
+  corner: Float64Array;
 }
 let shape: Shape | null = null;
 
@@ -131,10 +135,7 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
   const h = l.y0 + l.rows * CLOUD_CELL;
   const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
-  const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
-  const mx = b.x + b.w / 2;
-  const my = b.y + b.h / 2;
   // distance (px) from the text itself: its line boxes melted together, so the clearing follows the lines, not their container
   const gap = (px: number, py: number): number => {
     let g = Infinity;
@@ -147,37 +148,32 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
     }
     return g;
   };
-  // the mockup's ellipse, grown until the padded text fits inside it: its edge is never the text's outline (a rounded box)
-  const a = b.w / 2 + pad;
-  const c = b.h / 2 + pad;
-  const rx = Math.max(w * (h > w ? 0.46 : 0.4), Math.SQRT2 * a);
-  const ry = Math.max(h * 0.4, c / Math.sqrt(1 - (a / rx) ** 2));
-  const dist = (px: number, py: number): number => Math.hypot((px - mx) / rx, (py - my) / ry);
-  // the mockup's hero corner sits at d = 1.77: where the text pushed the edge outwards, squeeze the band so the corners still get there
-  const far = Math.max(dist(0, 0), dist(w, 0), dist(0, h), dist(w, h));
-  const squeeze = Math.max(1, 0.77 / Math.max(far - 1, 0.01));
+  const cornerRadius = Math.hypot(w, h) * 0.38;
   const n = l.cols * l.rows;
-  shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n) };
+  shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n), corner: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const g = gap(x, y);
-    shape.base[i] = g <= pad ? NaN : 1 + (dist(x, y) - 1) * squeeze;
-    // how far past the ellipse, not past the text: inside it the push keeps every cell dark, so the text's outline never shows
-    shape.near[i] = Math.min(1, Math.max(0, (shape.base[i] - 1) / REACH));
+    shape.base[i] = g <= pad ? NaN : 1.0;
+    shape.near[i] = g <= pad ? 0 : Math.min(1, (g - pad) / 56);
+    // proximity to nearest of the 4 canvas corners (1.0 at corner, 0 beyond cornerRadius)
+    const dc = Math.min(
+      Math.hypot(x, y),
+      Math.hypot(w - x, y),
+      Math.hypot(x, h - y),
+      Math.hypot(w - x, h - y),
+    );
+    shape.corner[i] = Math.max(0, 1 - dc / cornerRadius);
   }
   return shape;
 }
 
 /**
- * How deep in the cloud a cell is, as in the approved mockup: a soft, noisy ellipse (radii 40% of the hero, 46% by 40%
- * on a tall one) around the text, lit where `d > 1`, with depth `min(1, (d - 1) * 1.6)`: solid blue at the edges, lavender
- * only near the rim, where a few specks (depth 0.1) also stray in. The ellipse grows until the text's own line boxes
- * (`clear`, melted together, plus CLEAR_PAD cells) fit inside it, and those are never lit. Like andreas.vision's sky
- * the rim is noise, never the text's outline: inside the ellipse the noise only pushes the cloud away (up to REACH
- * depth past it), and further out it swings both ways as in the mockup. `clear` null
- * (not measured yet) is a centred box of a quarter of the canvas. `shift` (cells, see `drift`) slides the noise
- * sideways: the cloud drifts with the wind while its clearing stays put.
+ * How deep in the cloud a cell is: fragmented into organic, broken cloud formations and billows
+ * like andreas.vision (not a single monolithic ellipse mask).
+ * Macro breaks carve open sky channels between cloud masses, while the clearing remains empty
+ * and the outer corners stay deep blue (> 0.75).
  */
 export function cloudDepth(col: number, row: number, l: FieldLayout, clear: readonly Box[] | null, shift = 0): number {
   const s = shapeOf(l, clear);
@@ -185,10 +181,18 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   const base = s.base[i];
   if (Number.isNaN(base)) return -0.2;
   const near = s.near[i];
-  // organic cloud noise: active across the entire sky to produce living drifting billows (like andreas.vision)
-  // while keeping corners dense blue (> 0.75) and clearing clear (<= -2 * BREATHE)
-  const calm = Math.min(1, Math.max(0.35, (2.4 - base) * 1.5));
-  const d = base + ((cloudNoise(col - shift, row) - 0.48) * 0.85 - 0.35 * (1 - near)) * calm;
+  const corner = s.corner[i];
+
+  // Broken cloud structure like andreas.vision:
+  // Combines multi-octave cloud noise with macro breaks separating cloud banks across the sky
+  const n = cloudNoise(col - shift, row);
+  const brk = cloudBreak(col - shift, row);
+
+  // Cloud formations with breaks:
+  // brk creates open channels between separate cloud formations, avoiding a single monolithic ellipse
+  const cloudMass = (n - 0.42) * 1.4 + (brk - 0.44) * 0.9;
+  const d = 0.82 + cloudMass * 0.95 + corner * 0.85 - 0.7 * (1 - near);
+
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
   return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
 }

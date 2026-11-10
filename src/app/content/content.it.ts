@@ -28,7 +28,7 @@ export const CONTENT_IT: SiteContent = {
   aboutStatement: 'Una tabella con migliaia di righe deve sembrare una con dieci.',
   aboutVoice: 'una con dieci.',
   about: [
-    'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di cybersecurity. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
+    'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di intelligence. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
   ],
   glance: [
@@ -194,11 +194,11 @@ export const CONTENT_IT: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'Nel team di una piattaforma enterprise di cybersecurity.',
+      summary: 'Nel team di una piattaforma enterprise di intelligence.',
       highlights: [
-        'Ho portato i componenti legacy su Signals, con facade sullo store NgRx.',
-        'Ho costruito un query builder per filtri avanzati in Kendo Grid.',
-        'Ho sviluppato un player video HTML5 con ricerca nei sottotitoli.',
+        'Ho migrato oltre 20 componenti Angular legacy a Signals mentre il codice passava da Angular 19 a 22.',
+        'Ho sviluppato uno strumento di ricerca con tre modalità di query su Kendo Grid, coperto da oltre 1.300 test unitari.',
+        'Ho realizzato una guida contestuale in-app con oltre 450 pagine in sei lingue, collegate a più di 100 campi.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },

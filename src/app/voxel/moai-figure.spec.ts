@@ -17,6 +17,14 @@ describe('MoaiFigure', () => {
     expect(el.querySelector('app-moai-scene')).toBeNull();
   });
 
+  it('stays on the still image on a data saver, without loading Three.js', async () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('prefers-reduced-data: reduce'), addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    const fixture = TestBed.createComponent(MoaiFigure);
+    await fixture.whenStable();
+    // not even the deferred block's placeholder: the scene's chunk is never asked for
+    expect((fixture.nativeElement as HTMLElement).querySelector('.layer')).toBeNull();
+  });
+
   it('stays on the still image where matchMedia is missing', async () => {
     vi.stubGlobal('matchMedia', undefined);
     const fixture = TestBed.createComponent(MoaiFigure);

@@ -67,6 +67,16 @@ const TAP_WINDOW_MS = 2000;
       background: var(--accent);
       box-shadow: none;
     }
+    @media (forced-colors: active) {
+      span {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+      }
+      .on {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
   `,
 })
 export class GameTrigger {

@@ -55,6 +55,16 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
       box-shadow: none;
       animation: node-on 0.24s steps(3);
     }
+    @media (forced-colors: active) {
+      app-thread .node {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+      }
+      app-thread .node.is-lit {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
     @keyframes node-on {
       from {
         transform: scale(2);

@@ -70,6 +70,12 @@ export function dissolvePaths(cols: number, rows: number, grow: 'up' | 'none', c
       display: block;
       pointer-events: none;
     }
+    // decoration in its own colours, which ignore the system palette (issue #431)
+    @media (forced-colors: active) {
+      :host {
+        visibility: hidden;
+      }
+    }
     svg {
       display: block;
       width: 100%;

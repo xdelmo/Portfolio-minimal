@@ -94,7 +94,8 @@ export class MoaiFigure {
 
   constructor() {
     afterNextRender(() => {
-      this.live.set(typeof matchMedia === 'function' && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+      // the still image only, and no Three.js chunk, with reduced motion or on a data saver (issue #431)
+      this.live.set(typeof matchMedia === 'function' && !matchMedia('(prefers-reduced-motion: reduce), (prefers-reduced-data: reduce)').matches);
     });
   }
 }

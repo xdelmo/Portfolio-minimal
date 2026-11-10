@@ -54,21 +54,34 @@ export interface Cells {
   shade: Float64Array;
 }
 
-const cache = new WeakMap<FieldLayout, { key: string; cells: Cells }>();
+const MAX_CACHE_ENTRIES = 48;
+const cache = new WeakMap<FieldLayout, Map<string, Cells>>();
 
 export function cellsOf(l: FieldLayout, clear: readonly Box[] | null, shift = 0): Cells {
   const key = `${JSON.stringify(clear)}@${String(shift)}`;
-  const hit = cache.get(l);
-  if (hit?.key === key) return hit.cells;
+  let entries = cache.get(l);
+  if (!entries) {
+    entries = new Map();
+    cache.set(l, entries);
+  }
+  const hit = entries.get(key);
+  if (hit) return hit;
   const n = l.cols * l.rows;
   const cells: Cells = { depth: new Float64Array(n), speed: new Float64Array(n), phase: new Float64Array(n), shade: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
-    cells.depth[i] = cloudDepth(i % l.cols, Math.floor(i / l.cols), l, clear, shift);
-    cells.speed[i] = 0.0006 + hash(i + 21) * 0.0018;
-    cells.phase[i] = hash(i + 29) * Math.PI * 2;
-    cells.shade[i] = hash(i + 3);
+    const col = i % l.cols;
+    const row = Math.floor(i / l.cols);
+    cells.depth[i] = cloudDepth(col, row, l, clear, shift);
+    const cShift = col - Math.round(shift);
+    cells.speed[i] = 0.0006 + hash((cShift * 19 + row * 43 + 21) & 0xffff) * 0.0018;
+    cells.phase[i] = hash((cShift * 29 + row * 53 + 29) & 0xffff) * Math.PI * 2;
+    cells.shade[i] = hash((cShift * 37 + row * 67 + 3) & 0xffff);
   }
-  cache.set(l, { key, cells });
+  if (entries.size >= MAX_CACHE_ENTRIES) {
+    const oldest = entries.keys().next().value;
+    if (oldest !== undefined) entries.delete(oldest);
+  }
+  entries.set(key, cells);
   return cells;
 }
 
@@ -103,12 +116,12 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
         if (grown <= 0) continue;
         size = CLOUD_CELL * grown;
         alpha = p.alpha + (1 - p.alpha) * e;
-        color = p.tones[tone(depth, cells.shade[i])];
+        color = p.tones[tone(depth, cells.shade[i], col, row)];
       } else {
         if (energy <= 0.05) continue;
         size = CLOUD_CELL;
         alpha = energy;
-        color = p.tones[tone(0, cells.shade[i])];
+        color = p.tones[tone(0, cells.shade[i], col, row)];
       }
       if (color !== fill) ctx.fillStyle = fill = color;
       ctx.globalAlpha = alpha;

@@ -94,11 +94,11 @@ function octaveNoise(x: number, y: number): number {
 
 /**
  * Organic cloud noise: horizontally stretched along the wind direction with 3-cell cluster
- * puffs/lobes (like andreas.vision) that drift across the sky.
+ * puffs/lobes (like andreas.vision) and subtle vertical wave modulation that drift across the sky.
  */
 function cloudNoise(col: number, row: number): number {
   const cx = col / 12;
-  const cy = row / 6;
+  const cy = (row + Math.sin(col * 0.18) * 0.6) / 6;
   const puff = noise(cx * 0.5 + 5.2, cy * 0.5 + 8.1) > 0.58;
   const qx = puff ? Math.floor(col / 3) * 3 / 12 + 0.125 : cx;
   const qy = puff ? Math.floor(row / 3) * 3 / 6 + 0.25 : cy;
@@ -154,9 +154,15 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   for (let i = 0; i < n; i++) {
     const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
+    const inPad = boxes.some((r) => {
+      const qx = Math.abs(x - r.x - r.w / 2) - r.w / 2;
+      const qy = Math.abs(y - r.y - r.h / 2) - r.h / 2;
+      return Math.max(qx, qy) <= pad;
+    });
     const g = gap(x, y);
-    shape.base[i] = g <= pad ? NaN : 1.0;
-    shape.near[i] = g <= pad ? 0 : Math.min(1, (g - pad) / 56);
+    const isClear = inPad || g <= pad;
+    shape.base[i] = isClear ? NaN : 1.0;
+    shape.near[i] = isClear ? 0 : Math.min(1, (g - pad) / 56);
     // proximity to nearest of the 4 canvas corners (1.0 at corner, 0 beyond cornerRadius)
     const dc = Math.min(
       Math.hypot(x, y),
@@ -183,10 +189,11 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   const near = s.near[i];
   const corner = s.corner[i];
 
-  // Broken cloud structure like andreas.vision:
-  // Combines multi-octave cloud noise with macro breaks separating cloud banks across the sky
+  // Broken cloud structure with atmospheric shear (impeccable motion):
+  // Macro breaks drift at 0.75x speed relative to the foreground puff clusters (shift),
+  // producing continuous multi-speed parallax and organic morphing across open sky channels.
   const n = cloudNoise(col - shift, row);
-  const brk = cloudBreak(col - shift, row);
+  const brk = cloudBreak(col - shift * 0.75, row);
 
   // Cloud formations with breaks:
   // brk creates open channels between separate cloud formations, avoiding a single monolithic ellipse

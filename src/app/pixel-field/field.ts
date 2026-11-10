@@ -117,9 +117,6 @@ export function bounds(boxes: readonly Box[]): Box {
   return { x, y, w: Math.max(...boxes.map((b) => b.x + b.w)) - x, h: Math.max(...boxes.map((b) => b.y + b.h)) - y };
 }
 
-/** How far (px) the text's boxes melt into one shape where they come close (a smooth minimum). */
-const MELT = 48;
-
 /** The part of the mask that does not drift: base clearing status, distance from text (0-1), and corner proximity (0-1). */
 interface Shape {
   l: FieldLayout;
@@ -135,18 +132,13 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
   const h = l.y0 + l.rows * CLOUD_CELL;
   const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
+  const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
-  // distance (px) from the text itself: its line boxes melted together, so the clearing follows the lines, not their container
+  // distance (px) from the text itself: its bounding box with pad
   const gap = (px: number, py: number): number => {
-    let g = Infinity;
-    for (const r of boxes) {
-      const qx = Math.abs(px - r.x - r.w / 2) - r.w / 2;
-      const qy = Math.abs(py - r.y - r.h / 2) - r.h / 2;
-      const d = Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0);
-      const k = Math.max(MELT - Math.abs(g - d), 0) / MELT;
-      g = Math.min(g, d) - k * k * MELT / 4;
-    }
-    return g;
+    const qx = Math.abs(px - b.x - b.w / 2) - b.w / 2;
+    const qy = Math.abs(py - b.y - b.h / 2) - b.h / 2;
+    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0);
   };
   const cornerRadius = Math.hypot(w, h) * 0.38;
   const n = l.cols * l.rows;
@@ -154,15 +146,11 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   for (let i = 0; i < n; i++) {
     const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
-    const inPad = boxes.some((r) => {
-      const qx = Math.abs(x - r.x - r.w / 2) - r.w / 2;
-      const qy = Math.abs(y - r.y - r.h / 2) - r.h / 2;
-      return Math.max(qx, qy) <= pad;
-    });
+    const inBox = x >= b.x - pad && x <= b.x + b.w + pad && y >= b.y - pad && y <= b.y + b.h + pad;
     const g = gap(x, y);
-    const isClear = inPad || g <= pad;
+    const isClear = inBox || g <= pad;
     shape.base[i] = isClear ? NaN : 1.0;
-    shape.near[i] = isClear ? 0 : Math.min(1, (g - pad) / 56);
+    shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (g - pad) / 56));
     // proximity to nearest of the 4 canvas corners (1.0 at corner, 0 beyond cornerRadius)
     const dc = Math.min(
       Math.hypot(x, y),

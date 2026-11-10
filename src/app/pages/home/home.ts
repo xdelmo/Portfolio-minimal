@@ -17,6 +17,7 @@ import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
 import { parallaxEffect } from '../../motion/effects/parallax';
 import { experienceEffect } from '../../motion/effects/experience';
+import { figuresEffect } from '../../motion/effects/figures';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { moaiEffect } from '../../motion/effects/moai';
@@ -68,7 +69,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
         <!-- the proof under the statement (issue #392): big numbers, each read as one sentence with its label -->
         <ul class="figures" role="list">
           @for (figure of content.figures; track figure.value) {
-            <li><span class="figure">{{ figure.value }}<span class="plus">+</span></span>&ngsp;<span class="figure-label">{{ figure.label }}</span></li>
+            <li><span class="figure"><span class="figure-value">{{ figure.value }}</span><span class="plus">+</span></span>&ngsp;<span class="figure-label">{{ figure.label }}</span></li>
           }
         </ul>
         <app-at-a-glance [items]="content.glance" />
@@ -315,7 +316,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       line-height: 0.8;
       font-variation-settings: 'wdth' 85;
       letter-spacing: -0.04em;
-      font-variant-numeric: lining-nums;
+      font-variant-numeric: lining-nums tabular-nums;
       white-space: nowrap;
     }
     .plus {
@@ -395,7 +396,7 @@ export class Home {
   protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
   protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
   protected readonly lede = around(this.content.hero.lede, this.content.hero.peek);
-  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, figuresEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

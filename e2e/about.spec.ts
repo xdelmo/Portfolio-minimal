@@ -62,3 +62,27 @@ for (const [lang, label] of [
     }
   });
 }
+
+test('the big numbers count up from zero once they scroll into view, and end on their values', async ({ page }) => {
+  await page.goto('/en/');
+  const values = page.locator('#about .figure-value');
+  await expect(values).toHaveText(['€1M', '20', '450', '40']);
+  await values.first().evaluate((el) => {
+    const w = window as unknown as { seen: string[] };
+    w.seen = [];
+    new MutationObserver(() => w.seen.push(el.textContent)).observe(el, { childList: true, characterData: true, subtree: true });
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight / 2);
+  });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { seen: string[] }).seen.some((t) => t.endsWith('K')))).toBe(true);
+  await expect(values).toHaveText(['€1M', '20', '450', '40']);
+});
+
+test.describe('the big numbers with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('stay still on their values', async ({ page }) => {
+    await page.goto('/en/');
+    await page.locator('#about .figures').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    await expect(page.locator('#about .figure-value')).toHaveText(['€1M', '20', '450', '40']);
+  });
+});

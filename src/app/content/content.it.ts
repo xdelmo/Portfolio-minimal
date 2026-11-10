@@ -186,7 +186,7 @@ export const CONTENT_IT: SiteContent = {
         'Ho costruito ApexFlow, una dashboard CRM con tabelle lato server, in Angular 19 con Signals.',
         'Ho aggiunto filtri e paginazione lato server su grandi dataset, permessi per ruolo e unit test.',
       ],
-      tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
+      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'Case study di ApexFlow' },
     },
     {

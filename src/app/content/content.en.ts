@@ -46,7 +46,7 @@ export const CONTENT_EN: SiteContent = {
       result: 'One API call per filter change, on every table.',
       summary:
         'A CRM and analytics dashboard whose tables sort, filter and page on the server, with every view saved in the URL.',
-      stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
+      stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS', 'Spring Boot', 'PostgreSQL'],
       repos: [
         { label: 'Frontend code', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
@@ -194,7 +194,7 @@ export const CONTENT_EN: SiteContent = {
         'Built ApexFlow, a CRM dashboard with server-side tables, in Angular 19 with Signals.',
         'Added server-side filtering, pagination, role-based permissions and unit tests.',
       ],
-      tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
+      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
     {

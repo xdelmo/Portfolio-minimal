@@ -669,7 +669,6 @@ test.describe('on other pages', () => {
       await page.setViewportSize({ width: 1280, height: 800 });
       await page.goto(path);
       await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure[data-corner]')).toHaveCount(1);
-      await expect(page.locator('app-moai-guest[data-place=peek] app-moai-figure')).toHaveCount(0);
       const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
       const box = await rect(page, 'app-moai-guest .body');
       expect([Math.round(box.height), Math.round(w - box.right), Math.round(h - box.bottom)]).toEqual([140, 16, 16]);
@@ -693,22 +692,12 @@ test.describe('on other pages', () => {
     });
   }
 
-  test('on a phone its head peeks above the footer, with no speech bubble', async ({ page }) => {
+  test('on phones and tablets no moai appears outside the home', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/en/work/apexflow/');
-    const peek = page.locator('app-moai-guest[data-place=peek]');
-    await expect(peek.locator('app-moai-figure')).toHaveCount(1);
-    await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(0);
-    const [p, f] = await Promise.all([rect(page, 'app-moai-guest[data-place=peek]'), rect(page, 'app-site-footer')]);
-    expect(Math.abs(p.bottom - f.top)).toBeLessThanOrEqual(1);
-    // the clip cuts the figure, never squashes it: Lighthouse fails a still image drawn out of its proportions
-    const ratio = await peek.locator('app-moai-figure').evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      return r.width / r.height;
-    });
-    expect(ratio).toBeCloseTo(288 / 655, 2);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-    await expect(page.locator('.moai-line')).toHaveCount(0);
+    await expect(guest(page)).toHaveCount(0);
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await expect(guest(page)).toHaveCount(0);
   });
 
   test('the home has only its own moai, also after going to a case study and back', async ({ page, isMobile }) => {
@@ -727,14 +716,13 @@ test.describe('on other pages', () => {
     expect(await page.locator('app-moai-scene').count()).toBeLessThanOrEqual(1);
   });
 
-  test('crossing 1024px it moves between the corner and the footer, never in both', async ({ page, isMobile }) => {
+  test('crossing 1024px it appears only on desktop', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/en/work/apexflow/');
     await expect(guest(page)).toHaveCount(1);
     await page.setViewportSize({ width: 800, height: 800 });
-    await expect(page.locator('app-moai-guest[data-place=peek] app-moai-figure')).toHaveCount(1);
-    await expect(guest(page)).toHaveCount(1);
+    await expect(guest(page)).toHaveCount(0);
     await page.setViewportSize({ width: 1280, height: 800 });
     await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(1);
     await expect(guest(page)).toHaveCount(1);

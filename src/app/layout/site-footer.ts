@@ -70,7 +70,21 @@ import { APP_VERSION } from '../core/version.generated';
     .to-top:hover svg {
       translate: 0 -4px;
     }
+    // tablets: the year and the way back up share a line, the links take the next one whole (in a third of the width the
+    // Start key wrapped alone under them)
     @include bp.up(md) {
+      .site-footer {
+        grid-template-columns: 1fr auto;
+      }
+      .to-top {
+        justify-self: end;
+      }
+      ul {
+        grid-column: 1 / -1;
+      }
+    }
+    // the three columns need 1100px: at 1024 a column, less the room left for the moai, is 1.5px short of the links
+    @media (min-width: 1100px) {
       .site-footer {
         grid-template-columns: 1fr auto 1fr;
       }
@@ -78,6 +92,7 @@ import { APP_VERSION } from '../core/version.generated';
         justify-self: center;
       }
       ul {
+        grid-column: auto;
         justify-self: end;
       }
     }

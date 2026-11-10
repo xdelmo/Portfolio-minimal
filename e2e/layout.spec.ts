@@ -347,3 +347,14 @@ test('the lead project spans the work list on desktop, the next one sits under i
   expect(boxes[0].w).toBeCloseTo(list, 0);
   expect(boxes[1].w).toBeLessThan(list / 2);
 });
+
+// issue #415: in a third of the width the Start key wrapped alone under the links at 1024px and from 768 to 1023
+for (const width of [768, 1024, 1099, 1100]) {
+  test(`the footer links stay on one line at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/en/');
+    await expect(page.locator('[data-press-start]')).toBeVisible();
+    const tops = await page.locator('app-site-footer li').evaluateAll((items) => items.map((li) => Math.round(li.getBoundingClientRect().top)));
+    expect(new Set(tops).size).toBe(1);
+  });
+}

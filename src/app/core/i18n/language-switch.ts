@@ -100,6 +100,11 @@ const COVER_MS = 500;
       background: var(--surface);
       box-shadow: 0 0 0 1px var(--rule);
     }
+    @media (forced-colors: active) {
+      ul:not(.languages) {
+        outline: 1px solid CanvasText;
+      }
+    }
     li > * {
       position: relative;
       display: flex;

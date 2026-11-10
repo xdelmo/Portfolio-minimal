@@ -88,6 +88,11 @@ const SHOWN = 'inset(0 0 0% 0)';
       background: var(--bg);
       box-shadow: 0 1px 0 var(--rule);
     }
+    @media (forced-colors: active) {
+      nav {
+        border-bottom: 1px solid CanvasText;
+      }
+    }
     nav {
       display: grid;
     }

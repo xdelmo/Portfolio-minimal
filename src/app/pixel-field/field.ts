@@ -127,30 +127,46 @@ interface Shape {
 }
 let shape: Shape | null = null;
 
+function sameBoxes(a: readonly Box[] | null, b: readonly Box[] | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.length === b.length && a.every((box, i) => box.x === b[i].x && box.y === b[i].y && box.w === b[i].w && box.h === b[i].h);
+}
+
 function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
-  if (shape?.l === l && shape.clear === clear) return shape;
+  if (shape?.l === l && sameBoxes(shape.clear, clear)) return shape;
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
   const h = l.y0 + l.rows * CLOUD_CELL;
   const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
   const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
-  // distance (px) from the text itself: its bounding box with pad
-  const gap = (px: number, py: number): number => {
-    const qx = Math.abs(px - b.x - b.w / 2) - b.w / 2;
-    const qy = Math.abs(py - b.y - b.h / 2) - b.h / 2;
-    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0);
-  };
-  const cornerRadius = Math.hypot(w, h) * 0.38;
+  const cornerRadius = Math.hypot(w, h) * 0.24;
   const n = l.cols * l.rows;
   shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n), corner: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
+
+    // Euclidean distance to individual text line boxes (like andreas.vision za function):
+    let dMin = Infinity;
+    for (const box of boxes) {
+      const qx = Math.max(box.x - x, 0, x - box.x - box.w);
+      const qy = Math.max(box.y - y, 0, y - box.y - box.h);
+      const d = Math.hypot(qx, qy);
+      if (d < dMin) dMin = d;
+    }
+
+    // Andreas-style organic clearing perimeter (clouds-part):
+    // Smooth 2D noise billows the clearing outwards from the text in organic puffy lobes,
+    // ensuring no artificial rectangular container is ever perceived.
+    const wave = noise(x / 80, y / 60) * 2.2 + noise(x / 40 + 17, y / 30 + 31) * 1.0;
+    const organicPad = pad + wave * CLOUD_CELL;
+
     const inBox = x >= b.x - pad && x <= b.x + b.w + pad && y >= b.y - pad && y <= b.y + b.h + pad;
-    const g = gap(x, y);
-    const isClear = inBox || g <= pad;
+    const isClear = inBox || dMin <= organicPad;
     shape.base[i] = isClear ? NaN : 1.0;
-    shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (g - pad) / 56));
+    shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (dMin - organicPad) / 48));
+
     // proximity to nearest of the 4 canvas corners (1.0 at corner, 0 beyond cornerRadius)
     const dc = Math.min(
       Math.hypot(x, y),

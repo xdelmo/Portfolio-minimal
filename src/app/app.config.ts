@@ -8,6 +8,7 @@ import {
   withViewTransitions,
 } from '@angular/router';
 import { routes } from './app.routes';
+import { withChunkReload } from './core/chunk-error';
 import { provideContent } from './content/content';
 import { workImageLoader } from './content/image-loader';
 import { smoother } from './motion/smoother';
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
       // only between pages of the app: the first navigation at hydration would cross-fade the page it just loaded
       withViewTransitions({ skipInitialTransition: true }),
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
+      withChunkReload(),
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),
     provideContent(),

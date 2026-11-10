@@ -45,3 +45,20 @@ for (const [lang, sentence, daily] of [
     expect(ld.join()).toContain('Model Context Protocol');
   });
 }
+
+for (const [lang, label] of [
+  ['en', '€1M+ in orders placed through the Flexie configurator I built'],
+  ['it', '€1M+ di ordini passati dal configuratore Flexie che ho costruito'],
+] as const) {
+  test(`${lang}: the About proves the statement with four big numbers that fit a phone`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/${lang}/`);
+    const figures = page.locator('#about .figures li');
+    await expect(figures).toHaveCount(4);
+    await expect(figures.first()).toHaveText(label);
+    await expect(page.locator('#about .figure')).toHaveText(['€1M+', '20+', '450+', '40+']);
+    for (const box of await page.locator('#about .figure').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().right))) {
+      expect(box).toBeLessThanOrEqual(390);
+    }
+  });
+}

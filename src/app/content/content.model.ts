@@ -138,6 +138,8 @@ export interface SiteContent {
   /** One string per paragraph. */
   about: readonly string[];
   glance: readonly GlanceItem[];
+  /** The About's row of big numbers (issue #392): only true, checkable facts; every value reads "more than". */
+  figures: readonly GlanceItem[];
   projects: readonly Project[];
   experience: readonly ExperienceItem[];
   studies: readonly StudyItem[];

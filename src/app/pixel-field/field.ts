@@ -87,9 +87,22 @@ function noise(x: number, y: number): number {
   return top * (1 - sy) + bottom * sy;
 }
 
-/** The mockup's two-scale noise in [0, 1), in cell units. */
+/** 3-octave Hermite value noise inspired by andreas.vision. */
+function octaveNoise(x: number, y: number): number {
+  return 0.6 * noise(x, y) + 0.3 * noise(x * 2 + 17.1, y * 2 + 31.4) + 0.1 * noise(x * 4 + 43.7, y * 4 + 79.2);
+}
+
+/**
+ * Organic cloud noise: horizontally stretched along the wind direction with 3-cell cluster
+ * puffs/lobes (like andreas.vision) that drift across the sky.
+ */
 function cloudNoise(col: number, row: number): number {
-  return 0.6 * noise(col / 9, row / 9) + 0.4 * noise((col + 50) / 4, (row + 50) / 4);
+  const cx = col / 12;
+  const cy = row / 6;
+  const puff = noise(cx * 0.5 + 5.2, cy * 0.5 + 8.1) > 0.58;
+  const qx = puff ? Math.floor(col / 3) * 3 / 12 + 0.125 : cx;
+  const qy = puff ? Math.floor(row / 3) * 3 / 6 + 0.25 : cy;
+  return octaveNoise(qx, qy);
 }
 
 /** The box around all of `boxes`. */
@@ -172,9 +185,10 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   const base = s.base[i];
   if (Number.isNaN(base)) return -0.2;
   const near = s.near[i];
-  // the mockup's ±0.35 noise, outward only next to the text, calmed far out so the corners are always solid blue
-  const calm = Math.min(1, Math.max(0, (2 - base) * 2));
-  const d = base + ((cloudNoise(col - shift, row) - 0.5) * 0.7 - 0.35 * (1 - near)) * calm;
+  // organic cloud noise: active across the entire sky to produce living drifting billows (like andreas.vision)
+  // while keeping corners dense blue (> 0.75) and clearing clear (<= -2 * BREATHE)
+  const calm = Math.min(1, Math.max(0.35, (2.4 - base) * 1.5));
+  const d = base + ((cloudNoise(col - shift, row) - 0.48) * 0.85 - 0.35 * (1 - near)) * calm;
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
   return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
 }
@@ -184,11 +198,18 @@ export function breathe(depth: number, phase: number, t: number): number {
   return t <= 0 ? depth : depth + BREATHE * Math.sin(t * BREATHE_SPEED + phase);
 }
 
-/** Index into the six tones (`--px-1`...`--px-6`): signal blue at the edges, lavender and sparse peach near the clearing. */
-export function tone(depth: number, shade: number): number {
-  if (depth > 0.75) return 0;
-  if (depth > 0.5) return 1;
-  if (depth > 0.3) return 2;
+/**
+ * Index into the six tones (`--px-1`...`--px-6`): signal blue at the edges, lavender and sparse peach near the clearing.
+ * Integrates 2x2 pixel-art checkerboard dithering on threshold transitions as in andreas.vision.
+ */
+export function tone(depth: number, shade: number, col = 0, row = 0): number {
+  const dither = (col + row) % 2 === 0;
+  if (depth > 0.78) return 0;
+  if (depth > 0.72) return dither ? 0 : 1;
+  if (depth > 0.53) return 1;
+  if (depth > 0.47) return dither ? 1 : 2;
+  if (depth > 0.33) return 2;
+  if (depth > 0.27) return dither ? 2 : (shade > 0.6 ? 3 : 4);
   return shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
 }
 

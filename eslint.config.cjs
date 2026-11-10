@@ -31,6 +31,9 @@ module.exports = defineConfig([
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'app', style: 'camelCase' }],
       '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'app', style: 'kebab-case' }],
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
+      // signal inputs, queries and outputs only (issue #428)
+      '@angular-eslint/prefer-signals': 'error',
+      '@angular-eslint/prefer-output-emitter-ref': 'error',
       // Angular components and services are decorated classes, often without members.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       // inject() inside a render hook's callback runs outside the injection context: NG0203 at runtime (issue #330).

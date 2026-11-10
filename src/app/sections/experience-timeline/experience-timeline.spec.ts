@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { testProviders } from '../../../testing/test-providers';
 import { CONTENT_EN } from '../../content/content.en';
 import { ExperienceTimeline } from './experience-timeline';
 
 describe('ExperienceTimeline', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: testProviders() });
   });
 
   it('renders an ordered list, oldest first so the deck ends on the current job, period before title', async () => {

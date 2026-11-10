@@ -16,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run i18n:extract` — regenerate `src/locale/messages.xlf` (git-ignored, generated) after changing template strings, then add the units by hand to `messages.it.xlf` (the only tracked one)
 - `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
 - `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)
+- `npm run verify:quick` — lint, unit and script tests in about a minute (no build, no e2e): the check while iterating, `verify` stays the gate. TestBeds for pages and sections take `testProviders()` from `src/testing/test-providers.ts`
 
 ## Git workflow
 

@@ -15,7 +15,7 @@ test('the Konami code opens the player card, Escape closes it', async ({ page })
   await page.goto('/en/');
   await typeCode(page);
   await expect(card(page)).toBeVisible();
-  await expect(card(page).getByRole('listitem')).toHaveCount(6);
+  await expect(card(page).getByRole('listitem')).toHaveCount(5);
   await expect(card(page).getByRole('meter')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(card(page)).toBeHidden();
@@ -232,4 +232,17 @@ test.describe('on a 360px phone', () => {
     expect(m.afterHeading).toBeLessThan(m.beforeHeading);
     expect(Math.round(m.button)).toBe(Math.round(m.inner));
   });
+});
+
+// issue #467: on a phone the card opened scrolled to its button, and it was taller than the screen
+test('on a phone the whole cheat card fits the screen, read from the title', async ({ page }) => {
+  // an iPhone 15's Safari with its toolbars shown, in Italian (the longer texts)
+  await page.setViewportSize({ width: 393, height: 695 });
+  await page.goto('/it/');
+  await typeCode(page);
+  const cheat = page.getByRole('dialog', { name: 'Trucco attivato' });
+  await expect(cheat.locator('.level')).toHaveText('99');
+  const box = await cheat.evaluate((d) => ({ top: d.scrollTop, scroll: d.scrollHeight, client: d.clientHeight }));
+  expect(box.top).toBe(0);
+  expect(box.scroll).toBeLessThanOrEqual(box.client);
 });

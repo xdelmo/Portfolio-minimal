@@ -79,16 +79,17 @@ export function moaiVoxels(): Voxel[] {
 }
 
 /**
- * The moai's ground shadow, in the still image's CSS pixels (288 × 655, MOAI_IMAGE): a stepped ellipse of 8px cells
- * round the base, cast a little to the right (the light comes from the left), one rect per row of cells.
+ * The moai's ground shadow: the cells of the ground (x, z) under its base and one cell round it. The 3D scene lays them
+ * flat under the moai and turns them with it; the still image draws the same cells in isometric (iso.ts isoShadow).
  */
-export function moaiShadow(cx = 160, cy = 552, rx = 124, ry = 32, cell = 8): { x: number; y: number; w: number }[] {
-  const rows: { x: number; y: number; w: number }[] = [];
-  for (let y = cy - ry; y < cy + ry; y += cell) {
-    const dy = (y + cell / 2 - cy) / ry;
-    const half = rx * Math.sqrt(1 - dy * dy);
-    const x = Math.round((cx - half) / cell) * cell;
-    rows.push({ x, y, w: Math.round((cx + half) / cell) * cell - x });
+export function moaiShadowCells(): { x: number; z: number }[] {
+  const base = new Set(moaiVoxels().filter((v) => v.y === MOAI_BOUNDS.minY).map((v) => `${String(v.x)},${String(v.z)}`));
+  const cells: { x: number; z: number }[] = [];
+  for (let z: number = MOAI_BOUNDS.minZ - 1; z <= MOAI_BOUNDS.maxZ + 1; z++) {
+    for (let x: number = MOAI_BOUNDS.minX - 1; x <= MOAI_BOUNDS.maxX + 1; x++) {
+      const near = [-1, 0, 1].some((dz) => [-1, 0, 1].some((dx) => base.has(`${String(x + dx)},${String(z + dz)}`)));
+      if (near) cells.push({ x, z });
+    }
   }
-  return rows;
+  return cells;
 }

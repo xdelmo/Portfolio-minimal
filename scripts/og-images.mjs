@@ -9,7 +9,8 @@ import { BLOG } from '../src/app/content/blog.generated.ts';
 import { CONTENT_EN } from '../src/app/content/content.en.ts';
 import { CONTENT_IT } from '../src/app/content/content.it.ts';
 import { voices } from '../src/app/content/voices.ts';
-import { moaiShadow } from '../src/app/voxel/moai.model.ts';
+import { isoShadow } from '../src/app/voxel/iso.ts';
+import { MOAI_FRAME, moaiShadowCells, moaiVoxels } from '../src/app/voxel/moai.model.ts';
 import { CLOUD_CELL, cloudDepth, hash, layout, tone } from '../src/app/pixel-field/field.ts';
 
 const W = 1200, H = 630;
@@ -24,7 +25,7 @@ const SANS = b64('node_modules/@fontsource-variable/instrument-sans/files/instru
 const SERIF = b64('node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2');
 const MOAI = b64('public/images/moai.png');
 // the moai's ground shadow, in the still image's own pixels (288 × 655), dark theme's --moai-shadow
-const SHADOW = `<svg class="shadow" viewBox="0 0 288 655" shape-rendering="crispEdges" fill="rgb(0 0 0 / 0.5)">${moaiShadow().map((r) => `<rect x="${String(r.x)}" y="${String(r.y)}" width="${String(r.w)}" height="8"/>`).join('')}</svg>`;
+const SHADOW = `<svg class="shadow" viewBox="0 0 288 655" fill="rgb(0 0 0 / 0.5)"><path d="${isoShadow(moaiShadowCells(), moaiVoxels(), 16, MOAI_FRAME)}"/></svg>`;
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 /** The hero's cloud round the text's line boxes; `seed` shifts the noise so every page gets its own sky. */

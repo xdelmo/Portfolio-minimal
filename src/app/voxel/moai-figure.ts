@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, input, signal } from '@angular/core';
-import { MOAI_BLEED, moaiShadow } from './moai.model';
+import { isoShadow } from './iso';
+import { MOAI_BLEED, MOAI_FRAME, moaiShadowCells, moaiVoxels } from './moai.model';
 import { MoaiScene } from './moai-scene';
 
 /** Still render of the moai, made by scripts/moai-image.mjs; width and height are CSS pixels. */
@@ -13,11 +14,9 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
   template: `
     <!-- the still moai stays underneath until the 3D scene has drawn its first frame -->
     <span class="body">
-      <!-- the ground shadow, under the still and the scene alike: when the moai hops, it stays on the ground -->
-      <svg class="shadow" viewBox="0 0 288 655" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true">
-        @for (row of shadow; track row.y) {
-          <rect [attr.x]="row.x" [attr.y]="row.y" [attr.width]="row.w" height="8" />
-        }
+      <!-- the still's ground shadow; the 3D scene draws its own, which turns with the moai -->
+      <svg class="shadow" [class.covered]="drawn()" viewBox="0 0 288 655" preserveAspectRatio="none" aria-hidden="true">
+        <path [attr.d]="shadow" />
       </svg>
       <img class="still still--light" [class.covered]="drawn()" [src]="image.src" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
       <img class="still still--dark" [class.covered]="drawn()" [src]="image.darkSrc" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
@@ -97,7 +96,7 @@ export class MoaiFigure {
   readonly greet = input(true);
   protected readonly image = MOAI_IMAGE;
   protected readonly bleed = MOAI_BLEED;
-  protected readonly shadow = moaiShadow();
+  protected readonly shadow = isoShadow(moaiShadowCells(), moaiVoxels(), 16, MOAI_FRAME);
   protected readonly ratio = `${String(MOAI_IMAGE.width)} / ${String(MOAI_IMAGE.height)}`;
   protected readonly live = signal(false);
   protected readonly failed = signal(false);

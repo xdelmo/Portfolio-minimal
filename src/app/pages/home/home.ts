@@ -30,14 +30,13 @@ import { MoaiFigure } from '../../voxel/moai-figure';
 import { MoaiPeek } from '../../voxel/moai-peek';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
-import { CopyEmail } from '../../layout/copy-email';
 import { LinkedinMark } from '../../layout/linkedin-mark';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero" aria-labelledby="hero-title">
@@ -106,12 +105,11 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
       <div class="contact-text">
         <p class="contact-lede" i18n="@@home.contact.lede">Hiring for a frontend role?</p>
         <h2 id="contact-title">
-          <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
+          <a class="contact-link" [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
         <ul class="profiles">
           <li><a class="repo-link" [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-linkedin-mark />LinkedIn</a></li>
           <li><a class="repo-link" [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener"><app-github-mark />GitHub</a></li>
-          <li><app-copy-email /></li>
         </ul>
       </div>
       <img appDepixelate class="contact-photo" src="images/emanuele.webp" [alt]="content.person.name" width="512" height="512" loading="lazy" decoding="async" />

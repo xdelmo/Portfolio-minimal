@@ -41,7 +41,10 @@ describe('CaseStudy', () => {
     const el = await render('apexflow');
     expect(el.querySelector('.intro .role')?.textContent).toBe(CONTENT_EN.projects[0].role);
     const contact = el.querySelector('.more app-contact-prompt a');
-    expect(contact?.getAttribute('href')).toBe(`mailto:${CONTENT_EN.person.email}`);
+    expect(contact?.getAttribute('href')).toBe(CONTENT_EN.person.linkedin);
+    expect(contact?.getAttribute('target')).toBe('_blank');
+    expect(contact?.getAttribute('rel')).toBe('me noopener');
+    expect(contact?.getAttribute('aria-describedby')).toBe('new-tab');
     expect(contact?.classList).toContain('button--primary');
   });
 

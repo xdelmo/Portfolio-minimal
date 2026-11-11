@@ -39,11 +39,11 @@ test.describe('intro', () => {
     await page.goto('/en/');
     if (isMobile) {
       await page.locator('.site-menu summary').click();
-      await page.locator('.site-menu .cta').click();
+      await page.locator('.site-menu a[href$="#work"]').click();
     } else {
-      await page.locator('app-site-header .site-header > .cta').click();
+      await page.locator('app-site-header .site-header > nav a[href$="#work"]').click();
     }
-    await expect(page).toHaveURL(/#contact$/);
+    await expect(page).toHaveURL(/#work$/);
   });
 
   test('is shown once per session', async ({ page }) => {

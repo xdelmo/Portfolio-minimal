@@ -6,6 +6,7 @@
     "generate": "node scripts/version.mjs && node scripts/public-repos.mjs && node --import ./scripts/ts-resolve.mjs scripts/blog.mjs",
     "prepare": "git config core.hooksPath .githooks && npm run generate",
     "start": "npm run generate && (ng serve -c development-it --port 4201 & ng serve --port 4200)",
+    "start:lan": "npm run generate && (ng serve -c development-it --port 4201 --host 0.0.0.0 & ng serve --port 4200 --host 0.0.0.0)",
     "build": "npm run generate && ng build && node --import ./scripts/ts-resolve.mjs scripts/postbuild.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

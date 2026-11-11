@@ -1,5 +1,5 @@
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiVoxels } from './moai.model';
+import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiShadow, moaiVoxels } from './moai.model';
 import { GUM_LIPS, bubbleCells } from './motion';
 
 describe('moai model', () => {
@@ -70,5 +70,21 @@ describe('moai frame', () => {
       }
     }
     expect(widest).toBeLessThanOrEqual(half);
+  });
+});
+
+describe('moai shadow', () => {
+  const rows = moaiShadow();
+
+  it('is a stepped ellipse on the 8px grid, widest in the middle', () => {
+    expect(rows.every((r) => r.x % 8 === 0 && r.y % 8 === 0 && r.w % 8 === 0 && r.w > 0)).toBe(true);
+    const widths = rows.map((r) => r.w);
+    const mid = widths.indexOf(Math.max(...widths));
+    expect(widths.slice(0, mid + 1)).toEqual([...widths.slice(0, mid + 1)].sort((a, b) => a - b));
+    expect(widths.slice(mid)).toEqual([...widths.slice(mid)].sort((a, b) => b - a));
+  });
+
+  it('stays inside the still image', () => {
+    expect(rows.every((r) => r.x >= 0 && r.x + r.w <= 288 && r.y + 8 <= 655)).toBe(true);
   });
 });

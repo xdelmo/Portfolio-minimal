@@ -24,6 +24,8 @@
   --stone-dark: #85857f;
   --stone-light: #bdbdb6;
   --moai-eye-white: #f2f2f2;
+  /* the moai's ground shadow: hard, flat, see-through so it darkens whatever band it stands on */
+  --moai-shadow: rgb(29 29 28 / 0.16);
   /* intro panel: opaque, so nothing of the page shows through */
   --intro-bg: #1d1d1c;
   --intro-fg: #e5e5e5;
@@ -67,6 +69,7 @@
   --stone-dark: #62625e;
   --stone-light: #9a9a94;
   --moai-eye-white: #d9d9d4;
+  --moai-shadow: rgb(0 0 0 / 0.5);
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
   --gum: #ef86b6;

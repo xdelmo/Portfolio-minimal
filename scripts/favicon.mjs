@@ -1,6 +1,7 @@
 // The favicon is the brand's logo (issue #334): the moai seen from the front, one colour, drawn by hand on a 16×16 grid.
 // Its features are holes, not shades, so it reads at 16 px: flat top, brow shelf, eye shadows, long nose, lips, square chin.
-// Run after changing the drawing: node scripts/favicon.mjs (scripts/favicon.test.mjs fails while public/ is stale).
+// Run after changing the drawing: node scripts/favicon.mjs, and paste logoPath() into src/app/layout/moai-mark.ts
+// (scripts/favicon.test.mjs fails while public/ or the header's mark is stale).
 import { Buffer } from 'node:buffer';
 import { writeFileSync } from 'node:fs';
 import { crc32, deflateSync } from 'node:zlib';
@@ -36,10 +37,14 @@ export function faviconGrid(color = INK) {
   return MOAI.map((row) => [...row].map((c) => (c === '#' ? color : null)));
 }
 
-/** One path of unit squares, ink on light tabs and paper on dark ones. */
+/** The logo as one SVG path, a rectangle per run of filled cells: the favicon and the header's MoaiMark share it. */
+export function logoPath() {
+  return MOAI.flatMap((row, y) => [...row.matchAll(/#+/g)].map((m) => `M${String(m.index)} ${String(y)}h${String(m[0].length)}v1h-${String(m[0].length)}z`)).join('');
+}
+
+/** The logo path, ink on light tabs and paper on dark ones. */
 export function faviconSvg() {
-  const d = MOAI.flatMap((row, y) => [...row].map((c, x) => (c === '#' ? `M${String(x)} ${String(y)}h1v1h-1z` : ''))).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${String(SIZE)} ${String(SIZE)}" shape-rendering="crispEdges"><style>path{fill:${INK}}@media (prefers-color-scheme:dark){path{fill:${PAPER}}}</style><path d="${d}"/></svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${String(SIZE)} ${String(SIZE)}" shape-rendering="crispEdges"><style>path{fill:${INK}}@media (prefers-color-scheme:dark){path{fill:${PAPER}}}</style><path d="${logoPath()}"/></svg>\n`;
 }
 
 /** An RGBA PNG of the grid, each cell `scale` pixels, centred on a `size` square (filled with `bg` when given). */

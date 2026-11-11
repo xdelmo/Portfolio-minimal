@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
-import { MOAI, faviconFiles, faviconGrid } from './favicon.mjs';
+import { MOAI, faviconFiles, faviconGrid, logoPath } from './favicon.mjs';
 
 test('public/ holds the favicons drawn from the current logo (run node scripts/favicon.mjs)', () => {
   for (const [name, data] of Object.entries(faviconFiles())) {
@@ -30,4 +30,8 @@ test('the .ico carries 16, 32 and 48 px images, the touch and manifest icons the
   for (const [name, size] of [['apple-touch-icon.png', 180], ['icon-192.png', 192], ['icon-512.png', 512], ['icon-maskable-512.png', 512]]) {
     assert.equal(files[name].readUInt32BE(16), size, name);
   }
+});
+
+test('the header mark draws the same logo as the favicon (issue #334)', () => {
+  assert.ok(readFileSync('src/app/layout/moai-mark.ts', 'utf8').includes(`d="${logoPath()}"`), 'moai-mark.ts is stale: paste logoPath()');
 });

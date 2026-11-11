@@ -3,20 +3,21 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
+import { MoaiMark } from './moai-mark';
 import { PauseToggle } from './pause-toggle';
 import { SiteMenu } from './site-menu';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu, MoaiMark],
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
       <!-- phones: the menu button right before the mark, one brand and navigation corner (issue #324) -->
       <app-site-menu class="menu" />
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
-        ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
+        ><app-moai-mark class="mark" /><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
@@ -56,7 +57,7 @@ import { SiteMenu } from './site-menu';
       gap: var(--space-1);
       min-height: var(--header-h);
     }
-    // the mark, a rule, then the full name on two lines: the site signed like a letterhead
+    // the moai mark (the favicon's drawing, issue #334), a rule, then the full name on two lines: the site signed like a letterhead
     .logo {
       display: flex;
       align-items: center;
@@ -68,10 +69,6 @@ import { SiteMenu } from './site-menu';
       }
       color: var(--fg);
       text-decoration: none;
-    }
-    .mark {
-      font-size: var(--step-1);
-      font-weight: 700;
     }
     // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
     // ran 96px past the edge); the full name signs the bar from 1024px

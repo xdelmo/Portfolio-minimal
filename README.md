@@ -21,6 +21,10 @@ Other checks: `npm run verify:quick` (lint, unit and script tests in about a min
 
 `npm start` runs both dev servers: open http://localhost:4200; `/it/` is proxied from port 4201, so the language switch works.
 
+## Handbook
+
+The technical handbook (in Italian: architecture, technical decisions, developer guide) lives in `handbook/` and is published at https://xdelmo.github.io/Portfolio-minimal/. Run it locally with `python3 -m venv .venv && .venv/bin/pip install -r handbook/requirements.txt && .venv/bin/mkdocs serve`.
+
 ## What changed
 
 The design spec keeps a dated list of changes: [docs/superpowers/specs/2026-10-03-portfolio-v2-design.md](docs/superpowers/specs/2026-10-03-portfolio-v2-design.md), section 17. Each plan in `docs/superpowers/plans/` records what it built.

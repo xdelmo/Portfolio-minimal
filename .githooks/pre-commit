@@ -5,4 +5,4 @@ export PATH="$HOME/.local/node/current/bin:$PATH"
 files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.ts' '*.html')
 [ -z "$files" ] && exit 0
 # shellcheck disable=SC2086
-exec npx eslint --max-warnings=0 $files
+exec npx eslint --max-warnings=0 --no-warn-ignored $files

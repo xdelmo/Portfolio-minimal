@@ -1,0 +1,175 @@
+/* The site's look (src/styles/_tokens.scss, _base.scss, site-header, site-footer) on Material:
+   greys and one blue, Instrument Sans with its width axis, a header on the page colour over a 1px rule, hard edges, no soft shadows. */
+
+/* the site's own font file, latin subset (the handbook is Italian) */
+@font-face {
+  font-family: 'Instrument Sans Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  src: url('../assets/fonts/instrument-sans-latin-wdth-normal.woff2') format('woff2-variations');
+}
+
+:root {
+  /* Material builds --md-*-font-family from these two */
+  --md-text-font: 'Instrument Sans Variable';
+  --md-code-font: ui-monospace, 'SFMono-Regular', Menlo, Consolas;
+}
+
+[data-md-color-scheme='default'] {
+  --rule: rgb(29 29 28 / 0.14);
+  --focus: #0066d4;
+  --md-primary-fg-color: #e5e5e5;
+  --md-primary-fg-color--light: #555555;
+  --md-primary-fg-color--dark: #e5e5e5;
+  --md-primary-bg-color: #1d1d1c;
+  --md-primary-bg-color--light: #555555;
+  --md-accent-fg-color: #0066d4;
+  --md-accent-fg-color--transparent: rgb(0 102 212 / 0.1);
+  --md-accent-bg-color: #ffffff;
+  --md-default-bg-color: #e5e5e5;
+  --md-default-fg-color: #1d1d1c;
+  --md-default-fg-color--light: #555555;
+  --md-default-fg-color--lighter: rgb(29 29 28 / 0.32);
+  --md-default-fg-color--lightest: rgb(29 29 28 / 0.14);
+  --md-code-bg-color: #f2f2f2;
+  --md-code-fg-color: #1d1d1c;
+  --md-typeset-a-color: #005fc5;
+  --md-admonition-bg-color: #f2f2f2;
+  --md-footer-bg-color: #e5e5e5;
+  --md-footer-bg-color--dark: #e5e5e5;
+  --md-footer-fg-color: #1d1d1c;
+  --md-footer-fg-color--light: #555555;
+  --md-footer-fg-color--lighter: #555555;
+}
+
+[data-md-color-scheme='slate'] {
+  --md-hue: 0;
+  --rule: rgb(255 255 255 / 0.12);
+  --focus: #4d9bf0;
+  --md-primary-fg-color: #121212;
+  --md-primary-fg-color--light: #aaaaaa;
+  --md-primary-fg-color--dark: #121212;
+  --md-primary-bg-color: rgb(255 255 255 / 0.87);
+  --md-primary-bg-color--light: #aaaaaa;
+  --md-accent-fg-color: #4d9bf0;
+  --md-accent-fg-color--transparent: rgb(77 155 240 / 0.12);
+  --md-accent-bg-color: #121212;
+  --md-default-bg-color: #121212;
+  --md-default-fg-color: rgb(255 255 255 / 0.87);
+  --md-default-fg-color--light: #aaaaaa;
+  --md-default-fg-color--lighter: rgb(255 255 255 / 0.32);
+  --md-default-fg-color--lightest: rgb(255 255 255 / 0.12);
+  --md-code-bg-color: #1c1c1c;
+  --md-code-fg-color: rgb(255 255 255 / 0.87);
+  --md-typeset-a-color: #4d9bf0;
+  --md-admonition-bg-color: #1c1c1c;
+  --md-footer-bg-color: #121212;
+  --md-footer-bg-color--dark: #121212;
+  --md-footer-fg-color: rgb(255 255 255 / 0.87);
+  --md-footer-fg-color--light: #aaaaaa;
+  --md-footer-fg-color--lighter: #aaaaaa;
+}
+
+/* header and tabs: the page colour over one rule, like site-header */
+.md-header,
+.md-tabs {
+  box-shadow: 0 1px 0 var(--rule);
+}
+.md-header__button.md-logo svg {
+  fill: currentcolor;
+  shape-rendering: crispEdges;
+}
+.md-header__topic:first-child {
+  font-weight: 700;
+}
+.md-tabs__link {
+  opacity: 1;
+  color: var(--md-default-fg-color--light);
+}
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link:hover {
+  color: var(--md-default-fg-color);
+}
+
+/* footer: a top rule and muted text, like site-footer */
+.md-footer {
+  border-top: 1px solid var(--rule);
+}
+
+/* type: the site's body size and heading shape */
+.md-typeset {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 85;
+  color: var(--md-default-fg-color);
+}
+.md-typeset h1 {
+  font-size: 2.4em;
+  font-variation-settings: 'wdth' 75;
+}
+.md-typeset strong {
+  font-weight: 600;
+}
+.md-typeset a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.md-typeset a.headerlink {
+  text-decoration: none;
+}
+.md-typeset :focus-visible,
+.md-header :focus-visible,
+.md-tabs :focus-visible,
+.md-nav :focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* hard edges everywhere: surfaces sit on --surface with a rule, the only shadow is none */
+.md-typeset code,
+.md-typeset pre > code,
+.md-typeset .admonition,
+.md-typeset details,
+.md-typeset table:not([class]),
+.md-search__form,
+.md-search__output,
+.md-search__scrollwrap,
+.md-clipboard,
+.md-top {
+  border-radius: 0;
+  box-shadow: none;
+}
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--md-accent-fg-color);
+  background: var(--md-admonition-bg-color);
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  background: transparent !important;
+  font-weight: 600;
+}
+.md-typeset .admonition-title::before,
+.md-typeset summary::before {
+  background-color: var(--md-accent-fg-color) !important;
+}
+.md-typeset table:not([class]) {
+  border: 1px solid var(--rule);
+}
+.md-typeset table:not([class]) th {
+  font-weight: 600;
+  background: var(--md-code-bg-color);
+}
+.md-search__form {
+  background: var(--md-code-bg-color);
+}

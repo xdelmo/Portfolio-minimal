@@ -11,6 +11,12 @@
         ],
         "createdAt": "2026-11-07T12:56:13.337Z",
         "reason": "user confirmed 2026-11-07: half-italic split headline, issue #304"
+      },
+      {
+        "rule": "overused-font",
+        "value": "instrument sans",
+        "createdAt": "2026-11-11T12:16:01.437Z",
+        "reason": "the site's brand font, reused by the handbook on purpose, issue #454"
       }
     ]
   }

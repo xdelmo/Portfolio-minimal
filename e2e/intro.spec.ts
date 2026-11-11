@@ -35,9 +35,14 @@ test.describe('intro', () => {
     });
   }
 
-  test('never blocks a click', async ({ page }) => {
+  test('never blocks a click', async ({ page, isMobile }) => {
     await page.goto('/en/');
-    await page.locator('app-site-header .cta').click();
+    if (isMobile) {
+      await page.locator('.site-menu summary').click();
+      await page.locator('.site-menu .cta').click();
+    } else {
+      await page.locator('app-site-header .site-header > .cta').click();
+    }
     await expect(page).toHaveURL(/#contact$/);
   });
 

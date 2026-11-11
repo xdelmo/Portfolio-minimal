@@ -1,0 +1,108 @@
+# Handbook: technical documentation of the portfolio (issue #454), published on GitHub Pages by .github/workflows/docs.yml.
+# Public: scripts/handbook-check.mjs stops the build on secrets, e-mail addresses and local paths.
+site_name: edm. handbook
+site_url: https://xdelmo.github.io/Portfolio-minimal/
+site_description: Come è costruito www.emanueledelmonte.it, decisioni tecniche e guida per sviluppatori
+site_author: Emanuele Del Monte
+copyright: '&copy; 2026 Emanuele Del Monte'
+repo_url: https://github.com/xdelmo/Portfolio-minimal
+repo_name: xdelmo/Portfolio-minimal
+edit_uri: edit/devel/handbook/
+docs_dir: handbook
+exclude_docs: |
+  requirements.txt
+
+theme:
+  name: material
+  language: it
+  # .icons/edm/moai.svg is the favicon's moai without colours, inlined so it takes the header's text colour
+  custom_dir: handbook/.overrides
+  favicon: assets/favicon.svg
+  icon:
+    logo: edm/moai
+    repo: fontawesome/brands/github
+  # the site's own Instrument Sans file, declared in stylesheets/extra.css: no Google Fonts
+  font: false
+  palette:
+    - media: '(prefers-color-scheme)'
+      toggle:
+        icon: material/brightness-auto
+        name: Passa al tema chiaro
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Passa al tema scuro
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Segui il tema di sistema
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang: it
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - toc:
+      permalink: true
+
+nav:
+  - Sintesi: index.md
+  - Architettura: architettura.md
+  - Decisioni tecniche:
+      - Motion: decisioni/motion.md
+      - Prima pittura e Lighthouse: decisioni/prestazioni.md
+      - Lingue e tema: decisioni/lingue-e-tema.md
+      - Contenuti, blog e SEO: decisioni/contenuti.md
+      - Sicurezza e privacy: decisioni/sicurezza.md
+      - Gli oggetti vivi: decisioni/oggetti-vivi.md
+  - Guida per sviluppatori:
+      - Setup e comandi: guida/setup.md
+      - Test e qualità: guida/test.md
+      - Workflow e CI: guida/workflow.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/xdelmo
+      name: GitHub
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/emanueledelmonte/
+      name: LinkedIn
+    - icon: material/web
+      link: https://www.emanueledelmonte.it/
+      name: Il sito

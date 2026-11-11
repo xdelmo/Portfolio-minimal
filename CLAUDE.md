@@ -17,6 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run verify:deploy -- <url>` — checks redirects, 404s and the SEO/GEO files on a Netlify deploy (preview or production)
 - `npm run test:scripts` — tests for the build scripts (`node --test scripts/*.test.mjs`)
 - `npm run verify:quick` — lint, unit and script tests in about a minute (no build, no e2e): the check while iterating, `verify` stays the gate. TestBeds for pages and sections take `testProviders()` from `src/testing/test-providers.ts`
+- Handbook (issue #454): public MkDocs Material site in Italian, pages in `handbook/`, nav in `mkdocs.yml`, published on GitHub Pages from `master` by `.github/workflows/docs.yml`. Build it with `python3 -m venv .venv && .venv/bin/pip install -r handbook/requirements.txt`, then `.venv/bin/mkdocs serve` or `build --strict`. It is public: no secrets, hook URLs, e-mail addresses, local paths, private repo names, nor content from `docs/launch/`, `docs/superpowers/` or `.claude/`; `node scripts/handbook-check.mjs` stops on the first four and its test runs in `test:scripts`. Its look follows the site (`handbook/stylesheets/extra.css`, the site's own font file, the moai in `handbook/.overrides/.icons/`)
 
 ## Git workflow
 

@@ -63,8 +63,10 @@ import { SiteMenu } from './site-menu';
       align-items: center;
       gap: var(--space-1);
       margin-right: auto;
-      // touch screens: a 44px target (issue #130)
+      // the moai alone is 20px wide on phones: the target stays at least 24px (WCAG 2.5.8), 44px on touch (issue #130)
+      min-width: 24px;
       @media (pointer: coarse) {
+        min-width: 44px;
         min-height: 44px;
       }
       color: var(--fg);

@@ -1,11 +1,13 @@
 // Renders the still moai (light and dark theme colours, from src/styles/_tokens.scss) used before the 3D scene loads, with reduced motion and when WebGL fails.
 // Run after changing the model: node scripts/moai-image.mjs, then update src/app/voxel/moai-image.ts.
 import { chromium } from 'playwright';
-import { isoSvg } from '../src/app/voxel/iso.ts';
-import { MOAI_FRAME, moaiVoxels } from '../src/app/voxel/moai.model.ts';
+import { isoShadow, isoSvg } from '../src/app/voxel/iso.ts';
+import { MOAI_FRAME, moaiShadowCells, moaiVoxels } from '../src/app/voxel/moai.model.ts';
 import { PHONE_GAZE, isPupil } from '../src/app/voxel/motion.ts';
 
 const UNIT = 16; // CSS px per voxel edge
+// --moai-shadow per theme, baked into the still so the page bundle carries no shadow code (issue #451)
+const shadows = { moai: 'rgb(29 29 28 / 0.16)', 'moai-dark': 'rgb(0 0 0 / 0.5)' };
 const palettes = {
   moai: { stone: '#a3a39d', stoneDark: '#85857f', stoneLight: '#bdbdb6', eye: '#0066d4', eyeWhite: '#f2f2f2', pukao: '#ffc9a8', moss: '#bdbdb6' },
   'moai-dark': { stone: '#7d7d78', stoneDark: '#62625e', stoneLight: '#9a9a94', eye: '#0066d4', eyeWhite: '#d9d9d4', pukao: '#f0a982', moss: '#9a9a94' },
@@ -20,7 +22,10 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 2 });
 let box = null;
 for (const [name, palette] of Object.entries(palettes)) {
-  await page.setContent(`<body style="margin:0;background:transparent">${isoSvg(open, palette, UNIT, MOAI_FRAME)}</body>`);
+  // the ground shadow goes first, under the figure
+  const shadow = `<path fill="${shadows[name]}" d="${isoShadow(moaiShadowCells(), voxels, UNIT, MOAI_FRAME)}"/>`;
+  const svg = isoSvg(open, palette, UNIT, MOAI_FRAME).replace(/(<svg[^>]*>)/, `$1${shadow}`);
+  await page.setContent(`<body style="margin:0;background:transparent">${svg}</body>`);
   const figure = page.locator('svg');
   await figure.screenshot({ path: `public/images/${name}.png`, omitBackground: true });
   box = await figure.boundingBox();

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-// the favicon's frontal moai (public/favicon.svg, issue #323), one character per 16 × 16 cell
+// the frontal moai drawn from the voxel model in issue #323 (the favicon until #334), one character per 16 × 16 cell
 const SPRITE = [
   '....aaaaaaa.....',
   '....aaaaaaa.....',
@@ -20,7 +20,7 @@ const SPRITE = [
   '...ccdddddcc....',
 ];
 
-// tokens, so the moai follows the theme like the 3D one (pukao in peach as on the favicon)
+// tokens, so the moai follows the theme like the 3D one (pukao in peach)
 const FILL: Record<string, string> = {
   a: 'var(--px-6)',
   b: 'var(--stone-light)',

@@ -25,8 +25,32 @@ test('on desktop there is no back-to-top button in the corner', async ({ page, i
   await expect(page.locator('app-back-to-top button')).toBeHidden();
 });
 
-// issue #197: it steps in and out instead of popping. Checked by the animations the button runs on its way out, not by
-// timing it: WebKit's frames in CI are too slow for a time window
+// issue #197, #460: it steps in and out instead of popping. Checked by the animations the button runs on its way in and out,
+// not by timing it: WebKit's frames in CI are too slow for a time window
+const animatesIn = async (page: Page): Promise<boolean> => {
+  return page.evaluate(
+    () =>
+      new Promise<boolean>((resolve) => {
+        const host = document.querySelector('app-back-to-top');
+        let animated = false;
+        const watch = new MutationObserver(() => {
+          const button = host?.querySelector('button');
+          if (button?.classList.contains('is-entering') && button.getAnimations().length > 0) {
+            animated = true;
+            watch.disconnect();
+            resolve(true);
+          }
+        });
+        if (host) watch.observe(host, { childList: true, subtree: true, attributes: true });
+        window.scrollTo(0, innerHeight * 3);
+        setTimeout(() => {
+          watch.disconnect();
+          resolve(animated);
+        }, 3000);
+      }),
+  );
+};
+
 const animatesOut = async (page: Page): Promise<boolean> => {
   await page.evaluate(() => {
     window.scrollTo(0, innerHeight * 3);
@@ -54,6 +78,7 @@ const animatesOut = async (page: Page): Promise<boolean> => {
 test('on phones the button rises in, and sinks out before it goes', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'phones');
   await page.goto('/en/');
+  expect(await animatesIn(page)).toBe(true);
   expect(await animatesOut(page)).toBe(true);
 });
 

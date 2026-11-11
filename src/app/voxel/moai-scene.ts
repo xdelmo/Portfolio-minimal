@@ -76,6 +76,7 @@ const spare: HTMLCanvasElement[] = [];
     '[attr.data-waving]': 'waving() ? "" : null',
     '[attr.data-scrolling]': 'scrolling() ? "" : null',
     '[attr.data-asleep]': 'asleep() ? "" : null',
+    '[attr.data-drowsy]': 'line()?.reaction === "wake" ? "" : null',
     '[attr.data-hop]': 'hopping() ? "" : null',
     '[attr.data-line]': 'line()?.reaction ?? null',
     '[attr.data-pukao]': 'pukaoOff() ? "off" : null',
@@ -395,7 +396,7 @@ export class MoaiScene {
     const paint = (): void => {
       const style = getComputedStyle(root);
       const color = new Color();
-      const asleep = this.asleep() || blink;
+      const asleep = this.asleep() || blink || this.line()?.reaction === 'wake';
       const looking = this.gaze();
       // while the page scrolls the pupils drop to the bottom of the eyes
       const g = rolling ?? (this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking);
@@ -531,8 +532,8 @@ export class MoaiScene {
         const pose = (hopStart === null ? null : hop(now - hopStart)) ?? (stretchStart === null ? null : stretch(now - stretchStart));
         pivot.scale.y = pose?.sy ?? 1;
         pivot.position.y = pose?.y ?? 0;
-        // it blinks as it crouches for the hop
-        const blinking = hopStart !== null && now - hopStart < HOP_MS / 2;
+        // it blinks as it crouches for the hop, and keeps its eyes shut while it asks for five more minutes (issue #444)
+        const blinking = (hopStart !== null && now - hopStart < HOP_MS / 2) || this.line()?.reaction === 'wake';
         if (blinking !== blink) {
           blink = blinking;
           paint();
@@ -758,10 +759,11 @@ export class MoaiScene {
       idleGum = false;
       if (!this.asleep()) return;
       this.asleep.set(false);
+      if (!this.pause.paused()) {
+        stretchStart = performance.now();
+        if (sleptInView) this.say('wake');
+      }
       paint();
-      if (this.pause.paused()) return;
-      stretchStart = performance.now();
-      if (sleptInView) this.say('wake');
     };
     // the paused moai neither falls asleep nor wakes by itself: its clock starts again from the pause
     const sleepTimer = window.setInterval(() => {

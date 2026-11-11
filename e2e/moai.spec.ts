@@ -434,6 +434,11 @@ test.describe('sleep', () => {
     await expect(host).toHaveAttribute('data-asleep', '');
     await nudge(page);
     await expect(host.locator('.moai-line')).toHaveText('Five more minutes…');
+    // still half asleep: the eyes stay shut while it asks, and open once the bubble closes (issue #444)
+    await expect(host).toHaveAttribute('data-drowsy', '');
+    await page.clock.fastForward('00:05');
+    await expect(host.locator('.moai-line')).toHaveCount(0);
+    await expect(host).not.toHaveAttribute('data-drowsy');
   });
 
   // issue #393: waiting, it blows one silent bubble of gum at 10 s, then sleeps at 20 s

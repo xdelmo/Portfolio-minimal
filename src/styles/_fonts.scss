@@ -1,12 +1,14 @@
 // Instrument Sans from @fontsource-variable, declared here to use `font-display: optional`:
 // with the preload added by scripts/postbuild.mjs the font is ready at first paint, and when it
 // is late the fallback stays for that page view instead of swapping and shifting the layout.
+// `npm start` has no preload (postbuild only), so `optional` would keep the fallback there: src/styles.dev.scss sets swap (issue #440)
+$display: optional !default;
 $files: '../../node_modules/@fontsource-variable/instrument-sans/files';
 
 @font-face {
   font-family: 'Instrument Sans Variable';
   font-style: normal;
-  font-display: optional;
+  font-display: $display;
   font-weight: 400 700;
   font-stretch: 75% 100%;
   src: url('#{$files}/instrument-sans-latin-ext-wdth-normal.woff2') format('woff2-variations');
@@ -17,7 +19,7 @@ $files: '../../node_modules/@fontsource-variable/instrument-sans/files';
 @font-face {
   font-family: 'Instrument Sans Variable';
   font-style: normal;
-  font-display: optional;
+  font-display: $display;
   font-weight: 400 700;
   font-stretch: 75% 100%;
   src: url('#{$files}/instrument-sans-latin-wdth-normal.woff2') format('woff2-variations');
@@ -29,7 +31,7 @@ $files: '../../node_modules/@fontsource-variable/instrument-sans/files';
 @font-face {
   font-family: 'Instrument Serif';
   font-style: italic;
-  font-display: optional;
+  font-display: $display;
   font-weight: 400;
   src: url('../../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,

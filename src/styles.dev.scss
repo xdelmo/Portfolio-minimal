@@ -1,0 +1,4 @@
+// Dev server entry (angular.json, development configurations): the real fonts swap in once they load, so sizes match
+// the built site. Production keeps `optional` with its preload (src/styles/_fonts.scss, issue #440)
+@use 'styles/fonts' with ($display: swap);
+@use 'styles';

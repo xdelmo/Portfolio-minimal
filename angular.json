@@ -85,7 +85,13 @@
               "localize": [
                 "en"
               ],
-              "baseHref": "/en/"
+              "baseHref": "/en/",
+              "styles": [
+                {
+                  "input": "src/styles.dev.scss",
+                  "bundleName": "styles"
+                }
+              ]
             },
             "development-it": {
               "optimization": false,
@@ -94,7 +100,13 @@
               "localize": [
                 "it"
               ],
-              "baseHref": "/it/"
+              "baseHref": "/it/",
+              "styles": [
+                {
+                  "input": "src/styles.dev.scss",
+                  "bundleName": "styles"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

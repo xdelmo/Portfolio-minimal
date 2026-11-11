@@ -77,7 +77,7 @@ export const SPRITES = {
       '................',
     ],
   },
-  // the player card's achievements (game/player-card.ts): a graduation cap, a trophy, a phone
+  // the player card's achievements (game/player-card.ts): a graduation cap, a trophy
   cap: {
     palette: { ...INK, a: '--accent', p: '--px-6' },
     rows: [
@@ -139,27 +139,6 @@ export const SPRITES = {
       '.kppppllllkpkpk.',
       '.kppppllllppppk.',
       '.kkkkkkkkkkkkkk.',
-      '................',
-    ],
-  },
-  phone: {
-    palette: { ...INK, w: '--surface', a: '--accent', b: '--px-3', l: '--px-4' },
-    rows: [
-      '....kkkkkkkk....',
-      '...kwwwwwwwwk...',
-      '...kwkkkkkkwk...',
-      '...kwkbbbbkwk...',
-      '...kwkbaabkwk...',
-      '...kwkbaabkwk...',
-      '...kwkbbbbkwk...',
-      '...kwkllllkwk...',
-      '...kwkllllkwk...',
-      '...kwkbbbbkwk...',
-      '...kwkkkkkkwk...',
-      '...kwwwwwwwwk...',
-      '...kwwwkkwwwk...',
-      '...kwwwwwwwwk...',
-      '....kkkkkkkk....',
       '................',
     ],
   },

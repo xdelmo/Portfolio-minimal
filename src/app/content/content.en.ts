@@ -314,7 +314,6 @@ export const CONTENT_EN: SiteContent = {
       { title: 'Drummer', detail: 'More than ten years behind the kit', sprite: 'drum' },
       { title: 'Hardcore raider', detail: 'World of Warcraft: teamwork is my daily bread', sprite: 'sword' },
       { title: 'Team pizza', detail: 'If I could eat one thing forever', sprite: 'pizza' },
-      { title: 'Phone bricker', detail: 'I bricked so many phones', sprite: 'phone' },
     ],
     cheat: { title: 'Konami code', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },
   },

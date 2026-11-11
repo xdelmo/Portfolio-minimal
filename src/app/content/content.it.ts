@@ -305,7 +305,6 @@ export const CONTENT_IT: SiteContent = {
       { title: 'Batterista', detail: 'Più di dieci anni dietro la batteria', sprite: 'drum' },
       { title: 'Raider hardcore', detail: 'World of Warcraft: il lavoro di squadra è il mio pane quotidiano', sprite: 'sword' },
       { title: 'Team pizza', detail: 'Se potessi mangiare una cosa sola per sempre', sprite: 'pizza' },
-      { title: 'Distruttore di telefoni', detail: 'Ne ho brickati tantissimi', sprite: 'phone' },
     ],
     cheat: { title: 'Codice Konami', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },
   },

@@ -1,5 +1,5 @@
-import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiShadow, moaiVoxels } from './moai.model';
+import { COS30, isoBounds, isoFaces, isoShadow } from './iso';
+import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiShadowCells, moaiVoxels } from './moai.model';
 import { GUM_LIPS, bubbleCells } from './motion';
 
 describe('moai model', () => {
@@ -74,17 +74,26 @@ describe('moai frame', () => {
 });
 
 describe('moai shadow', () => {
-  const rows = moaiShadow();
+  const cells = moaiShadowCells();
+  const base = moaiVoxels().filter((v) => v.y === MOAI_BOUNDS.minY);
+  const has = (x: number, z: number): boolean => cells.some((c) => c.x === x && c.z === z);
 
-  it('is a stepped ellipse on the 8px grid, widest in the middle', () => {
-    expect(rows.every((r) => r.x % 8 === 0 && r.y % 8 === 0 && r.w % 8 === 0 && r.w > 0)).toBe(true);
-    const widths = rows.map((r) => r.w);
-    const mid = widths.indexOf(Math.max(...widths));
-    expect(widths.slice(0, mid + 1)).toEqual([...widths.slice(0, mid + 1)].sort((a, b) => a - b));
-    expect(widths.slice(mid)).toEqual([...widths.slice(mid)].sort((a, b) => b - a));
+  it('lies under the whole base and one cell round it, no further', () => {
+    for (const v of base) {
+      for (const [dx, dz] of [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]]) expect(has(v.x + dx, v.z + dz)).toBe(true);
+    }
+    for (const c of cells) expect(base.some((v) => Math.abs(v.x - c.x) <= 1 && Math.abs(v.z - c.z) <= 1)).toBe(true);
   });
 
   it('stays inside the still image', () => {
-    expect(rows.every((r) => r.x >= 0 && r.x + r.w <= 288 && r.y + 8 <= 655)).toBe(true);
+    const b = isoBounds(isoFaces(moaiVoxels()));
+    const points = isoShadow(cells, moaiVoxels(), 16, MOAI_FRAME).match(/-?[\d.]+,-?[\d.]+/g) ?? [];
+    expect(points.length).toBe(cells.length * 4);
+    for (const p of points) {
+      const [x, y] = p.split(',').map(Number);
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(x).toBeLessThanOrEqual(b.width * MOAI_FRAME * 16);
+      expect(y).toBeLessThanOrEqual(b.height * MOAI_FRAME * 16);
+    }
   });
 });

@@ -69,3 +69,19 @@ export function isoSvg(voxels: readonly Voxel[], palette: Readonly<Record<VoxelC
   const h = String(Math.round(b.height * frame * unit));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${polygons.join('')}</svg>`;
 }
+
+/**
+ * The ground cells (x, z) as one SVG path in the coordinates of isoSvg(voxels, …, unit, frame), drawn at ground level:
+ * one path, so a see-through fill does not darken where the cells meet.
+ */
+export function isoShadow(cells: readonly { x: number; z: number }[], voxels: readonly Voxel[], unit: number, frame = 1): string {
+  const b = isoBounds(isoFaces(voxels));
+  const padX = ((frame - 1) / 2) * b.width;
+  const padY = ((frame - 1) / 2) * b.height;
+  const num = (n: number): string => String(Math.round(n * 10) / 10);
+  const point = (x: number, z: number): string => {
+    const [px, py] = project(x, 0, z);
+    return `${num((px - b.minX + padX) * unit)},${num((py - b.minY + padY) * unit)}`;
+  };
+  return cells.map(({ x, z }) => `M${point(x, z)}L${point(x + 1, z)}L${point(x + 1, z + 1)}L${point(x, z + 1)}Z`).join('');
+}

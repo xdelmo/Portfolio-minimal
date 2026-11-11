@@ -77,3 +77,18 @@ export function moaiVoxels(): Voxel[] {
   }
   return voxels;
 }
+
+/**
+ * The moai's ground shadow, in the still image's CSS pixels (288 × 655, MOAI_IMAGE): a stepped ellipse of 8px cells
+ * round the base, cast a little to the right (the light comes from the left), one rect per row of cells.
+ */
+export function moaiShadow(cx = 160, cy = 576, rx = 120, ry = 40, cell = 8): { x: number; y: number; w: number }[] {
+  const rows: { x: number; y: number; w: number }[] = [];
+  for (let y = cy - ry; y < cy + ry; y += cell) {
+    const dy = (y + cell / 2 - cy) / ry;
+    const half = rx * Math.sqrt(1 - dy * dy);
+    const x = Math.round((cx - half) / cell) * cell;
+    rows.push({ x, y, w: Math.round((cx + half) / cell) * cell - x });
+  }
+  return rows;
+}

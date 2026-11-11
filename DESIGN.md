@@ -195,7 +195,7 @@ The scale is modular, 1.25 on 18px (`--step--2` … `--step-5`). Three display r
 Prose wraps `pretty` (paragraphs and list items: no word alone on the last line), headings `balance`.
 
 ### Named Rules
-**The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the `edm.` mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.
+**The Sentence Case Rule.** Sentence case everywhere. No all-caps labels, eyebrows, monospace metadata, middle-dot meta strings, arrows appended to links, or a single accented word in a headline. Two exceptions: the full name beside the moai mark in the header, in tracked capitals on two lines from 1024px; and the pixel arrow after the giant contact title, which is the title's own action (it writes an email), not a decoration on a link.
 
 **The Width Not Weight Rule.** Hierarchy comes from size and the `wdth` axis at weight 600; don't add weights for emphasis. The one second face is the `voice` role: the sans is the method, the italic serif is the curiosity.
 

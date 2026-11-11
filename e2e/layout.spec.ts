@@ -186,7 +186,7 @@ for (const width of [1280, 390]) {
   });
 }
 
-// the header signs the site: the edm. mark, a rule, then the full name on two lines (phones: the mark alone)
+// the header signs the site: the moai mark, a rule, then the full name on two lines (phones: the mark alone)
 for (const width of [1280, 1024]) {
   test(`the header shows the full name beside the mark, on two lines, at ${String(width)}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
@@ -206,6 +206,8 @@ for (const width of [768, 390, 320]) {
     await page.setViewportSize({ width, height: 640 });
     await page.goto('/en/');
     await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
+    await expect(page.locator('app-site-header .logo')).not.toContainText('edm.');
+    await expect(page.locator('app-site-header .logo .mark svg')).toHaveAttribute('aria-hidden', 'true');
     await expect(page.locator('app-site-header .logo .name')).toBeHidden();
     expect(await headerRight(page)).toBeLessThanOrEqual(width);
   });
@@ -318,7 +320,7 @@ test('a project keeps its case study and code buttons on one row on desktop, sta
 // Browser translation leaves names and tools alone: "Del Monte" is no mountain, "Signals" no traffic lights (issue #136).
 test('names and tools are kept out of automatic translation', async ({ page }) => {
   await page.goto('/it/');
-  for (const selector of ['.logo .mark', '.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
+  for (const selector of ['.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
     await expect(page.locator(selector).first(), selector).toHaveAttribute('translate', 'no');
   }
 });

@@ -65,10 +65,15 @@ import { APP_VERSION } from '../core/version.generated';
     .to-top svg {
       width: 12px;
       height: 12px;
-      transition: translate 0.2s steps(2);
     }
-    .to-top:hover svg {
-      translate: 0 -4px;
+    // as the contact arrow (home.scss): it moves only with a mouse and no reduced-motion preference (issue #442)
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .to-top svg {
+        transition: translate 160ms steps(2);
+      }
+      .to-top:hover svg {
+        translate: 0 -4px;
+      }
     }
     // tablets: the year and the way back up share a line, the links take the next one whole (in a third of the width the
     // Start key wrapped alone under them)

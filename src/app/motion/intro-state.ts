@@ -11,7 +11,15 @@ export function afterIntro(then: () => void): () => void {
   };
 }
 
-export function endIntro(): void {
+/** `seen`: the animated intro really played, so this session does not show it again (issue #404). */
+export function endIntro(seen = false): void {
+  if (seen) {
+    try {
+      sessionStorage.setItem('intro', '1');
+    } catch {
+      // no storage (a private window): the intro plays on every load, as before the flag
+    }
+  }
   document.documentElement.classList.remove('intro-on');
   document.dispatchEvent(new CustomEvent('intro:done'));
 }

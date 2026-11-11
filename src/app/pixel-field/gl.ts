@@ -49,7 +49,14 @@ void main() {
     float grown = clamp((u_t - start) / ${(COMPOSE_MS * 0.4).toFixed(1)}, 0.0, 1.0);
     size = ${CLOUD_CELL.toFixed(1)} * grown;
     alpha = u_alpha + (1.0 - u_alpha) * e;
-    ti = depth > 0.75 ? 0 : depth > 0.5 ? 1 : depth > 0.3 ? 2 : shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
+    bool dither = mod(floor(p.x / ${CLOUD_CELL.toFixed(1)}) + floor(p.y / ${CLOUD_CELL.toFixed(1)}), 2.0) < 0.5;
+    ti = depth > 0.78 ? 0 :
+         depth > 0.72 ? (dither ? 0 : 1) :
+         depth > 0.53 ? 1 :
+         depth > 0.47 ? (dither ? 1 : 2) :
+         depth > 0.33 ? 2 :
+         depth > 0.27 ? (dither ? 2 : (shade > 0.6 ? 3 : 4)) :
+         shade > 0.94 ? 5 : shade > 0.6 ? 3 : 4;
   } else {
     // the clearing and the cloud's breathing holes show only the energy that crosses them
     size = e > 0.05 ? ${CLOUD_CELL.toFixed(1)} : 0.0;

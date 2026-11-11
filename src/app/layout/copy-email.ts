@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, inject, signal } from '@angular/core';
 import { CONTENT } from '../content/content';
+import { MoaiCues } from '../voxel/moai-cues';
 
 /**
  * Copies the email address, for a visitor whose browser has no mail program behind the mailto link (issue #231). The
@@ -16,7 +17,12 @@ import { CONTENT } from '../content/content';
           <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" d="M7 1h1v2H7zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4zM3 6h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" />
           </svg>
-          <span i18n="@@contact.copied">Copied</span>
+          <!-- the moai says goodbye where it can (desktop, in view); where it keeps quiet, the button does (issue #393) -->
+          @if (moaiSaid) {
+            <span i18n="@@contact.copied">Copied</span>
+          } @else {
+            <span i18n="@@contact.copiedTalkSoon">Copied. Talk soon.</span>
+          }
         } @else {
           <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" fill-rule="evenodd" d="M0 0h6v1H1v5H0zM2 2h6v6H2zM3 3v4h4V3z" />
@@ -46,6 +52,8 @@ import { CONTENT } from '../content/content';
 })
 export class CopyEmail {
   private readonly email = inject(CONTENT).person.email;
+  private readonly cues = inject(MoaiCues);
+  protected moaiSaid = false;
   protected readonly canCopy = signal(false);
   protected readonly copied = signal(false);
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -65,6 +73,7 @@ export class CopyEmail {
     } catch {
       return;
     }
+    this.moaiSaid = this.cues.cue('copy');
     this.copied.set(true);
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {

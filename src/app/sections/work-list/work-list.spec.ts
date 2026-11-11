@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { testProviders } from '../../../testing/test-providers';
 import { CONTENT_EN } from '../../content/content.en';
 import { WorkList } from './work-list';
 
 describe('WorkList', () => {
   async function render() {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: testProviders() });
     const fixture = TestBed.createComponent(WorkList);
     fixture.componentRef.setInput('projects', CONTENT_EN.projects);
     await fixture.whenStable();

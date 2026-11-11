@@ -395,8 +395,8 @@
         <target>Press start</target>
       </trans-unit>
       <trans-unit id="home.contact.lede" datatype="html">
-        <source>Building something with Angular, or hiring for a frontend role?</source>
-        <target>Stai costruendo qualcosa con Angular o cerchi chi segua il frontend?</target>
+        <source>Hiring for a frontend role?</source>
+        <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="home.stack.lede" datatype="html">
         <source>Three levels: what I use every day, what runs in production, what I try in my side projects.</source>
@@ -511,8 +511,8 @@
         <target>Ne ho scritto</target>
       </trans-unit>
       <trans-unit id="contactPrompt.lead" datatype="html">
-        <source>Looking for a frontend engineer?</source>
-        <target>Cerchi un frontend engineer?</target>
+        <source>Hiring for a frontend role?</source>
+        <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">
         <source>Email me</source>
@@ -538,6 +538,22 @@
         <source>View</source>
         <target>Vedi</target>
       </trans-unit>
+      <trans-unit id="moai.line.copy.1" datatype="html"><source>Talk soon.</source><target>A presto.</target></trans-unit>
+      <trans-unit id="moai.line.hop.1" datatype="html"><source>Hey.</source><target>Ehi.</target></trans-unit>
+      <trans-unit id="moai.line.hop.2" datatype="html"><source>Yes?</source><target>Sì?</target></trans-unit>
+      <trans-unit id="moai.line.gum.1" datatype="html"><source>Gum gum.</source><target>Gomma gomma.</target></trans-unit>
+      <trans-unit id="moai.line.drag.1" datatype="html"><source>Easy, I'm made of stone.</source><target>Piano, sono di pietra.</target></trans-unit>
+      <trans-unit id="moai.line.dizzy.1" datatype="html"><source>Eight hundred years still, and now this.</source><target>Ottocento anni fermo, e ora questo.</target></trans-unit>
+      <trans-unit id="moai.line.shake.1" datatype="html"><source>My pukao!</source><target>Il mio pukao!</target></trans-unit>
+      <trans-unit id="moai.line.sulk.1" datatype="html"><source>Hmph. Not talking to you.</source><target>Uffa. Non ti parlo.</target></trans-unit>
+      <trans-unit id="moai.line.sneeze.1" datatype="html"><source>Ah… ah… Achoo!</source><target>Ah… ah… Etciù!</target></trans-unit>
+      <trans-unit id="moai.line.dark.1" datatype="html"><source>Lights off. I'll keep watch.</source><target>Luci spente. Faccio io la guardia.</target></trans-unit>
+      <trans-unit id="moai.line.light.1" datatype="html"><source>Morning already?</source><target>Già mattina?</target></trans-unit>
+      <trans-unit id="moai.line.hello.1" datatype="html"><source>Hello!</source><target>Ciao!</target></trans-unit>
+      <trans-unit id="moai.line.found.1" datatype="html"><source>I knew you'd find it.</source><target>Lo sapevo che l'avresti trovato.</target></trans-unit>
+      <trans-unit id="moai.line.explorer.1" datatype="html"><source>You read them all. Respect.</source><target>Li hai letti tutti. Rispetto.</target></trans-unit>
+      <trans-unit id="moai.line.wake.1" datatype="html"><source>Five more minutes…</source><target>Altri cinque minuti…</target></trans-unit>
+      <trans-unit id="contact.copiedTalkSoon" datatype="html"><source>Copied. Talk soon.</source><target>Copiata. A presto.</target></trans-unit>
     </body>
   </file>
 </xliff>

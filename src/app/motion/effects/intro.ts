@@ -15,7 +15,7 @@ export const introEffect: Effect = (root, { gsap, desktop }) => {
   let deadline = 0;
   const complete = () => {
     window.clearTimeout(deadline);
-    endIntro();
+    endIntro(true);
   };
   const intro = gsap
     .timeline({ paused: true, onComplete: complete })
@@ -52,9 +52,17 @@ export const introEffect: Effect = (root, { gsap, desktop }) => {
     }
     // the letters and the squares still reach their end state (issue #251: without it they stay dim and black
     // under the panel): animated if they fit before the fallback starts to lift, snapped to it otherwise
-    if (introFits(performance.now(), seconds(intro.labels['lift'] ?? 0), cssStart - liftMs, cssMs)) intro.tweenTo('lift');
+    // only the animated letters count as seen: a snapped intro or one GSAP missed plays again on the next load (issue #404)
+    const animated = introFits(performance.now(), seconds(intro.labels['lift'] ?? 0), cssStart - liftMs, cssMs);
+    if (animated) intro.tweenTo('lift');
     else intro.seek('lift');
-    panel.addEventListener('animationend', endIntro, { once: true });
+    panel.addEventListener(
+      'animationend',
+      () => {
+        endIntro(animated);
+      },
+      { once: true },
+    );
     return undefined;
   }
   panel.style.animation = 'none';

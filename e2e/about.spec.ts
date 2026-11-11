@@ -7,7 +7,7 @@ const lit = (page: Page) =>
 
 test('the About opens with a statement whose words light up as it scrolls by', async ({ page }) => {
   await page.goto('/en/');
-  await expect(statement(page)).toHaveText('I care about the parts users never see but always feel.');
+  await expect(statement(page)).toHaveText('A table with thousands of rows should feel like one with ten.');
   await expect.poll(async () => (await lit(page)).length).toBeGreaterThan(5);
   expect((await lit(page)).some((v) => v < 1)).toBe(true);
   await statement(page).evaluate((el) => {
@@ -26,7 +26,7 @@ test.describe('with reduced motion', () => {
   test('the statement is plain text in full colour', async ({ page }) => {
     await page.goto('/it/');
     await page.waitForTimeout(500);
-    await expect(statement(page)).toHaveText('Curo le parti che nessuno vede ma tutti sentono.');
+    await expect(statement(page)).toHaveText('Una tabella con migliaia di righe deve sembrare una con dieci.');
     expect(await lit(page)).toHaveLength(0);
   });
 });
@@ -45,3 +45,44 @@ for (const [lang, sentence, daily] of [
     expect(ld.join()).toContain('Model Context Protocol');
   });
 }
+
+for (const [lang, label] of [
+  ['en', '€1M+ in orders placed through the Flexie configurator I built'],
+  ['it', '€1M+ di ordini passati dal configuratore Flexie che ho costruito'],
+] as const) {
+  test(`${lang}: the About proves the statement with four big numbers that fit a phone`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/${lang}/`);
+    const figures = page.locator('#about .figures li');
+    await expect(figures).toHaveCount(4);
+    await expect(figures.first()).toHaveText(label);
+    await expect(page.locator('#about .figure')).toHaveText(['€1M+', '20+', '450+', '40+']);
+    for (const box of await page.locator('#about .figure').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().right))) {
+      expect(box).toBeLessThanOrEqual(390);
+    }
+  });
+}
+
+test('the big numbers count up from zero once they scroll into view, and end on their values', async ({ page }) => {
+  await page.goto('/en/');
+  const values = page.locator('#about .figure-value');
+  await expect(values).toHaveText(['€1M', '20', '450', '40']);
+  await values.first().evaluate((el) => {
+    const w = window as unknown as { seen: string[] };
+    w.seen = [];
+    new MutationObserver(() => w.seen.push(el.textContent)).observe(el, { childList: true, characterData: true, subtree: true });
+    window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight / 2);
+  });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { seen: string[] }).seen.some((t) => t.endsWith('K')))).toBe(true);
+  await expect(values).toHaveText(['€1M', '20', '450', '40']);
+});
+
+test.describe('the big numbers with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('stay still on their values', async ({ page }) => {
+    await page.goto('/en/');
+    await page.locator('#about .figures').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    await expect(page.locator('#about .figure-value')).toHaveText(['€1M', '20', '450', '40']);
+  });
+});

@@ -21,13 +21,20 @@ export const CONTENT_EN: SiteContent = {
   hero: {
     headline: 'Engineer by method, curious by nature',
     voice: 'curious by nature',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. in Aprilia. I\u00a0build enterprise Angular apps whose large tables stay responsive, and I\u00a0leave an easter egg for whoever looks closely.",
+    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. I\u00a0build Angular interfaces that stay fast when the data gets big, and I\u00a0leave an easter egg for whoever looks closely.",
+    peek: 'closely',
   },
-  aboutStatement: 'I care about the parts users never see but always feel.',
-  aboutVoice: 'but always feel.',
+  aboutStatement: 'A table with thousands of rows should feel like one with ten.',
+  aboutVoice: 'like one with ten.',
   about: [
-    "I'm Emanuele Del Monte, a Frontend Engineer based in Latina, Italy. I build enterprise frontends with Angular, Signals and RxJS: large tables that stay responsive, filters that run on the server, state that stays predictable when the app grows. Before IPS I spent about two years at a web agency building CRMs, e-commerce sites and a B2B product configurator. My thesis, ApexFlow, is a full-stack CRM dashboard with an Angular frontend and a Spring Boot backend.",
+    'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
     "Claude Code is part of my day: I use it to write and review code, draft tests, find my way around new APIs and keep documentation up to date. I also studied how language models reach real tools and data, and built an MCP server to try it.",
+  ],
+  figures: [
+    { value: '€1M', label: 'in orders placed through the Flexie configurator I built' },
+    { value: '20', label: 'legacy components moved to Signals' },
+    { value: '450', label: 'pages in six languages, in the in-app help I built' },
+    { value: '40', label: 'countries using the IPS platform I work on' },
   ],
   glance: [
     { label: 'Role', value: 'Frontend Engineer, Angular specialist' },
@@ -42,9 +49,10 @@ export const CONTENT_EN: SiteContent = {
       slug: 'apexflow',
       title: 'ApexFlow',
       role: 'My Computer Engineering thesis, built during my internship at IPS S.p.A. in 2026.',
+      result: 'One API call per filter change, on every table.',
       summary:
-        'A CRM and analytics dashboard: Angular 19 with Signals and RxJS on the frontend, Spring Boot 3 and PostgreSQL on the backend.',
-      stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Spring Boot', 'PostgreSQL'],
+        'A CRM and analytics dashboard whose tables sort, filter and page on the server, with every view saved in the URL.',
+      stack: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS', 'Spring Boot', 'PostgreSQL'],
       repos: [
         { label: 'Frontend code', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
@@ -88,6 +96,7 @@ export const CONTENT_EN: SiteContent = {
       sprite: 'crossword',
       title: 'PokèVerba',
       role: 'A side project with a friend who writes the content; I build and run the site. 2026.',
+      result: 'A daily crossword whose answers never reach the browser.',
       summary: 'A daily Pokémon crossword with a collection of the Pokémon you catch and a blog, in Italian and English.',
       stack: ['WordPress', 'PHP', 'React', 'Vite'],
       repos: [{ label: 'Code on GitHub', url: 'https://github.com/xdelmo/pokeverba-site' }],
@@ -128,6 +137,7 @@ export const CONTENT_EN: SiteContent = {
       slug: 'wedding-3d-invite',
       title: 'Wedding 3D Invite',
       role: 'Designed and built on my own in 2026, for the wedding of two friends.',
+      result: 'A wedding invitation that opens like a real envelope, then stops using the GPU.',
       summary:
         'A mobile-first digital wedding invitation: a lace envelope in Three.js that opens at a tap, then the day told in eleven slides, with RSVP and offline support.',
       stack: ['React', 'TypeScript', 'Three.js', 'Tailwind CSS', 'Vite'],
@@ -187,10 +197,10 @@ export const CONTENT_EN: SiteContent = {
       org: 'IPS S.p.A.',
       summary: 'Joined the frontend team while finishing my degree.',
       highlights: [
-        'Built ApexFlow, a dashboard for complex data, in Angular 19 with Signals.',
+        'Built ApexFlow, a CRM dashboard with server-side tables, in Angular 19 with Signals.',
         'Added server-side filtering, pagination, role-based permissions and unit tests.',
       ],
-      tags: ['Angular', 'Signals', 'RxJS', 'Tailwind CSS'],
+      tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'ApexFlow case study' },
     },
     {
@@ -198,11 +208,10 @@ export const CONTENT_EN: SiteContent = {
       short: 'Frontend Specialist',
       title: 'Software Engineer, Frontend Specialist',
       org: 'IPS S.p.A.',
-      summary: 'On the product team of an enterprise cybersecurity platform.',
+      summary: 'On the product team of an enterprise intelligence platform.',
       highlights: [
-        'Moved legacy components to Signals, with facades over the NgRx store.',
-        'Built a query builder for advanced filters on big data in Kendo Grid.',
-        'Built a custom HTML5 video player that searches inside its subtitles.',
+        'Moved over 20 legacy components to Signals during the upgrade to Angular 22.',
+        'Built in-app help: over 450 pages in six languages, linked from 100+ fields.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'NgRx', 'Kendo UI'],
     },

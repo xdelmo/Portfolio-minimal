@@ -6,7 +6,8 @@
         "http://localhost/en/",
         "http://localhost/it/",
         "http://localhost/en/work/apexflow/",
-        "http://localhost/it/work/apexflow/"
+        "http://localhost/it/work/apexflow/",
+        "http://localhost/en/blog/signals-in-production/"
       ],
       "numberOfRuns": 3
     },

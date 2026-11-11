@@ -65,12 +65,31 @@ import { APP_VERSION } from '../core/version.generated';
     .to-top svg {
       width: 12px;
       height: 12px;
-      transition: translate 0.2s steps(2);
     }
-    .to-top:hover svg {
-      translate: 0 -4px;
+    // as the contact arrow (home.scss): it moves only with a mouse and no reduced-motion preference (issue #442)
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .to-top svg {
+        transition: translate 160ms steps(2);
+      }
+      .to-top:hover svg {
+        translate: 0 -4px;
+      }
     }
+    // tablets: the year and the way back up share a line, the links take the next one whole (in a third of the width the
+    // Start key wrapped alone under them)
     @include bp.up(md) {
+      .site-footer {
+        grid-template-columns: 1fr auto;
+      }
+      .to-top {
+        justify-self: end;
+      }
+      ul {
+        grid-column: 1 / -1;
+      }
+    }
+    // the three columns need 1100px: at 1024 a column, less the room left for the moai, is 1.5px short of the links
+    @media (min-width: 1100px) {
       .site-footer {
         grid-template-columns: 1fr auto 1fr;
       }
@@ -78,6 +97,7 @@ import { APP_VERSION } from '../core/version.generated';
         justify-self: center;
       }
       ul {
+        grid-column: auto;
         justify-self: end;
       }
     }
@@ -89,6 +109,13 @@ import { APP_VERSION } from '../core/version.generated';
       margin: 0;
       padding: 0;
       list-style: none;
+    }
+    // the small moai stands in the window's bottom-right corner on desktop (moai-guest.ts, effects/moai.ts): 16 px from
+    // the edge and about 62 px wide. Where the page's margin is narrower than that, the links step aside (issue #393)
+    @media (min-width: 1024px) and (pointer: fine) {
+      ul {
+        margin-right: max(0px, calc(96px - var(--gutter) - (100vw - min(100vw, var(--container) + 2 * var(--gutter))) / 2));
+      }
     }
     // flex items, so no line box puts the Start key (whose baseline is the bottom of its drawing) on another line than the links
     li {

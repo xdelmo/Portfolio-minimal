@@ -9,6 +9,8 @@ export function wave(t: number): number {
 
 /** How long without any input before the moai falls asleep, in milliseconds. */
 export const SLEEP_MS = 20_000;
+/** After this long without input, before it sleeps, it blows one bubble of gum while it waits, without a word (issue #393). */
+export const IDLE_GUM_MS = 10_000;
 
 // radians the moai bows its head while the page scrolls: it looks down at what passes by
 export const LOOK_DOWN = 0.18;
@@ -92,4 +94,89 @@ export function bubbleCells(radius = 3): { x: number; y: number; z: number }[] {
     }
   }
   return cells;
+}
+
+export interface Squash {
+  /** Vertical scale of the moai. */
+  readonly sy: number;
+  /** Lift, in voxels. */
+  readonly y: number;
+}
+
+// four held poses each: stone moves in steps, never with an elastic bounce (issue #393)
+const HOP: readonly Squash[] = [
+  { sy: 0.9, y: 0 },
+  { sy: 1.06, y: 1.5 },
+  { sy: 1, y: 0.75 },
+  { sy: 0.94, y: 0 },
+];
+const STRETCH: readonly Squash[] = [
+  { sy: 0.94, y: 0 },
+  { sy: 1.04, y: 0 },
+  { sy: 1.08, y: 0 },
+  { sy: 1.02, y: 0 },
+];
+
+/** A single click's hop, in milliseconds. */
+export const HOP_MS = 300;
+/** The stretch on waking up. */
+export const STRETCH_MS = 600;
+
+function steps(poses: readonly Squash[], duration: number, t: number): Squash | null {
+  if (t < 0 || t >= duration) return null;
+  return poses[Math.floor((t / duration) * poses.length)];
+}
+
+/** The pose `t` ms into a hop, or null once it has landed. */
+export function hop(t: number): Squash | null {
+  return steps(HOP, HOP_MS, t);
+}
+
+/** The pose `t` ms into the stretch on waking up, or null once it is over. */
+export function stretch(t: number): Squash | null {
+  return steps(STRETCH, STRETCH_MS, t);
+}
+
+/** Shaken, the pukao falls beside the moai, bounces twice, lies there, then hops back on (issue #393). */
+export const PUKAO_MS = 3000;
+// voxels it moves from its place, every 100 ms of the fall: stone falls in steps too
+const PUKAO_FALL: readonly { x: number; y: number }[] = [
+  { x: 1, y: -2 },
+  { x: 3, y: -8 },
+  { x: 5, y: -22 },
+  { x: 6, y: -17 },
+  { x: 7, y: -22 },
+  { x: 8, y: -20 },
+];
+const PUKAO_DOWN = { x: 8, y: -22 };
+const PUKAO_GROUND_MS = 2000;
+
+/** How far the pukao is from its place `t` ms after the shake, in voxels, or null once it is back on. */
+export function pukaoFall(t: number): { x: number; y: number } | null {
+  if (t < 0 || t >= PUKAO_MS) return null;
+  const fall = PUKAO_FALL.length * 100;
+  if (t < fall) return PUKAO_FALL[Math.floor(t / 100)];
+  if (t < fall + PUKAO_GROUND_MS) return PUKAO_DOWN;
+  // back up in four steps
+  const left = 1 - (Math.floor(((t - fall - PUKAO_GROUND_MS) / (PUKAO_MS - fall - PUKAO_GROUND_MS)) * 4) + 1) / 4;
+  return { x: Math.round(PUKAO_DOWN.x * left) || 0, y: Math.round(PUKAO_DOWN.y * left) || 0 };
+}
+
+/** Tickled, it turns its back for this long and takes no clicks. */
+export const SULK_MS = 4000;
+/** Spun round, its eyes roll and its head wobbles for this long. */
+export const DIZZY_MS = 1500;
+/** The sneeze a gust of scroll raises, in milliseconds. */
+export const SNEEZE_MS = 600;
+
+/** Extra pitch `t` ms into a sneeze, in radians: it leans back (ah…), jolts forward (achoo!), then is still. */
+export function sneeze(t: number): number {
+  if (t < 0 || t >= SNEEZE_MS) return 0;
+  return t < 300 ? -0.12 : t < 450 ? 0.3 : 0;
+}
+
+/** Roll of the dizzy head `t` ms in, in radians: it wobbles in held steps, never smoothly. */
+export function wobble(t: number): number {
+  if (t < 0 || t >= DIZZY_MS) return 0;
+  return [0.08, 0, -0.08, 0][Math.floor(t / 150) % 4];
 }

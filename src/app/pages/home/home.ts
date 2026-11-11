@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { CONTENT } from '../../content/content';
-import { voices } from '../../content/voices';
+import { around, voices } from '../../content/voices';
 import { toLocale } from '../../core/i18n/locale';
 import { homeJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
@@ -17,6 +17,7 @@ import { dissolveEffect } from '../../motion/effects/dissolve';
 import { aboutWordsEffect } from '../../motion/effects/about-words';
 import { parallaxEffect } from '../../motion/effects/parallax';
 import { experienceEffect } from '../../motion/effects/experience';
+import { figuresEffect } from '../../motion/effects/figures';
 import { finaleEffect } from '../../motion/effects/finale';
 import { heroEffect } from '../../motion/effects/hero';
 import { moaiEffect } from '../../motion/effects/moai';
@@ -26,6 +27,7 @@ import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure';
+import { MoaiPeek } from '../../voxel/moai-peek';
 import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { CopyEmail } from '../../layout/copy-email';
@@ -35,13 +37,13 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, CopyEmail, Depixelate],
   template: `
     <div class="motion" [appMotion]="effects">
     <section class="hero" aria-labelledby="hero-title">
       <div class="copy" #copy>
       <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
-      <p class="lede">{{ content.hero.lede }}</p>
+      <p class="lede">{{ lede[0] }}<app-moai-peek [word]="lede[1]" />{{ lede[2] }}</p>
       </div>
       <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />
@@ -64,6 +66,12 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
             <p>{{ paragraph }}</p>
           }
         </div>
+        <!-- the proof under the statement (issue #392): big numbers, each read as one sentence with its label -->
+        <ul class="figures" role="list">
+          @for (figure of content.figures; track figure.value) {
+            <li><span class="figure"><span class="figure-value">{{ figure.value }}</span><span class="plus">+</span></span>&ngsp;<span class="figure-label">{{ figure.label }}</span></li>
+          }
+        </ul>
         <app-at-a-glance [items]="content.glance" />
       </div>
       <app-moai-figure class="about-moai" />
@@ -96,7 +104,7 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     <section id="contact" class="section container band band--ink contact" aria-labelledby="contact-title">
       <app-pixel-dissolve class="seam" data-scrub [cols]="120" [rows]="3" [colors]="contactSeam" grow="up" />
       <div class="contact-text">
-        <p class="contact-lede" i18n="@@home.contact.lede">Building something with Angular, or hiring for a frontend role?</p>
+        <p class="contact-lede" i18n="@@home.contact.lede">Hiring for a frontend role?</p>
         <h2 id="contact-title">
           <a class="contact-link" [href]="'mailto:' + content.person.email"><span class="contact-label voice" i18n="@@home.contact.title">Let’s talk</span><app-pixel-arrow class="contact-arrow" /></a>
         </h2>
@@ -110,249 +118,14 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
     </section>
     </div>
   `,
-  styles: `
-    @use 'styles/breakpoints' as bp;
-
-    .motion {
-      display: contents;
-    }
-
-    // the first screen below the sticky header, so the seam at its foot meets the bottom edge of the viewport on every
-    // screen (issue #104: on phones it used to end with the text); svh: the screen with Safari's bars showing
-    .hero,
-    .copy {
-      display: grid;
-      // centred both ways, a poster on the first screen (issue #270)
-      justify-items: center;
-      // the headline's descenders need room above the lede
-      gap: var(--space-4);
-    }
-    .hero {
-      position: relative;
-      align-content: center;
-      text-align: center;
-      min-height: calc(100svh - var(--header-h));
-      // full bleed: the cloud runs edge to edge, so the text keeps the container's gutters itself
-      // even padding now the buttons are gone: the text sits lower, so more cloud shows above it (issue #339)
-      padding: var(--space-8) var(--gutter);
-    }
-    .copy {
-      max-width: var(--container);
-    }
-    // GSAP came after the intro's CSS fallback lifted the panel (a slow network): heroEffect never ran under the
-    // intro, so the copy rises right after the lift on the same first-render clock (2s on phones, 3.6s on desktop, site-intro.ts) instead
-    // of being already there (issue #329). endIntro() removes the class, so GSAP's own entrance wins when it is in time.
-    // Moved, never transparent: under the opaque panel the copy still paints at first render, so it is the LCP then
-    // and not 3.6s later (issue #381, mobile Lighthouse 0.88 with the intro on phones)
-    :host-context(.intro-on) .copy {
-      animation: hero-in 0.8s 2s ease-out backwards;
-      @media (min-width: 1024px) and (hover: hover) {
-        animation-delay: 3.6s;
-      }
-    }
-    @keyframes hero-in {
-      from {
-        translate: 0 var(--space-3);
-      }
-    }
-    .hero h1 {
-      // the full --step-hero (44 → 96px): the text alone fills the hero (the moai lives in the About, issue #270),
-      // and the short headline (issue #280) keeps the lede above the fold, so the base h1 size applies
-      // balanced lines read as one centred block, without a short last line (issue #270)
-      text-wrap: balance;
-      font-variation-settings: 'wdth' 100;
-      // the approved mockup's proportion (issue #304): the headline about 55% of the hero's width, so the cloud's
-      // clearing stays an ellipse around it instead of a box (44px on phones, 96px on wide screens)
-      font-size: clamp(2.747rem, 5.3vw, 6rem);
-      line-height: 0.98;
-      letter-spacing: -0.025em;
-      // the two voices stand on their own lines: the method, then the voice (issue #304)
-      .method,
-      .voice {
-        display: block;
-      }
-    }
-    // body size on phones, where the 44px headline would otherwise have a subtitle half its size beside it
-    // centred, it keeps a readable measure under the wide headline (issue #270)
-    .lede {
-      max-width: 44ch;
-      text-wrap: balance;
-      @include bp.up(md) {
-        font-size: var(--step-1);
-      }
-    }
-    .muted {
-      color: var(--fg-muted);
-    }
-    // the field sits behind the hero text: a cloud around a clearing for it (issue #304)
-    .hero {
-      isolation: isolate;
-    }
-    .field {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-    }
-    .contact {
-      display: grid;
-      gap: var(--space-4);
-    }
-    .contact-text {
-      display: grid;
-      gap: var(--space-3);
-    }
-    .contact-text > * {
-      margin: 0;
-    }
-    .contact-lede {
-      max-width: 40ch;
-      font-size: var(--step-1);
-    }
-    // the giant title is the action, as in the references: the whole line writes an email; the arrow stays inline
-    .contact-link {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0 0.16em;
-      min-height: 44px; // touch target (WCAG 2.5.8, e2e/touch.spec.ts)
-      color: inherit;
-      text-decoration: none;
-    }
-    .contact-label {
-      display: inline-block;
-      padding-inline-end: 0.16em;
-    }
-    .contact-arrow {
-      flex-shrink: 0;
-      width: 0.5em;
-      height: 0.5em;
-      color: var(--link);
-    }
-    .contact-link:hover .contact-label {
-      text-decoration: underline;
-      text-decoration-thickness: 0.05em;
-      text-underline-offset: 0.08em;
-    }
-    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .contact-arrow {
-        transition: transform 160ms steps(2);
-      }
-      .contact-link:hover .contact-arrow {
-        transform: translate(0.08em, -0.08em);
-      }
-    }
-    // the copy button's item stays out of the list (and of the count a screen reader gives) until it can copy
-    .profiles li:has(> app-copy-email:empty) {
-      display: none;
-    }
-    .profiles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      padding: 0;
-      list-style: none;
-    }
-    // a circle drawn on the pixel grid, 16 cells across: round like the tool rings, stepped like the pixel field
-    .contact-photo {
-      grid-row: 1;
-      width: 160px;
-      height: auto;
-      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h6v1h-6zM3 1h10v1h-10zM2 2h12v1h-12zM1 3h14v1h-14zM1 4h14v1h-14zM0 5h16v1h-16zM0 6h16v1h-16zM0 7h16v1h-16zM0 8h16v1h-16zM0 9h16v1h-16zM0 10h16v1h-16zM1 11h14v1h-14zM1 12h14v1h-14zM2 13h12v1h-12zM3 14h10v1h-10zM5 15h6v1h-6z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-    }
-    @include bp.up(md) {
-      .contact {
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: end;
-      }
-      .contact-photo {
-        grid-row: auto;
-        width: 256px;
-      }
-    }
-    #contact h2 {
-      font-size: clamp(3rem, 1rem + 8vw, 9rem);
-      line-height: 0.95;
-    }
-    // below the text on phones and tablets: centred, not stranded on the left of an empty band
-    .about-moai {
-      justify-self: center;
-    }
-    .about-text {
-      display: grid;
-      gap: var(--space-4);
-    }
-    // paragraphs of one text sit closer than the blocks of the section (issue #95)
-    .about-body {
-      display: grid;
-      gap: var(--space-2);
-    }
-    // the About's one idea: a sentence in the hero's condensed type, its words lit by the scroll (about-words.ts)
-    .statement {
-      max-width: 18ch;
-      font-size: clamp(2.2rem, 1.2rem + 4vw, var(--step-5));
-      font-weight: 600;
-      line-height: 1.05;
-      font-variation-settings: 'wdth' 75;
-      letter-spacing: -0.01em;
-      text-wrap: balance;
-      // inline: the statement keeps its balanced wrap (the voice only changes typeface, issue #304)
-      .method,
-      .voice {
-        display: inline;
-      }
-    }
-
-    @include bp.up(lg) {
-      .about {
-        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-        column-gap: var(--space-8);
-        align-items: start;
-      }
-      // its own stacking context (.band) holds the moai pinned in the corner (motion/effects/moai.ts): above every
-      // section after it, which would paint over the moai otherwise (issue #270); under the header
-      .about {
-        z-index: 2;
-      }
-    }
-    // pixel seams: full-bleed strips of 16px cells; a band grows one above its top edge, the hero one at its foot
-    .seam {
-      position: absolute;
-      inset-inline: calc(50% - 50vw);
-      height: var(--space-6);
-      // follows the contact band while it widens from a card (finale.ts)
-      clip-path: inset(0 var(--band-inset, 0%));
-    }
-    .band > .seam {
-      bottom: 100%;
-    }
-    .seam--hero {
-      bottom: 0;
-    }
-    .trail {
-      position: relative;
-    }
-    .section,
-    .deck {
-      display: grid;
-      gap: var(--space-4);
-      scroll-margin-top: calc(var(--header-h) + var(--space-2));
-    }
-    .section {
-      padding-block: var(--space-8);
-    }
-    // a band grows its pixel seam above its top edge, into the section before it: that section keeps 64px of air
-    // below its last line on top of the seam, like every other section
-    .section:has(+ .band > .seam),
-    // the stack closes the pixel thread's trail, and the contact band comes right after it
-    .trail:has(+ .band > .seam) > .section:last-child {
-      padding-bottom: calc(var(--space-8) + var(--space-6));
-    }
-  `,
+  styleUrl: './home.scss',
 })
 export class Home {
   protected readonly content = inject(CONTENT);
   protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
   protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
-  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, parallaxEffect];
+  protected readonly lede = around(this.content.hero.lede, this.content.hero.peek);
+  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, figuresEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

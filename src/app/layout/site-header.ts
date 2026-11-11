@@ -44,6 +44,12 @@ import { SiteMenu } from './site-menu';
       background: var(--bg);
       box-shadow: 0 1px 0 var(--rule);
     }
+    // forced colors drop box-shadow: the rule under the header becomes a system-coloured border (issue #431)
+    @media (forced-colors: active) {
+      :host {
+        border-bottom: 1px solid CanvasText;
+      }
+    }
     .site-header {
       display: flex;
       align-items: center;

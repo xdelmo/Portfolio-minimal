@@ -42,6 +42,8 @@ export interface Project {
   title: string;
   /** Whose project it is and in what context, said up front as a plain sentence: a thesis, a side project, with whom. */
   role: string;
+  /** The project's outcome in one line, shown above the summary on its card. */
+  result: string;
   summary: string;
   stack: readonly string[];
   /** Every repository, private ones too: the build links only the public ones (content/public-repos.ts). */
@@ -128,13 +130,16 @@ export interface SiteContent {
   person: Person;
   /** The home page's <title> and meta description: what a search result shows. */
   seo: { title: string; description: string };
-  hero: { headline: string; voice: string; lede: string };
+  /** `peek`: the word of the lede the moai peeks out from behind on hover (issue #394). */
+  hero: { headline: string; voice: string; lede: string; peek: string };
   /** One sentence that opens the About section, in large type. */
   aboutStatement: string;
   aboutVoice: string;
   /** One string per paragraph. */
   about: readonly string[];
   glance: readonly GlanceItem[];
+  /** The About's row of big numbers (issue #392): only true, checkable facts; every value reads "more than". */
+  figures: readonly GlanceItem[];
   projects: readonly Project[];
   experience: readonly ExperienceItem[];
   studies: readonly StudyItem[];

@@ -31,6 +31,12 @@ const MAX_STEP_MS = 100; // a long pause between frames must not jump the animat
       position: relative;
       display: block;
     }
+    // decoration in its own colours, which ignore the system palette (issue #431)
+    @media (forced-colors: active) {
+      :host {
+        visibility: hidden;
+      }
+    }
     // out of flow: its pixel size must never feed back into the height of the hero rows
     canvas {
       position: absolute;

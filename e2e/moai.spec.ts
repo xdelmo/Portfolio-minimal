@@ -1,5 +1,5 @@
 import { expect, test, type Page } from './fixtures';
-import { press } from './site';
+import { SLUGS, openLanguages, press } from './site';
 
 const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
 const scene = (page: Page) => page.locator('app-moai-scene canvas');
@@ -103,9 +103,10 @@ test('releases WebGL when leaving and coming back many times', async ({ page }) 
   const errors = collectErrors(page);
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  // the home's own moai: on the case study the corner has one too (issue #393), so both scenes come and go
   for (let i = 0; i < 8; i++) {
-    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
-    await expect(scene(page)).toBeVisible();
+    await page.locator('app-moai-figure.about-moai').scrollIntoViewIfNeeded();
+    await expect(page.locator('.about-moai app-moai-scene canvas')).toBeVisible();
     await page.getByRole('link', { name: 'ApexFlow' }).first().click();
     await expect(page.locator('h1')).toHaveText('ApexFlow');
     await page.goBack();
@@ -201,6 +202,11 @@ test('horizontal touchmove prevents default to stop page scroll, vertical does n
   });
   expect(preventedVertical).toBe(false);
 });
+
+/** Input the moai wakes to, sent in the page: under an installed clock WebKit's page.mouse.move can hang for tens of seconds. */
+async function nudge(page: Page): Promise<void> {
+  await page.evaluate(() => window.dispatchEvent(new PointerEvent('pointermove', { clientX: 200, clientY: 200 })));
+}
 
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
@@ -408,9 +414,65 @@ test.describe('sleep', () => {
     await page.clock.fastForward('00:12');
     await expect(host).toHaveAttribute('data-asleep', '');
     await expect(host.locator('.zzz')).toBeAttached();
-    await page.mouse.move(200, 200);
+    await nudge(page);
     await expect(host).not.toHaveAttribute('data-asleep');
     await expect(host.locator('.zzz')).toHaveCount(0);
+  });
+
+  test('woken in view on desktop, it asks for five more minutes', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'it speaks on desktop only');
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const host = page.locator('app-moai-scene');
+    // the idle gum comes only once the moai knows it is in view (WebKit's IntersectionObserver can lag): it must fall
+    // asleep in view to grumble
+    await page.clock.fastForward('00:11');
+    await expect(host).toHaveAttribute('data-gum', '');
+    await page.clock.fastForward('00:11');
+    await expect(host).toHaveAttribute('data-asleep', '');
+    await nudge(page);
+    await expect(host.locator('.moai-line')).toHaveText('Five more minutes…');
+    // still half asleep: the eyes stay shut while it asks, and open once the bubble closes (issue #444)
+    await expect(host).toHaveAttribute('data-drowsy', '');
+    await page.clock.fastForward('00:05');
+    await expect(host.locator('.moai-line')).toHaveCount(0);
+    await expect(host).not.toHaveAttribute('data-drowsy');
+  });
+
+  // issue #393: waiting, it blows one silent bubble of gum at 10 s, then sleeps at 20 s
+  test('after 10 s without input it blows one bubble of gum, without a word, and input puts the next one off', async ({ page }) => {
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const host = page.locator('app-moai-scene');
+    await page.clock.fastForward('00:08');
+    await nudge(page);
+    await page.clock.fastForward('00:08');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward('00:03');
+    await expect(host).toHaveAttribute('data-gum', '');
+    await expect(host.locator('.moai-line')).toHaveCount(0);
+    await page.clock.fastForward('00:05');
+    await expect(host).not.toHaveAttribute('data-gum');
+    // one per wait: no second bubble before it falls asleep
+    await page.clock.fastForward('00:05');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward('00:03');
+    await expect(host).toHaveAttribute('data-asleep', '');
+    await expect(host).not.toHaveAttribute('data-gum');
+  });
+
+  test('blows no bubble of gum while the animations are paused', async ({ page }) => {
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    await press(page, 'Pause animations');
+    await page.clock.fastForward('00:12');
+    await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-gum');
   });
 
   test('does not fall asleep while the animations are paused', async ({ page }) => {
@@ -422,6 +484,67 @@ test.describe('sleep', () => {
     await page.clock.fastForward('00:25');
     await page.clock.fastForward('00:25');
     await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-asleep');
+  });
+});
+
+// issue #393: a few words in a pixel bubble, on desktop, at most one line every 10 s
+test.describe('voice', () => {
+  test.beforeEach(async ({ page, isMobile }) => {
+    test.skip(isMobile, 'it speaks on desktop only');
+    await page.clock.install();
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    await page.locator('app-moai-figure').evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+    await expect(scene(page)).toBeVisible();
+  });
+  const line = (page: Page) => page.locator('app-moai-scene .moai-line');
+  /** A point on the canvas, `dx` px right of its centre: clicks far enough apart never make a double click. */
+  const at = async (page: Page, dx = 0) => {
+    const box = await scene(page).boundingBox();
+    if (!box) throw new Error('no canvas');
+    return [box.x + box.width / 2 + dx, box.y + box.height / 2] as const;
+  };
+
+  test('says nothing until asked; a click makes it hop and say a word, hidden from screen readers, for 3 s', async ({ page }) => {
+    await expect(line(page)).toHaveCount(0);
+    const host = page.locator('app-moai-scene');
+    await page.mouse.click(...(await at(page)));
+    await expect(host).toHaveAttribute('data-hop', '');
+    await expect(host).toHaveAttribute('data-line', 'hop');
+    await expect(line(page)).toHaveText(/^(Hey\.|Yes\?)$/);
+    await expect(line(page)).toHaveAttribute('aria-hidden', 'true');
+    await expect(host).not.toHaveAttribute('data-gum');
+    await page.clock.fastForward(3100);
+    await expect(line(page)).toHaveCount(0);
+  });
+
+  test('keeps quiet for 10 s after a line, then speaks again', async ({ page }) => {
+    const host = page.locator('app-moai-scene');
+    await page.mouse.click(...(await at(page, -40)));
+    await expect(line(page)).toHaveCount(1);
+    await page.clock.fastForward(3100);
+    await expect(host).not.toHaveAttribute('data-hop');
+    await page.mouse.click(...(await at(page)));
+    await expect(host).toHaveAttribute('data-hop', '');
+    await expect(line(page)).toHaveCount(0);
+    await page.clock.fastForward(7000);
+    await page.mouse.click(...(await at(page, 40)));
+    await expect(line(page)).toHaveCount(1);
+  });
+
+  test('a double click blows the gum and says so', async ({ page }) => {
+    const host = page.locator('app-moai-scene');
+    await page.mouse.dblclick(...(await at(page)));
+    await expect(host).toHaveAttribute('data-gum', '');
+    await expect(host).toHaveAttribute('data-line', 'gum');
+    await expect(line(page)).toHaveText('Gum gum.');
+  });
+
+  test('says nothing while the animations are paused', async ({ page }) => {
+    await press(page, 'Pause animations');
+    await page.mouse.click(...(await at(page)));
+    await page.clock.fastForward(500);
+    await expect(line(page)).toHaveCount(0);
   });
 });
 
@@ -538,4 +661,189 @@ test('back in the About on a narrow window after a resize from the corner', asyn
     const [moai, about] = await Promise.all([rect(page), rect(page, '#about')]);
     return moai.top >= about.top && moai.bottom <= about.bottom && moai.left >= about.left && moai.right <= about.right && moai.height > 140;
   }).toBe(true);
+});
+
+// issue #393: the moai on every page, one scene at a time
+test.describe('on other pages', () => {
+  const pages = ['/en/work/apexflow/', '/en/blog/signals-in-production/', '/en/404'];
+  const guest = (page: Page) => page.locator('app-moai-guest app-moai-figure');
+
+  for (const path of pages) {
+    test(`on desktop it stands in the corner of ${path} and covers no link or button`, async ({ page, isMobile }) => {
+      test.skip(isMobile, 'desktop only');
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(path);
+      await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure[data-corner]')).toHaveCount(1);
+      const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
+      const box = await rect(page, 'app-moai-guest .body');
+      expect([Math.round(box.height), Math.round(w - box.right), Math.round(h - box.bottom)]).toEqual([140, 16, 16]);
+      // scrolled to every height, what is under the corner is never a link or a button
+      const covered = await page.evaluate(async (b) => {
+        const hits: string[] = [];
+        const step = window.innerHeight / 2;
+        for (let y = 0; ; y += step) {
+          window.scrollTo(0, y);
+          await new Promise(requestAnimationFrame);
+          for (const el of document.querySelectorAll<HTMLElement>('a, button')) {
+            if (el.closest('app-moai-guest')) continue;
+            const r = el.getBoundingClientRect();
+            if (r.width && r.height && r.right > b.left && r.left < b.right && r.bottom > b.top && r.top < b.bottom) hits.push(el.outerHTML.slice(0, 80));
+          }
+          if (y >= document.documentElement.scrollHeight - window.innerHeight) break;
+        }
+        return [...new Set(hits)];
+      }, box);
+      expect(covered).toEqual([]);
+    });
+  }
+
+  test('on phones and tablets no moai appears outside the home', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/en/work/apexflow/');
+    await expect(guest(page)).toHaveCount(0);
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await expect(guest(page)).toHaveCount(0);
+  });
+
+  test('the home has only its own moai, also after going to a case study and back', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/en/');
+    await expect(guest(page)).toHaveCount(0);
+    await page.locator('a[href*="work/"]').first().evaluate((a) => { (a as HTMLAnchorElement).click(); });
+    await expect(page).toHaveURL(/work\//);
+    await expect(guest(page)).toHaveCount(1);
+    await expect(page.locator('app-moai-figure')).toHaveCount(1);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/en\/$/);
+    await expect(guest(page)).toHaveCount(0);
+    await expect(page.locator('app-moai-figure')).toHaveCount(1);
+    expect(await page.locator('app-moai-scene').count()).toBeLessThanOrEqual(1);
+  });
+
+  test('crossing 1024px it appears only on desktop', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/en/work/apexflow/');
+    await expect(guest(page)).toHaveCount(1);
+    await page.setViewportSize({ width: 800, height: 800 });
+    await expect(guest(page)).toHaveCount(0);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.locator('app-moai-guest[data-place=corner] app-moai-figure')).toHaveCount(1);
+    await expect(guest(page)).toHaveCount(1);
+  });
+});
+
+// issue #393: the gags, desktop only; on a case study the moai stands in the corner, in view from the start
+test.describe('the gags', () => {
+  test.beforeEach(({ isMobile }) => {
+    test.skip(isMobile, 'desktop only');
+  });
+
+  const ready = async (page: Page, path = '/en/') => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(path);
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    if (path === '/en/') await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    const box = await scene(page).boundingBox();
+    if (!box) throw new Error('no moai');
+    return { host: page.locator('app-moai-scene'), x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  };
+  const line = (page: Page) => page.locator('app-moai-scene .moai-line');
+  const study = `/en/work/${SLUGS[0]}`;
+
+  test('shaken, its pukao falls and comes back', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    // the shake is bound to 1200 ms, and each page.mouse.move takes over 100 ms (more on a busy machine): the moves go
+    // in one task in the page, to the pointer page.mouse holds down
+    await scene(page).evaluate((canvas, { x, y }) => {
+      for (const dx of [60, -60, 60, -60, 60, -60, 0])
+        canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, buttons: 1, clientX: x + dx, clientY: y }));
+    }, { x, y });
+    await page.mouse.up();
+    await expect(host).toHaveAttribute('data-pukao', 'off');
+    await expect(line(page)).toHaveText('My pukao!');
+    await expect(host).not.toHaveAttribute('data-pukao', { timeout: 6000 });
+  });
+
+  test('spun round twice, it gets dizzy', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (const to of [100, 1180, 100]) await page.mouse.move(to, y, { steps: 10 });
+    await page.mouse.up();
+    await expect(host).toHaveAttribute('data-dizzy', '');
+    await expect(line(page)).toHaveText('Eight hundred years still, and now this.');
+  });
+
+  test('tickled with six quick clicks, it turns its back', async ({ page }) => {
+    const { host, x, y } = await ready(page);
+    // six clicks within 2 s, and page.mouse.click takes up to 400 ms on a busy machine: they go in one task in the page
+    const errors: Error[] = [];
+    page.on('pageerror', (error) => errors.push(error));
+    await scene(page).evaluate((canvas, { x, y }) => {
+      for (let i = 0; i < 6; i++)
+        for (const type of ['pointerdown', 'pointerup'])
+          canvas.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 1, pointerType: 'mouse', isPrimary: true, clientX: x + (i % 2 ? 30 : -30), clientY: y + i * 4 }));
+    }, { x, y });
+    expect(errors).toEqual([]);
+    await expect(host).toHaveAttribute('data-sulking', '');
+    await expect(line(page)).toHaveText('Hmph. Not talking to you.');
+  });
+
+  test('a gust of the wheel makes it sneeze', async ({ page }) => {
+    const { host } = await ready(page, study);
+    // a gust is bound to 400 ms, longer than two page.mouse.wheel take on a busy machine: the wheel goes in the page
+    await page.evaluate(() => {
+      for (let i = 0; i < 2; i++) document.body.dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 1500 }));
+    });
+    await expect(host).toHaveAttribute('data-sneeze', '');
+    await expect(line(page)).toHaveText('Ah… ah… Achoo!');
+  });
+
+  test('says goodnight when the lights go off and good morning when they come back', async ({ page }) => {
+    await page.clock.install();
+    await ready(page, study);
+    await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+    await expect(line(page)).toHaveText("Lights off. I'll keep watch.");
+    // the bubble and its tail sit on the moai's left (issue #405)
+    const bubble = await line(page).boundingBox();
+    const moai = await scene(page).boundingBox();
+    if (!bubble || !moai) throw new Error('no bubble');
+    expect(bubble.x + bubble.width).toBeLessThan(moai.x + moai.width / 2 - 8);
+    // the real seconds of the test plus these 11 would put it to sleep, and its wake line would take the morning's turn
+    await nudge(page);
+    await page.clock.fastForward('00:11');
+    await page.getByRole('button', { name: 'Switch to light theme' }).click();
+    await expect(line(page)).toHaveText('Morning already?');
+  });
+
+  test('says hello in the new language after the switch, once', async ({ page }) => {
+    await ready(page, study);
+    await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
+    await expect(page).toHaveURL(/\/it\//);
+    await expect(scene(page)).toBeVisible();
+    await expect(line(page)).toHaveText('Ciao!');
+    await page.reload();
+    await expect(scene(page)).toBeVisible();
+    await expect(line(page)).toHaveCount(0);
+  });
+
+  test('knew you would find the Konami code', async ({ page }) => {
+    await ready(page, study);
+    for (const key of ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']) await page.keyboard.press(key);
+    await expect(line(page)).toHaveText("I knew you'd find it.");
+  });
+
+  test('pays its respects when the last case study is read', async ({ page }) => {
+    await page.addInitScript((read) => {
+      localStorage.setItem('explored', JSON.stringify(read));
+    }, SLUGS.slice(1));
+    await ready(page, study);
+    await expect(page.getByRole('status')).toHaveText('Achievement unlocked: Explorer');
+    await expect(line(page)).toHaveText('You read them all. Respect.');
+  });
 });

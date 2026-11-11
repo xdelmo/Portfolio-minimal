@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DOCUMENT, computed, inject } from '@angular/core';
 import { ThemeService } from './theme.service';
+import { MoaiCues } from '../../voxel/moai-cues';
 
 @Component({
   selector: 'app-theme-toggle',
@@ -49,6 +50,7 @@ import { ThemeService } from './theme.service';
 export class ThemeToggle {
   protected readonly themes = inject(ThemeService);
   private readonly doc = inject(DOCUMENT);
+  private readonly cues = inject(MoaiCues);
   protected readonly label = computed(() =>
     this.themes.theme() === 'dark'
       ? $localize`:@@theme.toLight:Switch to light theme`
@@ -60,6 +62,8 @@ export class ThemeToggle {
    * round, the light page closes into the toggle (issue #116). CSS in _base.scss.
    */
   protected switchTheme(event: MouseEvent): void {
+    // the moai has a word for the new theme (issue #393)
+    this.cues.cue(this.themes.theme() === 'dark' ? 'light' : 'dark');
     const view = this.doc.defaultView;
     if (!view || !('startViewTransition' in this.doc) || view.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.themes.toggle();

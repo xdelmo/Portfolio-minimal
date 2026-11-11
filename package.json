@@ -14,6 +14,8 @@
     "og:images": "node --import ./scripts/ts-resolve.mjs scripts/og-images.mjs",
     "verify:deploy": "node scripts/verify-deploy.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",
+    "ship": "sh scripts/ship.sh",
+    "verify:quick": "node scripts/env-check.mjs && npm run generate && npm run lint && ng test --no-watch && npm run test:scripts",
     "e2e": "playwright test",
     "e2e:changed": "bash scripts/e2e-changed.sh",
     "e2e:webkit": "bash scripts/e2e-webkit.sh",
@@ -22,6 +24,7 @@
     "verify": "node scripts/env-check.mjs && npm run generate && npm run lint && ng test --no-watch && npm run test:scripts && npm run build && npm run e2e -- --max-failures=1 && npm run e2e:webkit -- --max-failures=1 && npm run e2e:changed"
   },
   "private": true,
+  "type": "module",
   "packageManager": "npm@11.19.0",
   "dependencies": {
     "@angular/common": "^22.2.0",

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, input, signal } from '@angular/core';
 import { MOAI_BLEED } from './moai.model';
 import { MoaiScene } from './moai-scene';
 
@@ -17,7 +17,7 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
       <img class="still still--dark" [class.covered]="drawn()" [src]="image.darkSrc" [width]="image.width" [height]="image.height" alt="" loading="lazy" decoding="async" />
       @if (live() && !failed()) {
         @defer (on viewport) {
-          <app-moai-scene class="layer" (drawn)="drawn.set(true)" (failed)="drawn.set(false); failed.set(true)" />
+          <app-moai-scene class="layer" [greet]="greet()" (drawn)="drawn.set(true)" (failed)="drawn.set(false); failed.set(true)" />
         } @placeholder {
           <span class="layer"></span>
         }
@@ -83,6 +83,8 @@ export const MOAI_IMAGE = { src: 'images/moai.png', darkSrc: 'images/moai-dark.p
   `,
 })
 export class MoaiFigure {
+  /** Whether it waves once the intro is over: only on the home (issue #393). */
+  readonly greet = input(true);
   protected readonly image = MOAI_IMAGE;
   protected readonly bleed = MOAI_BLEED;
   protected readonly ratio = `${String(MOAI_IMAGE.width)} / ${String(MOAI_IMAGE.height)}`;
@@ -92,7 +94,8 @@ export class MoaiFigure {
 
   constructor() {
     afterNextRender(() => {
-      this.live.set(typeof matchMedia === 'function' && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+      // the still image only, and no Three.js chunk, with reduced motion or on a data saver (issue #431)
+      this.live.set(typeof matchMedia === 'function' && !matchMedia('(prefers-reduced-motion: reduce), (prefers-reduced-data: reduce)').matches);
     });
   }
 }

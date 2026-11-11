@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, DestroyRef, ViewContainerRef, afterNextRender, inject, signal } from '@angular/core';
 import { LEAD_IN_MS, announceGameStart } from './game-start';
+import { MoaiCues } from '../voxel/moai-cues';
 import type { PlayerCard } from './player-card';
 
 /** ↑ ↑ ↓ ↓ ← → ← → B A, as KeyboardEvent.key values. */
@@ -66,10 +67,21 @@ const TAP_WINDOW_MS = 2000;
       background: var(--accent);
       box-shadow: none;
     }
+    @media (forced-colors: active) {
+      span {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+      }
+      .on {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
   `,
 })
 export class GameTrigger {
   private readonly container = inject(ViewContainerRef);
+  private readonly cues = inject(MoaiCues);
   private card?: ComponentRef<PlayerCard>;
   private opening = false;
   protected readonly COMBO_FROM = COMBO_FROM;
@@ -125,6 +137,7 @@ export class GameTrigger {
   private async open(cheat: boolean): Promise<void> {
     if (this.card || this.opening) return;
     this.opening = true;
+    this.cues.cue('found');
     // the hero answers with a level up when it can be seen: the card waits for it, loading meanwhile
     const leadIn = announceGameStart() ? new Promise((resolve) => setTimeout(resolve, LEAD_IN_MS)) : null;
     let PlayerCard: typeof import('./player-card').PlayerCard;

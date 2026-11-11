@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DOCUMENT, ElementRef, LOCALE_ID, computed, inject, input } from '@angular/core';
 import { currentUrl } from '../current-url';
 import { Locale, localizedUrl, toLocale } from './locale';
+import { HELLO_KEY } from '../../voxel/moai-cues';
 
 /** Matches the `lang-cover` animation in styles/_base.scss. */
 const COVER_MS = 500;
@@ -99,6 +100,11 @@ const COVER_MS = 500;
       background: var(--surface);
       box-shadow: 0 0 0 1px var(--rule);
     }
+    @media (forced-colors: active) {
+      ul:not(.languages) {
+        outline: 1px solid CanvasText;
+      }
+    }
     li > * {
       position: relative;
       display: flex;
@@ -172,6 +178,12 @@ export class LanguageSwitch {
   protected switchTo(event: MouseEvent): void {
     this.doc.cookie = `nf_lang=${this.target}; path=/; max-age=31536000; samesite=lax`;
     const win = this.doc.defaultView;
+    try {
+      // the moai on the page it opens says hello (issue #393)
+      win?.sessionStorage.setItem(HELLO_KEY, '1');
+    } catch {
+      // no storage: no hello
+    }
     const plain = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
     if (!win || !plain || win.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     event.preventDefault();

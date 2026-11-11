@@ -109,7 +109,7 @@ import { QuestSprite } from './quest-sprite';
         justify-self: start;
       }
       li.current .slot {
-        border-color: var(--accent);
+        border-color: var(--accent-line);
       }
       @media (prefers-reduced-motion: no-preference) {
         li.current .sprite {

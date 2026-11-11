@@ -246,7 +246,7 @@ import { CodeBlock } from './code-block';
     }
     app-article .prose blockquote {
       padding-left: var(--space-2);
-      border-left: 3px solid var(--accent);
+      border-left: 3px solid var(--accent-line);
       color: var(--fg-muted);
       font-style: italic;
     }

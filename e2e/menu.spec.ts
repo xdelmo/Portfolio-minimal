@@ -14,15 +14,15 @@ test.describe('the phone menu', () => {
     await expect(menu).toBeHidden();
   });
 
-  // issue #305: the call to action stays in the bar, also over the open menu
-  test('the bar keeps the call to action, and pressing it closes the open menu and lands on the contact', async ({ page, isMobile }) => {
+  // issue #468: on phones the call to action is in the panel, and pressing it closes the menu and lands on the contact
+  test('the panel holds the call to action, and pressing it closes the open menu and lands on the contact', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
     await expect(menu).toBeVisible();
-    await header.locator('.cta').click();
+    await header.locator('.site-menu .cta').click();
     await expect(page).toHaveURL(/#contact$/);
     await expect(menu).toBeHidden();
     // the section is under the sticky header, not behind it
@@ -115,15 +115,17 @@ test.describe('the phone menu', () => {
     expect(await closingTime(page)).toBeLessThan(60);
   });
 
-  // issue #193: on phones the bar keeps the mark and the menu button; the controls are in the panel
-  test('on phones the bar shows only the mark and the menu; the panel holds the languages, pause and theme', async ({ page, isMobile }) => {
+  // issue #193, #468: on phones the bar keeps only the mark and the menu button; the CTA and controls are in the panel
+  test('on phones the bar shows only the mark and the menu; the panel holds the CTA, languages, pause and theme', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
     await expect(header.locator('.logo .mark')).toBeVisible();
     await expect(header.locator('.logo .name')).toBeHidden();
+    await expect(header.locator('.site-header > .cta')).toBeHidden();
     await expect(header.locator('.controls').getByRole('button', { name: 'Pause animations' })).toHaveCount(0);
     await header.locator('.site-menu summary').click();
+    await expect(header.locator('.site-menu .cta')).toBeVisible();
     const settings = header.locator('.site-menu .settings');
     await expect(settings.locator('[aria-current="true"]')).toHaveText('English');
     await expect(settings.getByRole('link', { name: 'Italiano' })).toHaveAttribute('href', '/it/');

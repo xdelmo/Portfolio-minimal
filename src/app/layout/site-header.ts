@@ -14,8 +14,6 @@ import { SiteMenu } from './site-menu';
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
-      <!-- phones: the menu button right before the mark, one brand and navigation corner (issue #324) -->
-      <app-site-menu class="menu" />
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
         ><app-moai-mark class="mark" /><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
@@ -29,8 +27,9 @@ import { SiteMenu } from './site-menu';
         <app-pause-toggle />
         <app-theme-toggle />
       </div>
-      <!-- the bar's one action, on every width and page; outside the nav so the menu's letter scramble leaves it alone -->
+      <!-- the bar's one action, from md; on phones it lives in the menu drawer (issue #468) -->
       <a class="button button--primary cta" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
+      <app-site-menu class="menu" />
     </header>
   `,
   styles: `
@@ -123,22 +122,15 @@ import { SiteMenu } from './site-menu';
       display: none;
       align-items: center;
     }
-    // phones: a compact key, a repository tag's size in the primary colours, between the mark and the menu button
+    // phones: the call to action lives in the menu panel (issue #468); shown in the bar from md
     .cta {
+      display: none;
       flex: none;
-      min-height: 40px;
-      padding-inline: var(--space-2);
-      font-size: var(--step--1);
       white-space: nowrap;
-      @media (pointer: coarse) {
-        min-height: 44px;
-      }
     }
-    // the menu button's bars line up with the gutter; its 48px target runs on to the edge of the screen, and the mark
-    // follows close, so the pair reads as one corner
+    // the menu button's bars line up with the right gutter; its 48px target runs on to the edge of the screen (issue #468)
     .menu {
-      margin-left: calc(-1 * var(--space-2));
-      margin-right: calc(-1 * var(--space-1));
+      margin-right: calc(-1 * var(--space-2));
     }
     @include bp.up(md) {
       nav,
@@ -166,7 +158,9 @@ import { SiteMenu } from './site-menu';
         letter-spacing: 0.12em;
       }
       .cta {
+        display: inline-flex;
         min-height: 48px;
+        padding-inline: var(--space-2);
         font-size: inherit;
       }
     }

@@ -213,13 +213,26 @@ for (const width of [768, 390, 320]) {
   });
 }
 
-// issue #305: the primary button is in the bar on every width, in both languages, and leads to the contact
+// issue #305, #468: the primary button is in the bar from 768px, and in the menu on phones, in both languages
 for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const) {
-  for (const width of [1280, 1024, 768, 390, 320]) {
+  for (const width of [1280, 1024, 768]) {
     test(`the header carries the call to action and still fits, /${lang}/ at ${String(width)}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 640 });
       await page.goto(`/${lang}/`);
-      const cta = page.locator('app-site-header .cta');
+      const cta = page.locator('app-site-header .site-header > .cta');
+      await expect(cta).toBeVisible();
+      await expect(cta).toHaveText(label);
+      await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);
+      expect(await headerRight(page)).toBeLessThanOrEqual(width);
+    });
+  }
+  for (const width of [390, 320]) {
+    test(`on phones the call to action is in the menu panel, /${lang}/ at ${String(width)}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 640 });
+      await page.goto(`/${lang}/`);
+      await expect(page.locator('app-site-header .site-header > .cta')).toBeHidden();
+      await page.locator('.site-menu summary').click();
+      const cta = page.locator('.site-menu .cta');
       await expect(cta).toBeVisible();
       await expect(cta).toHaveText(label);
       await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);

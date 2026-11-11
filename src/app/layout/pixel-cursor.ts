@@ -48,7 +48,7 @@ import { MotionHost } from '../motion/motion-host';
       height: 40px;
       margin: -20px 0 0 -20px;
       background: transparent;
-      box-shadow: inset 0 0 0 2px var(--accent);
+      box-shadow: inset 0 0 0 2px var(--accent-line);
     }
   `,
 })

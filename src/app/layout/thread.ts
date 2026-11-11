@@ -39,7 +39,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
       left: 0;
       width: 100%;
       height: calc(var(--thread, 0) * 100%);
-      background: var(--accent);
+      background: var(--accent-line);
     }
     // 12px: on phones the node reaches the 16px gutter and no further
     app-thread .node {

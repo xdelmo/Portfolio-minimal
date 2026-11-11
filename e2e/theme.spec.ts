@@ -99,5 +99,5 @@ test('the browser bar takes the page background in both themes', async ({ page }
   await press(page, 'Switch to light theme');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect.poll(bar).toBe(await bg());
-  expect(await bar()).toBe('#e5e5e5');
+  expect(await bar()).toBe('#dedede');
 });

@@ -1,0 +1,100 @@
+    :host {
+      display: grid;
+      min-width: 0;
+    }
+    .code-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      min-height: 32px;
+      margin-bottom: -2px;
+    }
+    .lang-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 var(--space-1);
+      border: 2px solid var(--fg);
+      border-bottom: 0;
+      background: var(--surface);
+      color: var(--fg-muted);
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      font-weight: 600;
+    }
+    @media (pointer: coarse) {
+      .code-bar,
+      .copy,
+      .lang-tag {
+        min-height: 44px;
+      }
+    }
+    pre {
+      max-width: 100%;
+      margin: 0;
+      overflow-x: auto;
+      padding: var(--space-2);
+      border: 2px solid var(--fg);
+      background: var(--surface);
+      line-height: 1.5;
+      tab-size: 2;
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+    }
+    .tok-kw {
+      color: var(--link);
+      font-weight: 600;
+    }
+    .tok-str {
+      color: var(--accent);
+    }
+    .tok-com {
+      color: var(--fg-muted);
+      font-style: italic;
+    }
+    .tok-dec {
+      color: var(--accent);
+    }
+    .tok-type {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .tok-num {
+      color: var(--fg);
+      font-weight: 600;
+    }
+    // a tab on the frame's top right edge: it never covers the first line of code
+    .copy {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      min-height: 32px;
+      padding: 0 var(--space-1);
+      border: 2px solid var(--fg);
+      border-bottom: 0;
+      background: var(--surface);
+      color: var(--fg);
+      font: inherit;
+      font-size: var(--step--1);
+      cursor: pointer;
+    }
+    .copy:hover span {
+      text-decoration: underline;
+    }
+    .copy.is-copied {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--on-accent);
+    }
+    // copied: the tick lands in three pixel steps, like a lit node of the thread
+    @media (prefers-reduced-motion: no-preference) {
+      .copy.is-copied svg {
+        animation: copied 0.24s steps(3);
+      }
+    }
+    @keyframes copied {
+      from {
+        transform: scale(2) rotate(-45deg);
+      }
+    }

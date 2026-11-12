@@ -1,0 +1,238 @@
+    @use 'styles/breakpoints' as bp;
+
+    app-article .reading-progress {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      z-index: 50;
+      pointer-events: none;
+      transition: width 100ms linear;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      app-article .reading-progress {
+        display: none;
+      }
+    }
+    app-article .post {
+      display: grid;
+      gap: var(--space-8);
+      padding-block: var(--space-12) var(--space-16);
+    }
+    app-article .intro {
+      display: grid;
+      gap: var(--space-3);
+    }
+    app-article .breadcrumb-bar {
+      margin-bottom: var(--space-1);
+    }
+    app-article .back-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--link);
+      font-size: var(--step--1);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
+    }
+    app-article .back-link:hover {
+      text-decoration-thickness: 2px;
+    }
+    app-article h1 {
+      margin: 0;
+      line-height: 1.15;
+    }
+    app-article .byline {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    app-article .author-name {
+      color: var(--fg);
+      font-weight: 600;
+    }
+    app-article .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      max-width: var(--measure);
+    }
+    app-article .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    app-article .meta-sep {
+      color: var(--rule);
+    }
+    app-article .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      min-height: 32px;
+      padding: 0 var(--space-1);
+      border: 1px solid var(--rule);
+      background: transparent;
+      color: var(--fg-muted);
+      font: inherit;
+      font-size: var(--step--1);
+      cursor: pointer;
+      transition: color 120ms steps(2), border-color 120ms steps(2);
+      &:hover {
+        border-color: var(--fg);
+        color: var(--fg);
+      }
+      &.is-copied {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
+    }
+    app-article .prose {
+      display: grid;
+      gap: var(--space-4);
+      min-width: 0;
+      line-height: 1.6;
+    }
+    // the runs of HTML lay their paragraphs out in the prose's grid, beside the code blocks
+    app-article .prose > .run {
+      display: contents;
+    }
+    app-article .prose > .run > * {
+      max-width: var(--measure);
+      margin: 0;
+    }
+    app-article .prose > app-code-block {
+      max-width: var(--measure);
+      margin: 0;
+      width: 100%;
+    }
+    @include bp.up(md) {
+      app-article .prose > app-code-block {
+        max-width: 72ch;
+      }
+    }
+    app-article .prose h2 {
+      margin-top: var(--space-6);
+      font-size: var(--step-3);
+      line-height: 1.2;
+    }
+    app-article .prose h3 {
+      margin-top: var(--space-4);
+      font-size: var(--step-1);
+      line-height: 1.25;
+    }
+    app-article .prose ul,
+    app-article .prose ol {
+      display: grid;
+      gap: var(--space-1);
+      padding-left: var(--space-3);
+    }
+    // inline code: a quiet tint, no rounded pill
+    app-article .prose .run code {
+      padding: 0 0.25em;
+      background: var(--surface);
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+    }
+    app-article .prose blockquote {
+      padding-left: var(--space-2);
+      border-left: 2px solid var(--accent-line);
+      color: var(--fg-muted);
+      font-style: italic;
+    }
+    app-article .adjacent {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+      max-width: var(--measure);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--rule);
+    }
+    @media (max-width: 640px) {
+      app-article .adjacent {
+        grid-template-columns: 1fr;
+      }
+    }
+    app-article .adjacent-card {
+      display: grid;
+      gap: var(--space-1);
+      padding: var(--space-2);
+      border: 1px solid var(--rule);
+      color: inherit;
+      text-decoration: none;
+      background: var(--surface);
+      transition: border-color 120ms steps(2);
+      &:hover {
+        border-color: var(--fg);
+        .adjacent-title {
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 3px;
+        }
+      }
+      &:active {
+        transform: translate(2px, 2px);
+      }
+    }
+    app-article .adjacent-meta {
+      font-size: var(--step--1);
+      color: var(--fg-muted);
+    }
+    app-article .adjacent-title {
+      font-size: var(--step-0);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    app-article .adjacent-empty {
+      display: none;
+    }
+    @media (min-width: 641px) {
+      app-article .adjacent-empty {
+        display: block;
+        visibility: hidden;
+      }
+      app-article .adjacent-card--next {
+        text-align: right;
+      }
+    }
+    app-article .more {
+      display: grid;
+      justify-items: start;
+      gap: var(--space-3);
+      max-width: var(--measure);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--rule);
+    }
+    app-article .next {
+      display: grid;
+      gap: var(--space-1);
+      color: inherit;
+      text-decoration: none;
+      &:hover .next-title {
+        text-decoration: underline;
+        text-decoration-thickness: 0.06em;
+        text-underline-offset: 0.1em;
+      }
+    }
+    app-article .next-label {
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    app-article .next-title {
+      font-size: var(--step-3);
+      font-weight: 600;
+      font-variation-settings: 'wdth' 85;
+      line-height: 1.1;
+    }

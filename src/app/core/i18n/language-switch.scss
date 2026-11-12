@@ -1,0 +1,106 @@
+    .language-menu {
+      position: relative;
+    }
+    summary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      min-height: 48px;
+      padding-inline: var(--space-1);
+      color: var(--fg);
+      list-style: none;
+      cursor: pointer;
+    }
+    // the whole summary opens the menu: the icons need not catch the pointer (on phones they sit over the hidden name)
+    summary svg {
+      flex: none;
+      pointer-events: none;
+    }
+    .lang-name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    .chevron {
+      transition: transform 120ms steps(2);
+    }
+    [open] .chevron {
+      transform: rotate(180deg);
+    }
+    /* the items' text lines up with the summary's label (8px padding + 16px icon + 8px gap); the current
+       language's square sits in the icon column */
+    ul {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1;
+      min-width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      background: var(--surface);
+      box-shadow: 0 0 0 1px var(--rule);
+    }
+    @media (forced-colors: active) {
+      ul:not(.languages) {
+        outline: 1px solid CanvasText;
+      }
+    }
+    li > * {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      padding-inline: var(--space-4) var(--space-2);
+      // touch screens: a 44px target (issue #130)
+      @media (pointer: coarse) {
+        min-height: 44px;
+      }
+      color: var(--fg);
+      white-space: nowrap;
+    }
+    a {
+      text-decoration: none;
+    }
+    a:hover {
+      background: var(--bg);
+      text-decoration: underline;
+    }
+    [aria-current] {
+      font-weight: 600;
+    }
+    // in the phone menu: a row, no dropdown box
+    ul.languages {
+      position: static;
+      display: flex;
+      min-width: 0;
+      background: none;
+      box-shadow: none;
+    }
+    // the current language's square starts on the menu rows' left edge
+    ul.languages li > * {
+      min-height: 48px;
+      padding-inline: var(--space-2) var(--space-3);
+    }
+    [aria-current]::before {
+      content: '';
+      position: absolute;
+      left: calc(var(--space-1) + 4px);
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+    }
+    ul.languages [aria-current]::before {
+      left: 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chevron {
+        transition: none;
+      }
+    }

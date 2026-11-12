@@ -1,0 +1,201 @@
+    @use 'styles/breakpoints' as bp;
+
+    .projects {
+      display: grid;
+      gap: var(--space-8);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .project {
+      display: grid;
+      gap: var(--space-3);
+      align-items: start;
+    }
+    .text {
+      display: grid;
+      gap: var(--space-2);
+    }
+    h3 a {
+      color: var(--fg);
+    }
+    .result {
+      font-weight: 600;
+    }
+    .role {
+      color: var(--fg-muted);
+    }
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    // the case study first, the code after it, smaller
+    // the project's actions: stacked on phones, one row from md (issue #94)
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+      margin-top: var(--space-1);
+      @include bp.up(md) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+    }
+    .repos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    // phones: the picture first, then what it is
+    .media {
+      order: -1;
+    }
+    @include bp.up(md) {
+      .media {
+        order: 0;
+      }
+    }
+    // one 3:2 window for every project: a desktop screenshot fills it, a phone one stands in it whole, a pixel item sits
+    // in its middle
+    .media {
+      position: relative;
+      display: grid;
+      // one row as tall as the frame, so a phone picture's percentage height resolves against it: with an auto row the
+      // picture kept its own height and the frame cut it (issue #229)
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+      place-items: center;
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .shot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    // under smooth scroll the picture drifts inside its frame (effects/parallax.ts, speed 0.95): a screenshot that fills
+    // the frame is grown by 12% so the drift never shows the frame's edge (issue #408)
+    :host-context(html.smooth) .project:not(.project--tall) .shot {
+      scale: 1.12;
+    }
+    // keep in step with the 280px in the image's sizes
+    .project--tall .shot {
+      width: auto;
+      max-width: 280px;
+      height: calc(100% - 2 * var(--space-3));
+      object-fit: contain;
+    }
+    .item {
+      width: 36%;
+      aspect-ratio: 1;
+    }
+    .media-arrow {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      min-width: 40px;
+      height: 40px;
+      padding-inline: 11px; // 16px arrow + 2 * 11 + 2 * 1 border = the 40px square
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      color: var(--fg);
+      @media (pointer: coarse) {
+        min-width: 44px;
+        height: 44px;
+        padding-inline: 13px;
+      }
+    }
+    // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
+    .media-arrow-label {
+      max-width: 0;
+      overflow: hidden;
+      margin-right: calc(-1 * var(--space-1)); // cancels the gap while folded
+      opacity: 0;
+      font-size: 14px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .media-arrow app-pixel-arrow {
+      width: 16px;
+      height: 16px;
+    }
+    @media (hover: hover) {
+      .media:hover .media-arrow-label {
+        max-width: 5em;
+        margin-right: 0;
+        opacity: 1;
+      }
+      .media:hover .media-arrow {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .media-arrow {
+        transition: background-color 120ms steps(2), color 120ms steps(2), border-color 120ms steps(2);
+      }
+      .media-arrow app-pixel-arrow {
+        transition: transform 160ms steps(2);
+      }
+      .media-arrow-label {
+        transition:
+          max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          margin-right 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 200ms ease 80ms;
+      }
+      .media:hover .media-arrow app-pixel-arrow {
+        transform: translate(2px, -2px);
+      }
+    }
+    .media:active .media-arrow {
+      transform: translate(2px, 2px);
+    }
+    @include bp.up(md) {
+      // the text sits level with the middle of its picture, so a short description leaves no hole below it
+      .project {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-6);
+        align-items: center;
+      }
+    }
+    // the lead project (the first, ApexFlow) takes the whole row; the others pair up under it, each picture on top of
+    // its text (issue #231: the three looked like equals)
+    @include bp.up(lg) {
+      .projects {
+        grid-template-columns: 1fr 1fr;
+        column-gap: var(--space-6);
+      }
+      .project:first-child {
+        grid-column: 1 / -1;
+      }
+      .project:not(:first-child) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-3);
+        align-items: start;
+      }
+      .project:not(:first-child) .media {
+        order: -1;
+      }
+    }

@@ -1,0 +1,16 @@
+    <h3 i18n="@@home.experience.studies">Studies and certificates</h3>
+    <ul>
+      @for (study of studies(); track study.title) {
+        <li>
+          <app-quest-sprite class="sprite" [name]="study.sprite" />
+          <div class="text">
+            <h4>{{ study.title }}</h4>
+            <p class="meta">{{ study.org }}, {{ study.period }}</p>
+            <p>{{ study.summary }}</p>
+            @if (study.caseStudy; as cs) {
+              <a class="touch-line" [routerLink]="['/work', cs.slug]">{{ cs.label }}</a>
+            }
+          </div>
+        </li>
+      }
+    </ul>

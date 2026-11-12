@@ -7,7 +7,7 @@ import { CONTENT } from '../content/content';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p class="lead" i18n="@@contactPrompt.lead">Hiring for a frontend role?</p>
-    <a class="button button--primary" [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" i18n="@@contactPrompt.cta">Email me</a>
+    <a class="button button--primary" [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" i18n="@@contactPrompt.cta">Message on LinkedIn</a>
   `,
   styles: `
     :host {

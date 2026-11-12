@@ -515,8 +515,8 @@
         <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">
-        <source>Email me</source>
-        <target>Scrivimi una email</target>
+        <source>Message on LinkedIn</source>
+        <target>Scrivimi su LinkedIn</target>
       </trans-unit>
       <trans-unit id="work.demo" datatype="html">
         <source>Live demo</source>

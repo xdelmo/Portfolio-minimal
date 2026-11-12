@@ -1,7 +1,55 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, computed, inject, input, signal } from '@angular/core';
 
 /** How long the button says "Copied" before it offers to copy again. */
 export const COPIED_MS = 2000;
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Lightweight token highlighter without external dependencies; strictly follows "No green anywhere". */
+export function highlightCode(raw: string, lang?: string): string {
+  if (!lang || !['ts', 'typescript', 'js', 'javascript', 'java'].includes(lang.toLowerCase())) {
+    return escapeHtml(raw);
+  }
+  const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(@\w+)|(\b(?:export|import|from|class|interface|type|const|let|var|function|return|new|if|else|switch|case|default|for|while|do|break|continue|try|catch|finally|throw|async|await|yield|public|private|protected|readonly|static|abstract|implements|extends|override|package|void|enum|super|this)\b)|(\b(?:string|number|boolean|any|unknown|never|void|null|undefined|Record|Array|Promise|Observable|Signal|WritableSignal|int|long|double|float|char|byte|short|String|List|Map|Set)\b)|(\b\d+(?:\.\d+)?\b|\btrue\b|\bfalse\b)/g;
+
+  let lastIndex = 0;
+  let html = '';
+  let match: RegExpExecArray | null;
+
+  while ((match = tokenRegex.exec(raw)) !== null) {
+    if (match.index > lastIndex) {
+      html += escapeHtml(raw.slice(lastIndex, match.index));
+    }
+    const [full, comment, str, decorator, keyword, type, numOrBool] = match;
+    if (comment) {
+      html += `<span class="tok-com">${escapeHtml(comment)}</span>`;
+    } else if (str) {
+      html += `<span class="tok-str">${escapeHtml(str)}</span>`;
+    } else if (decorator) {
+      html += `<span class="tok-dec">${escapeHtml(decorator)}</span>`;
+    } else if (keyword) {
+      html += `<span class="tok-kw">${escapeHtml(keyword)}</span>`;
+    } else if (type) {
+      html += `<span class="tok-type">${escapeHtml(type)}</span>`;
+    } else if (numOrBool) {
+      html += `<span class="tok-num">${escapeHtml(numOrBool)}</span>`;
+    } else {
+      html += escapeHtml(full);
+    }
+    lastIndex = match.index + full.length;
+  }
+  if (lastIndex < raw.length) {
+    html += escapeHtml(raw.slice(lastIndex));
+  }
+  return html;
+}
 
 /**
  * A code block of a blog post (issue #191, issue #315): ink on paper in a hard frame, scrolling sideways inside itself
@@ -35,7 +83,7 @@ export const COPIED_MS = 2000;
         </button>
       }
     </div>
-    <pre tabindex="0"><code [class]="lang() ? 'language-' + lang() : null">{{ code() }}</code></pre>
+    <pre tabindex="0"><code [class]="lang() ? 'language-' + lang() : null" [innerHTML]="highlightedCode()"></code></pre>
     <span class="visually-hidden" role="status">
       @if (copied()) {
         <span i18n="@@blog.copiedStatus">Code copied</span>
@@ -65,8 +113,13 @@ export const COPIED_MS = 2000;
       font-family: var(--font-mono);
       font-size: var(--step--2);
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    }
+    @media (pointer: coarse) {
+      .code-bar,
+      .copy,
+      .lang-tag {
+        min-height: 44px;
+      }
     }
     pre {
       max-width: 100%;
@@ -81,6 +134,28 @@ export const COPIED_MS = 2000;
     code {
       font-family: var(--font-mono);
       font-size: var(--step--1);
+    }
+    .tok-kw {
+      color: var(--link);
+      font-weight: 600;
+    }
+    .tok-str {
+      color: var(--accent);
+    }
+    .tok-com {
+      color: var(--fg-muted);
+      font-style: italic;
+    }
+    .tok-dec {
+      color: var(--accent);
+    }
+    .tok-type {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .tok-num {
+      color: var(--fg);
+      font-weight: 600;
     }
     // a tab on the frame's top right edge: it never covers the first line of code
     .copy {
@@ -121,6 +196,7 @@ export const COPIED_MS = 2000;
 export class CodeBlock {
   readonly code = input.required<string>();
   readonly lang = input<string>();
+  protected readonly highlightedCode = computed(() => highlightCode(this.code(), this.lang()));
   protected readonly canCopy = signal(false);
   protected readonly copied = signal(false);
   private timer: ReturnType<typeof setTimeout> | undefined;

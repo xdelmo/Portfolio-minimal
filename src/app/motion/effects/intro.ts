@@ -47,9 +47,9 @@ export const introEffect: Effect = (root, { gsap, desktop }) => {
   const cssPlaying = Number(lit?.currentTime ?? 0) > (lit?.effect?.getTiming().delay ?? 0);
   if (cssPlaying || !introFits(performance.now(), seconds(intro.duration()), cssStart, cssMs)) {
     intro.revert();
-    // GSAP missed the whole intro: it plays again on the next load (issue #404)
+    // the CSS already played the whole intro, letters and squares included, so it counts as seen (issue #481)
     if (getComputedStyle(panel).visibility === 'hidden') {
-      endIntro();
+      endIntro(true);
       return undefined;
     }
     // the letters' and the squares' own animationend bubble up here too

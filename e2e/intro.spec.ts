@@ -108,8 +108,8 @@ test.describe('intro', () => {
     expect(await page.evaluate(() => document.documentElement.classList.contains('intro-on'))).toBe(true);
   });
 
-  // GSAP missed the whole intro, so it does not count as seen (issue #404)
-  test('plays again on the next load when the motion script came after the CSS lift', async ({ page }) => {
+  // the CSS played the whole intro before GSAP arrived, letters and squares included, so it counts as seen (issue #481)
+  test('counts as seen when the motion script came after the CSS lift', async ({ page }) => {
     await page.route('**/*.js', async (route) => {
       const response = await route.fetch();
       if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
@@ -118,8 +118,9 @@ test.describe('intro', () => {
     await page.goto('/en/');
     await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 15000 });
     await page.unroute('**/*.js');
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('intro'))).toBe('1');
     await page.goto('/en/work/apexflow');
-    await expect(page.locator('.site-intro')).toBeVisible();
+    await expect(page.locator('.site-intro')).toBeHidden();
   });
 
   // a slow network: GSAP arrives after the CSS lift, too late for heroEffect's entrance, so the CSS one shows the

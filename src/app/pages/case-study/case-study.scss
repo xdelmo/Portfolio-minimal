@@ -42,9 +42,13 @@
     }
     .summary {
       font-size: var(--step-1);
+      max-width: var(--measure);
+      line-height: 1.5;
     }
     .role {
       color: var(--fg-muted);
+      max-width: var(--measure);
+      font-size: var(--step--1);
     }
     .stack {
       display: flex;

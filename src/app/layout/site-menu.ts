@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CONTENT } from '../content/content';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { MOTION_LOADER, type MotionLib } from '../motion/motion-host';
@@ -47,6 +48,8 @@ const SHOWN = 'inset(0 0 0% 0)';
           <a routerLink="/" fragment="experience" (click)="close(false)" i18n="@@nav.experience">Experience</a>
           <a routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" (click)="close(false)" i18n="@@nav.blog">Blog</a>
         </nav>
+        <!-- on phones: the primary contact action sits prominently in the panel (issue #468) -->
+        <a class="button button--primary cta" [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" (click)="close(false)" i18n="@@home.cta.contact">Contact me</a>
         <div class="settings">
           <app-language-switch [inline]="true" />
           <app-pause-toggle />
@@ -96,11 +99,20 @@ const SHOWN = 'inset(0 0 0% 0)';
     nav {
       display: grid;
     }
+    // the call to action, full-width with a generous touch target before the settings (issue #468)
+    .cta {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--space-2);
+      min-height: 48px;
+      font-size: var(--step-0);
+      text-align: center;
+    }
     // the header's controls, in a row under the links: the languages on the left, pause and theme on the right
     .settings {
       display: flex;
       align-items: center;
-      margin-top: var(--space-1);
+      margin-top: var(--space-2);
       padding-top: var(--space-1);
       border-top: 1px solid var(--rule);
     }
@@ -133,6 +145,7 @@ const SHOWN = 'inset(0 0 0% 0)';
   `,
 })
 export class SiteMenu {
+  protected readonly content = inject(CONTENT);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private gsap?: Gsap;
   private closing?: ReturnType<Gsap['timeline']>;

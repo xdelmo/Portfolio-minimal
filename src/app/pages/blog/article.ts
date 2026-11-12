@@ -18,6 +18,8 @@ import { toLocale } from '../../core/i18n/locale';
 import { articleJsonLd } from '../../core/seo/seo';
 import { SeoService } from '../../core/seo/seo.service';
 import { ContactPrompt } from '../../layout/contact-prompt';
+import { type Effect, MotionHost } from '../../motion/motion-host';
+import { stickyEffect } from '../../motion/effects/sticky';
 import { CodeBlock } from './code-block';
 
 /**
@@ -28,16 +30,21 @@ import { CodeBlock } from './code-block';
   selector: 'app-article',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [RouterLink, CodeBlock, ContactPrompt],
+  imports: [RouterLink, CodeBlock, ContactPrompt, MotionHost],
   template: `
-    <div class="reading-progress" [style.width.%]="progress()" aria-hidden="true"></div>
-    <article class="container post">
+    <div class="reading-progress" data-sticky [style.width.%]="progress()" aria-hidden="true"></div>
+    <article class="container post" [appMotion]="effects">
       @if (article(); as a) {
         <header class="intro">
           <div class="breadcrumb-bar">
             <a routerLink="/blog" class="back-link touch-line" i18n="@@blog.backToAll">All posts</a>
           </div>
           <h1>{{ a.title }}</h1>
+          <p class="byline">
+            <span class="author-name">{{ content.person.name }}</span>
+            <span class="meta-sep" aria-hidden="true">·</span>
+            <span class="author-role">{{ content.person.role }}</span>
+          </p>
           <div class="meta-row">
             <p class="meta">
               <time [attr.datetime]="a.date">{{ a.dateLabel }}</time>
@@ -96,13 +103,13 @@ import { CodeBlock } from './code-block';
           </nav>
         }
         <nav class="more" i18n-aria-label="@@blog.more" aria-label="After this post">
-          <app-contact-prompt />
           @if (project(); as p) {
             <a class="next" [routerLink]="['/work', p.slug]">
               <span class="next-label" i18n="@@blog.project">The project behind it</span>
               <span class="next-title">{{ p.title }}</span>
             </a>
           }
+          <app-contact-prompt />
           @if (a.linkedin) {
             <a class="repo-link" [href]="a.linkedin" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@blog.linkedin">First posted on LinkedIn</a>
           }
@@ -115,10 +122,13 @@ import { CodeBlock } from './code-block';
     </article>
   `,
   styles: `
+    @use 'styles/breakpoints' as bp;
+
     app-article .reading-progress {
-      position: fixed;
+      position: sticky;
       top: 0;
       left: 0;
+      width: 100%;
       height: 2px;
       background: var(--accent);
       z-index: 50;
@@ -159,6 +169,15 @@ import { CodeBlock } from './code-block';
       margin: 0;
       line-height: 1.15;
     }
+    app-article .byline {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    app-article .author-name {
+      color: var(--fg);
+      font-weight: 600;
+    }
     app-article .meta-row {
       display: flex;
       flex-wrap: wrap;
@@ -191,20 +210,18 @@ import { CodeBlock } from './code-block';
       font-size: var(--step--1);
       cursor: pointer;
       transition: color 120ms steps(2), border-color 120ms steps(2);
-    }
-    @media (pointer: coarse) {
-      app-article .action-btn {
+      &:hover {
+        border-color: var(--fg);
+        color: var(--fg);
+      }
+      &.is-copied {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      @media (pointer: coarse) {
         min-height: 44px;
       }
-    }
-    app-article .action-btn:hover {
-      border-color: var(--fg);
-      color: var(--fg);
-    }
-    app-article .action-btn.is-copied {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: var(--on-accent);
     }
     app-article .prose {
       display: grid;
@@ -216,10 +233,19 @@ import { CodeBlock } from './code-block';
     app-article .prose > .run {
       display: contents;
     }
-    app-article .prose > .run > *,
+    app-article .prose > .run > * {
+      max-width: var(--measure);
+      margin: 0;
+    }
     app-article .prose > app-code-block {
       max-width: var(--measure);
       margin: 0;
+      width: 100%;
+    }
+    @include bp.up(md) {
+      app-article .prose > app-code-block {
+        max-width: 72ch;
+      }
     }
     app-article .prose h2 {
       margin-top: var(--space-6);
@@ -246,7 +272,7 @@ import { CodeBlock } from './code-block';
     }
     app-article .prose blockquote {
       padding-left: var(--space-2);
-      border-left: 3px solid var(--accent);
+      border-left: 2px solid var(--accent-line);
       color: var(--fg-muted);
       font-style: italic;
     }
@@ -272,12 +298,17 @@ import { CodeBlock } from './code-block';
       text-decoration: none;
       background: var(--surface);
       transition: border-color 120ms steps(2);
-    }
-    app-article .adjacent-card:hover {
-      border-color: var(--fg);
-    }
-    app-article .adjacent-card:active {
-      transform: translate(2px, 2px);
+      &:hover {
+        border-color: var(--fg);
+        .adjacent-title {
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 3px;
+        }
+      }
+      &:active {
+        transform: translate(2px, 2px);
+      }
     }
     app-article .adjacent-meta {
       font-size: var(--step--1);
@@ -287,11 +318,6 @@ import { CodeBlock } from './code-block';
       font-size: var(--step-0);
       font-weight: 600;
       line-height: 1.25;
-    }
-    app-article .adjacent-card:hover .adjacent-title {
-      text-decoration: underline;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 3px;
     }
     app-article .adjacent-empty {
       display: none;
@@ -318,6 +344,11 @@ import { CodeBlock } from './code-block';
       gap: var(--space-1);
       color: inherit;
       text-decoration: none;
+      &:hover .next-title {
+        text-decoration: underline;
+        text-decoration-thickness: 0.06em;
+        text-underline-offset: 0.1em;
+      }
     }
     app-article .next-label {
       color: var(--fg-muted);
@@ -329,28 +360,24 @@ import { CodeBlock } from './code-block';
       font-variation-settings: 'wdth' 85;
       line-height: 1.1;
     }
-    app-article .next:hover .next-title {
-      text-decoration: underline;
-      text-decoration-thickness: 0.06em;
-      text-underline-offset: 0.1em;
-    }
   `,
 })
 export class ArticlePage {
   private readonly articles = inject(BLOG);
-  private readonly content = inject(CONTENT);
+  protected readonly content = inject(CONTENT);
   readonly slug = input.required<string>();
+  protected readonly effects: readonly Effect[] = [stickyEffect];
   protected readonly article = computed(() => this.articles.find((a) => a.slug === this.slug()));
   protected readonly project = computed(() => this.content.projects.find((p) => p.slug === this.article()?.project));
   protected readonly prevArticle = computed(() => {
     const list = this.articles;
     const i = list.findIndex((a) => a.slug === this.slug());
-    return i > 0 ? list[i - 1] : undefined;
+    return i >= 0 && i < list.length - 1 ? list[i + 1] : undefined;
   });
   protected readonly nextArticle = computed(() => {
     const list = this.articles;
     const i = list.findIndex((a) => a.slug === this.slug());
-    return i >= 0 && i < list.length - 1 ? list[i + 1] : undefined;
+    return i > 0 ? list[i - 1] : undefined;
   });
 
   protected readonly progress = signal(0);

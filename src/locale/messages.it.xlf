@@ -515,24 +515,12 @@
         <target>Cerchi chi segua il frontend?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">
-        <source>Email me</source>
-        <target>Scrivimi una email</target>
+        <source>Message on LinkedIn</source>
+        <target>Scrivimi su LinkedIn</target>
       </trans-unit>
       <trans-unit id="work.demo" datatype="html">
         <source>Live demo</source>
         <target>Demo online</target>
-      </trans-unit>
-      <trans-unit id="contact.copy" datatype="html">
-        <source>Copy my email address</source>
-        <target>Copia il mio indirizzo email</target>
-      </trans-unit>
-      <trans-unit id="contact.copied" datatype="html">
-        <source>Copied</source>
-        <target>Copiato</target>
-      </trans-unit>
-      <trans-unit id="contact.copiedStatus" datatype="html">
-        <source>Email address copied</source>
-        <target>Indirizzo email copiato</target>
       </trans-unit>
       <trans-unit id="work.view" datatype="html">
         <source>View</source>
@@ -553,7 +541,6 @@
       <trans-unit id="moai.line.found.1" datatype="html"><source>I knew you'd find it.</source><target>Lo sapevo che l'avresti trovato.</target></trans-unit>
       <trans-unit id="moai.line.explorer.1" datatype="html"><source>You read them all. Respect.</source><target>Li hai letti tutti. Rispetto.</target></trans-unit>
       <trans-unit id="moai.line.wake.1" datatype="html"><source>Five more minutes…</source><target>Altri cinque minuti…</target></trans-unit>
-      <trans-unit id="contact.copiedTalkSoon" datatype="html"><source>Copied. Talk soon.</source><target>Copiata. A presto.</target></trans-unit>
     </body>
   </file>
 </xliff>

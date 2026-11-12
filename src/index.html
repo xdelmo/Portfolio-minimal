@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="theme-color" content="#e5e5e5">
+  <meta name="theme-color" content="#dedede">
   <script>
     (function () {
       var t = null;
@@ -12,7 +12,7 @@
       }
       document.documentElement.setAttribute('data-theme', t);
       // the browser bar takes the page's --bg (_tokens.scss) before the styles load; ThemeService follows it after (issue #134)
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#121212' : '#e5e5e5');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#121212' : '#dedede');
       // the intro plays once per session, on every screen (issue #381), never with reduced motion (SiteIntro + motion/effects/intro.ts);
       // endIntro() marks it seen only once it has really played (issue #404), so a reload or a late motion script never eats it
       try {

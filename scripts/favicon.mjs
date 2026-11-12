@@ -1,38 +1,50 @@
-// The favicon is the home's moai seen from the front (issue #323), drawn from the voxel model on a 16×16 grid.
-// Run after changing the model: node scripts/favicon.mjs (scripts/favicon.test.mjs fails while public/ is stale).
+// The favicon is the brand's logo (issue #334): the moai seen from the front, one colour, drawn by hand on a 16×16 grid.
+// Its features are holes, not shades, so it reads at 16 px: flat top, brow shelf, eye shadows, long nose, lips, square chin.
+// Run after changing the drawing: node scripts/favicon.mjs, and paste logoPath() into src/app/layout/moai-mark.ts
+// (scripts/favicon.test.mjs fails while public/ or the header's mark is stale).
 import { Buffer } from 'node:buffer';
 import { writeFileSync } from 'node:fs';
 import { crc32, deflateSync } from 'node:zlib';
-import { moaiVoxels } from '../src/app/voxel/moai.model.ts';
-import { PHONE_GAZE, isPupil } from '../src/app/voxel/motion.ts';
 
-// light theme colours, src/styles/_tokens.scss (the tab shows them on light and dark browsers alike)
-const PALETTE = { stone: '#a3a39d', stoneDark: '#85857f', stoneLight: '#bdbdb6', eye: '#0066d4', eyeWhite: '#f2f2f2', pukao: '#ffc9a8', moss: '#bdbdb6' };
+export const MOAI = [
+  '....########....',
+  '....########....',
+  '....########....',
+  '...##########...',
+  '...#...##...#...',
+  '....#..##..#....',
+  '....##.##.##....',
+  '....##.##.##....',
+  '....##.##.##....',
+  '....#.####.#....',
+  '....########....',
+  '....########....',
+  '....##....##....',
+  '....########....',
+  '....########....',
+  '....########....',
+];
+
+// src/styles/_tokens.scss: ink on the light theme, paper on the dark one, concrete behind the PNGs
+// (a .ico or a home screen icon cannot follow the theme, so they carry their own light tile)
+const INK = '#1d1d1c';
+const PAPER = '#f2f2f2';
 const BG = '#e5e5e5';
 const SIZE = 16;
-const NECK = 9; // the plain neck row is left out, so the head (lips to pukao) fits 16 rows
 
-/** The head as a 16×16 grid of colours (null is transparent): the frontmost voxel of each column, open eyes. */
-export function faviconGrid() {
-  const voxels = moaiVoxels();
-  const eyes = voxels.filter((v) => v.color === 'eye');
-  const grid = Array.from({ length: SIZE }, () => Array(SIZE).fill(null));
-  const depth = new Map();
-  for (const v of voxels) {
-    if (v.y < 8 || v.y === NECK) continue;
-    const row = 24 - v.y - (v.y < NECK ? 1 : 0);
-    const col = v.x + 7; // 11 columns wide: 2 empty on the left, 3 on the right (no odd width centres on 16)
-    const key = `${String(row)},${String(col)}`;
-    if ((depth.get(key) ?? -Infinity) > v.z) continue;
-    depth.set(key, v.z);
-    grid[row][col] = PALETTE[v.color === 'eye' && !isPupil(eyes, v, PHONE_GAZE) ? 'eyeWhite' : v.color];
-  }
-  return grid;
+/** The logo as a 16×16 grid of colours (null is transparent). */
+export function faviconGrid(color = INK) {
+  return MOAI.map((row) => [...row].map((c) => (c === '#' ? color : null)));
 }
 
-export function faviconSvg(grid = faviconGrid()) {
-  const rects = grid.flatMap((cells, y) => cells.map((c, x) => (c ? `<rect x="${String(x)}" y="${String(y)}" width="1" height="1" fill="${c}"/>` : '')));
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${String(SIZE)} ${String(SIZE)}" shape-rendering="crispEdges">${rects.join('')}</svg>\n`;
+/** The logo as one SVG path, a rectangle per run of filled cells: the favicon and the header's MoaiMark share it. */
+export function logoPath() {
+  return MOAI.flatMap((row, y) => [...row.matchAll(/#+/g)].map((m) => `M${String(m.index)} ${String(y)}h${String(m[0].length)}v1h-${String(m[0].length)}z`)).join('');
+}
+
+/** The logo path, ink on light tabs and paper on dark ones. */
+export function faviconSvg() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${String(SIZE)} ${String(SIZE)}" shape-rendering="crispEdges"><style>path{fill:${INK}}@media (prefers-color-scheme:dark){path{fill:${PAPER}}}</style><path d="${logoPath()}"/></svg>\n`;
 }
 
 /** An RGBA PNG of the grid, each cell `scale` pixels, centred on a `size` square (filled with `bg` when given). */
@@ -85,14 +97,18 @@ export function ico(images) {
 export function faviconFiles() {
   const grid = faviconGrid();
   return {
-    'favicon.svg': faviconSvg(grid),
-    'favicon.ico': ico([1, 2, 3].map((s) => ({ size: SIZE * s, data: png(grid, s) }))),
-    // iOS fills transparency with black: the page background behind 11 px cells, 2 px of margin
-    'apple-touch-icon.png': png(grid, 11, 180, BG),
+    'favicon.svg': faviconSvg(),
+    'favicon.ico': ico([1, 2, 3].map((s) => ({ size: SIZE * s, data: png(grid, s, SIZE * s, BG) }))),
+    // iOS fills transparency with black: the page background behind the logo, about a tenth of margin on each side
+    'apple-touch-icon.png': png(grid, 9, 180, BG),
+    'icon-192.png': png(grid, 9, 192, BG),
+    'icon-512.png': png(grid, 25, 512, BG),
+    // the farthest filled corner sits 8.9 cells from the centre: 20 px cells (179 px) keep it inside the 205 px safe circle
+    'icon-maskable-512.png': png(grid, 20, 512, BG),
   };
 }
 
 if (import.meta.main) {
   for (const [name, data] of Object.entries(faviconFiles())) writeFileSync(`public/${name}`, data);
-  console.log('public/favicon.svg, favicon.ico (16, 32, 48) and apple-touch-icon.png (180) written');
+  console.log(`public/ ${Object.keys(faviconFiles()).join(', ')} written`);
 }

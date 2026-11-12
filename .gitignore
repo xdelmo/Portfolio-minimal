@@ -60,3 +60,6 @@ src/locale/messages.xlf
 
 # written at every build by scripts/version.mjs (issue #291)
 /src/app/core/version.generated.ts
+# MkDocs output (handbook)
+/site/
+/.venv/

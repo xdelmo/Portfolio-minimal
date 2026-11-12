@@ -39,11 +39,14 @@ export const SHOW_AFTER_SCREENS = 1.5;
       background: var(--band-ink-bg);
       color: var(--band-ink-fg);
       cursor: pointer;
+      clip-path: inset(0 0 0 0);
+      translate: 0 0;
+      opacity: 1;
       @include bp.up(md) {
         display: none;
       }
     }
-    // in and out in pixel steps (issue #197): it rises into the corner as it is revealed, and sinks away as it is wiped
+    // in and out in pixel steps (issue #197, #460): it rises into the corner as it is revealed, and sinks away as it is wiped
     // out; Angular keeps it on the page until the way out has played. Reduced motion: it simply appears and goes.
     @media (prefers-reduced-motion: no-preference) {
       .is-entering {
@@ -57,12 +60,24 @@ export const SHOW_AFTER_SCREENS = 1.5;
       from {
         clip-path: inset(100% 0 0 0);
         translate: 0 var(--space-2);
+        opacity: 0;
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+        translate: 0 0;
+        opacity: 1;
       }
     }
     @keyframes back-out {
+      from {
+        clip-path: inset(0 0 0 0);
+        translate: 0 0;
+        opacity: 1;
+      }
       to {
         clip-path: inset(100% 0 0 0);
         translate: 0 var(--space-2);
+        opacity: 0;
       }
     }
   `,

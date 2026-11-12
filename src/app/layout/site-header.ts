@@ -1,22 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CONTENT } from '../content/content';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
+import { MoaiMark } from './moai-mark';
 import { PauseToggle } from './pause-toggle';
 import { SiteMenu } from './site-menu';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, SiteMenu, MoaiMark],
   template: `
     <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
     <header class="site-header container">
-      <!-- phones: the menu button right before the mark, one brand and navigation corner (issue #324) -->
-      <app-site-menu class="menu" />
       <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
-        ><span class="mark" translate="no">edm.</span><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
+        ><app-moai-mark class="mark" /><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
       >
       <nav i18n-aria-label="@@nav.label" aria-label="Main">
         <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
@@ -28,8 +28,9 @@ import { SiteMenu } from './site-menu';
         <app-pause-toggle />
         <app-theme-toggle />
       </div>
-      <!-- the bar's one action, on every width and page; outside the nav so the menu's letter scramble leaves it alone -->
-      <a class="button button--primary cta" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
+      <!-- the bar's one action, from md; on phones it lives in the menu drawer (issue #468) -->
+      <a class="button button--primary cta" data-magnetic [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" i18n="@@home.cta.contact">Contact me</a>
+      <app-site-menu class="menu" />
     </header>
   `,
   styles: `
@@ -56,22 +57,20 @@ import { SiteMenu } from './site-menu';
       gap: var(--space-1);
       min-height: var(--header-h);
     }
-    // the mark, a rule, then the full name on two lines: the site signed like a letterhead
+    // the moai mark (the favicon's drawing, issue #334), a rule, then the full name on two lines: the site signed like a letterhead
     .logo {
       display: flex;
       align-items: center;
       gap: var(--space-1);
       margin-right: auto;
-      // touch screens: a 44px target (issue #130)
+      // the moai alone is 20px wide on phones: the target stays at least 24px (WCAG 2.5.8), 44px on touch (issue #130)
+      min-width: 24px;
       @media (pointer: coarse) {
+        min-width: 44px;
         min-height: 44px;
       }
       color: var(--fg);
       text-decoration: none;
-    }
-    .mark {
-      font-size: var(--step-1);
-      font-weight: 700;
     }
     // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
     // ran 96px past the edge); the full name signs the bar from 1024px
@@ -124,22 +123,15 @@ import { SiteMenu } from './site-menu';
       display: none;
       align-items: center;
     }
-    // phones: a compact key, a repository tag's size in the primary colours, between the mark and the menu button
+    // phones: the call to action lives in the menu panel (issue #468); shown in the bar from md
     .cta {
+      display: none;
       flex: none;
-      min-height: 40px;
-      padding-inline: var(--space-2);
-      font-size: var(--step--1);
       white-space: nowrap;
-      @media (pointer: coarse) {
-        min-height: 44px;
-      }
     }
-    // the menu button's bars line up with the gutter; its 48px target runs on to the edge of the screen, and the mark
-    // follows close, so the pair reads as one corner
+    // the menu button's bars line up with the right gutter; its 48px target runs on to the edge of the screen (issue #468)
     .menu {
-      margin-left: calc(-1 * var(--space-2));
-      margin-right: calc(-1 * var(--space-1));
+      margin-right: calc(-1 * var(--space-2));
     }
     @include bp.up(md) {
       nav,
@@ -167,7 +159,9 @@ import { SiteMenu } from './site-menu';
         letter-spacing: 0.12em;
       }
       .cta {
+        display: inline-flex;
         min-height: 48px;
+        padding-inline: var(--space-2);
         font-size: inherit;
       }
     }
@@ -190,6 +184,7 @@ import { SiteMenu } from './site-menu';
   `,
 })
 export class SiteHeader {
+  protected readonly content = inject(CONTENT);
   private readonly url = currentUrl();
   protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
 

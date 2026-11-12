@@ -186,7 +186,7 @@ for (const width of [1280, 390]) {
   });
 }
 
-// the header signs the site: the edm. mark, a rule, then the full name on two lines (phones: the mark alone)
+// the header signs the site: the moai mark, a rule, then the full name on two lines (phones: the mark alone)
 for (const width of [1280, 1024]) {
   test(`the header shows the full name beside the mark, on two lines, at ${String(width)}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
@@ -206,21 +206,42 @@ for (const width of [768, 390, 320]) {
     await page.setViewportSize({ width, height: 640 });
     await page.goto('/en/');
     await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
+    await expect(page.locator('app-site-header .logo')).not.toContainText('edm.');
+    await expect(page.locator('app-site-header .logo .mark svg')).toHaveAttribute('aria-hidden', 'true');
     await expect(page.locator('app-site-header .logo .name')).toBeHidden();
     expect(await headerRight(page)).toBeLessThanOrEqual(width);
   });
 }
 
-// issue #305: the primary button is in the bar on every width, in both languages, and leads to the contact
+// issue #305, #468: the primary button is in the bar from 768px, and in the menu on phones, in both languages
 for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const) {
-  for (const width of [1280, 1024, 768, 390, 320]) {
+  for (const width of [1280, 1024, 768]) {
     test(`the header carries the call to action and still fits, /${lang}/ at ${String(width)}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 640 });
       await page.goto(`/${lang}/`);
-      const cta = page.locator('app-site-header .cta');
+      const cta = page.locator('app-site-header .site-header > .cta');
       await expect(cta).toBeVisible();
       await expect(cta).toHaveText(label);
-      await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);
+      await expect(cta).toHaveAttribute('href', 'https://www.linkedin.com/in/emanueledelmonte/');
+      await expect(cta).toHaveAttribute('target', '_blank');
+      await expect(cta).toHaveAttribute('rel', 'me noopener');
+      await expect(cta).toHaveAttribute('aria-describedby', 'new-tab');
+      expect(await headerRight(page)).toBeLessThanOrEqual(width);
+    });
+  }
+  for (const width of [390, 320]) {
+    test(`on phones the call to action is in the menu panel, /${lang}/ at ${String(width)}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 640 });
+      await page.goto(`/${lang}/`);
+      await expect(page.locator('app-site-header .site-header > .cta')).toBeHidden();
+      await page.locator('.site-menu summary').click();
+      const cta = page.locator('.site-menu .cta');
+      await expect(cta).toBeVisible();
+      await expect(cta).toHaveText(label);
+      await expect(cta).toHaveAttribute('href', 'https://www.linkedin.com/in/emanueledelmonte/');
+      await expect(cta).toHaveAttribute('target', '_blank');
+      await expect(cta).toHaveAttribute('rel', 'me noopener');
+      await expect(cta).toHaveAttribute('aria-describedby', 'new-tab');
       expect(await headerRight(page)).toBeLessThanOrEqual(width);
     });
   }
@@ -318,7 +339,7 @@ test('a project keeps its case study and code buttons on one row on desktop, sta
 // Browser translation leaves names and tools alone: "Del Monte" is no mountain, "Signals" no traffic lights (issue #136).
 test('names and tools are kept out of automatic translation', async ({ page }) => {
   await page.goto('/it/');
-  for (const selector of ['.logo .mark', '.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
+  for (const selector of ['.logo .name', 'app-stack-list li', '#experience .tags', '#side-quests .tags']) {
     await expect(page.locator(selector).first(), selector).toHaveAttribute('translate', 'no');
   }
 });

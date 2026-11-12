@@ -18,15 +18,17 @@ import {
   Group,
   HemisphereLight,
   InstancedMesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   Object3D,
   OrthographicCamera,
+  PlaneGeometry,
   Scene,
   Vector3,
   WebGLRenderer,
 } from 'three';
 import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiVoxels } from './moai.model';
+import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiShadowCells, moaiVoxels } from './moai.model';
 import { MotionPause } from '../motion/pause';
 import { afterIntro } from '../motion/intro-state';
 import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from './motion';
@@ -38,6 +40,7 @@ import { HELLO_KEY, MOAI_DESKTOP, MoaiCues } from './moai-cues';
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
 const GUM = '--gum';
+const SHADOW = '--moai-shadow';
 /** The colour of closed eyelids: the stone of the face. */
 const LIDS = '--stone';
 /** The page counts as scrolling until this long after its last scroll event. */
@@ -332,6 +335,26 @@ export class MoaiScene {
     mesh.position.set(-0.5, 0, -0.5);
     pivot.add(mesh);
 
+    // the ground shadow: flat cells under the base, on the ground under the voxels' feet; it turns with the moai but
+    // stays down when it hops, and does not tilt with its breath or its wave
+    const shadowCells = moaiShadowCells();
+    const shadowGeometry = new PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+    const shadowMaterial = new MeshBasicMaterial({ transparent: true, depthWrite: false });
+    const shadowMesh = new InstancedMesh(shadowGeometry, shadowMaterial, shadowCells.length);
+    const shadowDummy = new Object3D();
+    shadowCells.forEach((c, i) => {
+      shadowDummy.position.set(c.x, 0.01, c.z);
+      shadowDummy.updateMatrix();
+      shadowMesh.setMatrixAt(i, shadowDummy.matrix);
+    });
+    const shadow = new Group();
+    shadow.position.copy(pivot.position);
+    shadow.add(shadowMesh);
+    this.cleanups.push(() => {
+      shadowGeometry.dispose();
+      shadowMaterial.dispose();
+    });
+
     // the bubble gum: a ball of pink voxels blown from the lips, its back on their front face; it grows from the lips
     const gumCells = bubbleCells();
     const gumMaterial = new MeshLambertMaterial();
@@ -377,7 +400,7 @@ export class MoaiScene {
     });
 
     const scene = new Scene();
-    scene.add(pivot, new HemisphereLight(0xffffff, 0x555555, 2.4));
+    scene.add(shadow, pivot, new HemisphereLight(0xffffff, 0x555555, 2.4));
     const sun = new DirectionalLight(0xffffff, 1.4);
     sun.position.set(2, 4, 3);
     scene.add(sun);
@@ -407,6 +430,10 @@ export class MoaiScene {
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       gumMaterial.color.set(style.getPropertyValue(GUM).trim());
+      // a see-through token, rgb(r g b / a): Three.js does not read the space-separated form
+      const [sr = 0, sg = 0, sb = 0, sa = 1] = (style.getPropertyValue(SHADOW).match(/[\d.]+/g) ?? []).map(Number);
+      shadowMaterial.color.setStyle(`rgb(${String(sr)},${String(sg)},${String(sb)})`);
+      shadowMaterial.opacity = sa;
     };
     const dummy = new Object3D();
     base.forEach((p, i) => {
@@ -522,6 +549,7 @@ export class MoaiScene {
         pivot.rotation.x = breath(idle) + down + (this.sneezing() ? sneeze(now - sneezeStart) : 0);
         // sulking it turns its back, and holds still
         pivot.rotation.y = this.drag + (this.sulking() ? Math.PI : look);
+        shadow.rotation.y = pivot.rotation.y;
         pivot.rotation.z = wave(waveT) + (this.dizzy() ? wobble(now - dizzyStart) : 0);
         placePukao(this.pukaoOff() ? pukaoFall(now - pukaoStart) : null);
         const roll = this.dizzy() ? ROLL[Math.floor((now - dizzyStart) / 150) % ROLL.length] : null;

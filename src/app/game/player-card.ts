@@ -97,18 +97,31 @@ export const MAX_LEVEL = 99;
     }
     // the rhythm by proximity (issue #383): blocks 24px apart, a new section (the achievements, the action) 32px,
     // a heading 16px from the list it names
+    // phones get one step less of everything, so the whole card fits a screen (issue #467)
     .card > * + * {
-      margin-top: var(--space-3);
+      margin-top: var(--space-2);
+      @include bp.up(md) {
+        margin-top: var(--space-3);
+      }
     }
     .card > h3,
     .card > form {
-      margin-top: var(--space-4);
+      margin-top: var(--space-3);
+      @include bp.up(md) {
+        margin-top: var(--space-4);
+      }
     }
     .card > h3 + .achievements {
-      margin-top: var(--space-2);
+      margin-top: var(--space-1);
+      @include bp.up(md) {
+        margin-top: var(--space-2);
+      }
     }
     h2 {
-      font-size: var(--step-5);
+      font-size: var(--step-3);
+      @include bp.up(md) {
+        font-size: var(--step-5);
+      }
       font-variation-settings: 'wdth' 75;
       line-height: 1;
     }
@@ -119,8 +132,11 @@ export const MAX_LEVEL = 99;
     .stats {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-2) var(--space-3);
+      gap: var(--space-2);
       margin: 0;
+      @include bp.up(md) {
+        column-gap: var(--space-3);
+      }
     }
     dt {
       color: var(--fg-muted);
@@ -163,7 +179,14 @@ export const MAX_LEVEL = 99;
     }
     .achievements {
       display: grid;
-      gap: var(--space-2);
+      gap: var(--space-1);
+      font-size: var(--step--1);
+      line-height: 1.35;
+      @include bp.up(md) {
+        gap: var(--space-2);
+        font-size: inherit;
+        line-height: inherit;
+      }
       margin: 0;
       padding: 0;
       list-style: none;
@@ -175,8 +198,12 @@ export const MAX_LEVEL = 99;
     }
     .sprite {
       flex: none;
-      width: 48px;
-      height: 48px;
+      width: 32px;
+      height: 32px;
+      @include bp.up(md) {
+        width: 48px;
+        height: 48px;
+      }
     }
     // not earned yet: the drawing waits faded, the text keeps its contrast
     .locked .sprite {
@@ -236,6 +263,8 @@ export class PlayerCard {
   open(): void {
     const dialog = this.dialog().nativeElement;
     if (!dialog.open) dialog.showModal();
+    // showModal focuses the one button, at the bottom, and scrolls there: open from the title (issue #467)
+    dialog.scrollTop = 0;
     if (this.levelsUp()) void this.levelUp();
   }
 

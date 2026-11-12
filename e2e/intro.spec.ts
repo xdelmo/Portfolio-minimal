@@ -35,10 +35,15 @@ test.describe('intro', () => {
     });
   }
 
-  test('never blocks a click', async ({ page }) => {
+  test('never blocks a click', async ({ page, isMobile }) => {
     await page.goto('/en/');
-    await page.locator('app-site-header .cta').click();
-    await expect(page).toHaveURL(/#contact$/);
+    if (isMobile) {
+      await page.locator('.site-menu summary').click();
+      await page.locator('.site-menu a[href$="#work"]').click();
+    } else {
+      await page.locator('app-site-header .site-header > nav a[href$="#work"]').click();
+    }
+    await expect(page).toHaveURL(/#work$/);
   });
 
   test('is shown once per session', async ({ page }) => {

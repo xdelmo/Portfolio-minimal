@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{# preload the font, like scripts/postbuild.mjs on the site: with font-display optional it is then ready at first paint #}
+{% block extrahead %}
+  <link rel="preload" href="{{ 'assets/fonts/instrument-sans-latin-wdth-normal.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+{% endblock %}

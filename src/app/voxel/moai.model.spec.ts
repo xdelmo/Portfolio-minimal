@@ -1,5 +1,5 @@
-import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiVoxels } from './moai.model';
+import { COS30, isoBounds, isoFaces, isoShadow } from './iso';
+import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, moaiCell, moaiShadowCells, moaiVoxels } from './moai.model';
 import { GUM_LIPS, bubbleCells } from './motion';
 
 describe('moai model', () => {
@@ -70,5 +70,30 @@ describe('moai frame', () => {
       }
     }
     expect(widest).toBeLessThanOrEqual(half);
+  });
+});
+
+describe('moai shadow', () => {
+  const cells = moaiShadowCells();
+  const base = moaiVoxels().filter((v) => v.y === MOAI_BOUNDS.minY);
+  const has = (x: number, z: number): boolean => cells.some((c) => c.x === x && c.z === z);
+
+  it('lies under the whole base and one cell round it, no further', () => {
+    for (const v of base) {
+      for (const [dx, dz] of [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]]) expect(has(v.x + dx, v.z + dz)).toBe(true);
+    }
+    for (const c of cells) expect(base.some((v) => Math.abs(v.x - c.x) <= 1 && Math.abs(v.z - c.z) <= 1)).toBe(true);
+  });
+
+  it('stays inside the still image', () => {
+    const b = isoBounds(isoFaces(moaiVoxels()));
+    const points = isoShadow(cells, moaiVoxels(), 16, MOAI_FRAME).match(/-?[\d.]+,-?[\d.]+/g) ?? [];
+    expect(points.length).toBe(cells.length * 4);
+    for (const p of points) {
+      const [x, y] = p.split(',').map(Number);
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(x).toBeLessThanOrEqual(b.width * MOAI_FRAME * 16);
+      expect(y).toBeLessThanOrEqual(b.height * MOAI_FRAME * 16);
+    }
   });
 });

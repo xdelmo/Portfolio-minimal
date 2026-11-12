@@ -3,14 +3,15 @@
 :root,
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #e5e5e5;
+  --bg: #dedede;
   --surface: #f2f2f2;
   --fg: #1d1d1c;
   --fg-muted: #555555;
-  --accent: #0066d4;
+  --accent: #0058b8;
+  --accent-line: #0058b8;
   --on-accent: #ffffff;
-  --link: #005fc5;
-  --focus: #0066d4;
+  --link: #0058b8;
+  --focus: #0058b8;
   --rule: rgb(29 29 28 / 0.14);
   /* pixel palette: decorative only, never for text */
   --px-1: #0066d4;
@@ -18,12 +19,14 @@
   --px-3: #b9d5f5;
   --px-4: #c9b8f5;
   --px-5: #dccff8;
-  --px-6: #ffc9a8;
+  --px-6: #ffb88f;
   --cloud-alpha: 1;
   --stone: #a3a39d;
   --stone-dark: #85857f;
   --stone-light: #bdbdb6;
   --moai-eye-white: #f2f2f2;
+  /* the moai's ground shadow: hard, flat, see-through so it darkens whatever band it stands on */
+  --moai-shadow: rgb(29 29 28 / 0.16);
   /* intro panel: opaque, so nothing of the page shows through */
   --intro-bg: #1d1d1c;
   --intro-fg: #e5e5e5;
@@ -48,10 +51,11 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
   --bg: #121212;
-  --surface: #1c1c1c;
-  --fg: rgb(255 255 255 / 0.87);
+  --surface: #202020;
+  --fg: #dedede;
   --fg-muted: #aaaaaa;
   --accent: #0066d4;
+  --accent-line: #4d9bf0;
   --on-accent: #ffffff;
   --link: #4d9bf0;
   --focus: #4d9bf0;
@@ -67,6 +71,7 @@
   --stone-dark: #62625e;
   --stone-light: #9a9a94;
   --moai-eye-white: #d9d9d4;
+  --moai-shadow: rgb(0 0 0 / 0.5);
   --intro-bg: #e0e0e0;
   --intro-fg: #121212;
   --gum: #ef86b6;

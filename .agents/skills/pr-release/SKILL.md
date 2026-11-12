@@ -1,6 +1,6 @@
 ---
 name: pr-release
-description: Automates and standardizes the release process whenever a pull request is merged into master (or when asked to release, bump package version, create git tag, and publish GitHub Release). Use proactively when a PR is merged into master, or when the user says "fai release", "tagga", "pubblica versione", "rilascia su master", "crea release su github", "crea release", "tag and release", or "auto-release PR".
+description: Automates and standardizes the release process whenever a pull request is merged into master (or when asked to release, bump package version, create git tag, publish GitHub Release, update the repo info, README and MkDocs handbook beforehand, then clean up merged local/remote branches and worktrees). Use proactively when a PR is merged into master, or when the user says "fai release", "tagga", "pubblica versione", "rilascia su master", "crea release su github", "crea release", "tag and release", or "auto-release PR".
 ---
 
 # 🚀 PR Release Skill (package.json + Git Tag + GitHub Release)
@@ -50,7 +50,8 @@ flowchart TD
     K --> L["Crea Tag Annotato Git vX.Y.Z"]
     L --> M["Push su origin/master e Push Tag"]
     M --> N["gh release create con Note Categorizzate"]
-    N --> O["✅ Release Pubblicata con Successo"]
+    N --> P["Pulizia: node scripts/cleanup-branches.mjs, poi --apply"]
+    P --> O["✅ Release Pubblicata con Successo"]
 ```
 
 ---
@@ -81,6 +82,17 @@ node scripts/release.mjs --pr-number <PR_NUMBER>
 # Forzatura esplicita del tipo di incremento (patch, minor, major)
 node scripts/release.mjs --bump minor
 ```
+
+### 3. Pulizia di Branch e Worktree (dopo ogni rilascio)
+Il rilascio è finito solo dopo la pulizia, una volta che il workflow di release è verde. Lancia `scripts/cleanup-branches.mjs` (test in `scripts/cleanup-branches.test.mjs`, issue #448) da un worktree dentro la repo:
+```bash
+# Piano: fa fetch --prune e worktree prune, poi elenca cosa toglierebbe senza toccare niente
+node scripts/cleanup-branches.mjs
+
+# Esecuzione: rimuove i worktree, cancella i branch locali (-D) e quelli su origin (push --delete)
+node scripts/cleanup-branches.mjs --apply
+```
+Toglie solo ciò che è sicuramente già entrato: un branch se una PR **merged** su GitHub ha come head esattamente la sua punta. Il controllo tramite PR verificate su GitHub assicura che solo i branch effettivamente mergiati vengano rimossi, mentre un commit aggiunto dopo il merge lo tiene in vita. Un worktree va via solo se sta su un branch così, è pulito (nemmeno file non tracciati), non è `locked`, non è il checkout principale, nessun processo ha la cwd al suo interno (lsof, quindi le sessioni aperte in altri worktree restano) e non contiene un worktree annidato da tenere. Non tocca mai `master`, `devel`, `v2` o `archive/*`: i branch di release non si eliminano da origin. Mostra il piano all'utente prima di `--apply`, e riporta ciò che lo script segnala come `kept` invece di forzarlo: niente `--force` e niente `git worktree remove --force`. Il worktree della sessione corrente resta, perché ci sta dentro questo processo; a fine sessione lo toglie l'utente.
 
 ---
 
@@ -115,7 +127,9 @@ Dopo aver completato un rilascio, verificare:
 3. `gh release view vX.Y.Z` (la release è visibile con note e changelog comparativo su GitHub).
 4. Il sito live mostra la nuova versione nel footer, a deploy Netlify concluso: `curl -s https://www.emanueledelmonte.it/en/ | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -1`.
 5. `npm run test:scripts` (i test degli script rimangono al 100% verdi).
-5. Le info della repo erano già aggiornate prima del merge (vedi sotto).
+6. Le info della repo erano già aggiornate prima del merge (vedi sotto).
+   Se la release tocca `handbook/**` o `mkdocs.yml` (solo allora `docs.yml` parte su `master`), l'handbook è ripubblicato: `gh run list --workflow docs.yml --branch master --limit 1` è verde e https://xdelmo.github.io/Portfolio-minimal/ mostra le pagine aggiornate.
+7. `node scripts/cleanup-branches.mjs` non elenca più niente da togliere, a parte ciò che `--apply` ha segnalato come `kept` e i worktree ancora in uso (sezione "Pulizia di Branch e Worktree").
 
 ---
 
@@ -124,4 +138,5 @@ Dopo aver completato un rilascio, verificare:
 Prima di fare il merge della PR di release in `master`, aggiorna ciò che descrive la repo, così entra già nella versione rilasciata. Confronta le note in anteprima (`node scripts/release.mjs --dry-run`) con lo stato attuale:
 1. **GitHub**: `gh repo view --json description,homepageUrl,repositoryTopics`; se descrizione, homepage o topic non descrivono più il progetto (stack, funzionalità aggiunte o tolte), correggili con `gh repo edit --description … --homepage … --add-topic … --remove-topic …`.
 2. **README.md** (e `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md` se toccati): togli ciò che la release ha rimosso, aggiungi ciò che ha introdotto, aggiorna versioni e stack citati. Le modifiche ai file passano da un branch `docs/<topic>` e da una PR in `devel` come ogni altra modifica, mai da un commit diretto su `master`; la PR di release ripete la sua CI dopo quel merge, e solo allora si fa il merge in `master`.
-3. Il branch di release (`devel`) non si elimina mai da origin: merge della PR di release senza `--delete-branch`.
+3. **Handbook MkDocs** (`handbook/**` e `mkdocs.yml`, pubblicato su https://xdelmo.github.io/Portfolio-minimal/ da `.github/workflows/docs.yml` a ogni push su `master`): rileggi `index.md`, `architettura.md`, `decisioni/*` e `guida/*` alla luce delle note e aggiorna ciò che la release cambia (una decisione tecnica nuova o rivista, comandi, script, workflow, CI); una pagina nuova va anche nel `nav` di `mkdocs.yml`, e `site_description` deve ancora descrivere il sito. È pubblico e in italiano: niente segreti, URL di hook, indirizzi e-mail, percorsi locali, nomi di repo private né contenuti da `docs/launch/`, `docs/superpowers/` o `.claude/`. Prima della PR: `node scripts/handbook-check.mjs`, poi `python3 -m venv .venv && .venv/bin/pip install -r handbook/requirements.txt && .venv/bin/mkdocs build --strict`. Passa dallo stesso branch `docs/<topic>` del punto 2.
+4. Il branch di release (`devel`) non si elimina mai da origin: merge della PR di release senza `--delete-branch`.

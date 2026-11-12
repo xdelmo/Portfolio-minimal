@@ -42,7 +42,7 @@ test.describe('on a desktop with a mouse', () => {
   test('it opens into a frame over links and buttons', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    await page.locator('app-site-header .cta').hover();
+    await page.locator('app-site-header .site-header > .cta').hover();
     await expect(cursor(page)).toHaveClass(/is-over/);
     // an empty spot under the header, beside the headline
     await page.mouse.move(700, 130);
@@ -103,13 +103,13 @@ test.describe('on a desktop with a mouse', () => {
   test('buttons lean towards the pointer and settle back when it leaves', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
-    const button = page.locator('app-site-header .cta');
+    const button = page.locator('app-site-header .site-header > .cta');
     const box = await button.boundingBox();
     if (!box) throw new Error('no button');
     await button.hover({ position: { x: box.width - 4, y: box.height / 2 } });
-    await expect.poll(() => translate(page, 'app-site-header .cta')).toBeGreaterThan(1);
+    await expect.poll(() => translate(page, 'app-site-header .site-header > .cta')).toBeGreaterThan(1);
     await page.getByRole('heading', { level: 1 }).hover();
-    await expect.poll(() => translate(page, 'app-site-header .cta')).toBeCloseTo(0, 0);
+    await expect.poll(() => translate(page, 'app-site-header .site-header > .cta')).toBeCloseTo(0, 0);
   });
 });
 

@@ -4,17 +4,22 @@ description: Server-side pagination, sorting and filters for PrimeNG tables, wit
 date: 2026-10-11
 project: apexflow
 ---
-In my first weeks as an intern at IPS I met one of the most common, and most underestimated, problems of enterprise frontends: data tables with pagination and filters done on the server. With ten records you load everything and filter in the browser. With ten thousand you cannot: the server pages, sorts and filters, and the frontend has to ask for exactly the right slice every time something changes.
+During my early weeks at IPS, I tackled a classic enterprise frontend challenge: managing large-scale data tables with pagination, sorting, and filtering delegated entirely to the server. When rendering ten records, you can comfortably fetch the entire payload and sort it in browser memory. With ten thousand records, that approach breaks down: the server must slice and index the dataset, while the frontend must reliably request only the currently visible slice.
 
-I took that experience straight into my thesis, ApexFlow. Its customers, orders and products are PrimeNG tables in lazy mode, and I wanted to leave behind the approach where every change calls a `load()` method by hand.
+I brought this architectural lesson directly into ApexFlow. Customer, order, and product lists are all PrimeNG tables in lazy-loading mode, and my priority was to eliminate the antipattern where every user interaction triggers an imperative `loadData()` method.
 
-## What has to stay consistent
+## The state matrix of an enterprise table
 
-A server-side table has more state than it looks: the current page, the page size, the sort field and direction, the filters of each column, a free-text search. Change any of them and the table must make one request, with all of them, and ignore the answer to any request it has made since. Spread that over a component and you get a `load()` called from six places, each one able to forget a parameter.
+A server-side table coordinates more interconnected state than it might appear:
+- Active page index (`currentPage`) and batch size (`pageSize`).
+- Sort field and direction (`sortField`, `sortOrder`).
+- Column filters and global search queries (`filters`, `query`).
 
-## One class for the state
+When these parameters are scattered across isolated component properties, user interactions (column header clicks, filter debounces, page jumps) easily construct partial requests, dropping parameters or introducing race conditions.
 
-`TablePaginationState` holds every piece in a signal, and one `computed` turns them into the query parameters the API expects:
+## Reactive encapsulation: TablePaginationState
+
+In ApexFlow, I isolated the entire table lifecycle inside `TablePaginationState`. Each navigation parameter is a discrete `signal`, and a single derived `computed` value generates the HTTP parameters configuration object:
 
 ```ts
 export class TablePaginationState {
@@ -34,11 +39,11 @@ export class TablePaginationState {
 }
 ```
 
-PrimeNG reports every page change, sort and column filter in one `TableLazyLoadEvent`. The class translates it, and it only sets a signal when its value really changed (filters are compared deeply), so a click that changes nothing makes no request.
+PrimeNG emits user interaction events through a consolidated `TableLazyLoadEvent`. The state class normalizes this payload and updates internal signals only when values actually change (filters undergo a deep equality check). As a result, redundant clicks never dispatch unnecessary network traffic.
 
-## From state to requests, with no subscribe
+## From state to network: the Signals-RxJS bridge
 
-The component turns `params` into an observable, lets RxJS do what it is good at, and turns the result back into a signal for the template:
+The component converts the computed `params` into an observable stream, delegates asynchronous request handling to RxJS, and pipes the final response back into a signal for the template:
 
 ```ts
 export class CustomerListComponent {
@@ -60,12 +65,11 @@ export class CustomerListComponent {
 }
 ```
 
-`toObservable` emits whenever any parameter changes, once per change. `switchMap` cancels the request still in flight when a newer one starts, so a slow page 2 never overwrites page 3. `toSignal` subscribes for the component and unsubscribes when it is destroyed.
+This architecture solves three critical concerns cleanly:
+1. **Zero race conditions:** `switchMap` automatically cancels any in-flight HTTP request if the user navigates to another page or updates a filter. A delayed response from page 2 can never overwrite page 3.
+2. **Clean subscription lifecycle:** `toSignal` handles subscription management behind the scenes and tears it down when the component unmounts, removing manual `subscribe()` and `unsubscribe()` boilerplate.
+3. **Backend decoupling:** The HTTP parameters represent the only contract between client and server. During initial development, the frontend worked against a mock JSON Server with custom middleware; transitioning to production Spring Boot APIs required changes only in the service layer, leaving table components completely untouched.
 
 ## The result
 
-1. **Predictable state.** Every table has the same handful of signals, and the parameters of a request are a function of them: nothing can drift apart.
-2. **Clean components.** A component declares its table and what to fetch. It never calls `subscribe()` or `load()`, so it has no subscription to destroy.
-3. **A realistic integration.** The frontend really delegates paging and filtering to the server. While the Spring Boot API was being built, a JSON Server with a small custom middleware stood in for it; the parameters are the only contract, so switching backend touches the service, not the tables.
-
-Every table in ApexFlow reuses the same class.
+Every table in ApexFlow reuses this exact `TablePaginationState` pattern. Component code remains purely declarative: it defines what to display and how to map data, letting the reactive system guarantee synchronization between UI and server.

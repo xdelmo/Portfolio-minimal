@@ -1,6 +1,6 @@
 #!/bin/sh
 # Ships the current branch: push, PR into devel (arguments go to `gh pr create`, e.g.
-# --title "…" --body-file f.md), wait for the Actions checks, rebase-merge only on green.
+# --title "…" --body-file f.md), wait for the Actions checks, merge commit only on green.
 # Exit 0 = merged. Not for release PRs (devel → master): those keep their branch and need the user's yes.
 set -eu
 branch=$(git branch --show-current)
@@ -22,7 +22,7 @@ done
 
 sleep 10 # let the runs register their checks on the PR
 if gh pr checks "$pr" --watch --fail-fast >/dev/null; then
-  gh pr merge "$pr" --rebase --delete-branch
+  gh pr merge "$pr" --merge --delete-branch
   echo "ship: PR #$pr merged into devel"
 else
   gh pr checks "$pr" | grep -v pass >&2 || true

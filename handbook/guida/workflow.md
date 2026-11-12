@@ -22,7 +22,7 @@ gitGraph
 
 ## Dalla modifica al merge
 
-`npm run ship -- --title "…" --body-file <file>` fa push, apre la pull request verso `devel`, aspetta i controlli di GitHub Actions e fa il merge con rebase solo se passano. Una CI rossa si corregge sul branch, non si fa mai il merge.
+`npm run ship -- --title "…" --body-file <file>` fa push, apre la pull request verso `devel`, aspetta i controlli di GitHub Actions e fa il merge commit solo se passano. Una CI rossa si corregge sul branch, non si fa mai il merge.
 
 ## La CI
 

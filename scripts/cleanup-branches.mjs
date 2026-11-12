@@ -1,8 +1,8 @@
 // After a release, removes the branches and worktrees whose work is provably in: a pull request merged it and the
-// branch's tip is still that pull request's head (rebase merges change the SHAs, so `git branch --merged` misses
-// them). A worktree goes only if it sits on such a branch, is clean, unlocked, not the main checkout, no running
-// process has its cwd inside it and no kept worktree is nested in it. Never master, devel, v2 or archive/*: release
-// branches stay on origin (issue #448). `node scripts/cleanup-branches.mjs` prints the plan, `--apply` carries it out.
+// branch's tip is still that pull request's head. A worktree goes only if it sits on such a branch, is clean,
+// unlocked, not the main checkout, no running process has its cwd inside it and no kept worktree is nested in it.
+// Never master, devel, v2 or archive/*: release branches stay on origin (issue #448).
+// `node scripts/cleanup-branches.mjs` prints the plan, `--apply` carries it out.
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
@@ -111,7 +111,7 @@ function run(apply) {
     }
   };
   for (const path of plan.worktrees) attempt(['worktree', 'remove', path]);
-  // -D because a rebase merge never looks merged to git; a branch whose worktree could not go is refused by git itself
+  // -D safely deletes branches confirmed merged via PRs; a branch whose worktree could not go is refused by git itself
   for (const name of plan.local) attempt(['branch', '-D', name]);
   if (plan.remote.length) attempt(['push', 'origin', '--delete', ...plan.remote]);
   git('worktree', 'prune');

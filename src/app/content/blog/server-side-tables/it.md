@@ -1,7 +1,7 @@
 ---
 title: Gestire 10 record è facile, gestirne 10.000 è ingegneria
 description: Paginazione, ordinamento e filtri lato server per le tabelle PrimeNG, con una sola classe TablePaginationState e il ponte tra Signals e RxJS.
-date: 2026-10-11
+date: 2026-03-02
 project: apexflow
 ---
 Nelle prime settimane del mio percorso in IPS ho affrontato una delle sfide classiche del frontend enterprise: la gestione di tabelle dati su larga scala con paginazione, ordinamento e filtri delegati al server. Con dieci record puoi permetterti di caricare l'intero dataset e filtrarlo in memoria nel browser. Con diecimila record questo approccio fallisce: il server deve occuparsi di affettare e ordinare i dati, mentre il client deve richiedere in modo deterministico e reattivo solo i record visibili.

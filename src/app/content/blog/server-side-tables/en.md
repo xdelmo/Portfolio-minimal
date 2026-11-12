@@ -1,7 +1,8 @@
 ---
 title: Ten records is easy, ten thousand is engineering
 description: Server-side pagination, sorting and filters for PrimeNG tables, with one TablePaginationState class and the bridge between Signals and RxJS.
-date: 2026-10-11
+date: 2026-03-02
+linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7434229982136168448/
 project: apexflow
 ---
 During my early weeks at IPS, I tackled a classic enterprise frontend challenge: managing large-scale data tables with pagination, sorting, and filtering delegated entirely to the server. When rendering ten records, you can comfortably fetch the entire payload and sort it in browser memory. With ten thousand records, that approach breaks down: the server must slice and index the dataset, while the frontend must reliably request only the currently visible slice.

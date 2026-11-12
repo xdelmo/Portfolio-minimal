@@ -170,32 +170,37 @@ test.describe('project cards', () => {
     await expect(page).toHaveURL(/\/work\/apexflow/);
   });
 
-  // issue #340, #376: the pixel cursor snaps to the preview's arrow button from a little way off, and the button leans in
-  test('the cursor snaps to the preview arrow button and the button leans towards the pointer', async ({ page }) => {
+  // issue #340, #376, #489: the pixel cursor snaps to the preview's arrow button from anywhere in the picture; the
+  // button holds still and the frame grows with it, frame for frame
+  test('the cursor snaps to the preview arrow button, which holds still while the frame rings it', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
     const arrow = page.locator('#work .project .media-arrow').first();
     await expect(arrow).toHaveAttribute('data-snap', '');
     await arrow.scrollIntoViewIfNeeded();
-    const box = await arrow.boundingBox();
-    if (!box) throw new Error('no arrow box');
-    // far from the button, in the middle of the picture
+    const rest = await arrow.boundingBox();
+    if (!rest) throw new Error('no arrow box');
+    // far from the button, low in the picture: the pointer is well below it
     const media = await page.locator('#work .project .media').first().boundingBox();
     if (!media) throw new Error('no media box');
     await page.mouse.move(media.x + media.width / 2, media.y + media.height / 2);
-    await page.mouse.move(media.x + media.width / 3, media.y + media.height / 2, { steps: 4 });
-    const lean = () => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
-    await expect.poll(lean).toBeLessThan(-0.5);
-    // the pixel is a frame centred on the button, not on the pointer
-    const offset = async () => {
-      const now = await arrow.boundingBox();
-      const dot = await page.locator('.pixel-cursor').boundingBox();
-      if (!now || !dot) throw new Error('no box');
-      return Math.hypot(dot.x + dot.width / 2 - (now.x + now.width / 2), dot.y + dot.height / 2 - (now.y + now.height / 2));
+    await page.mouse.move(media.x + media.width / 3, media.y + media.height * 0.9, { steps: 4 });
+    const dot = page.locator('.pixel-cursor');
+    // the frame is centred on the button and 8px larger, with no transition trailing the pill's growth
+    const fit = async () => {
+      const b = await arrow.boundingBox();
+      const d = await dot.boundingBox();
+      if (!b || !d) throw new Error('no box');
+      const off = Math.hypot(d.x + d.width / 2 - (b.x + b.width / 2), d.y + d.height / 2 - (b.y + b.height / 2));
+      return Math.max(off, Math.abs(d.width - b.width - 8), Math.abs(d.height - b.height - 8));
     };
-    await expect.poll(offset).toBeLessThan(3);
-    await page.mouse.move(5, 5);
-    await expect.poll(lean).toBeGreaterThan(-0.05);
+    await expect.poll(fit).toBeLessThan(3);
+    // the pill grows to the left from a right edge and a top that never move
+    const now = await arrow.boundingBox();
+    if (!now) throw new Error('no arrow box');
+    expect(Math.abs(now.y - rest.y)).toBeLessThan(0.5);
+    expect(Math.abs(now.x + now.width - (rest.x + rest.width))).toBeLessThan(0.5);
+    expect(await dot.evaluate((el) => getComputedStyle(el).transitionProperty)).toBe('background-color');
   });
 });
 

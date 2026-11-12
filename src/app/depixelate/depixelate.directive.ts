@@ -35,7 +35,7 @@ export const luma = ([r, g, b]: RGB): number => (0.2126 * r + 0.7152 * g + 0.072
 
 /**
  * 1-bit ordered dither of an RGBA buffer `cols` pixels wide, in place (issue #420): every pixel becomes `dark` or `light`
- * by its luminance against the Bayer threshold of its cell.
+ * by its luminance against the Bayer threshold of its cell, and fully opaque or fully transparent.
  */
 export function dither(data: Uint8ClampedArray, cols: number, dark: RGB, light: RGB): void {
   for (let i = 0; i < data.length; i += 4) {
@@ -45,6 +45,9 @@ export function dither(data: Uint8ClampedArray, cols: number, dark: RGB, light: 
     data[i] = r;
     data[i + 1] = g;
     data[i + 2] = b;
+    // 1-bit alpha too: a half-covered edge pixel kept its alpha, and WebKit's premultiplied canvas read it back as a
+    // third colour; the bands `contain` leaves stay transparent
+    data[i + 3] = data[i + 3] < 128 ? 0 : 255;
   }
 }
 

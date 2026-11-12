@@ -37,6 +37,13 @@ describe('depixelate', () => {
     expect(data.filter((_, i) => i % 4 === 3).every((a) => a === 255)).toBe(true);
   });
 
+  it('makes alpha 1-bit too: half-covered edge pixels go opaque, empty ones stay empty', () => {
+    const data = pixels(4, 1, 128);
+    [0, 100, 128, 255].forEach((a, p) => (data[p * 4 + 3] = a));
+    dither(data, 4, ink, paper);
+    expect(data.filter((_, i) => i % 4 === 3)).toEqual(new Uint8ClampedArray([0, 0, 255, 255]));
+  });
+
   it('turns black into ink and white into paper', () => {
     const black = pixels(4, 4, 0);
     const white = pixels(4, 4, 255);

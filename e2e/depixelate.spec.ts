@@ -36,7 +36,8 @@ test('a project screenshot reveals from a two-colour dither to the photo', async
       if (c && ctx && c.width > 0) {
         const data = ctx.getImageData(0, 0, c.width, c.height).data;
         const seen = new Set<number>();
-        for (let i = 0; i < data.length; i += 4) seen.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
+        // the bands of a `contain` screenshot stay transparent: not a colour
+        for (let i = 0; i < data.length; i += 4) if (data[i + 3]) seen.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
         w.palettes.push(seen.size);
       }
       requestAnimationFrame(look);

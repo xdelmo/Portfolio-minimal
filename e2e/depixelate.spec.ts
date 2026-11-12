@@ -22,6 +22,35 @@ test('a project screenshot depixelates as it scrolls in, then shows sharp', asyn
   expect(canvases[0]).toBe(8);
 });
 
+// issue #420: on the project cards every step is a 1-bit dither in the theme's ink and paper, then the colour photo shows
+test('a project screenshot reveals from a two-colour dither to the photo', async ({ page }) => {
+  await page.goto('/en/');
+  const shot = page.locator('#work .shot').first();
+  // note how many colours the canvas holds at every frame while it lives
+  await page.evaluate(() => {
+    const w = window as unknown as { palettes: number[] };
+    w.palettes = [];
+    const look = (): void => {
+      const c = document.querySelector<HTMLCanvasElement>('#work .media canvas');
+      const ctx = c?.getContext('2d');
+      if (c && ctx && c.width > 0) {
+        const data = ctx.getImageData(0, 0, c.width, c.height).data;
+        const seen = new Set<number>();
+        for (let i = 0; i < data.length; i += 4) seen.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
+        w.palettes.push(seen.size);
+      }
+      requestAnimationFrame(look);
+    };
+    look();
+  });
+  await shot.evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+  const palettes = () => page.evaluate(() => (window as unknown as { palettes: number[] }).palettes);
+  await expect.poll(async () => (await palettes()).length).toBeGreaterThan(0);
+  await expect(page.locator('#work .media canvas')).toHaveCount(0);
+  await expect(shot).toHaveCSS('opacity', '1');
+  expect(Math.max(...(await palettes()))).toBeLessThanOrEqual(2);
+});
+
 // issue #207: drawing the <img> itself decoded the whole JPEG on the main thread at every step, 16 ms each, right as the
 // first photo scrolled in under the hero; the steps draw from one bitmap decoded off the main thread
 test('the steps draw from a decoded bitmap, never from the photo itself', async ({ page }) => {

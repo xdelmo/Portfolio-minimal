@@ -65,30 +65,30 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'For my Computer Engineering thesis, I focused on real-world enterprise architecture challenges. ApexFlow models a SaaS platform that a tech company would use to manage customers, subscriptions, products, and orders, designed around the performance, security, and maintainability constraints of a production system.',
+          'For my Computer Engineering thesis I wanted a project with real problems to solve. ApexFlow simulates a SaaS platform that a tech company would use to manage customers, subscriptions, products and orders, with the constraints of a production system.',
         architecture: [
-          'Angular 19 single-page application with standalone components and reactive state management powered by Signals.',
-          'PrimeNG design system for data-dense UI: lazy-loading data tables, reactive forms, modal dialogs, and toast notifications.',
-          'Role-based access control (RBAC) with synchronous route guards protecting admin configurations and sensitive user profile views.',
-          'Centralized HTTP interceptors attaching JWT Bearer tokens and transforming API error responses into unified toast notifications.',
-          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, containerized PostgreSQL via Docker, deployed across Vercel (frontend) and Render (backend).',
+          'Angular 19 single-page app with standalone components and Signals for state.',
+          'PrimeNG for data-heavy components: tables, forms, dialogs and toasts.',
+          'Role-based access with route guards (admin-only settings, profile pages limited to the owner or an admin).',
+          'HTTP interceptors that attach the bearer token and turn API errors into toast notifications in one place.',
+          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; frontend on Vercel, backend on Render.',
         ],
         decisions: [
           {
             title: 'Signals for state, RxJS where time matters',
-            body: 'Authentication state resides in signals, eliminating manual subscriptions and memory leaks across component lifecycles. RxJS remains focused on its core strength: debouncing search inputs and automatically cancelling stale HTTP requests via switchMap.',
+            body: 'Authentication state lives in signals, so the components never subscribe or unsubscribe by hand. RxJS stays where it is the right tool: debouncing filters and cancelling stale requests.',
           },
           {
             title: 'Server-side tables with one reusable state class',
-            body: 'The TablePaginationState class encapsulates pagination, sorting, and filter state in the URL, bridging signals and observables via toSignal and toObservable. Deep equality checks prevent redundant API requests on unchanged filters, enabling every table in the app to share the same deterministic logic.',
+            body: 'A TablePaginationState class keeps page, sort and filters in the URL and bridges signals and observables with toSignal and toObservable. Changing a filter or a page triggers exactly one API call, and every table in the app reuses the same logic.',
           },
           {
             title: 'Spring Boot instead of a JavaScript backend',
-            body: 'NestJS would have kept the entire stack in TypeScript, but Spring Boot represents the dominant enterprise standard alongside Angular. Managing two separate runtimes enforced strict interface boundaries: JPA persistence entities never bleed into presentation components, making every field in the REST contract an intentional decision.',
+            body: 'NestJS would have kept everything in TypeScript, but Spring Boot is what most of the job posts I read asked for next to Angular. With two languages, the contract between client and server has to be explicit: every field the frontend relies on is a decision.',
           },
         ],
         outcome:
-          'I graduated in April 2026 with ApexFlow as my thesis project. The live demo on Vercel includes one-click credentials to test both administrator and standard user workflows.',
+          'I graduated in April 2026 with ApexFlow as my thesis. The live demo has one-click demo accounts for an admin and a regular user.',
       },
     },
     {
@@ -109,25 +109,25 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'A daily Pokémon crossword playable in the browser. Operating as an independent commercial platform with ads and affiliate links, strict trademark constraints prevent the use of any official Nintendo or Pokémon Company art or text—requiring all clues to be procedurally generated from raw data.',
+          'A crossword about Pokémon that changes every day, played in the browser. The site will carry ads and affiliate links, so the use is commercial: no official text or image may appear anywhere, and every clue has to be our own.',
         architecture: [
-          'Hybrid architecture: custom WordPress theme for core pages, backed by a dedicated plugin exposing REST APIs, custom database tables, and WP-CLI commands.',
-          'Interactive React application built with Vite and mounted via shortcode, powering the crossword grid, Pokémon catch collection, and achievement system.',
-          'Server-side generation algorithm laying out 10 to 15 words across a matrix up to 15 × 15, seeded daily with a 30-day anti-repetition window.',
-          'Bilingual localization (Italian and English) without translation plugins, storing player streaks and progress in local storage.',
+          'A classic WordPress theme for the whole site (home, blog, pages) and a plugin with its own tables, a REST API and WP-CLI commands.',
+          'A React app built with Vite, embedded through a shortcode: the grid, the Collection of caught Pokémon, achievements and coins.',
+          'A server-side generator lays out 10 to 15 words in a grid of up to 15 × 15, seeded by the date, with no Pokémon repeated within 30 days.',
+          'Italian and English without a multilingual plugin; progress lives in the browser, in local storage.',
         ],
         decisions: [
           {
             title: 'The answers never reach the browser',
-            body: 'The browser receives only word lengths and grid topology. Validation happens server-side through a REST endpoint that evaluates complete words: players cannot inspect network traffic or client memory to extract puzzle solutions.',
+            body: 'The app only knows how long each word is. Checking goes through the API, which judges whole words only, so the Check button never gives letters away one at a time.',
           },
           {
             title: 'Original clues composed from facts',
-            body: 'The generation engine synthesizes original clues by combining taxonomic attributes (type, generation, physical stats) from PokéAPI, programmatically discarding any string that mentions the target species or mirrors official trademarked copy.',
+            body: 'The generator composes each clue from facts such as type, generation, height and weight, imported from PokéAPI, and rejects any clue that names the answer. No official text is ever copied.',
           },
           {
             title: 'One puzzle a day, cached until midnight',
-            body: "Today's puzzle is generated once and cached until midnight (Rome timezone), reducing server computation to a single daily execution per language.",
+            body: "Today's puzzle is cached until midnight in Rome, when the next one is generated, so the server does the work once a day.",
           },
         ],
         outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',
@@ -151,25 +151,25 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the smartphone their guests already hold. The experience had to replicate the tactile feeling of opening a physical envelope, while providing a comprehensive ceremony guide: countdown, interactive maps, dress code, and an offline RSVP flow.',
+          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the phone their guests already hold. It has to feel like opening a real envelope, then answer every practical question: when, where, how to get there, what to wear, and whether you are coming.',
         architecture: [
-          'Mobile-first single-page application in React and TypeScript with Tailwind CSS; desktop viewports are framed inside a phone mockup to maintain intended visual proportions.',
-          'Interactive 3D Three.js scene featuring opening lace flaps, a custom engraved wax seal, and physically based rendering (PBR) shaders for realistic pearl reflections.',
-          'Full-screen vertical navigation driven by CSS scroll snap (dvh), snapping each ceremony section seamlessly to the viewport.',
-          'Serverless RSVP architecture forwarding guest responses directly to Google Sheets via Google Apps Script; PWA service worker caching ensures offline reliability.',
+          'A React and TypeScript single-page app built with Vite and styled with Tailwind CSS, mobile first; on a desktop the invitation sits in a phone-sized frame.',
+          'The envelope is a Three.js scene: lace flaps that open, a wax seal that lifts away and pearls with physically based materials.',
+          'Eleven full-screen slides with CSS scroll snap: countdown, calendar export, maps, programme, dress code, transport and RSVP.',
+          'RSVP answers go to a Google Sheet through Google Apps Script, so there is no server to run; a service worker keeps the invitation working offline as a PWA.',
         ],
         decisions: [
           {
             title: 'Every word of the invitation in one config file',
-            body: 'All ceremony details, schedule data, and RSVP endpoints live in a single typed TypeScript configuration. The public demo uses anonymized sample data while the private production deployment houses real wedding details, powering Open Graph, event JSON-LD, and PWA manifest from one source.',
+            body: 'Names, date, places, programme and RSVP live in a typed config, so the demo runs on sample names while the real invitation keeps its own. Title, Open Graph tags, event JSON-LD, manifest and service worker are generated from the same config.',
           },
           {
             title: 'The 3D scene stops once the envelope is open',
-            body: 'Once the envelope opening animation completes, the Three.js requestAnimationFrame loop completely freezes. Reading the ceremony slides draws zero continuous GPU or battery power, with a footer control available to replay the 3D sequence on demand.',
+            body: 'After the opening animation the render loop freezes, so reading the invitation costs no GPU time and no battery. A button in the footer plays the opening again.',
           },
           {
             title: 'One palette, with contrast under test',
-            body: 'The burgundy and ivory palette propagates consistently across Three.js materials, Tailwind classes, and SVG icons. Automated unit tests enforce WCAG 2.2 AA color contrast ratios across all text and surface combinations before building.',
+            body: 'The burgundy and ivory palette is defined once and flows into Tailwind, Three.js, the manifest and the icons. A unit test fails the build on any combination below WCAG AA contrast.',
           },
         ],
         outcome:

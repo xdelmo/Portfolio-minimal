@@ -1,7 +1,8 @@
 ---
 title: Signals in un'app vera: il modulo di autenticazione di ApexFlow
 description: Come lo stato di autenticazione del mio progetto di tesi è passato ai Signals di Angular, cosa ha tolto dal codice e dove RxJS resta lo strumento giusto.
-date: 2026-10-11
+date: 2026-01-28
+linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7422344320042594307/
 project: apexflow
 ---
 Quando ho impostato l'architettura di ApexFlow, costruirla su Angular 19 e sui Signals era una scommessa tecnica. I Signals erano appena diventati stabili, la maggior parte dei tutorial continuava a usare `BehaviorSubject` per qualsiasi cosa e io stavo progettando una dashboard CRM con dati eterogenei e permessi granulari. Ripensandoci, è stata la scelta architetturale più solida dell'intero progetto.

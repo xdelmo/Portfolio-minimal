@@ -47,6 +47,10 @@ export const introEffect: Effect = (root, { gsap, desktop }) => {
   const cssPlaying = Number(lit?.currentTime ?? 0) > (lit?.effect?.getTiming().delay ?? 0);
   if (cssPlaying || !introFits(performance.now(), seconds(intro.duration()), cssStart, cssMs)) {
     intro.revert();
+    // the CSS animations stop when the panel turns display: none at the end, and their colours with them: the end
+    // state goes inline too, under the running animations, so the squares keep their colour afterwards (issue #481)
+    gsap.set(root.querySelectorAll('.letter'), { opacity: 1 });
+    gsap.set(root.querySelectorAll('.px'), { backgroundColor: (_: number, px: HTMLElement) => getComputedStyle(px).getPropertyValue('--c').trim() });
     // the CSS already played the whole intro, letters and squares included, so it counts as seen (issue #481)
     if (getComputedStyle(panel).visibility === 'hidden') {
       endIntro(true);

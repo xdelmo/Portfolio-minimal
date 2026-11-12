@@ -68,6 +68,23 @@ describe('the cloud mask', () => {
     expect(pinned).toEqual([]);
   });
 
+  it('clears round each line, not the box round all of them: the cloud reaches between the lines (issue #504)', () => {
+    // a long headline over a short lede: their common box has wide empty corners far from both lines
+    const lines = [{ x: 200, y: 160, w: 800, h: 96 }, { x: 480, y: 480, w: 240, h: 32 }];
+    const far = 6 * CLOUD_CELL;
+    let reached = 0;
+    for (let i = 0; i < l.cols * l.rows; i++) {
+      const col = i % l.cols;
+      const row = Math.floor(i / l.cols);
+      const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+      const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
+      const inBounds = x > 200 && x < 1000 && y > 160 && y < 512;
+      const away = lines.every((b) => Math.hypot(Math.max(b.x - x, 0, x - b.x - b.w), Math.max(b.y - y, 0, y - b.y - b.h)) > far);
+      if (inBounds && away && [0, 7, 23, 41].some((s) => cloudDepth(col, row, l, lines, s) > 0)) reached++;
+    }
+    expect(reached).toBeGreaterThan(0);
+  });
+
   it('lights a wide share of a desktop hero, with cloud on all four sides', () => {
     const big = layout(1440, 900);
     const text = { x: 340, y: 290, w: 760, h: 320 };

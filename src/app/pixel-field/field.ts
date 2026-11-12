@@ -140,7 +140,6 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   const w = l.x0 * 2 + l.cols * CLOUD_CELL;
   const h = l.y0 + l.rows * CLOUD_CELL;
   const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
-  const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
   const n = l.cols * l.rows;
   shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n) };
@@ -163,10 +162,6 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
     const wave = (octaveNoise(x / 64, y / 36) - 0.35) * 4.2 + (noise(x / 24 + 13, y / 16 + 17) - 0.5) * 2.8;
     const organicPad = Math.max(pad, pad + wave * CLOUD_CELL);
 
-    // Strict copy interior protection (only inside the text bounds so copy is clear of pixels):
-    const inCopy = x >= b.x - CLOUD_CELL / 2 && x <= b.x + b.w + CLOUD_CELL / 2 &&
-                   y >= b.y - CLOUD_CELL / 2 && y <= b.y + b.h + CLOUD_CELL / 2;
-
     // Unit test clearing guarantee: cells within the padded clearance zone around each box
     const inPad = boxes.some((r) => {
       const qx = Math.abs(x - r.x - r.w / 2) - r.w / 2;
@@ -174,7 +169,8 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
       return Math.max(qx, qy) <= pad;
     });
 
-    const isClear = inCopy || inPad || dMin <= organicPad;
+    // each line is cleared on its own, never the box round all of them (issue #504, as andreas.vision)
+    const isClear = inPad || dMin <= organicPad;
     shape.base[i] = isClear ? NaN : 1.0;
     shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (dMin - organicPad) / 48));
   }

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ContactPrompt } from '../../../layout/contact-prompt';
 import { BLOG } from '../../../content/blog';
 import { CONTENT } from '../../../content/content';
 import { toLocale } from '../../../core/i18n/locale';
@@ -10,7 +11,7 @@ import { SeoService } from '../../../core/seo/seo.service';
 @Component({
   selector: 'app-blog-index',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, ContactPrompt],
   templateUrl: './blog-index.html',
   styleUrl: './blog-index.scss',
 })

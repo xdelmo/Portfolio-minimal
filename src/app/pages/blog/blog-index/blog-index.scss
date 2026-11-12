@@ -106,3 +106,11 @@
     .read-link:hover {
       text-decoration-thickness: 2px;
     }
+    .more {
+      display: grid;
+      justify-items: start;
+      gap: var(--space-3);
+      max-width: var(--measure);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--rule);
+    }

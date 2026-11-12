@@ -217,10 +217,21 @@ test.describe('the abstract field', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
     await expect(canvas(page)).toHaveAttribute('data-clear', /.+/);
-    // read the pixels of the canvas copy: lit cells left, right, above and below the clearing, none inside it
+    // read the pixels of the canvas copy: lit cells left, right, above and below the clearing, none on the text's own
+    // lines (the cloud may reach between them, inside their common box: issue #504, #510)
     const lit = await canvas(page).evaluate((c) => {
       const el = c as HTMLCanvasElement;
       const [cx, cy, cw, ch] = (el.dataset['clear'] ?? '').split(',').map(Number);
+      const box = el.getBoundingClientRect();
+      const copy0 = document.querySelector('.hero .copy');
+      if (!copy0) throw new Error('no hero copy');
+      const lines = [...copy0.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+      const walker = document.createTreeWalker(copy0, NodeFilter.SHOW_TEXT);
+      const range = document.createRange();
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        range.selectNodeContents(n);
+        lines.push(...range.getClientRects());
+      }
       const k = el.width / el.clientWidth;
       const copy = document.createElement('canvas');
       copy.width = el.width;
@@ -239,7 +250,9 @@ test.describe('the abstract field', () => {
         right: count(cx + cw, 0, el.clientWidth - cx - cw, el.clientHeight),
         above: count(0, 0, el.clientWidth, cy),
         below: count(0, cy + ch, el.clientWidth, el.clientHeight - cy - ch),
-        inside: count(cx, cy, cw, ch),
+        inside: lines
+          .filter((r) => r.width > 0 && r.height > 0)
+          .reduce((n, r) => n + count(r.x - box.x, r.y - box.y, r.width, r.height), 0),
       };
     });
     expect(lit.left).toBeGreaterThan(0);

@@ -82,7 +82,33 @@ test.describe('intro', () => {
     expect(await page.evaluate(() => 'replayed' in window)).toBe(false);
   });
 
-  // GSAP missed the whole intro: the CSS lifted a dim panel, which does not count as seen (issue #404)
+  // a slow phone: GSAP came after the lift, but the CSS lit the letters and coloured the squares by itself (issue #481)
+  test('lights the letters and colours the squares without the motion script', async ({ page }) => {
+    await page.route('**/*.js', async (route) => {
+      const response = await route.fetch();
+      if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
+      await route.fulfill({ response });
+    });
+    await page.goto('/en/');
+    // before the CSS lift starts (1.4s on phones, 3s on desktop)
+    await page.waitForFunction(
+      () => {
+        const fg = getComputedStyle(document.querySelector('.site-intro') ?? document.body).color;
+        const px = [...document.querySelectorAll('.site-intro .px')];
+        const letters = [...document.querySelectorAll('.site-intro .letter')];
+        return (
+          px.length > 0 &&
+          px.every((el) => getComputedStyle(el).backgroundColor !== fg && getComputedStyle(el).transform === 'matrix(1, 0, 0, 1, 0, 0)') &&
+          letters.every((el) => getComputedStyle(el).opacity === '1')
+        );
+      },
+      null,
+      { timeout: 2800 },
+    );
+    expect(await page.evaluate(() => document.documentElement.classList.contains('intro-on'))).toBe(true);
+  });
+
+  // GSAP missed the whole intro, so it does not count as seen (issue #404)
   test('plays again on the next load when the motion script came after the CSS lift', async ({ page }) => {
     await page.route('**/*.js', async (route) => {
       const response = await route.fetch();

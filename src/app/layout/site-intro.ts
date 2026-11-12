@@ -14,7 +14,7 @@ import { MotionHost } from '../motion/motion-host';
         @for (word of words; track $index) {
           <span class="word">
             @for (char of word; track $index) {
-              <span class="letter">{{ char }}</span>
+              <span class="letter" [style.--i]="char.i">{{ char.char }}</span>
             }
           </span>
           @if (!$last) {
@@ -24,7 +24,7 @@ import { MotionHost } from '../motion/motion-host';
       </p>
       <p class="pixels">
         @for (px of pixels; track $index) {
-          <span class="px"></span>
+          <span class="px" [style.--i]="$index"></span>
         }
       </p>
     </div>
@@ -44,11 +44,18 @@ import { MotionHost } from '../motion/motion-host';
       background: var(--intro-bg);
       color: var(--intro-fg);
       pointer-events: none;
+      // the letters and the squares play in CSS too, after --d, at the same pace as effects/intro.ts (its timeline runs
+      // --k times faster on phones): GSAP takes over only if it arrives before --d, or the squares stayed black whenever
+      // the motion script came late (issue #481)
+      --k: 1.6;
+      --d: 0.5s;
       // lifts the panel even if the motion script never arrives: by 2s on phones, where a longer cover cost the
       // Speed Index (issue #381), by 3.6s on desktop. effects/intro.ts reads these timings back
       animation: intro-out 0.6s 1.4s cubic-bezier(0.7, 0, 0.3, 1) forwards;
       @media (min-width: 1024px) and (hover: hover) {
         animation-delay: 3s;
+        --k: 1;
+        --d: 1s;
       }
     }
     .name {
@@ -66,6 +73,8 @@ import { MotionHost } from '../motion/motion-host';
     }
     .letter {
       opacity: 0.18;
+      animation: intro-letter calc(0.35s / var(--k)) calc(var(--d) + var(--i) * 0.035s / var(--k))
+        cubic-bezier(0.33, 1, 0.68, 1) both;
     }
     .pixels {
       display: flex;
@@ -80,6 +89,41 @@ import { MotionHost } from '../motion/motion-host';
       height: 12px;
       background: currentColor;
       opacity: 0.9;
+      animation: intro-px calc(0.3s / var(--k)) calc(var(--d) + (0.1s + var(--i) * 0.03s) / var(--k))
+        cubic-bezier(0.34, 1.8, 0.64, 1) both;
+    }
+    // the colour each square ends on; effects/intro.ts reads it back
+    .px:nth-child(5n + 1) {
+      --c: var(--px-2);
+    }
+    .px:nth-child(5n + 2) {
+      --c: var(--px-3);
+    }
+    .px:nth-child(5n + 3) {
+      --c: var(--px-4);
+    }
+    .px:nth-child(5n + 4) {
+      --c: var(--px-5);
+    }
+    .px:nth-child(5n) {
+      --c: var(--px-6);
+    }
+    .site-intro.gsap :is(.letter, .px) {
+      animation: none;
+    }
+    @keyframes intro-letter {
+      to {
+        opacity: 1;
+      }
+    }
+    @keyframes intro-px {
+      from {
+        transform: scale(0);
+      }
+      to {
+        transform: scale(1);
+        background-color: var(--c);
+      }
     }
     @keyframes intro-out {
       to {
@@ -90,6 +134,12 @@ import { MotionHost } from '../motion/motion-host';
   `,
 })
 export class SiteIntro {
-  protected readonly words = inject(CONTENT).person.name.split(' ').map((word) => Array.from(word));
+  protected readonly words = (() => {
+    // one index across the words, so the letters light up in a single stagger
+    let i = 0;
+    return inject(CONTENT)
+      .person.name.split(' ')
+      .map((word) => Array.from(word, (char) => ({ char, i: i++ })));
+  })();
   protected readonly pixels = Array.from({ length: 12 });
 }

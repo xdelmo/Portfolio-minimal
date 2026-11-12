@@ -119,13 +119,13 @@ test.describe('the phone menu', () => {
     expect(await closingTime(page)).toBeLessThan(60);
   });
 
-  // issue #193, #468: on phones the bar keeps only the mark and the menu button; the CTA and controls are in the panel
-  test('on phones the bar shows only the mark and the menu; the panel holds the CTA, languages, pause and theme', async ({ page, isMobile }) => {
+  // issue #193, #468, #483: on phones the bar keeps the logo and the menu button; the CTA and controls are in the panel
+  test('on phones the bar shows the logo and the menu; the panel holds the CTA, languages, pause and theme', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
     await expect(header.locator('.logo .mark')).toBeVisible();
-    await expect(header.locator('.logo .name')).toBeHidden();
+    await expect(header.locator('.logo .name')).toBeVisible();
     await expect(header.locator('.site-header > .cta')).toBeHidden();
     await expect(header.locator('.controls').getByRole('button', { name: 'Pause animations' })).toHaveCount(0);
     await header.locator('.site-menu summary').click();

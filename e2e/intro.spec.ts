@@ -82,8 +82,34 @@ test.describe('intro', () => {
     expect(await page.evaluate(() => 'replayed' in window)).toBe(false);
   });
 
-  // GSAP missed the whole intro: the CSS lifted a dim panel, which does not count as seen (issue #404)
-  test('plays again on the next load when the motion script came after the CSS lift', async ({ page }) => {
+  // a slow phone: GSAP came after the lift, but the CSS lit the letters and coloured the squares by itself (issue #481)
+  test('lights the letters and colours the squares without the motion script', async ({ page }) => {
+    await page.route('**/*.js', async (route) => {
+      const response = await route.fetch();
+      if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
+      await route.fulfill({ response });
+    });
+    await page.goto('/en/');
+    // before the CSS lift starts (1.4s on phones, 3s on desktop)
+    await page.waitForFunction(
+      () => {
+        const fg = getComputedStyle(document.querySelector('.site-intro') ?? document.body).color;
+        const px = [...document.querySelectorAll('.site-intro .px')];
+        const letters = [...document.querySelectorAll('.site-intro .letter')];
+        return (
+          px.length > 0 &&
+          px.every((el) => getComputedStyle(el).backgroundColor !== fg && getComputedStyle(el).transform === 'matrix(1, 0, 0, 1, 0, 0)') &&
+          letters.every((el) => getComputedStyle(el).opacity === '1')
+        );
+      },
+      null,
+      { timeout: 2800 },
+    );
+    expect(await page.evaluate(() => document.documentElement.classList.contains('intro-on'))).toBe(true);
+  });
+
+  // the CSS played the whole intro before GSAP arrived, letters and squares included, so it counts as seen (issue #481)
+  test('counts as seen when the motion script came after the CSS lift', async ({ page }) => {
     await page.route('**/*.js', async (route) => {
       const response = await route.fetch();
       if ((await response.text()).includes('GreenSock')) await new Promise((resolve) => setTimeout(resolve, 8000));
@@ -92,8 +118,9 @@ test.describe('intro', () => {
     await page.goto('/en/');
     await page.waitForFunction(() => !document.documentElement.classList.contains('intro-on'), null, { timeout: 15000 });
     await page.unroute('**/*.js');
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('intro'))).toBe('1');
     await page.goto('/en/work/apexflow');
-    await expect(page.locator('.site-intro')).toBeVisible();
+    await expect(page.locator('.site-intro')).toBeHidden();
   });
 
   // a slow network: GSAP arrives after the CSS lift, too late for heroEffect's entrance, so the CSS one shows the

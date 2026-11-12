@@ -51,12 +51,12 @@ describe('WorkList', () => {
     }
   });
 
-  it('renders an arrow button with data-magnetic on each media frame', async () => {
+  it('renders a snap arrow button on each media frame', async () => {
     const el = await render();
     const arrows = [...el.querySelectorAll('.media .media-arrow')];
     expect(arrows.length).toBe(3);
     for (const arrow of arrows) {
-      expect(arrow.hasAttribute('data-magnetic')).toBe(true);
+      expect(arrow.hasAttribute('data-snap')).toBe(true);
       expect(arrow.querySelector('app-pixel-arrow')).not.toBeNull();
     }
   });

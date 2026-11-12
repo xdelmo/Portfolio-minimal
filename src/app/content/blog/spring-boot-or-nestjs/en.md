@@ -2,6 +2,7 @@
 title: Why Spring Boot when I already knew TypeScript?
 description: A senior backend friend asked why my thesis paired Angular with Java instead of NestJS. What drove the choice, what it cost, and what I think now.
 date: 2026-03-19
+linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7440413562331860992/
 project: apexflow
 ---
 "Why learn Java and Spring Boot from scratch if you already master the TypeScript ecosystem?"

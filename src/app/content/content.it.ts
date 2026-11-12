@@ -63,30 +63,30 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Per la tesi in Ingegneria Informatica volevo un progetto con problemi reali da risolvere. ApexFlow simula una piattaforma SaaS con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'Per la mia tesi in Ingegneria Informatica volevo affrontare sfide architetturali tipiche dei sistemi enterprise. ApexFlow riproduce una piattaforma SaaS per la gestione di clienti, abbonamenti, prodotti e ordini, rispettando i vincoli di performance e manutenibilità di un sistema in produzione.',
         architecture: [
-          'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
-          'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
-          'Accesso basato sui ruoli con route guard (impostazioni solo per gli admin, pagine profilo visibili al proprietario o a un admin).',
-          'Interceptor HTTP che aggiungono il token e trasformano gli errori delle API in notifiche, in un unico punto.',
-          'API REST in Spring Boot 3 su Java 21 con Spring Data JPA, PostgreSQL e Docker; frontend su Vercel, backend su Render.',
+          'Single-page application in Angular 19 con componenti standalone e gestione reattiva dello stato tramite Signals.',
+          'Libreria PrimeNG per i componenti complessi: tabelle dati in lazy loading, form reattivi, dialog modali e notifiche toast.',
+          'Controllo accessi basato sui ruoli (RBAC) con route guard sincrone per proteggere impostazioni di amministrazione e pagine profilo.',
+          'HTTP Interceptor centralizzati per la gestione del Bearer token JWT e la normalizzazione automatica degli errori API.',
+          'Backend REST in Spring Boot 3 su Java 21 con Spring Data JPA, database PostgreSQL containerizzato in Docker e deploy distribuito (frontend su Vercel, backend su Render).',
         ],
         decisions: [
           {
-            title: 'Signals per lo stato, RxJS dove conta il tempo',
-            body: "Lo stato dell'autenticazione vive nei signal, così i componenti non si iscrivono né si disiscrivono a mano. RxJS resta dove è lo strumento giusto: il debounce dei filtri e l'annullamento delle richieste non più attuali.",
+            title: 'Signals per lo stato sincrono, RxJS dove conta il tempo',
+            body: "Lo stato dell'autenticazione vive nei signal, eliminando sottoscrizioni manuali e memory leak nel ciclo di vita dei componenti. RxJS rimane circoscritto al suo dominio naturale: debounce degli input di ricerca e cancellazione automatica delle richieste HTTP superate tramite switchMap.",
           },
           {
             title: 'Tabelle lato server con una sola classe di stato riutilizzabile',
-            body: "Una classe TablePaginationState tiene pagina, ordinamento e filtri nell'URL e collega signal e observable con toSignal e toObservable. Cambiare un filtro o una pagina fa partire una sola chiamata, e ogni tabella dell'app riusa la stessa logica.",
+            body: "Una classe TablePaginationState tiene pagina, ordinamento e filtri nell'URL e collega signal e observable con toSignal e toObservable. Un controllo di deep equality impedisce chiamate API ridondanti e garantisce che ogni tabella dell'app riutilizzi la stessa logica deterministica.",
           },
           {
-            title: 'Spring Boot invece di un backend JavaScript',
-            body: 'Con NestJS avrei scritto tutto in TypeScript, ma Spring Boot era lo stack che la maggior parte degli annunci che leggevo chiedeva accanto ad Angular. Con due linguaggi il contratto tra client e server deve essere esplicito: ogni campo su cui conta il frontend è una scelta.',
+            title: 'Spring Boot per contratti architetturali espliciti',
+            body: 'NestJS avrebbe permesso uno stack TypeScript omogeneo, ma Spring Boot è lo standard consolidato nel mercato enterprise accanto ad Angular. Con due linguaggi il contratto tra client e server deve essere esplicito: ogni campo su cui conta il frontend è una scelta.',
           },
         ],
         outcome:
-          'Mi sono laureato ad aprile 2026 con ApexFlow come tesi. La demo online ha account di prova con un clic, per un admin e per un utente normale.',
+          'Ho completato la laurea ad aprile 2026 con ApexFlow come progetto di tesi. La demo pubblica su Vercel include credenziali precompilate con un clic per testare sia il profilo amministratore che utente standard.',
       },
     },
     {
@@ -103,25 +103,25 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l\'uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Essendo un progetto indipendente con annunci e link di affiliazione, il contesto commerciale impone vincoli legali stringenti: nessun testo né immagine ufficiale di Nintendo o The Pokémon Company può essere utilizzato, rendendo necessaria la generazione procedurale di ogni indizio.',
         architecture: [
-          'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
-          "Un'app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
-          'Un generatore lato server dispone da 10 a 15 parole in una griglia fino a 15 × 15, con il seme dato dalla data e nessun Pokémon ripetuto entro 30 giorni.',
-          'Italiano e inglese senza plugin multilingua; i progressi restano nel browser, nel local storage.',
+          'Architettura ibrida: tema WordPress personalizzato per le pagine istituzionali e plugin dedicato per API REST, tabelle database custom e comandi WP-CLI.',
+          "Applicazione interattiva in React compilata con Vite e integrata via shortcode per la griglia di gioco, la Collezione dei Pokémon catturati e il sistema di traguardi.",
+          'Algoritmo generatore lato server che dispone da 10 a 15 vocaboli su una matrice fino a 15 × 15, con seed giornaliero e rotazione di 30 giorni per evitare ripetizioni.',
+          'Localizzazione bilingue (italiano e inglese) gestita a livello applicativo; persistenza dei progressi e delle serie di vittorie nel local storage.',
         ],
         decisions: [
           {
-            title: 'Le risposte non arrivano mai al browser',
-            body: "L'app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
+            title: 'Le risposte non arrivano mai al client',
+            body: "Il browser riceve unicamente la lunghezza delle parole e la topologia della griglia. La validazione avviene sul server tramite API, che valuta esclusivamente parole intere: in questo modo il comando di verifica non svela le lettere una alla volta né espone le soluzioni nella rete.",
           },
           {
-            title: 'Indizi originali composti da fatti',
-            body: "Il generatore compone ogni indizio da fatti come tipo, generazione, altezza e peso, importati da PokéAPI, e scarta quelli che nominano la risposta. Nessun testo ufficiale viene copiato.",
+            title: 'Generazione procedurale degli indizi da dati PokéAPI',
+            body: "Il motore di generazione sintetizza indizi originali combinando parametri tassonomici (tipo, generazione, statistiche fisiche) estratti da PokéAPI, scartando programmaticamente qualsiasi frase che contenga il nome della specie o violi vincoli di originalità.",
           },
           {
-            title: 'Un cruciverba al giorno, in cache fino a mezzanotte',
-            body: 'Il cruciverba di oggi resta in cache fino alla mezzanotte di Roma, quando si genera il successivo, così il server lavora una volta al giorno.',
+            title: 'Caching deterministico giornaliero',
+            body: 'Il cruciverba di oggi resta in cache fino alla mezzanotte di Roma, quando si genera il successivo, riducendo il carico del server a una sola esecuzione giornaliera.',
           },
         ],
         outcome: 'Online su sbustiamobro.it e alla versione 1.18 a ottobre 2026, con un cruciverba regionale, gettoni e traguardi.',
@@ -143,21 +143,21 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi rispondere a ogni domanda pratica: quando, dove, come arrivarci, cosa indossare e se ci sarai.",
+          "Replicare l'eleganza tattile di una partecipazione cartacea artigianale in pizzo e perle all'interno dello smartphone degli invitati, offrendo al contempo una guida completa alla cerimonia: orari, mappe interattive, dress code e modulo RSVP.",
         architecture: [
-          "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
-          'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
-          'Undici slide a schermo intero con lo scroll snap di CSS: conto alla rovescia, salvataggio nel calendario, mappe, programma, dress code, trasporti e RSVP.',
-          "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
+          "Single-page app mobile-first in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS; su desktop l'invito sta in una cornice grande come uno smartphone.",
+          'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici (PBR).',
+          'Undici slide a schermo intero con lo scroll snap di CSS (dvh): conto alla rovescia, salvataggio nel calendario, mappe, programma, dress code, trasporti e RSVP.',
+          "Architettura serverless per l'RSVP collegata a Google Sheets via Google Apps Script; service worker per garantire il funzionamento offline come PWA.",
         ],
         decisions: [
           {
-            title: "Ogni parola dell'invito in un solo file di configurazione",
+            title: "Configurazione tipizzata unificata",
             body: "Nomi, data, luoghi, programma e RSVP stanno in una configurazione tipizzata, così la demo gira con nomi di esempio mentre l'invito vero tiene i suoi. Titolo, tag Open Graph, JSON-LD dell'evento, manifest e service worker nascono dalla stessa configurazione.",
           },
           {
             title: 'La scena 3D si ferma quando la busta è aperta',
-            body: "Finita l'animazione di apertura il ciclo di rendering si congela, così leggere l'invito non costa GPU né batteria. Un pulsante nel footer fa rivedere l'apertura.",
+            body: "Finita l'animazione di apertura il ciclo di rendering si congela (0 FPS), azzerando il consumo di GPU e batteria durante la lettura dell'invito. Un pulsante nel footer fa rivedere l'apertura.",
           },
           {
             title: 'Una sola palette, con il contrasto sotto test',

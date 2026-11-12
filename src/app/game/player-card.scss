@@ -1,0 +1,159 @@
+    @use 'styles/breakpoints' as bp;
+    .card {
+      width: min(100% - 2 * var(--gutter), 32rem);
+      max-height: calc(100svh - 2 * var(--space-2));
+      // scrolled to its end, the card does not hand the scroll to the page behind (issue #135)
+      overscroll-behavior: contain;
+      // 24px a side on phones leaves the stats room; 32px from md up (issue #383)
+      padding: var(--space-3);
+      border: 4px solid var(--fg);
+      outline: 4px solid var(--band-ink-bg);
+      background: var(--band-ink-bg);
+      color: var(--fg);
+      overflow: auto;
+      @include bp.up(md) {
+        padding: var(--space-4);
+      }
+    }
+    .card::backdrop {
+      background: var(--scrim);
+    }
+    // the rhythm by proximity (issue #383): blocks 24px apart, a new section (the achievements, the action) 32px,
+    // a heading 16px from the list it names
+    // phones get one step less of everything, so the whole card fits a screen (issue #467)
+    .card > * + * {
+      margin-top: var(--space-2);
+      @include bp.up(md) {
+        margin-top: var(--space-3);
+      }
+    }
+    .card > h3,
+    .card > form {
+      margin-top: var(--space-3);
+      @include bp.up(md) {
+        margin-top: var(--space-4);
+      }
+    }
+    .card > h3 + .achievements {
+      margin-top: var(--space-1);
+      @include bp.up(md) {
+        margin-top: var(--space-2);
+      }
+    }
+    h2 {
+      font-size: var(--step-3);
+      @include bp.up(md) {
+        font-size: var(--step-5);
+      }
+      font-variation-settings: 'wdth' 75;
+      line-height: 1;
+    }
+    h3 {
+      font-size: var(--step-1);
+    }
+    // a long class wraps the level to the next row on a narrow screen, instead of squeezing every column
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin: 0;
+      @include bp.up(md) {
+        column-gap: var(--space-3);
+      }
+    }
+    dt {
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    dd {
+      margin: 0;
+      font-weight: 600;
+    }
+    .xp {
+      display: grid;
+      gap: var(--space-1);
+    }
+    label {
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    // the bar drawn as the site draws everything: hard edges, accent on ink
+    meter {
+      width: 100%;
+      height: var(--space-2);
+      border: 2px solid var(--fg);
+      background: transparent;
+      appearance: none;
+    }
+    meter::-webkit-meter-bar {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    meter::-webkit-meter-optimum-value {
+      background: var(--accent);
+    }
+    meter::-moz-meter-bar {
+      background: var(--accent);
+    }
+    // every digit the same width, so the climbing level does not jitter (issue #135)
+    .level {
+      font-variant-numeric: tabular-nums;
+    }
+    .achievements {
+      display: grid;
+      gap: var(--space-1);
+      font-size: var(--step--1);
+      line-height: 1.35;
+      @include bp.up(md) {
+        gap: var(--space-2);
+        font-size: inherit;
+        line-height: inherit;
+      }
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .sprite {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      @include bp.up(md) {
+        width: 48px;
+        height: 48px;
+      }
+    }
+    // not earned yet: the drawing waits faded, the text keeps its contrast
+    .locked .sprite {
+      opacity: 0.35;
+    }
+    // the one action, a full-width target on phones; its own size from md up
+    form .button {
+      width: 100%;
+      justify-content: center;
+      @include bp.up(md) {
+        width: auto;
+      }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .card[open] {
+        animation: press-start 320ms steps(4);
+      }
+    }
+    // the level up's pixels (issue #124): created and removed by levelUp(), outside Angular's style scope
+    :host ::ng-deep .burst {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+    }
+    @keyframes press-start {
+      from {
+        clip-path: inset(50% 0);
+      }
+    }

@@ -1,0 +1,16 @@
+    <!-- on phones the list scrolls sideways: focusable so arrow keys scroll it too, and labelled by the section title -->
+    <ul #list class="quests" tabindex="0" aria-labelledby="side-quests-title">
+      @for (quest of items(); track quest.title) {
+        <li>
+          <div class="slot"><app-quest-sprite class="sprite" [name]="quest.sprite" /></div>
+          <div class="text">
+            <h3>{{ quest.title }}</h3>
+            <p>{{ quest.summary }}</p>
+            <p class="tags" translate="no">{{ quest.tags.join(', ') }}</p>
+            @if (quest.repo) {
+              <a class="repo-link" [href]="quest.repo" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark /><span i18n="@@sideQuests.repo">Code on GitHub</span></a>
+            }
+          </div>
+        </li>
+      }
+    </ul>

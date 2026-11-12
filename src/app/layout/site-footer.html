@@ -1,0 +1,26 @@
+    <footer class="site-footer container band band--ink">
+      <p>© {{ year }} {{ content.person.name }} · v{{ version }}</p>
+      <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
+        ><span i18n="@@footer.top">Back to top</span
+        ><svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h6v1h-6zM0 3h2v1h-2zM3 3h2v5h-2zM6 3h2v1h-2z" /></svg
+      ></a>
+      <ul>
+        <li><a [href]="'mailto:' + content.person.email" i18n="@@footer.email">Email</a></li>
+        <li><a [href]="content.person.linkedin" target="_blank" aria-describedby="new-tab" rel="me noopener">LinkedIn</a></li>
+        <li><a [href]="content.person.github" target="_blank" aria-describedby="new-tab" rel="me noopener">GitHub</a></li>
+        <li><a routerLink="/privacy" i18n="@@footer.privacy">Privacy</a></li>
+        @if (ready()) {
+          <!-- game-trigger.ts listens for clicks on [data-press-start]; it needs JavaScript, so it appears only then -->
+          <li>
+            <button type="button" class="press-start" data-press-start i18n-aria-label="@@footer.pressStart" aria-label="Press start">
+              <svg class="key" viewBox="0 0 16 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+                <path class="fill" d="M1 1h7v1h-7zM1 2h9v1h-9zM1 3h11v1h-11zM1 4h11v1h-11zM1 5h9v1h-9zM1 6h7v1h-7z" />
+                <path class="line" d="M0 0h8v1h-8zM0 1h1v1h-1zM8 1h2v1h-2zM0 2h1v1h-1zM10 2h2v1h-2zM0 3h1v1h-1zM12 3h2v1h-2zM0 4h1v1h-1zM12 4h2v1h-2zM0 5h1v1h-1zM10 5h2v1h-2zM0 6h1v1h-1zM8 6h2v1h-2zM0 7h8v1h-8z" />
+              </svg>
+              <span i18n="@@footer.start">Start</span>
+            </button>
+          </li>
+        }
+      </ul>
+    </footer>

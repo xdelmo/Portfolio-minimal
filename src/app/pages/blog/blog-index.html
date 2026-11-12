@@ -1,0 +1,29 @@
+    <div class="container blog">
+      <header class="intro">
+        <h1 i18n="@@blog.title">Blog</h1>
+        <p class="lede" i18n="@@blog.lede">Notes from building Angular frontends: what I tried, what broke, what I would do again.</p>
+      </header>
+      <ol class="posts">
+        @for (post of articles; track post.slug) {
+          <li class="post-item">
+            <div class="post-meta-row">
+              <p class="meta">
+                <time [attr.datetime]="post.date">{{ post.dateLabel }}</time>
+                <span class="meta-sep" aria-hidden="true">/</span>
+                <span i18n="@@blog.minutes">{{ post.minutes }} min read</span>
+              </p>
+              @if (post.project) {
+                <a class="project-tag" [routerLink]="['/work', post.project]">
+                  {{ post.project }}
+                </a>
+              }
+            </div>
+            <h2><a class="title-link" [routerLink]="['/blog', post.slug]">{{ post.title }}</a></h2>
+            <p class="desc">{{ post.description }}</p>
+            <div class="post-action">
+              <a class="read-link touch-line" [routerLink]="['/blog', post.slug]" i18n="@@blog.readMore">Read article</a>
+            </div>
+          </li>
+        }
+      </ol>
+    </div>

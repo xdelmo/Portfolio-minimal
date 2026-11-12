@@ -1,0 +1,19 @@
+    <div class="levels">
+      @for (group of groups(); track group.name; let i = $index, count = $count) {
+        <section class="level" [class]="'level--' + i" [attr.aria-labelledby]="'level-' + i">
+          <h3 [id]="'level-' + i">
+            <span class="meter" aria-hidden="true">
+              @for (cell of cells(count); track cell) {
+                <i [class.on]="cell < count - i"></i>
+              }
+            </span>
+            {{ group.name }}
+          </h3>
+          <ul>
+            @for (item of group.items; track item) {
+              <li translate="no">{{ item }}</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>

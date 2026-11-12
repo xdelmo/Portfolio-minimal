@@ -58,6 +58,7 @@ Angular 22 (standalone, zoneless, signals), fully prerendered (`outputMode: "sta
 - Site content is bilingual (English source, Italian translation).
 - No green anywhere in the palette (the user's brand colours are greys, the `--accent` blue family, lavender and peach).
 - Styles are SCSS (`inlineStyleLanguage: scss`, `includePaths: [src]`); colors stay CSS custom properties because the theme switches them at runtime; use `@use 'styles/breakpoints' as bp;` and `@include bp.up(md)` for breakpoints.
+- Components split into .ts/.html/.scss when inline template > ~30 lines or styles > ~50 (checked by `.claude/skills/component-split/inline-size.mjs --check`, in test:scripts).
 - The whole site must meet WCAG 2.2 AA (spec §11): axe runs with WCAG tags in both themes in the e2e suite.
 - Visual style directives live in the project skill `.claude/skills/edm-style/SKILL.md` (palette, type, 8px grid, stepped shapes, the living objects, motion rules): read it before any visual change. `DESIGN.md` carries the same system's tokens and rules in the DESIGN.md format, `PRODUCT.md` the product context, both for the impeccable skill; edm-style and the code win where they differ. The original visual system is in plan 1, section "Sistema visivo".
 - The old Gatsby site lives on `master`; its images can be recovered with `git show master:content/images/<file>`.

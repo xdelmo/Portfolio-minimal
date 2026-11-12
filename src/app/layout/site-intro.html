@@ -1,0 +1,20 @@
+    <div class="site-intro" aria-hidden="true">
+      <p class="name">
+        <!-- a narrow screen wraps the name between words, never inside one (issue #381) -->
+        @for (word of words; track $index) {
+          <span class="word">
+            @for (char of word; track $index) {
+              <span class="letter" [style.--i]="char.i">{{ char.char }}</span>
+            }
+          </span>
+          @if (!$last) {
+            {{ ' ' }}
+          }
+        }
+      </p>
+      <p class="pixels">
+        @for (px of pixels; track $index) {
+          <span class="px" [style.--i]="$index"></span>
+        }
+      </p>
+    </div>

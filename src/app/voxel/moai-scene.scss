@@ -1,0 +1,120 @@
+    :host {
+      position: relative;
+      display: block;
+    }
+    // a sideways swipe turns the moai; vertical panning and pinch-zoom stay with the browser
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: pan-y pinch-zoom;
+    }
+    // asleep: pixel z's of 8px cells rise from the top of the head and fade, one after the other
+    .zzz {
+      position: absolute;
+      top: 2%;
+      left: 58%;
+      pointer-events: none;
+    }
+    svg {
+      position: absolute;
+      width: 24px;
+      fill: var(--px-4);
+      shape-rendering: crispEdges;
+      opacity: 0;
+      animation: zzz 3s steps(6) infinite;
+    }
+    svg:nth-child(2) {
+      animation-delay: 1s;
+    }
+    svg:nth-child(3) {
+      animation-delay: 2s;
+    }
+    :host-context(html[data-motion-paused]) svg {
+      animation-play-state: paused;
+    }
+    // what it says: a pixel bubble above its head, the corners cut out of its outline and a tail of two steps down to the
+    // left side of the head, never the right. It opens left and up, so in the corner it stays inside the window, and takes
+    // no clicks. In the corner the moai is the About's one scaled down (effects/moai.ts): the bubble scales back up to keep
+    // its text readable
+    .moai-line {
+      position: absolute;
+      right: 66%;
+      bottom: 98%;
+      width: max-content;
+      max-width: 14rem;
+      margin: 0;
+      padding: var(--space-1) var(--space-2);
+      background: var(--surface);
+      color: var(--fg);
+      font-size: var(--step--1);
+      line-height: 1.5;
+      box-shadow: 0 -4px var(--fg), 0 4px var(--fg), -4px 0 var(--fg), 4px 0 var(--fg);
+      pointer-events: none;
+      transform-origin: 100% 100%;
+      scale: calc(1 / var(--moai-s, 1));
+      animation: line-in 160ms steps(2) both;
+    }
+    .moai-line::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      bottom: -12px;
+      width: 8px;
+      height: 8px;
+      background: var(--fg);
+      box-shadow: 8px 8px var(--fg);
+    }
+    // the sneeze blows a puff of stone dust from the nose: four pixel squares that fly apart and fade
+    .dust {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      pointer-events: none;
+    }
+    .dust i {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--stone-light);
+      animation: dust 600ms steps(4) both;
+    }
+    .dust i:nth-child(1) {
+      --to: -24px -16px;
+    }
+    .dust i:nth-child(2) {
+      --to: 24px -8px;
+    }
+    .dust i:nth-child(3) {
+      --to: -16px 16px;
+    }
+    .dust i:nth-child(4) {
+      --to: 32px 16px;
+    }
+    @keyframes dust {
+      to {
+        opacity: 0;
+        translate: var(--to);
+      }
+    }
+    @keyframes line-in {
+      from {
+        opacity: 0;
+        translate: 0 8px;
+      }
+    }
+    @keyframes zzz {
+      0% {
+        opacity: 0;
+        translate: 0 0;
+        scale: 0.5;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        translate: 24px -48px;
+        scale: 1;
+      }
+    }

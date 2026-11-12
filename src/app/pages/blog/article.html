@@ -1,0 +1,88 @@
+    <div class="reading-progress" data-sticky [style.width.%]="progress()" aria-hidden="true"></div>
+    <article class="container post" [appMotion]="effects">
+      @if (article(); as a) {
+        <header class="intro">
+          <div class="breadcrumb-bar">
+            <a routerLink="/blog" class="back-link touch-line" i18n="@@blog.backToAll">All posts</a>
+          </div>
+          <h1>{{ a.title }}</h1>
+          <p class="byline">
+            <span class="author-name">{{ content.person.name }}</span>
+            <span class="meta-sep" aria-hidden="true">·</span>
+            <span class="author-role">{{ content.person.role }}</span>
+          </p>
+          <div class="meta-row">
+            <p class="meta">
+              <time [attr.datetime]="a.date">{{ a.dateLabel }}</time>
+              <span class="meta-sep" aria-hidden="true">/</span>
+              <span i18n="@@blog.minutes">{{ a.minutes }} min read</span>
+            </p>
+            @if (canCopy()) {
+              <button type="button" class="action-btn" [class.is-copied]="copied()" (click)="copyLink()">
+                @if (copied()) {
+                  <svg viewBox="0 0 8 8" width="14" height="14" shape-rendering="crispEdges" aria-hidden="true">
+                    <path fill="currentColor" d="M7 1h1v2H7zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4zM3 6h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" />
+                  </svg>
+                  <span i18n="@@blog.linkCopied">Copied</span>
+                } @else {
+                  <svg viewBox="0 0 8 8" width="14" height="14" shape-rendering="crispEdges" aria-hidden="true">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 0h6v1H1v5H0zM2 2h6v6H2zM3 3v4h4V3z" />
+                  </svg>
+                  <span i18n="@@blog.copyLink">Copy link</span>
+                }
+              </button>
+              <span class="visually-hidden" role="status">
+                @if (copied()) {
+                  <span i18n="@@blog.linkCopiedStatus">Article link copied to clipboard</span>
+                }
+              </span>
+            }
+          </div>
+        </header>
+        <div class="prose">
+          @for (part of a.parts; track $index) {
+            @if (part.code !== undefined) {
+              <app-code-block [code]="part.code" [lang]="part.lang" />
+            } @else {
+              <div class="run" [innerHTML]="part.html"></div>
+            }
+          }
+        </div>
+        @if (prevArticle() || nextArticle()) {
+          <nav class="adjacent" aria-label="Adjacent articles" i18n-aria-label="@@blog.adjacent">
+            @if (prevArticle(); as prev) {
+              <a class="adjacent-card adjacent-card--prev" [routerLink]="['/blog', prev.slug]">
+                <span class="adjacent-meta" i18n="@@blog.prevPost">Previous post</span>
+                <span class="adjacent-title">{{ prev.title }}</span>
+              </a>
+            } @else {
+              <div class="adjacent-empty" aria-hidden="true"></div>
+            }
+            @if (nextArticle(); as next) {
+              <a class="adjacent-card adjacent-card--next" [routerLink]="['/blog', next.slug]">
+                <span class="adjacent-meta" i18n="@@blog.nextPost">Next post</span>
+                <span class="adjacent-title">{{ next.title }}</span>
+              </a>
+            } @else {
+              <div class="adjacent-empty" aria-hidden="true"></div>
+            }
+          </nav>
+        }
+        <nav class="more" i18n-aria-label="@@blog.more" aria-label="After this post">
+          @if (project(); as p) {
+            <a class="next" [routerLink]="['/work', p.slug]">
+              <span class="next-label" i18n="@@blog.project">The project behind it</span>
+              <span class="next-title">{{ p.title }}</span>
+            </a>
+          }
+          <app-contact-prompt />
+          @if (a.linkedin) {
+            <a class="repo-link" [href]="a.linkedin" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@blog.linkedin">First posted on LinkedIn</a>
+          }
+          <a class="touch-line" routerLink="/blog" i18n="@@blog.all">All posts</a>
+        </nav>
+      } @else {
+        <h1 i18n="@@blog.notFound">Post not found</h1>
+        <p><a routerLink="/blog" i18n="@@blog.all">All posts</a></p>
+      }
+    </article>

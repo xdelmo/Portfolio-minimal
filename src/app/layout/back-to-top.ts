@@ -12,75 +12,8 @@ export const SHOW_AFTER_SCREENS = 1.5;
 @Component({
   selector: 'app-back-to-top',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (shown()) {
-      <button type="button" class="back-to-top" animate.enter="is-entering" animate.leave="is-leaving" i18n-aria-label="@@footer.top" aria-label="Back to top" (click)="toTop()">
-        <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
-          <path d="M3 0h2v1h-2zM2 1h4v1h-4zM1 2h6v1h-6zM0 3h2v1h-2zM3 3h2v5h-2zM6 3h2v1h-2z" />
-        </svg>
-      </button>
-    }
-  `,
-  styles: `
-    @use 'styles/breakpoints' as bp;
-
-    // the ink band's colours, a hard square like the rest of the site; phones only (the header's links are there on
-    // wider screens)
-    .back-to-top {
-      position: fixed;
-      right: var(--space-2);
-      bottom: var(--space-2);
-      z-index: 30;
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      border: 2px solid var(--band-ink-fg);
-      background: var(--band-ink-bg);
-      color: var(--band-ink-fg);
-      cursor: pointer;
-      clip-path: inset(0 0 0 0);
-      translate: 0 0;
-      opacity: 1;
-      @include bp.up(md) {
-        display: none;
-      }
-    }
-    // in and out in pixel steps (issue #197, #460): it rises into the corner as it is revealed, and sinks away as it is wiped
-    // out; Angular keeps it on the page until the way out has played. Reduced motion: it simply appears and goes.
-    @media (prefers-reduced-motion: no-preference) {
-      .is-entering {
-        animation: back-in 200ms steps(4);
-      }
-      .is-leaving {
-        animation: back-out 160ms steps(3) forwards;
-      }
-    }
-    @keyframes back-in {
-      from {
-        clip-path: inset(100% 0 0 0);
-        translate: 0 var(--space-2);
-        opacity: 0;
-      }
-      to {
-        clip-path: inset(0 0 0 0);
-        translate: 0 0;
-        opacity: 1;
-      }
-    }
-    @keyframes back-out {
-      from {
-        clip-path: inset(0 0 0 0);
-        translate: 0 0;
-        opacity: 1;
-      }
-      to {
-        clip-path: inset(100% 0 0 0);
-        translate: 0 var(--space-2);
-        opacity: 0;
-      }
-    }
-  `,
+  templateUrl: './back-to-top.html',
+  styleUrl: './back-to-top.scss',
 })
 export class BackToTop {
   protected readonly shown = signal(false);

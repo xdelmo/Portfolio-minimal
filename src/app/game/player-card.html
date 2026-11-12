@@ -1,0 +1,56 @@
+    <dialog #dialog class="card band--ink" aria-labelledby="game-title" (close)="done.emit()">
+      @if (cheat()) {
+        <h2 id="game-title" i18n="@@game.cheat">Cheat activated</h2>
+      } @else {
+        <!-- the pause screen of a retro role-playing game (issue #111) -->
+        <h2 id="game-title" i18n="@@game.title">Pause</h2>
+      }
+      <dl class="stats">
+        <div>
+          <dt i18n="@@game.player">Player</dt>
+          <dd translate="no">{{ content.game.player }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@game.class">Class</dt>
+          <dd>{{ content.person.role }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@game.level">Level</dt>
+          <dd class="level">{{ level() }}</dd>
+        </div>
+      </dl>
+      <p class="xp">
+        <label for="game-xp" i18n="@@game.xp">Experience points to {{ content.game.next }}</label>
+        <meter id="game-xp" min="0" max="1" [value]="xp()">{{ xp() * 100 }}%</meter>
+      </p>
+      <h3 i18n="@@game.achievements">Achievements</h3>
+      <ul class="achievements">
+        @for (achievement of content.game.achievements; track achievement.title) {
+          <li>
+            <app-quest-sprite class="sprite" [name]="achievement.sprite" />
+            <span><strong>{{ achievement.title }}</strong> {{ achievement.detail }}</span>
+          </li>
+        }
+        <!-- earned by reading every case study in this browser (issue #133) -->
+        <li [class.locked]="explored < total">
+          <app-quest-sprite class="sprite" name="map" />
+          <span>
+            <!-- &ngsp; keeps the space Angular drops before a control flow block (issue #192) -->
+            <strong i18n="@@game.explorer">Explorer</strong>&ngsp;@if (explored < total) {
+              <ng-container i18n="@@game.explorerProgress">{{ explored }} of {{ total }} case studies read</ng-container>
+            } @else {
+              <ng-container i18n="@@game.explorerDone">Read every case study</ng-container>
+            }
+          </span>
+        </li>
+        @if (cheat()) {
+          <li class="unlocked" #unlocked>
+            <app-quest-sprite class="sprite" [name]="content.game.cheat.sprite" />
+            <span><strong>{{ content.game.cheat.title }}</strong> {{ content.game.cheat.detail }}</span>
+          </li>
+        }
+      </ul>
+      <form method="dialog">
+        <button class="button button--primary" i18n="@@game.continue">Continue</button>
+      </form>
+    </dialog>

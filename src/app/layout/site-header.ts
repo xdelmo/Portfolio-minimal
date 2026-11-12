@@ -72,10 +72,9 @@ import { SiteMenu } from './site-menu';
       color: var(--fg);
       text-decoration: none;
     }
-    // phones and tablets: the mark alone (issue #193: asked for phones; at 768px the name, five links and the controls
-    // ran 96px past the edge); the full name signs the bar from 1024px
+    // the full name on two lines, beside the moai mark: signs the bar on every width (issue #483)
     .name {
-      display: none;
+      display: grid;
       padding-left: var(--space-1);
       border-left: 1px solid var(--rule);
       font-size: var(--step--2);
@@ -166,9 +165,6 @@ import { SiteMenu } from './site-menu';
       }
     }
     @include bp.up(lg) {
-      .name {
-        display: grid;
-      }
       nav,
       .site-header {
         gap: var(--space-3);

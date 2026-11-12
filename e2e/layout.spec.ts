@@ -186,29 +186,20 @@ for (const width of [1280, 390]) {
   });
 }
 
-// the header signs the site: the moai mark, a rule, then the full name on two lines (phones: the mark alone)
-for (const width of [1280, 1024]) {
-  test(`the header shows the full name beside the mark, on two lines, at ${String(width)}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 800 });
+// the header signs the site: the moai mark, a rule, then the full name on two lines, on every width (issue #483)
+for (const width of [1280, 1024, 768, 390, 320]) {
+  test(`the header shows the full name beside the mark, on two lines, and still fits at ${String(width)}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: width >= 1024 ? 800 : 640 });
     await page.goto('/en/');
     const name = page.locator('app-site-header .logo .name');
+    await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
+    await expect(page.locator('app-site-header .logo')).not.toContainText('edm.');
+    await expect(page.locator('app-site-header .logo .mark svg')).toHaveAttribute('aria-hidden', 'true');
     await expect(name).toBeVisible();
     await expect(name).toHaveText(/Emanuele\s*Del Monte/);
     const lines = await name.locator('span').evaluateAll((spans) => spans.map((s) => Math.round(s.getBoundingClientRect().top)));
     expect(lines).toHaveLength(2);
     expect(lines[1]).toBeGreaterThan(lines[0]);
-    expect(await headerRight(page)).toBeLessThanOrEqual(width);
-  });
-}
-
-for (const width of [768, 390, 320]) {
-  test(`below 1024px the header keeps the mark alone, and still fits, at ${String(width)}px (issue #193)`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 640 });
-    await page.goto('/en/');
-    await expect(page.locator('app-site-header .logo .mark')).toBeVisible();
-    await expect(page.locator('app-site-header .logo')).not.toContainText('edm.');
-    await expect(page.locator('app-site-header .logo .mark svg')).toHaveAttribute('aria-hidden', 'true');
-    await expect(page.locator('app-site-header .logo .name')).toBeHidden();
     expect(await headerRight(page)).toBeLessThanOrEqual(width);
   });
 }

@@ -217,7 +217,8 @@ test.describe('the abstract field', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/en/');
     await expect(canvas(page)).toHaveAttribute('data-clear', /.+/);
-    // read the pixels of the canvas copy: lit cells left, right, above and below the clearing, none inside it
+    // read the pixels of the canvas copy: lit cells left, right, above and below the clearing, none over the text;
+    // the cloud may reach between the lines inside the clearing's box (issues #504, #512)
     const lit = await canvas(page).evaluate((c) => {
       const el = c as HTMLCanvasElement;
       const [cx, cy, cw, ch] = (el.dataset['clear'] ?? '').split(',').map(Number);
@@ -234,18 +235,32 @@ test.describe('the abstract field', () => {
         for (let i = 3; i < data.length; i += 4) if (data[i] > 0) n++;
         return n;
       };
+      // the text's own line boxes and the buttons, as the field measures them, in canvas coordinates
+      const heroCopy = document.querySelector('.hero .copy');
+      if (!heroCopy) throw new Error('no hero copy');
+      const rects = [...heroCopy.querySelectorAll('a, button')].map((e) => e.getBoundingClientRect());
+      const walker = document.createTreeWalker(heroCopy, NodeFilter.SHOW_TEXT);
+      const range = document.createRange();
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        range.selectNodeContents(n);
+        rects.push(...range.getClientRects());
+      }
+      const origin = el.getBoundingClientRect();
+      const overText = rects
+        .filter((r) => r.width > 0 && r.height > 0)
+        .reduce((n, r) => n + count(r.x - origin.x, r.y - origin.y, r.width, r.height), 0);
       return {
         left: count(0, 0, cx, el.clientHeight),
         right: count(cx + cw, 0, el.clientWidth - cx - cw, el.clientHeight),
         above: count(0, 0, el.clientWidth, cy),
         below: count(0, cy + ch, el.clientWidth, el.clientHeight - cy - ch),
-        inside: count(cx, cy, cw, ch),
+        overText,
       };
     });
     expect(lit.left).toBeGreaterThan(0);
     expect(lit.right).toBeGreaterThan(0);
     expect(lit.above).toBeGreaterThan(0);
     expect(lit.below).toBeGreaterThan(0);
-    expect(lit.inside).toBe(0);
+    expect(lit.overText).toBe(0);
   });
 });

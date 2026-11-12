@@ -117,13 +117,15 @@ export function bounds(boxes: readonly Box[]): Box {
   return { x, y, w: Math.max(...boxes.map((b) => b.x + b.w)) - x, h: Math.max(...boxes.map((b) => b.y + b.h)) - y };
 }
 
-/** The part of the mask that does not drift: base clearing status, distance from text (0-1), and corner proximity (0-1). */
+/**
+ * The part of the mask that does not drift: base clearing status and distance from text (0-1). Nothing here favours
+ * the hero's edges, so the wind carries the cloud across them (issue #504, as andreas.vision's sky).
+ */
 interface Shape {
   l: FieldLayout;
   clear: readonly Box[] | null;
   base: Float64Array;
   near: Float64Array;
-  corner: Float64Array;
 }
 let shape: Shape | null = null;
 
@@ -140,9 +142,8 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
   const boxes = clear?.length ? clear : [{ x: w * 0.375, y: h * 0.375, w: w / 4, h: h / 4 }];
   const b = bounds(boxes);
   const pad = CLEAR_PAD * CLOUD_CELL;
-  const cornerRadius = Math.hypot(w, h) * 0.24;
   const n = l.cols * l.rows;
-  shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n), corner: new Float64Array(n) };
+  shape = { l, clear, base: new Float64Array(n), near: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const x = l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
     const y = l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2;
@@ -176,15 +177,6 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
     const isClear = inCopy || inPad || dMin <= organicPad;
     shape.base[i] = isClear ? NaN : 1.0;
     shape.near[i] = isClear ? 0 : Math.min(1, Math.max(0, (dMin - organicPad) / 48));
-
-    // proximity to nearest of the 4 canvas corners (1.0 at corner, 0 beyond cornerRadius)
-    const dc = Math.min(
-      Math.hypot(x, y),
-      Math.hypot(w - x, y),
-      Math.hypot(x, h - y),
-      Math.hypot(w - x, h - y),
-    );
-    shape.corner[i] = Math.max(0, 1 - dc / cornerRadius);
   }
   return shape;
 }
@@ -192,8 +184,7 @@ function shapeOf(l: FieldLayout, clear: readonly Box[] | null): Shape {
 /**
  * How deep in the cloud a cell is: fragmented into organic, broken cloud formations and billows
  * like andreas.vision (not a single monolithic ellipse mask).
- * Macro breaks carve open sky channels between cloud masses, while the clearing remains empty
- * and the outer corners stay deep blue (> 0.75).
+ * Macro breaks carve open sky channels between cloud masses, while the clearing remains empty.
  */
 export function cloudDepth(col: number, row: number, l: FieldLayout, clear: readonly Box[] | null, shift = 0): number {
   const s = shapeOf(l, clear);
@@ -201,7 +192,6 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   const base = s.base[i];
   if (Number.isNaN(base)) return -0.2;
   const near = s.near[i];
-  const corner = s.corner[i];
 
   // Broken cloud structure with atmospheric shear (impeccable motion):
   // Macro breaks drift at 0.75x speed relative to the foreground puff clusters (shift),
@@ -212,7 +202,7 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   // Cloud formations with breaks:
   // brk creates open channels between separate cloud formations, avoiding a single monolithic ellipse
   const cloudMass = (n - 0.42) * 1.4 + (brk - 0.44) * 0.9;
-  const d = 0.82 + cloudMass * 0.95 + corner * 0.85 - 0.7 * (1 - near);
+  const d = 0.82 + cloudMass * 0.95 - 0.7 * (1 - near);
 
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
   return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;

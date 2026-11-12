@@ -59,11 +59,13 @@ describe('the cloud mask', () => {
     }
   });
 
-  it("cloudDepth is deepest at the hero's corners", () => {
-    for (const [c, r] of [[0, 0], [l.cols - 1, 0], [0, l.rows - 1], [l.cols - 1, l.rows - 1]]) {
-      expect(cloudDepth(c, r, l, [clear])).toBeGreaterThan(0.75);
-    }
-    expect(cloudDepth(0, 0, l, null)).toBeGreaterThan(0.75);
+  it('the wind carries the cloud off the edges: no edge cell stays lit through a whole crossing (issue #504)', () => {
+    const edge: [number, number][] = [];
+    for (let c = 0; c < l.cols; c++) edge.push([c, 0], [c, l.rows - 1]);
+    for (let r = 1; r < l.rows - 1; r++) edge.push([0, r], [l.cols - 1, r]);
+    const shifts = Array.from({ length: 80 }, (_, k) => (k * l.cols * 3) / 80);
+    const pinned = edge.filter(([c, r]) => shifts.every((s) => cloudDepth(c, r, l, [clear], s) > 0));
+    expect(pinned).toEqual([]);
   });
 
   it('lights a wide share of a desktop hero, with cloud on all four sides', () => {
@@ -83,7 +85,6 @@ describe('the cloud mask', () => {
     }
     expect(lit / (big.cols * big.rows)).toBeGreaterThanOrEqual(0.25);
     for (const n of Object.values(strips)) expect(n).toBeGreaterThan(0);
-    expect(cloudDepth(0, 0, big, [text])).toBeGreaterThan(0.75);
   });
 
   it('the drifting cloud never lights the padded clearing', () => {

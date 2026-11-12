@@ -195,3 +195,15 @@ jobs:
           path: |
             playwright-report
             test-results
+
+  # The one check the devel/master ruleset requires, so GitHub's auto-merge waits for the
+  # whole CI without listing every shard by name (a renamed shard would block every PR).
+  ci-ok:
+    name: CI ok
+    if: always()
+    needs: [check, build, lhci, e2e, e2e-changed]
+    runs-on: ubuntu-24.04
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - run: echo "all CI jobs passed or were skipped"

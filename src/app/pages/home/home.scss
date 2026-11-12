@@ -96,7 +96,7 @@
   max-width: 40ch;
   font-size: var(--step-1);
 }
-// the giant title is the action, as in the references: the whole line writes an email; the arrow stays inline
+// the giant title is the action, as in the references: the whole line opens LinkedIn; the arrow stays inline
 .contact-link {
   display: inline-flex;
   align-items: baseline;
@@ -127,10 +127,6 @@
   .contact-link:hover .contact-arrow {
     transform: translate(0.08em, -0.08em);
   }
-}
-// the copy button's item stays out of the list (and of the count a screen reader gives) until it can copy
-.profiles li:has(> app-copy-email:empty) {
-  display: none;
 }
 .profiles {
   display: flex;

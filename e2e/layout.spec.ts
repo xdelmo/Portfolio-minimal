@@ -222,7 +222,10 @@ for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const)
       const cta = page.locator('app-site-header .site-header > .cta');
       await expect(cta).toBeVisible();
       await expect(cta).toHaveText(label);
-      await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);
+      await expect(cta).toHaveAttribute('href', 'https://www.linkedin.com/in/emanueledelmonte/');
+      await expect(cta).toHaveAttribute('target', '_blank');
+      await expect(cta).toHaveAttribute('rel', 'me noopener');
+      await expect(cta).toHaveAttribute('aria-describedby', 'new-tab');
       expect(await headerRight(page)).toBeLessThanOrEqual(width);
     });
   }
@@ -235,7 +238,10 @@ for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const)
       const cta = page.locator('.site-menu .cta');
       await expect(cta).toBeVisible();
       await expect(cta).toHaveText(label);
-      await expect(cta).toHaveAttribute('href', `/${lang}/#contact`);
+      await expect(cta).toHaveAttribute('href', 'https://www.linkedin.com/in/emanueledelmonte/');
+      await expect(cta).toHaveAttribute('target', '_blank');
+      await expect(cta).toHaveAttribute('rel', 'me noopener');
+      await expect(cta).toHaveAttribute('aria-describedby', 'new-tab');
       expect(await headerRight(page)).toBeLessThanOrEqual(width);
     });
   }

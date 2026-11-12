@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CONTENT } from '../content/content';
 import { currentUrl, inPageHref } from '../core/current-url';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
@@ -28,7 +29,7 @@ import { SiteMenu } from './site-menu';
         <app-theme-toggle />
       </div>
       <!-- the bar's one action, from md; on phones it lives in the menu drawer (issue #468) -->
-      <a class="button button--primary cta" data-magnetic routerLink="/" fragment="contact" i18n="@@home.cta.contact">Contact me</a>
+      <a class="button button--primary cta" data-magnetic [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" i18n="@@home.cta.contact">Contact me</a>
       <app-site-menu class="menu" />
     </header>
   `,
@@ -183,6 +184,7 @@ import { SiteMenu } from './site-menu';
   `,
 })
 export class SiteHeader {
+  protected readonly content = inject(CONTENT);
   private readonly url = currentUrl();
   protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
 

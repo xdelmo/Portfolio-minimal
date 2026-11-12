@@ -14,22 +14,26 @@ test.describe('the phone menu', () => {
     await expect(menu).toBeHidden();
   });
 
-  // issue #468: on phones the call to action is in the panel, and pressing it closes the menu and lands on the contact
-  test('the panel holds the call to action, and pressing it closes the open menu and lands on the contact', async ({ page, isMobile }) => {
+  // issue #468, #472: on phones the call to action is in the panel, and pressing it closes the open menu
+  test('the panel holds the call to action, and pressing it closes the open menu', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'phones');
     await page.goto('/en/');
     const header = page.locator('app-site-header');
     await header.locator('.site-menu summary').click();
     const menu = header.getByRole('navigation', { name: 'Main' });
     await expect(menu).toBeVisible();
-    await header.locator('.site-menu .cta').click();
-    await expect(page).toHaveURL(/#contact$/);
+    const cta = header.locator('.site-menu .cta');
+    await expect(cta).toHaveAttribute('href', 'https://www.linkedin.com/in/emanueledelmonte/');
+    await expect(cta).toHaveAttribute('target', '_blank');
+    await expect(cta).toHaveAttribute('rel', 'me noopener');
+    await expect(cta).toHaveAttribute('aria-describedby', 'new-tab');
+    const [popup] = await Promise.all([
+      page.waitForEvent('popup'),
+      cta.click(),
+    ]);
+    expect(popup.url()).toContain('linkedin.com');
+    await popup.close();
     await expect(menu).toBeHidden();
-    // the section is under the sticky header, not behind it
-    await expect
-      .poll(() => page.locator('#contact h2').evaluate((h) => Math.round(h.getBoundingClientRect().top)))
-      .toBeGreaterThan(0);
-    await expect.poll(() => page.locator('#contact h2').evaluate((h) => h.getBoundingClientRect().top < innerHeight)).toBe(true);
   });
 
   test('Escape and a tap outside close it', async ({ page, isMobile }) => {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CONTENT } from '../content/content';
 import { LanguageSwitch } from '../core/i18n/language-switch';
 import { ThemeToggle } from '../core/theme/theme-toggle';
 import { MOTION_LOADER, type MotionLib } from '../motion/motion-host';
@@ -48,7 +49,7 @@ const SHOWN = 'inset(0 0 0% 0)';
           <a routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" (click)="close(false)" i18n="@@nav.blog">Blog</a>
         </nav>
         <!-- on phones: the primary contact action sits prominently in the panel (issue #468) -->
-        <a class="button button--primary cta" routerLink="/" fragment="contact" (click)="close(false)" i18n="@@home.cta.contact">Contact me</a>
+        <a class="button button--primary cta" [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" (click)="close(false)" i18n="@@home.cta.contact">Contact me</a>
         <div class="settings">
           <app-language-switch [inline]="true" />
           <app-pause-toggle />
@@ -144,6 +145,7 @@ const SHOWN = 'inset(0 0 0% 0)';
   `,
 })
 export class SiteMenu {
+  protected readonly content = inject(CONTENT);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private gsap?: Gsap;
   private closing?: ReturnType<Gsap['timeline']>;

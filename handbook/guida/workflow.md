@@ -22,7 +22,7 @@ gitGraph
 
 ## Dalla modifica al merge
 
-`npm run ship -- --title "…" --body-file <file>` fa push, apre la pull request verso `devel`, aspetta i controlli di GitHub Actions e fa il merge commit solo se passano. Una CI rossa si corregge sul branch, non si fa mai il merge.
+`npm run ship -- --title "…" --body-file <file>` fa push, apre la pull request verso `devel`, aspetta i controlli di GitHub Actions e fa il merge commit solo se passano. Una CI rossa si corregge sul branch, non si fa mai il merge. Su `devel` e `master` una regola del repository richiede il controllo `CI ok`, e l'auto-merge è attivo: `gh pr merge <n> --auto --merge` lascia che GitHub faccia il merge da solo quando la CI passa.
 
 ## La CI
 
@@ -33,6 +33,7 @@ gitGraph
 | Lighthouse CI | performance mobile sul build |
 | E2E | Chromium, Firefox, Android, WebKit, iPhone, divisi in shard |
 | E2E Changed Specs | ripete 5 volte le spec cambiate dalla pull request, per scovare i test instabili |
+| CI ok | passa solo se tutti i job sopra sono passati o saltati: è l'unico controllo obbligatorio per il merge, così GitHub lo aspetta anche con l'auto-merge |
 | Docs | controllo dei dati sensibili e `mkdocs build --strict`; da `master` pubblica questo handbook su GitHub Pages |
 
 Per un fallimento in CI: `gh run download <run-id>` scarica i `test-results`; si leggono i passi e le durate dal `trace.zip` prima di cambiare qualcosa, e si corregge la causa invece di rilanciare finché diventa verde.

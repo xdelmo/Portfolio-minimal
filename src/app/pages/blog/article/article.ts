@@ -12,15 +12,15 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BLOG } from '../../content/blog';
-import { CONTENT } from '../../content/content';
-import { toLocale } from '../../core/i18n/locale';
-import { articleJsonLd } from '../../core/seo/seo';
-import { SeoService } from '../../core/seo/seo.service';
-import { ContactPrompt } from '../../layout/contact-prompt';
-import { type Effect, MotionHost } from '../../motion/motion-host';
-import { stickyEffect } from '../../motion/effects/sticky';
-import { CodeBlock } from './code-block';
+import { BLOG } from '../../../content/blog';
+import { CONTENT } from '../../../content/content';
+import { toLocale } from '../../../core/i18n/locale';
+import { articleJsonLd } from '../../../core/seo/seo';
+import { SeoService } from '../../../core/seo/seo.service';
+import { ContactPrompt } from '../../../layout/contact-prompt';
+import { type Effect, MotionHost } from '../../../motion/motion-host';
+import { stickyEffect } from '../../../motion/effects/sticky';
+import { CodeBlock } from '../code-block/code-block';
 
 /**
  * A blog post (issue #1, issue #315). Its HTML is written at build time by scripts/blog.mjs from the repository's Markdown;

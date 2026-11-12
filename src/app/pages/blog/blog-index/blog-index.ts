@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BLOG } from '../../content/blog';
-import { CONTENT } from '../../content/content';
-import { toLocale } from '../../core/i18n/locale';
-import { blogJsonLd } from '../../core/seo/seo';
-import { SeoService } from '../../core/seo/seo.service';
+import { BLOG } from '../../../content/blog';
+import { CONTENT } from '../../../content/content';
+import { toLocale } from '../../../core/i18n/locale';
+import { blogJsonLd } from '../../../core/seo/seo';
+import { SeoService } from '../../../core/seo/seo.service';
 
 /** The blog (issue #1, issue #315): every post, newest first. */
 @Component({

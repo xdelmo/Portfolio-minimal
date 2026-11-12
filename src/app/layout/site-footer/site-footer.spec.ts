@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { testProviders } from '../../testing/test-providers';
-import { CONTENT_EN } from '../content/content.en';
-import { APP_VERSION } from '../core/version.generated';
+import { testProviders } from '../../../testing/test-providers';
+import { CONTENT_EN } from '../../content/content.en';
+import { APP_VERSION } from '../../core/version.generated';
 import { SiteFooter } from './site-footer';
 
 describe('SiteFooter', () => {

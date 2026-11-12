@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, linkedSignal, output, viewChild } from '@angular/core';
-import { CONTENT } from '../content/content';
-import { MOTION_LOADER } from '../motion/motion-host';
-import { QuestSprite } from '../sections/side-quests/quest-sprite';
-import { readExplored } from './explorer';
+import { CONTENT } from '../../content/content';
+import { MOTION_LOADER } from '../../motion/motion-host';
+import { QuestSprite } from '../../sections/side-quests/quest-sprite';
+import { readExplored } from '../explorer';
 
 /** The cheat card's level up: the level climbs to this, the experience bar fills, the new achievement steps in. */
 export const MAX_LEVEL = 99;

@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { testProviders } from '../../../testing/test-providers';
 import { Title } from '@angular/platform-browser';
-import { ArticlePage } from './article';
-import { BlogIndex } from './blog-index';
-import { CodeBlock } from './code-block';
+import { ArticlePage } from './article/article';
+import { BlogIndex } from './blog-index/blog-index';
+import { CodeBlock } from './code-block/code-block';
 
 describe('BlogIndex', () => {
   it('renders all blog articles with dates, reading time and read-link', async () => {

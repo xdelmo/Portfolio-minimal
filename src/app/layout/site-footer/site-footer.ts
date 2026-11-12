@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { currentUrl, inPageHref } from '../core/current-url';
-import { CONTENT } from '../content/content';
-import { APP_VERSION } from '../core/version.generated';
+import { currentUrl, inPageHref } from '../../core/current-url';
+import { CONTENT } from '../../content/content';
+import { APP_VERSION } from '../../core/version.generated';
 
 /**
  * The end of every page: the year, a way back up, my profiles, the privacy page, and the door to the easter egg (craft.wild.as closes

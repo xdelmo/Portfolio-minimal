@@ -1,8 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DOCUMENT, ElementRef, LOCALE_ID, computed, inject, input } from '@angular/core';
-import { currentUrl } from '../current-url';
-import { Locale, localizedUrl, toLocale } from './locale';
-import { HELLO_KEY } from '../../voxel/moai-cues';
+import { currentUrl } from '../../current-url';
+import { Locale, localizedUrl, toLocale } from '../locale';
+import { HELLO_KEY } from '../../../voxel/moai-cues';
 
 /** Matches the `lang-cover` animation in styles/_base.scss. */
 const COVER_MS = 500;

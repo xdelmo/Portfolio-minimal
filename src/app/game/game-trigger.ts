@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, DestroyRef, ViewContainerRef, afterNextRender, inject, signal } from '@angular/core';
 import { LEAD_IN_MS, announceGameStart } from './game-start';
 import { MoaiCues } from '../voxel/moai-cues';
-import type { PlayerCard } from './player-card';
+import type { PlayerCard } from './player-card/player-card';
 
 /** ↑ ↑ ↓ ↓ ← → ← → B A, as KeyboardEvent.key values. */
 export const KONAMI: readonly string[] = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
@@ -140,9 +140,9 @@ export class GameTrigger {
     this.cues.cue('found');
     // the hero answers with a level up when it can be seen: the card waits for it, loading meanwhile
     const leadIn = announceGameStart() ? new Promise((resolve) => setTimeout(resolve, LEAD_IN_MS)) : null;
-    let PlayerCard: typeof import('./player-card').PlayerCard;
+    let PlayerCard: typeof import('./player-card/player-card').PlayerCard;
     try {
-      [{ PlayerCard }] = await Promise.all([import('./player-card'), leadIn]);
+      [{ PlayerCard }] = await Promise.all([import('./player-card/player-card'), leadIn]);
     } finally {
       this.opening = false;
     }

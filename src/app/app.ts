@@ -4,14 +4,14 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { isNewPage } from './core/current-url';
 import { GameTrigger } from './game/game-trigger';
-import { BackToTop } from './layout/back-to-top';
-import { SiteFooter } from './layout/site-footer';
+import { BackToTop } from './layout/back-to-top/back-to-top';
+import { SiteFooter } from './layout/site-footer/site-footer';
 import { PixelCursor } from './layout/pixel-cursor';
-import { SiteIntro } from './layout/site-intro';
+import { SiteIntro } from './layout/site-intro/site-intro';
 import { cursorEffect } from './motion/effects/cursor';
 import { introEffect } from './motion/effects/intro';
 import { scrambleEffect } from './motion/effects/scramble';
-import { SiteHeader } from './layout/site-header';
+import { SiteHeader } from './layout/site-header/site-header';
 import { MoaiGuest } from './voxel/moai-guest';
 
 @Component({

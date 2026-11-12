@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { testProviders } from '../../testing/test-providers';
-import { CONTENT_EN } from '../content/content.en';
+import { testProviders } from '../../../testing/test-providers';
+import { CONTENT_EN } from '../../content/content.en';
 import { SiteHeader } from './site-header';
 
 describe('SiteHeader', () => {

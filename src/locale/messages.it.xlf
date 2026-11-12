@@ -22,7 +22,7 @@
         <source>Skip to content</source>
         <target>Vai al contenuto</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">11,12</context>
         </context-group>
       </trans-unit>
@@ -30,7 +30,7 @@
         <source>Language:</source>
         <target>Lingua:</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/i18n/language-switch.ts</context>
+          <context context-type="sourcefile">src/app/core/i18n/language-switch/language-switch.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
@@ -42,7 +42,7 @@
         <source>Emanuele Del Monte, home</source>
         <target>Emanuele Del Monte, home</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">13,14</context>
         </context-group>
       </trans-unit>
@@ -50,7 +50,7 @@
         <source>Main</source>
         <target>Principale</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
@@ -62,7 +62,7 @@
         <source>Work</source>
         <target>Progetti</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
@@ -70,7 +70,7 @@
         <source>About</source>
         <target>Chi sono</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">16,17</context>
         </context-group>
       </trans-unit>
@@ -318,7 +318,7 @@
         <source>Experience</source>
         <target>Esperienza</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>

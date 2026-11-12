@@ -9,7 +9,7 @@ test('the menu leads to the blog, which lists every post with its date and readi
   await expect(page).toHaveURL(/\/en\/blog\/?$/);
   await expect(page.locator('h1')).toHaveText('Blog');
   const posts = page.locator('.posts li');
-  await expect(posts).toHaveCount(3);
+  await expect(posts).toHaveCount(4);
   await expect(posts.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(posts.first()).toContainText(/\d+ min read/);
 });

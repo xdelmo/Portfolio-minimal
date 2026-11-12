@@ -4,19 +4,19 @@ description: How the authentication state of my thesis project moved to Angular 
 date: 2026-10-11
 project: apexflow
 ---
-When I started my thesis on ApexFlow, building it on Angular 19 and Signals felt like a gamble. Signals had only just become stable, most tutorials still used `BehaviorSubject` for everything, and I was about to build a CRM dashboard on top of them. Looking back, it is the decision I am happiest with.
+When I designed the architecture for ApexFlow, building it around Angular 19 and Signals was a calculated technical bet. Signals had just reached stability, most tutorials still defaulted to `BehaviorSubject` for everything, and I was setting out to build an enterprise CRM dashboard with varied data flows and role-based permissions. Looking back, it was the soundest architectural choice in the entire project.
 
-The clearest example is the authentication module: the piece of state every other part of the app depends on.
+The clearest proof point was the authentication module: the critical slice of state that every route guard, navigation bar, and user view depends on.
 
-## The problem: state that has to stay in sync
+## The problem: shared state without race conditions
 
-An auth service answers a few questions all the time. Is someone logged in? Who? Are they an admin? The header, the sidebar, the route guards and half of the pages ask them.
+An authentication service continually answers three essential questions: is someone logged in? Who are they? What permissions do they have? The header, sidebar, route guards, and most pages require these answers synchronously and immediately.
 
-The classic answer is a `BehaviorSubject` for the user, an observable for each question derived from it, and a `subscribe()` in every component that needs one, plus the `takeUntil` or `async` pipe that cleans up after it. It works, but the state ends up spread over a set of streams you *hope* stay in sync, and every new consumer is one more subscription to get right.
+The traditional Angular approach involves a primary `BehaviorSubject` for the user, derived observables for roles, and manual subscriptions across components managed with `takeUntil` or the `async` pipe. It works, but it scatters state across multiple streams that must remain synchronized over time. Every new consumer introduces the potential for leaked subscriptions or subtle timing mismatches.
 
-## Two signals and a derived question
+## Two signals and synchronous derivation
 
-In ApexFlow the service keeps two signals, read once from storage when the app starts:
+In ApexFlow, the service centralizes state in just two signals, initialized synchronously from local storage when the application boots:
 
 ```ts
 @Injectable({ providedIn: 'root' })
@@ -25,12 +25,13 @@ export class AuthService {
   currentUser = signal<User | null>(this.getUserFromStorage());
 
   isAdmin(): boolean {
-    return this.currentUser()?.role === UserRole.Admin;
+    const user = this.currentUser();
+    return user?.role === UserRole.Admin;
   }
 }
 ```
 
-Everything else is a read. A template writes `auth.currentUser()?.name` and Angular knows that view depends on it. A guard reads the value synchronously, with no stream to wait for and nothing to unsubscribe from:
+From there, consuming state becomes a direct synchronous read. In templates, `auth.currentUser()?.name` registers a fine-grained dependency for that specific view slice. In route guards, authorization checks are completely synchronous—no observable streams to await, no emission delays, and no teardown logic:
 
 ```ts
 export const authGuard: CanActivateFn = () => {
@@ -40,18 +41,20 @@ export const authGuard: CanActivateFn = () => {
 };
 ```
 
-Logging in and out are just two `set()` calls. Every view that reads the user updates itself, and nothing has to be told.
+Logging in and out reduce to direct `.set()` calls. Dependent components update automatically through Angular's fine-grained reactivity, without manual notification dispatches or re-evaluating the entire component tree.
 
-## What disappeared
+## What disappears from the codebase
 
-- **Manual subscriptions.** No component calls `subscribe()` to follow the auth state, so there is nothing to tear down in `ngOnDestroy` and nothing leaks when a page is left.
-- **Order bugs.** A signal always has a value. A guard never runs before the first emission, because there is no first emission.
-- **Guessing in the debugger.** The state is a value: put a breakpoint anywhere and read it, instead of tapping a pipe to see what went through it.
+- **Manual subscriptions.** No component opens a stream to track authentication: no `ngOnDestroy` cleanup boilerplate, and zero memory leaks when navigating across complex screens.
+- **Timing and order bugs.** A signal always holds an immediate value. A route guard never executes before an initial subject emission because there is no stream to wait for.
+- **Debugging guesswork.** State is a tangible value at a point in time, not an ephemeral stream: you can place a breakpoint anywhere and inspect it directly without injecting temporary `tap()` operators.
 
-## Where RxJS stays
+## Where RxJS remains indispensable
 
-In ApexFlow, Signals gave RxJS a narrower job. Time is still RxJS: the HTTP call that logs in is an `Observable`, and so are debounced search boxes and requests that must cancel the one before them. Signals hold *what is true now*; observables describe *what happens over time*. The two meet through `toSignal` and `toObservable`, which I used for the server-side tables (the next post).
+Signals do not replace RxJS; they clarify its boundaries. The rule I established in ApexFlow is simple: **Signals govern synchronous present state; RxJS handles asynchronous events over time**.
 
-## Would I do it again?
+The login HTTP request remains an `Observable`, as do debounced search inputs and cancellation pipelines where a newer query must abort an in-flight request. The two paradigms integrate cleanly via `toSignal` and `toObservable`, which form the backbone of our server-side data tables.
 
-Yes, and from the first commit. If you are starting a new Angular project today, put its state in signals and keep RxJS for the events and the async work it was made for. The code reads like a description of the state rather than a set of instructions for keeping it consistent.
+## The architectural takeaway
+
+Starting directly with Signals allows code to describe *what the application is at any given moment*, rather than maintaining a chain of imperative-reactive commands to keep it in sync. RxJS returns to what it excels at: orchestrating time, events, and asynchronous concurrency.

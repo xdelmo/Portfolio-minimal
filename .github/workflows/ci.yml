@@ -13,7 +13,7 @@ env:
 jobs:
   check:
     name: Lint & Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,7 +31,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -49,7 +49,7 @@ jobs:
   lhci:
     name: Lighthouse CI
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,7 +71,7 @@ jobs:
   e2e:
     name: E2E (${{ matrix.name }})
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -131,7 +131,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
+          key: playwright-24.04-${{ matrix.browser }}-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright ${{ matrix.browser }}
         run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
@@ -148,7 +148,7 @@ jobs:
     name: E2E Changed Specs
     if: github.event_name == 'pull_request'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -181,7 +181,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-all-${{ hashFiles('package-lock.json') }}
+          key: playwright-24.04-all-${{ hashFiles('package-lock.json') }}
       - if: steps.diff.outputs.changed == 'true'
         name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit

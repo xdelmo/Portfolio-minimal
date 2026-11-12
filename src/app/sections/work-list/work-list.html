@@ -33,7 +33,7 @@
           <a class="media" data-snap-zone [routerLink]="['/work', project.slug]" tabindex="-1" aria-hidden="true">
             @if (project.image; as image) {
               <img
-                appDepixelate
+                appDepixelate="dither"
                 class="shot"
                 [ngSrc]="image.src"
                 [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"

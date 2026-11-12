@@ -1,4 +1,4 @@
-import { STEPS, fit, grid } from './depixelate.directive';
+import { type RGB, STEPS, dither, fit, grid, luma } from './depixelate.directive';
 
 describe('depixelate', () => {
   it('cover fills the box and crops the long side, centred', () => {
@@ -21,5 +21,52 @@ describe('depixelate', () => {
   it('gets finer at every step, as on locomotive.ca', () => {
     expect([...STEPS]).toEqual([...STEPS].sort((a, b) => a - b));
     expect(STEPS[0]).toBe(8);
+  });
+
+  const ink: RGB = [29, 29, 28];
+  const paper: RGB = [242, 242, 242];
+  const pixels = (cols: number, rows: number, grey: number): Uint8ClampedArray =>
+    new Uint8ClampedArray(cols * rows * 4).map((_, i) => (i % 4 === 3 ? 255 : grey));
+  const colours = (data: Uint8ClampedArray): string[] =>
+    Array.from({ length: data.length / 4 }, (_, p) => (data[p * 4] === ink[0] ? 'ink' : 'paper'));
+
+  it('dithers to the two theme colours only, keeping alpha', () => {
+    const data = pixels(4, 4, 128);
+    dither(data, 4, ink, paper);
+    expect(new Set(colours(data))).toEqual(new Set(['ink', 'paper']));
+    expect(data.filter((_, i) => i % 4 === 3).every((a) => a === 255)).toBe(true);
+  });
+
+  it('makes alpha 1-bit too: half-covered edge pixels go opaque, empty ones stay empty', () => {
+    const data = pixels(4, 1, 128);
+    [0, 100, 128, 255].forEach((a, p) => (data[p * 4 + 3] = a));
+    dither(data, 4, ink, paper);
+    expect(data.filter((_, i) => i % 4 === 3)).toEqual(new Uint8ClampedArray([0, 0, 255, 255]));
+  });
+
+  it('turns black into ink and white into paper', () => {
+    const black = pixels(4, 4, 0);
+    const white = pixels(4, 4, 255);
+    dither(black, 4, ink, paper);
+    dither(white, 4, ink, paper);
+    expect(colours(black).every((c) => c === 'ink')).toBe(true);
+    expect(colours(white).every((c) => c === 'paper')).toBe(true);
+  });
+
+  it('inks a share of each 4 × 4 cell that follows the grey, tile after tile', () => {
+    const inked = (grey: number): number => {
+      const data = pixels(8, 8, grey);
+      dither(data, 8, ink, paper);
+      return colours(data).filter((c) => c === 'ink').length;
+    };
+    // a light grey (75%) inks a quarter of the pixels, mid grey half
+    expect(inked(Math.round(255 * 0.75))).toBe(16);
+    expect(inked(128)).toBe(32);
+    expect(inked(64)).toBeGreaterThan(inked(192));
+  });
+
+  it('ranks the theme colours by luminance, so the dark theme does not invert the photo', () => {
+    expect(luma(ink)).toBeLessThan(luma(paper));
+    expect(luma([255, 255, 255])).toBeCloseTo(1);
   });
 });

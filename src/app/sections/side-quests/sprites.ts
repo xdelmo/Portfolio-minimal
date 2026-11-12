@@ -77,7 +77,7 @@ export const SPRITES = {
       '................',
     ],
   },
-  // the player card's achievements (game/player-card.ts): a graduation cap, a trophy
+  // the player card's achievements (game/player-card/player-card.ts): a graduation cap, a trophy
   cap: {
     palette: { ...INK, a: '--accent', p: '--px-6' },
     rows: [

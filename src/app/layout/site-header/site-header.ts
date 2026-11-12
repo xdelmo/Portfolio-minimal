@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CONTENT } from '../content/content';
-import { currentUrl, inPageHref } from '../core/current-url';
-import { LanguageSwitch } from '../core/i18n/language-switch';
-import { ThemeToggle } from '../core/theme/theme-toggle';
-import { MoaiMark } from './moai-mark';
-import { PauseToggle } from './pause-toggle';
-import { SiteMenu } from './site-menu';
+import { CONTENT } from '../../content/content';
+import { currentUrl, inPageHref } from '../../core/current-url';
+import { LanguageSwitch } from '../../core/i18n/language-switch/language-switch';
+import { ThemeToggle } from '../../core/theme/theme-toggle';
+import { MoaiMark } from '../moai-mark';
+import { PauseToggle } from '../pause-toggle';
+import { SiteMenu } from '../site-menu/site-menu';
 
 @Component({
   selector: 'app-site-header',

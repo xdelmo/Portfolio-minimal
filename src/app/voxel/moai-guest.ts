@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
 import { currentUrl } from '../core/current-url';
 import { CORNER_GAP, CORNER_PX } from '../motion/effects/moai';
-import { MoaiFigure } from './moai-figure';
+import { MoaiFigure } from './moai-figure/moai-figure';
 import { MOAI_DESKTOP } from './moai-cues';
 
 /**

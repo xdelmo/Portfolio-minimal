@@ -27,15 +27,15 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { COS30, isoBounds, isoFaces } from './iso';
-import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiShadowCells, moaiVoxels } from './moai.model';
-import { MotionPause } from '../motion/pause';
-import { afterIntro } from '../motion/intro-state';
-import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from './motion';
-import { Sample, isDizzy, isShake, isSneeze, isTickle } from './gestures';
-import { LINE_MS, QUIET, Reaction, VoiceState, speak } from './voice';
-import { LINES } from './lines';
-import { HELLO_KEY, MOAI_DESKTOP, MoaiCues } from './moai-cues';
+import { COS30, isoBounds, isoFaces } from '../iso';
+import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiShadowCells, moaiVoxels } from '../moai.model';
+import { MotionPause } from '../../motion/pause';
+import { afterIntro } from '../../motion/intro-state';
+import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from '../motion';
+import { Sample, isDizzy, isShake, isSneeze, isTickle } from '../gestures';
+import { LINE_MS, QUIET, Reaction, VoiceState, speak } from '../voice';
+import { LINES } from '../lines';
+import { HELLO_KEY, MOAI_DESKTOP, MoaiCues } from '../moai-cues';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';

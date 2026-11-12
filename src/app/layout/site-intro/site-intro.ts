@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CONTENT } from '../content/content';
-import { MotionHost } from '../motion/motion-host';
+import { CONTENT } from '../../content/content';
+import { MotionHost } from '../../motion/motion-host';
 
 /** First-visit overlay; only visible while <html> has the intro-on class set by the inline script in index.html. */
 @Component({

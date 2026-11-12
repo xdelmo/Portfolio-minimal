@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CONTENT } from '../content/content';
-import { LanguageSwitch } from '../core/i18n/language-switch';
-import { ThemeToggle } from '../core/theme/theme-toggle';
-import { MOTION_LOADER, type MotionLib } from '../motion/motion-host';
-import { PauseToggle } from './pause-toggle';
+import { CONTENT } from '../../content/content';
+import { LanguageSwitch } from '../../core/i18n/language-switch/language-switch';
+import { ThemeToggle } from '../../core/theme/theme-toggle';
+import { MOTION_LOADER, type MotionLib } from '../../motion/motion-host';
+import { PauseToggle } from '../pause-toggle';
 
 type Gsap = MotionLib['gsap'];
 /** Four pixel steps, like the language curtain; closing is a little quicker than opening. */

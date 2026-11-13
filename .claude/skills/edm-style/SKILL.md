@@ -44,6 +44,8 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - Spacing only from `--space-1` (8px) … `--space-16` (128px). Home sections pad 64px above and below; projects sit 64px apart. Sizes of icons, cells and images are multiples of 8.
 - Vertical rhythm: 64px (`--space-8`) from a section's edge to its title and from its last line to what follows; a section followed by a band adds the band's 48px pixel seam (`home.ts`, `.section:has(+ .band > .seam)`). Pinned blocks keep their own height (a pin stretched to the screen leaves its spare room on the page once it ends).
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
+- No row of three identical tiles (icon or title over a short text, repeated): list things as full-width rows under a 1px `--rule`, so the words keep their width (issue #533).
+- Secondary actions beside a primary button match its 48px height and type size; body text and bullet lists keep to `--measure`.
 - No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.
 - **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs (brand marks 16×16: `github-mark.ts`, `linkedin-mark.ts`; the site's own logo is the moai, `moai-mark.ts`, one colour through `currentColor`, the same drawing as the favicon from `scripts/favicon.mjs`, never below 16 px or in a second colour) with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
 - Soft round things are allowed only as **light** (radial gradients, no `filter: blur`).
@@ -64,13 +66,13 @@ Photos load depixelating (`src/app/depixelate/`, as on locomotive.ca): a canvas 
 
 Projects without a screenshot show their pixel sprite in the same 3:2 frame as the screenshots (`Project.sprite`).
 
-A new section gets **one** idea in this family, not a new visual language.
+A new section gets **one** idea in this family, not a new visual language. Every page carries at least one (the blog index has its terminal sprite): a page with none reads as a template.
 
 ## Motion rules
 
 - GSAP via the lazy `MOTION_LOADER`; effects live in `src/app/motion/effects/`, run by `[appMotion]` inside `gsap.matchMedia`, return a cleanup.
 - `prefers-reduced-motion: reduce` → no effects at all, still images, no pause button.
-- Two grammars, nothing in between (issue #521): small feedback (hover, focus, press, a notice opening) moves in `steps(2–4)` over 80–240 ms, in CSS where it can; a surface that covers or uncovers the page (intro lift, language curtain, theme circle) glides on `--ease-cover`; an entrance lands on `--ease-arrive` (GSAP `power3.out`); scrubbed tweens use `ease: 'none'`. One reveal per moment: section titles do not get their own entrance, the thread node and the seams already mark them.
+- Two grammars, nothing in between (issue #521): small feedback (hover, focus, press, a notice opening) moves in `steps(2–4)` over 80–240 ms, in CSS where it can; a surface that covers or uncovers the page (intro lift, language curtain, theme circle) glides on `--ease-cover`; an entrance lands on `--ease-arrive` (GSAP `power3.out`); scrubbed tweens use `ease: 'none'`. Entrances never overshoot (no `back.out`, elastic or bounce), and a CSS fallback uses the same ease as the GSAP effect it stands in for. One reveal per moment: section titles do not get their own entrance, the thread node and the seams already mark them.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).
@@ -89,3 +91,12 @@ A new section gets **one** idea in this family, not a new visual language.
 ## Copy voice
 
 Plain, first person, specific. Buttons say what happens ("See my work", "Contact me"). No filler, no selling adjectives.
+
+Patterns that read as generated, removed in issue #531; keep them out:
+
+- No aphorism after a colon or a dash ("every field is a decision"): say the fact.
+- No triads or colon-led lists in a sentence ("what I tried, what broke, what I kept"); one or two concrete things read as a person.
+- No idioms or stock phrases ("my daily bread", "under the hood").
+- No pleonasm with the title (a "Raider" who plays "in raids").
+- Claims match what CI enforces: Lighthouse mobile ≥ 95 (`lighthouserc.json`), never "100".
+- Rewriting a line for tone keeps every fact it carried (tools, numbers, features); change the phrasing, not the content. Italian is written as Italian, not translated word for word.

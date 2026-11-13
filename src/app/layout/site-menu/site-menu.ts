@@ -4,6 +4,7 @@ import { CONTENT } from '../../content/content';
 import { LanguageSwitch } from '../../core/i18n/language-switch/language-switch';
 import { ThemeToggle } from '../../core/theme/theme-toggle';
 import { MOTION_LOADER, type MotionLib } from '../../motion/motion-host';
+import { MusicToggle } from '../music-toggle';
 import { PauseToggle } from '../pause-toggle';
 
 type Gsap = MotionLib['gsap'];
@@ -23,7 +24,7 @@ const SHOWN = 'inset(0 0 0% 0)';
 @Component({
   selector: 'app-site-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, LanguageSwitch, PauseToggle, ThemeToggle],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, PauseToggle, MusicToggle, ThemeToggle],
   host: {
     '(document:click)': 'closeOutside($event)',
     '(keydown.escape)': 'close(true)',

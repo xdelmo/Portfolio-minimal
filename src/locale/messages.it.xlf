@@ -38,6 +38,10 @@
         <source>Pause animations</source>
         <target>Metti in pausa le animazioni</target>
       </trans-unit>
+      <trans-unit id="music.toggle" datatype="html">
+        <source>Background music</source>
+        <target>Musica di sottofondo</target>
+      </trans-unit>
       <trans-unit id="nav.home" datatype="html">
         <source>Emanuele Del Monte, home</source>
         <target>Emanuele Del Monte, home</target>

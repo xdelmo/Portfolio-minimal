@@ -93,7 +93,7 @@
   /* motion: small feedback steps (steps(2–4), 80–240ms); a surface that covers or uncovers glides on --ease-cover,
      an entrance lands on --ease-arrive (GSAP power3.out) */
   --ease-cover: cubic-bezier(0.7, 0, 0.3, 1);
-  --ease-arrive: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-arrive: cubic-bezier(0.165, 0.84, 0.44, 1);
 
   /* 8px pixel grid */
   --space-1: 8px;

@@ -1,20 +1,26 @@
 ---
 title: Gestire 10 record è facile, gestirne 10.000 è ingegneria
 description: Paginazione, ordinamento e filtri lato server per le tabelle PrimeNG, con una sola classe TablePaginationState e il ponte tra Signals e RxJS.
-date: 2026-10-11
+date: 2026-03-02
+linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7434229982136168448/
 project: apexflow
 ---
-Nelle prime settimane del mio tirocinio in IPS ho incontrato uno dei problemi più comuni, e più sottovalutati, del frontend enterprise: tabelle di dati con paginazione e filtri lato server. Con dieci record carichi tutto e filtri nel browser. Con diecimila non puoi: il server pagina, ordina e filtra, e il frontend deve chiedere ogni volta esattamente la fetta giusta quando qualcosa cambia.
+Nelle prime settimane del mio percorso in IPS ho affrontato una delle sfide classiche del frontend enterprise: la gestione di tabelle dati su larga scala con paginazione, ordinamento e filtri delegati al server. Con dieci record puoi permetterti di caricare l'intero dataset e filtrarlo in memoria nel browser. Con diecimila record questo approccio fallisce: il server deve occuparsi di affettare e ordinare i dati, mentre il client deve richiedere in modo deterministico e reattivo solo i record visibili.
 
-Ho portato quell'esperienza direttamente nella mia tesi, ApexFlow. Clienti, ordini e prodotti sono tabelle PrimeNG in modalità lazy, e volevo lasciarmi alle spalle l'approccio in cui ogni cambiamento chiama a mano un metodo `load()`.
+Ho portato questa lezione direttamente nel cuore di ApexFlow. Le schermate di clienti, ordini e prodotti sono tabelle PrimeNG in modalità lazy-loading, e il mio obiettivo era superare l'antipattern in cui ogni interazione utente invoca manualmente un metodo imperativo `loadData()`.
 
-## Cosa deve restare coerente
+## L'anatomia dello stato di una tabella enterprise
 
-Una tabella lato server ha più stato di quanto sembri: la pagina corrente, la dimensione della pagina, il campo e il verso dell'ordinamento, i filtri di ogni colonna, una ricerca libera. Se ne cambia uno qualsiasi la tabella deve fare una richiesta, con tutti, e ignorare la risposta di ogni richiesta superata. Sparso in un componente diventa un `load()` chiamato da sei punti diversi, ognuno dei quali può dimenticare un parametro.
+Una tabella lato server gestisce una matrice di parametri più articolata di quanto appaia:
+- La pagina corrente (`currentPage`) e la dimensione del blocco (`pageSize`).
+- Il campo attivo e la direzione dell'ordinamento (`sortField`, `sortOrder`).
+- I filtri di colonna e la query di ricerca globale (`filters`, `query`).
 
-## Una classe per lo stato
+Se questi valori vivono sparsi nelle proprietà di un componente, ogni evento (click sull'intestazione, digitazione nel filtro, cambio pagina) rischia di comporre una richiesta parziale, dimenticando uno dei parametri o introducendo race condition.
 
-`TablePaginationState` tiene ogni pezzo in un signal, e un solo `computed` li trasforma nei parametri che l'API si aspetta:
+## Incapsulamento reattivo: TablePaginationState
+
+In ApexFlow ho isolato l'intera logica di paginazione nella classe `TablePaginationState`. Ogni parametro di navigazione è un `signal`, e un unico valore derivato `computed` genera l'oggetto di configurazione per i parametri HTTP:
 
 ```ts
 export class TablePaginationState {
@@ -34,11 +40,11 @@ export class TablePaginationState {
 }
 ```
 
-PrimeNG riporta ogni cambio di pagina, ordinamento e filtro di colonna in un unico `TableLazyLoadEvent`. La classe lo traduce e imposta un signal solo se il suo valore è cambiato davvero (i filtri si confrontano in profondità), così un clic che non cambia niente non fa nessuna richiesta.
+PrimeNG emette tutte le interazioni dell'utente (paginazione, ordinamento, filtri) attraverso un singolo evento `TableLazyLoadEvent`. La classe normalizza l'evento e aggiorna i rispettivi signal solo quando il valore effettivo è cambiato (i filtri vengono verificati con un confronto in profondità). In questo modo, click ridondanti non innescano alcuna chiamata API superflua.
 
-## Dallo stato alle richieste, senza subscribe
+## Dallo stato al network: il ponte Signals-RxJS
 
-Il componente trasforma `params` in un observable, lascia a RxJS ciò che sa fare meglio e riporta il risultato in un signal per il template:
+Il componente converte il computed `params` in un flusso observable, delega a RxJS la gestione asincrona del ciclo di vita della richiesta e riconverte il risultato finale in un signal per il template:
 
 ```ts
 export class CustomerListComponent {
@@ -60,12 +66,11 @@ export class CustomerListComponent {
 }
 ```
 
-`toObservable` emette quando cambia un parametro qualsiasi, una volta per cambiamento. `switchMap` annulla la richiesta ancora in corso quando ne parte una più nuova, così una pagina 2 lenta non sovrascrive mai la pagina 3. `toSignal` si iscrive per il componente e si disiscrive quando viene distrutto.
+L'architettura risolve tre problemi critici in poche righe:
+1. **Eliminazione delle race condition:** `switchMap` cancella automaticamente qualsiasi richiesta HTTP ancora in volo se l'utente cambia pagina o digita un nuovo filtro. Una risposta ritardata della pagina 2 non potrà mai sovrascrivere i dati della pagina 3.
+2. **Ciclo di vita pulito:** `toSignal` gestisce la sottoscrizione in modo automatico e la distrugge quando il componente viene smontato, eliminando qualsiasi `subscribe()` o `unsubscribe()` manuale.
+3. **Disaccoppiamento totale dal backend:** I parametri HTTP rappresentano l'unico contratto tra client e server. Durante lo sviluppo del backend Spring Boot, il frontend ha operato contro un JSON Server con middleware personalizzato: il passaggio alle API definitive in Java ha richiesto modifiche solo agli endpoint di servizio, senza toccare la logica delle tabelle.
 
-## Il risultato
+## Risultato
 
-1. **Stato prevedibile.** Ogni tabella ha gli stessi pochi signal, e i parametri di una richiesta sono una funzione di quei signal: niente può andare fuori sincrono.
-2. **Componenti puliti.** Un componente dichiara la sua tabella e cosa caricare. Non chiama mai `subscribe()` né `load()`, quindi non ha sottoscrizioni da distruggere.
-3. **Un'integrazione realistica.** Il frontend delega davvero paginazione e filtri al server. Mentre l'API Spring Boot prendeva forma, al suo posto c'era un JSON Server con un piccolo middleware personalizzato; il contratto sono solo i parametri, quindi cambiare backend tocca il servizio, non le tabelle.
-
-Ogni tabella di ApexFlow riusa la stessa classe.
+Ogni tabella dell'applicazione riutilizza la medesima classe `TablePaginationState`. Il codice dei componenti rimane dichiarativo: dichiara quali dati mostrare e come consumarli, lasciando al sistema reattivo la sincronizzazione infallibile tra interfaccia e server.

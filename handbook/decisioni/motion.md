@@ -11,7 +11,7 @@ Le animazioni sono GSAP con ScrollTrigger, SplitText e ScrollSmoother. Il proble
 
 ## Desktop e telefono
 
-Pin ed effetti legati al puntatore sono solo desktop (≥ 1024px con hover). Sui telefoni ogni idea ha una versione a scroll e touch: card sticky che si impilano, livelli che entrano a scatti, swipe sul moai.
+Pin ed effetti legati al puntatore sono solo desktop (≥ 1024px con hover). Sulle immagini dei progetti il cursore di pixel aggancia il pulsante freccia e nasconde il puntatore di sistema, così ce n'è uno solo, e l'immagine scorre appena con il mouse finché ci resta sopra. Sui telefoni ogni idea ha una versione a scroll e touch: card sticky che si impilano, livelli che entrano a scatti, swipe sul moai.
 
 Un effetto con due versioni imposta, in ciascuna, ogni proprietà di transform che l'altra muove: un resize oltre i 1024px annulla gli stili inline ma non la cache dei transform di GSAP.
 

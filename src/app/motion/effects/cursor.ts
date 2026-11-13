@@ -15,7 +15,7 @@ const GROW_S = 0.16;
 /**
  * Desktop: a pixel trails the pointer and opens into a frame over links and buttons; elements marked
  * `data-magnetic` lean a few pixels towards it, and over a `data-snap-zone` the pixel becomes a frame around the
- * zone's `data-snap` button, which leans towards the pointer from anywhere in the zone. Near a section title the pixel
+ * zone's `data-snap` button, which holds still, and the system pointer hides. Near a section title the pixel
  * becomes an arrow pointing at the
  * title's centre. One delegated listener, so every route is covered.
  */
@@ -92,6 +92,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   };
   let magnet: HTMLElement | null = null;
   let snapped: HTMLElement | null = null;
+  let bare: HTMLElement | null = null; // the snap zone whose system pointer is hidden
   // every frame while snapped: the button grows into its pill and leans, and the frame follows it without a move
   const frame = (): void => {
     if (!snapped) return;
@@ -112,13 +113,21 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     }
     const target = e.target instanceof Element ? e.target : null;
     // over a snap zone (a project's picture) the pixel leaves the pointer and frames the zone's button
-    const snap = target?.closest('[data-snap-zone]')?.querySelector<HTMLElement>('[data-snap]') ?? null;
+    const zone = target?.closest<HTMLElement>('[data-snap-zone]') ?? null;
+    const snap = zone?.querySelector<HTMLElement>('[data-snap]') ?? null;
     if (snap !== snapped) {
       snapped = snap;
-      if (snap) gsap.ticker.add(frame);
-      else {
+      // the frame is the cursor now: the system pointer hides over the zone, so only one cursor shows (issue #523)
+      if (bare) bare.style.cursor = '';
+      bare = snap ? zone : null;
+      if (bare) bare.style.cursor = 'none';
+      // the frame is sized from the button every frame: a CSS transition on top would trail its growth (issue #489)
+      if (snap) {
+        dot.style.transition = 'background-color 120ms steps(2)';
+        gsap.ticker.add(frame);
+      } else {
         gsap.ticker.remove(frame);
-        dot.style.width = dot.style.height = dot.style.margin = '';
+        dot.style.width = dot.style.height = dot.style.margin = dot.style.transition = '';
       }
     }
     if (!snap) {
@@ -130,7 +139,8 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
     // links keep their frame; elsewhere the nearest title within reach turns the pixel into an arrow
     point(over ? null : pointing(e.clientX, e.clientY, [...document.querySelectorAll(TITLES)].map(textBox)));
 
-    const next = snap ?? target?.closest<HTMLElement>('[data-magnetic]') ?? null;
+    // a snapped button stays put: from most of its zone the pointer is below it, so leaning pulled it down (issue #489)
+    const next = snap ? null : (target?.closest<HTMLElement>('[data-magnetic]') ?? null);
     if (magnet && magnet !== next) lean(magnet, 0, 0);
     magnet = next;
     if (magnet) {
@@ -143,6 +153,9 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   const onLeave = (): void => {
     gsap.ticker.remove(frame);
     snapped = null;
+    if (bare) bare.style.cursor = '';
+    bare = null;
+    dot.style.width = dot.style.height = dot.style.margin = dot.style.transition = '';
     gsap.killTweensOf(grow);
     gsap.set([dot, arrow], { display: 'none' });
     dot.style.visibility = '';
@@ -155,11 +168,12 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
 
   return () => {
     gsap.ticker.remove(frame);
+    if (bare) bare.style.cursor = '';
     gsap.killTweensOf(grow);
     removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener('pointerleave', onLeave);
     gsap.set([dot, arrow], { clearProps: 'all' });
-    dot.style.width = dot.style.height = dot.style.margin = '';
+    dot.style.width = dot.style.height = dot.style.margin = dot.style.transition = '';
     dot.classList.remove('is-over');
     for (const el of leaning) gsap.set(el, { '--mx': '0px', '--my': '0px' });
   };

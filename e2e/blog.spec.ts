@@ -9,7 +9,7 @@ test('the menu leads to the blog, which lists every post with its date and readi
   await expect(page).toHaveURL(/\/en\/blog\/?$/);
   await expect(page.locator('h1')).toHaveText('Blog');
   const posts = page.locator('.posts li');
-  await expect(posts).toHaveCount(3);
+  await expect(posts).toHaveCount(4);
   await expect(posts.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(posts.first()).toContainText(/\d+ min read/);
 });
@@ -17,7 +17,7 @@ test('the menu leads to the blog, which lists every post with its date and readi
 test('a post has its title, its date, code the keyboard can reach and a way to its project and back', async ({ page }) => {
   await page.goto(`/en/blog/${POST}`);
   await expect(page.locator('h1')).toHaveText('Ten records is easy, ten thousand is engineering');
-  await expect(page.locator('.post .meta time')).toHaveText('11 October 2026');
+  await expect(page.locator('.post .meta time')).toHaveText('2 March 2026');
   const code = page.locator('.prose pre').first();
   await expect(code).toHaveAttribute('tabindex', '0');
   await code.focus();

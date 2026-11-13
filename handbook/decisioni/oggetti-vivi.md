@@ -11,6 +11,14 @@ L'hero disegna su un canvas una nuvola di pixel pastello, calcolata da funzioni 
 - `PixelDissolve` (`src/app/pixel-dissolve/`) disegna le cuciture di pixel dove una banda incontra la pagina: livelli SVG a gradini guidati da una sola variabile `--p`, che `effects/dissolve.ts` lega allo scroll. Si formano entrando e si sbriciolano salendo verso l'header.
 - Sulla home una linea accent scende lungo il margine sinistro e accende un nodo per sezione (`effects/thread.ts`).
 
+## Le immagini che si rivelano
+
+Le immagini dei progetti entrano depixelandosi (`src/app/depixelate/`): sulle card passano per un dither Bayer 4 × 4 a un bit nei colori di inchiostro e carta del tema, poi la foto a colori sfuma sotto l'ultimo gradino. Con reduced motion compaiono subito.
+
+## La musica
+
+Un altoparlante nell'header e nel menu del telefono accende una musica ambient a 8 bit, spenta di default: pad lenti e campanelle pentatoniche casuali in un'eco lunga, generati dal vivo con Web Audio, senza file audio, quindi il giro non suona mai uguale. Il sintetizzatore è un chunk lazy scaricato alla prima accensione; tace nelle schede in background e con la pausa del sito.
+
 ## Il moai
 
 Un moai a voxel in Three.js (`InstancedMesh`), caricato solo quando entra in vista. Respira, gira la testa verso il mouse, segue il puntatore con le pupille, fa una bolla di gomma con un doppio clic e dice qualche parola in un fumetto di pixel. Su desktop sta anche nell'angolo delle altre pagine.

@@ -25,10 +25,10 @@ import { MotionHost } from '../motion/motion-host';
       background: var(--accent);
       pointer-events: none;
       transition:
-        width 0.25s ease,
-        height 0.25s ease,
-        margin 0.25s ease,
-        background-color 0.25s ease;
+        width 120ms steps(2),
+        height 120ms steps(2),
+        margin 120ms steps(2),
+        background-color 120ms steps(2);
     }
     // near a section title: an arrow of 8px cells, redrawn on the grid for each direction (motion/arrow.ts)
     .pixel-arrow {

@@ -145,7 +145,7 @@ export interface SiteContent {
   studies: readonly StudyItem[];
   privacy: PrivacyContent;
   sideQuests: readonly SideQuest[];
-  /** The player card of the Konami code easter egg (game/player-card.ts). */
+  /** The player card of the Konami code easter egg (game/player-card/player-card.ts). */
   game: Game;
   stack: readonly StackGroup[];
 }

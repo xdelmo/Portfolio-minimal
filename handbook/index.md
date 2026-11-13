@@ -16,7 +16,7 @@
 
 ## Gli obiettivi
 
-- **Veloce sul telefono**: Lighthouse mobile ≥ 0.95 in CI, CLS a zero, JavaScript iniziale sotto i 150 KB gzip (il build fallisce oltre).
+- **Veloce sul telefono**: Lighthouse mobile ≥ 0.95 in CI, CLS a zero, JavaScript iniziale sotto i 144 KB gzip (il build fallisce oltre).
 - **Accessibile**: WCAG 2.2 AA in entrambi i temi, ogni animazione rispetta `prefers-reduced-motion` e un pulsante nell'header la ferma tutta.
 - **Vivo ma mai d'intralcio**: una nuvola di pixel, un moai che respira e segue il mouse, cuciture di pixel tra le sezioni, un easter egg da videogioco.
 - **Leggibile dalle macchine**: JSON-LD, sitemap con hreflang, `llms.txt` e una copia Markdown di ogni pagina.

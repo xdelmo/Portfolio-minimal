@@ -22,7 +22,7 @@
         <source>Skip to content</source>
         <target>Vai al contenuto</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">11,12</context>
         </context-group>
       </trans-unit>
@@ -30,7 +30,7 @@
         <source>Language:</source>
         <target>Lingua:</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/i18n/language-switch.ts</context>
+          <context context-type="sourcefile">src/app/core/i18n/language-switch/language-switch.ts</context>
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
@@ -38,11 +38,15 @@
         <source>Pause animations</source>
         <target>Metti in pausa le animazioni</target>
       </trans-unit>
+      <trans-unit id="music.toggle" datatype="html">
+        <source>Background music</source>
+        <target>Musica di sottofondo</target>
+      </trans-unit>
       <trans-unit id="nav.home" datatype="html">
         <source>Emanuele Del Monte, home</source>
         <target>Emanuele Del Monte, home</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">13,14</context>
         </context-group>
       </trans-unit>
@@ -50,7 +54,7 @@
         <source>Main</source>
         <target>Principale</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
@@ -62,7 +66,7 @@
         <source>Work</source>
         <target>Progetti</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
@@ -70,7 +74,7 @@
         <source>About</source>
         <target>Chi sono</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">16,17</context>
         </context-group>
       </trans-unit>
@@ -318,7 +322,7 @@
         <source>Experience</source>
         <target>Esperienza</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/layout/site-header.ts</context>
+          <context context-type="sourcefile">src/app/layout/site-header/site-header.ts</context>
           <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
@@ -385,10 +389,6 @@
       <trans-unit id="footer.email" datatype="html">
         <source>Email</source>
         <target>Email</target>
-      </trans-unit>
-      <trans-unit id="footer.start" datatype="html">
-        <source>Start</source>
-        <target>Start</target>
       </trans-unit>
       <trans-unit id="footer.pressStart" datatype="html">
         <source>Press start</source>

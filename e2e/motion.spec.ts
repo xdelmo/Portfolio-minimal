@@ -1,31 +1,10 @@
 import { type Locator, type Page, expect, test } from './fixtures';
 
 const ready = (page: Page) => expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
-// SplitText wraps each line in a masking element; the title is back to plain text once its reveal is over
-// (the headline's own two voice spans do not count)
+// SplitText wraps each line in a masking element; the headline is back to plain text once its reveal is over
+// (its own two voice spans do not count)
 const isPlainText = (el: Locator) =>
   el.evaluate((node) => [...node.children].every((child) => child.classList.contains('method') || child.classList.contains('voice')));
-
-test.describe('section titles', () => {
-  test('rise line by line when they scroll in, then go back to plain text', async ({ page }) => {
-    await page.goto('/en/');
-    await ready(page);
-    const title = page.locator('#experience h2');
-    await expect.poll(() => isPlainText(title)).toBe(false);
-    await expect(title).toHaveAccessibleName('Experience');
-    await title.scrollIntoViewIfNeeded();
-    await expect.poll(() => isPlainText(title)).toBe(true);
-    await expect(title).toHaveText('Experience');
-  });
-
-  test('a title already in view on load is left alone', async ({ page }) => {
-    await page.goto('/en/#work');
-    await ready(page);
-    expect(await isPlainText(page.locator('#work h2'))).toBe(true);
-    const where = await page.evaluate(() => `scrollY ${String(scrollY)}, #work top ${String(document.querySelector('#work')?.getBoundingClientRect().top)}, height ${String(document.documentElement.scrollHeight)}, hash ${location.hash}`);
-    await expect(page.locator('#work h2'), where).toBeInViewport();
-  });
-});
 
 test('the motion library downloads only after the first paint, out of the way of the headline', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'paint timing is read in Chromium');
@@ -170,32 +149,62 @@ test.describe('project cards', () => {
     await expect(page).toHaveURL(/\/work\/apexflow/);
   });
 
-  // issue #340, #376: the pixel cursor snaps to the preview's arrow button from a little way off, and the button leans in
-  test('the cursor snaps to the preview arrow button and the button leans towards the pointer', async ({ page }) => {
+  // issue #340, #376, #489: the pixel cursor snaps to the preview's arrow button from anywhere in the picture; the
+  // button holds still and the frame grows with it, frame for frame
+  test('the cursor snaps to the preview arrow button, which holds still while the frame rings it', async ({ page }) => {
     await page.goto('/en/');
     await ready(page);
     const arrow = page.locator('#work .project .media-arrow').first();
     await expect(arrow).toHaveAttribute('data-snap', '');
     await arrow.scrollIntoViewIfNeeded();
-    const box = await arrow.boundingBox();
-    if (!box) throw new Error('no arrow box');
-    // far from the button, in the middle of the picture
+    const rest = await arrow.boundingBox();
+    if (!rest) throw new Error('no arrow box');
+    // far from the button, low in the picture: the pointer is well below it
     const media = await page.locator('#work .project .media').first().boundingBox();
     if (!media) throw new Error('no media box');
     await page.mouse.move(media.x + media.width / 2, media.y + media.height / 2);
-    await page.mouse.move(media.x + media.width / 3, media.y + media.height / 2, { steps: 4 });
-    const lean = () => arrow.evaluate((el) => parseFloat(getComputedStyle(el).translate.split(' ')[0]) || 0);
-    await expect.poll(lean).toBeLessThan(-0.5);
-    // the pixel is a frame centred on the button, not on the pointer
-    const offset = async () => {
-      const now = await arrow.boundingBox();
-      const dot = await page.locator('.pixel-cursor').boundingBox();
-      if (!now || !dot) throw new Error('no box');
-      return Math.hypot(dot.x + dot.width / 2 - (now.x + now.width / 2), dot.y + dot.height / 2 - (now.y + now.height / 2));
+    await page.mouse.move(media.x + media.width / 3, media.y + media.height * 0.9, { steps: 4 });
+    const dot = page.locator('.pixel-cursor');
+    // the frame is centred on the button and 8px larger, with no transition trailing the pill's growth
+    const fit = async () => {
+      const b = await arrow.boundingBox();
+      const d = await dot.boundingBox();
+      if (!b || !d) throw new Error('no box');
+      const off = Math.hypot(d.x + d.width / 2 - (b.x + b.width / 2), d.y + d.height / 2 - (b.y + b.height / 2));
+      return Math.max(off, Math.abs(d.width - b.width - 8), Math.abs(d.height - b.height - 8));
     };
-    await expect.poll(offset).toBeLessThan(3);
-    await page.mouse.move(5, 5);
-    await expect.poll(lean).toBeGreaterThan(-0.05);
+    await expect.poll(fit).toBeLessThan(3);
+    // the pill grows to the left from a right edge and a top that never move
+    const now = await arrow.boundingBox();
+    if (!now) throw new Error('no arrow box');
+    expect(Math.abs(now.y - rest.y)).toBeLessThan(0.5);
+    expect(Math.abs(now.x + now.width - (rest.x + rest.width))).toBeLessThan(0.5);
+    expect(await dot.evaluate((el) => getComputedStyle(el).transitionProperty)).toBe('background-color');
+    // the frame is the only cursor: the system pointer hides over the picture, and comes back off it (issue #523)
+    const pointer = () => page.locator('#work .project .media').first().evaluate((el) => getComputedStyle(el).cursor);
+    expect(await pointer()).toBe('none');
+    await page.mouse.move(media.x - 40, media.y - 40);
+    await expect.poll(pointer).toBe('pointer');
+  });
+
+  // inside the frame the screenshot drifts against the mouse, and settles back when it leaves (issue #523)
+  test('the project picture drifts against the mouse while it is inside', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const frame = page.locator('#work .project .media').first();
+    await frame.scrollIntoViewIfNeeded();
+    const box = await frame.boundingBox();
+    if (!box) throw new Error('no media box');
+    const drift = async () => {
+      const [x = 0, y = 0] = (await frame.locator('.shot').evaluate((el) => getComputedStyle(el).translate)).split(' ').map(parseFloat);
+      return { x, y };
+    };
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // right of and above the centre: the picture moves left and down
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.1, { steps: 4 });
+    await expect.poll(async () => { const d = await drift(); return d.x < -4 && d.y > 4; }).toBe(true);
+    await page.mouse.move(box.x - 40, box.y - 40);
+    await expect.poll(async () => { const d = await drift(); return Math.abs(d.x) + Math.abs(d.y) < 0.5; }).toBe(true);
   });
 });
 

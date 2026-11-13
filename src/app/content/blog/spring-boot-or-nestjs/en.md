@@ -1,30 +1,34 @@
 ---
 title: Why Spring Boot when I already knew TypeScript?
 description: A senior backend friend asked why my thesis paired Angular with Java instead of NestJS. What drove the choice, what it cost, and what I think now.
-date: 2026-10-11
+date: 2026-03-19
+linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7440413562331860992/
 project: apexflow
 ---
-"Why learn Java and Spring Boot if you already know TypeScript?"
+"Why learn Java and Spring Boot from scratch if you already master the TypeScript ecosystem?"
 
-A friend who works as a senior backend developer asked me that while I was studying NgRx for my thesis and wanted his opinion on the architecture. I told him the stack: Angular 19 and Signals on the client, Spring Boot 3 on Java 21 on the server. His reaction: "Why make life hard with Java? You know TypeScript, you could have used NestJS and kept everything in JS and TS."
+A senior backend engineer posed this question during an informal review of ApexFlow's architecture. I was outlining my technical stack: Angular 19 with Signals on the client, Spring Boot 3 on Java 21 on the server. His point was pragmatic: with NestJS, I would have maintained a single unified language, sharing type models, tooling, and lint configurations end to end.
 
-It is a fair question, and it made me think it through properly.
+It was a completely legitimate question. It challenged me to articulate the core trade-offs behind a stack choice deliberately geared toward enterprise software engineering.
 
-## The case for NestJS
+## The immediate appeal of NestJS
 
-NestJS would have been the comfortable choice, and not only because of the language:
+NestJS was unequivocally the lower-friction path for a solo engineer:
+- **Language uniformity:** TypeScript in both browser and runtime, minimizing context switching.
+- **Shared typing:** The same `Customer` interface could seamlessly flow from database queries to presentation tables, eliminating redundant type declarations.
+- **Familiar conventions:** Modules, decorators, and dependency injection in NestJS mirror Angular's architecture, offering a virtually flat learning curve.
 
-- **One language end to end.** The same TypeScript in the browser and on the server, the same tooling, the same lint rules.
-- **Shared types.** The `Customer` interface the tables render could have been the exact type the API returns, with no hand-kept copy on either side.
-- **A familiar shape.** Modules, decorators and dependency injection: NestJS is openly modelled on Angular, so the backend would have looked like the frontend.
-
-For a solo project, that is a lot of friction removed.
+If the goal were purely initial delivery speed, NestJS would have been the obvious choice.
 
 ## Why I chose Spring Boot anyway
 
-The reason was the market. Java and Spring Boot run a large share of enterprise backends, and it is the stack most of the job posts I read asked for next to Angular. A thesis is the one project where I choose the stack to learn, not to ship fast, so I chose the one I would meet at work.
+The primary driver was enterprise market reality. Java and the Spring ecosystem power mission-critical software across global industry, and it is the backend pair that appears most frequently alongside Angular in large engineering organizations. An engineering thesis is an ideal opportunity to invest in the architectural patterns one will actually navigate in production, rather than optimizing for shortcuts.
 
-There was a second reason I only saw later: with two languages, the contract between client and server has to be explicit. In ApexFlow it is. Spring Data JPA entities and repositories on one side:
+The second reason—and perhaps the most impactful in terms of software design—concerns **explicit architectural boundaries**.
+
+When frontend and backend share a language and type repository, the risk of accidental coupling is high: persistence concerns and internal database structures easily bleed into client-facing UI components. With two distinct ecosystems, the HTTP boundary is inevitably strict, deliberate, and formal.
+
+On one side stand Spring Data JPA entities, repositories, and controllers:
 
 ```java
 @RestController
@@ -43,16 +47,17 @@ public class CustomerController {
 }
 ```
 
-TypeScript models on the other, and HTTP in between. Nothing is shared by accident, so every field the frontend relies on is a decision.
+On the other side reside TypeScript domain models, bridged solely via a JSON REST contract. Nothing is inherited implicitly: every field exposed to the client represents a conscious interface decision.
 
-## What it cost
+## The operational trade-offs
 
-- **Two of everything.** Two languages, two build tools (npm and Maven), two test setups, two deploys: the frontend on Vercel, the API on Render with PostgreSQL in Docker.
-- **Types written twice.** A field renamed in a Java entity is a broken table until the TypeScript model follows. Generating the client from an OpenAPI description is the fix I would add next.
-- **Slower start.** The first weeks went into Spring itself (beans, JPA, CORS, Spring Security) rather than into features.
+Building across heterogeneous stacks introduces real complexity:
+- **Dual build and deployment chains:** Two distinct runtimes, two dependency managers (npm and Maven), two testing pipelines, and two separate hosting environments (Vercel for the static frontend, Render with PostgreSQL in Docker for the API).
+- **Manual contract synchronization:** Updating a property in a Java entity requires an explicit, synchronized update in TypeScript types. In an enterprise team, adopting a contract-first approach with OpenAPI client code generation would be the natural next step.
+- **Steeper initial setup:** Configuring dependency injection beans, route security, CORS filters, and JPA entities demands a significantly higher initial investment than a quick Node.js setup.
 
-## What I think now
+## The architectural takeaway
 
-For a team that is all TypeScript and wants to move fast, NestJS is a sound choice and I would not argue against it. For me, at this point, Spring Boot was the better investment: it is what I am likely to find behind an enterprise Angular frontend, and building both sides taught me what a frontend can ask of a backend, and what it should not.
+For a startup or agile product team prioritizing rapid iteration speed, NestJS remains a compelling choice.
 
-My friend's question is a good one to ask at the start of any project, and the answer depends on what the project is for.
+For me, building ApexFlow with Spring Boot 3 was the most valuable investment I could have made. It deepened my appreciation of backend system responsibilities, teaching me precisely what an enterprise frontend engineer can expect from an API—and what logic belongs firmly within the client interface.

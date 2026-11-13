@@ -1,0 +1,39 @@
+    <!-- one chapter per job, oldest first: links to the cards, so they work without JavaScript; on desktop the deck
+         fills their cells and marks the current one (motion/effects/experience.ts) -->
+    <nav class="chapters" aria-label="Career chapters" i18n-aria-label="@@home.experience.chapters">
+      <ol>
+        @for (item of items(); track item.title + item.org; let i = $index) {
+          <li>
+            <a [href]="'#exp-' + i">
+              <i class="cells" aria-hidden="true"></i>
+              <span class="when">{{ item.period }}</span>{{ " " }}
+              <span class="what">{{ item.short }}, {{ item.org }}</span>
+            </a>
+          </li>
+        }
+      </ol>
+    </nav>
+    <ol class="timeline">
+      @for (item of items(); track item.title + item.org; let i = $index) {
+        <li [id]="'exp-' + i" [style.--i]="i" tabindex="-1">
+          <p class="period">{{ item.period }}</p>
+          <div class="body">
+            <h3>{{ item.title }}<span class="org">, {{ item.org }}</span></h3>
+            <p>{{ item.summary }}</p>
+            <ul class="highlights">
+              @for (line of item.highlights; track line) {
+                <li>{{ line }}</li>
+              }
+            </ul>
+            <ul class="tags" translate="no" aria-label="Tools" i18n-aria-label="@@home.experience.tools">
+              @for (tag of item.tags; track tag) {
+                <li>{{ tag }}</li>
+              }
+            </ul>
+            @if (item.caseStudy; as study) {
+              <a class="case-study touch-line" [routerLink]="['/work', study.slug]">{{ study.label }}</a>
+            }
+          </div>
+        </li>
+      }
+    </ol>

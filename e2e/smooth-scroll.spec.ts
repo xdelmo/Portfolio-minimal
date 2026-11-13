@@ -73,46 +73,16 @@ test.describe('parallax under smooth scroll (issue #160)', () => {
   test.use({ smoothScroll: true });
   test.skip(({ isMobile }) => isMobile, 'touch keeps the native scroll');
 
-  const lift = (page: Page) =>
-    page.locator('#work .media > .shot').first().evaluate((m) => new DOMMatrix(getComputedStyle(m).transform).m42);
-
-  test('a project picture scrolls slower than its text, and sits in place when centred', async ({ page }) => {
+  // issue #489: a screenshot fills its frame exactly, unscaled and still, so nothing at its edges is cut
+  test('a project screenshot stays still and whole in its frame', async ({ page }) => {
     await page.goto('/en/');
-    const media = page.locator('#work .media > .shot').first();
-    // Every read waits for the page to settle, and each scroll is aimed again until its check holds: the content at
-    // rest for one read could still be nudged by a ScrollTrigger refresh, and an aim taken before it left the picture
-    // 87 px off centre in WebKit on CI (issue #222).
-    // the picture near the top of the screen: moved off its place
-    await expect(async () => {
-      await media.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
-      await settledTop(page, '#work .media > .shot >> nth=0');
-      // speed 0.95: off its place by a twentieth of how far its centre is from the screen's (as laid out, before the lift)
-      const expected = await media.evaluate((m) => {
-        const box = m.getBoundingClientRect();
-        const y = new DOMMatrix(getComputedStyle(m).transform).m42;
-        return 0.05 * Math.abs(innerHeight / 2 - (box.top - y + box.height / 2));
-      });
-      expect(expected).toBeGreaterThan(3);
-      expect(Math.abs(Math.abs(await lift(page)) - expected)).toBeLessThan(2);
-      // issue #408: the frame stays where the layout puts it, so the picture never slides over the title, and the
-      // grown picture still covers the whole frame
-      const [frame, shot, frameLift] = await media.evaluate((m) => {
-        const f = m.closest('.media') ?? m;
-        return [f.getBoundingClientRect(), m.getBoundingClientRect(), new DOMMatrix(getComputedStyle(f).transform).m42];
-      });
-      expect(frameLift).toBe(0);
-      expect(shot.top).toBeLessThanOrEqual(frame.top + 1);
-      expect(shot.bottom).toBeGreaterThanOrEqual(frame.bottom - 1);
-    }).toPass({ timeout: 2 * REST_MS });
-    // centred in the screen: where the layout puts it; the aim is taken on the frame, which never moves
-    await expect(async () => {
-      await media.evaluate((m) => {
-        const f = m.closest('.media') ?? m;
-        window.scrollTo(0, f.getBoundingClientRect().top + window.scrollY - (innerHeight - f.offsetHeight) / 2);
-      });
-      await settledTop(page, '#work .media > .shot >> nth=0');
-      expect(Math.abs(await lift(page))).toBeLessThan(3);
-    }).toPass({ timeout: 2 * REST_MS });
+    const shot = page.locator('#work .media > .shot').first();
+    await shot.evaluate((m) => { window.scrollTo(0, m.getBoundingClientRect().top + window.scrollY - 40); });
+    await settledTop(page, '#work .media > .shot >> nth=0');
+    const [frame, box] = await shot.evaluate((m) => [(m.closest('.media') ?? m).getBoundingClientRect(), m.getBoundingClientRect()]);
+    expect(Math.abs(box.top - frame.top - 1)).toBeLessThan(1.5);
+    expect(Math.abs(box.left - frame.left - 1)).toBeLessThan(1.5);
+    expect(Math.abs(box.width - frame.width + 2)).toBeLessThan(1.5);
   });
 });
 

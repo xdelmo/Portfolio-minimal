@@ -150,7 +150,7 @@ export function generateReleaseNotes({
  */
 /**
  * The release commit's message. No [skip ci] or [skip netlify]: Netlify skips those commits, so production stayed
- * on the previous version (issue #386); Actions need no marker, since GITHUB_TOKEN pushes start no workflow.
+ * on the previous version (issue #386). release.yml pushes over a deploy key, so CI runs on the release commit too.
  */
 export function releaseCommitMessage(tag) {
   return `chore(release): ${tag}`;

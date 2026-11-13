@@ -59,11 +59,30 @@ describe('the cloud mask', () => {
     }
   });
 
-  it("cloudDepth is deepest at the hero's corners", () => {
-    for (const [c, r] of [[0, 0], [l.cols - 1, 0], [0, l.rows - 1], [l.cols - 1, l.rows - 1]]) {
-      expect(cloudDepth(c, r, l, [clear])).toBeGreaterThan(0.75);
+  it('the wind carries the cloud off the edges: no edge cell stays lit through a whole crossing (issue #504)', () => {
+    const edge: [number, number][] = [];
+    for (let c = 0; c < l.cols; c++) edge.push([c, 0], [c, l.rows - 1]);
+    for (let r = 1; r < l.rows - 1; r++) edge.push([0, r], [l.cols - 1, r]);
+    const shifts = Array.from({ length: 80 }, (_, k) => (k * l.cols * 3) / 80);
+    const pinned = edge.filter(([c, r]) => shifts.every((s) => cloudDepth(c, r, l, [clear], s) > 0));
+    expect(pinned).toEqual([]);
+  });
+
+  it('clears round each line, not the box round all of them: the cloud reaches between the lines (issue #504)', () => {
+    // a long headline over a short lede: their common box has wide empty corners far from both lines
+    const lines = [{ x: 200, y: 160, w: 800, h: 96 }, { x: 480, y: 480, w: 240, h: 32 }];
+    const far = 6 * CLOUD_CELL;
+    let reached = 0;
+    for (let i = 0; i < l.cols * l.rows; i++) {
+      const col = i % l.cols;
+      const row = Math.floor(i / l.cols);
+      const x = l.x0 + col * CLOUD_CELL + CLOUD_CELL / 2;
+      const y = l.y0 + row * CLOUD_CELL + CLOUD_CELL / 2;
+      const inBounds = x > 200 && x < 1000 && y > 160 && y < 512;
+      const away = lines.every((b) => Math.hypot(Math.max(b.x - x, 0, x - b.x - b.w), Math.max(b.y - y, 0, y - b.y - b.h)) > far);
+      if (inBounds && away && [0, 7, 23, 41].some((s) => cloudDepth(col, row, l, lines, s) > 0)) reached++;
     }
-    expect(cloudDepth(0, 0, l, null)).toBeGreaterThan(0.75);
+    expect(reached).toBeGreaterThan(0);
   });
 
   it('lights a wide share of a desktop hero, with cloud on all four sides', () => {
@@ -83,7 +102,6 @@ describe('the cloud mask', () => {
     }
     expect(lit / (big.cols * big.rows)).toBeGreaterThanOrEqual(0.25);
     for (const n of Object.values(strips)) expect(n).toBeGreaterThan(0);
-    expect(cloudDepth(0, 0, big, [text])).toBeGreaterThan(0.75);
   });
 
   it('the drifting cloud never lights the padded clearing', () => {

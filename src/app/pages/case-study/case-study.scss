@@ -1,0 +1,197 @@
+    @use 'styles/breakpoints' as bp;
+
+    .unlock {
+      position: fixed;
+      inset: auto auto var(--space-2) var(--gutter);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin: 0;
+      color: var(--fg);
+      background: var(--band-bg);
+      &:not(:empty) {
+        padding: var(--space-1) var(--space-2);
+        border: 4px solid var(--fg);
+      }
+      app-quest-sprite {
+        width: 32px;
+        height: 32px;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        &:not(:empty) {
+          animation: pixel-open 320ms steps(4);
+        }
+      }
+    }
+
+    .case-study {
+      display: grid;
+      gap: var(--space-8);
+      padding-block: var(--space-12);
+    }
+    .intro,
+    section {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .summary {
+      font-size: var(--step-1);
+      max-width: var(--measure);
+      line-height: 1.5;
+    }
+    .role {
+      color: var(--fg-muted);
+      max-width: var(--measure);
+      font-size: var(--step--1);
+    }
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--fg-muted);
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    h2 {
+      font-size: var(--step-3);
+    }
+    h3 {
+      margin-top: var(--space-2);
+      font-size: var(--step-1);
+    }
+    // prose keeps the body measure (issue #213: up to 99 characters a line on desktop)
+    section > p {
+      max-width: var(--measure);
+    }
+    .bullets {
+      display: grid;
+      gap: var(--space-2);
+      max-width: var(--measure);
+      margin: 0;
+      padding-left: var(--space-3);
+    }
+    .more {
+      display: grid;
+      justify-items: start;
+      gap: var(--space-3);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--rule);
+    }
+    .next {
+      display: grid;
+      gap: var(--space-1);
+      color: inherit;
+      text-decoration: none;
+    }
+    .next-label {
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    .next-title {
+      font-size: var(--step-3);
+      font-weight: 600;
+      font-variation-settings: 'wdth' 85;
+      line-height: 1.1;
+    }
+    .next:hover .next-title {
+      text-decoration: underline;
+      text-decoration-thickness: 0.06em;
+      text-underline-offset: 0.1em;
+    }
+    .toc {
+      display: none;
+    }
+    @include bp.up(lg) {
+      // the intro and the image across the page; the index in a narrow column, the sections and what follows beside it
+      .case-study {
+        grid-template-columns: 13rem minmax(0, 1fr);
+      }
+      .intro,
+      .shot,
+      .item {
+        grid-column: 1 / -1;
+      }
+      section,
+      .more {
+        grid-column: 2;
+      }
+      .toc {
+        display: block;
+        grid-column: 1;
+        grid-row: span 4;
+        align-self: start;
+        position: sticky;
+        top: calc(var(--header-h) + var(--space-4));
+      }
+      .toc ul {
+        display: grid;
+        gap: var(--space-2);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .toc a {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+        color: var(--fg-muted);
+        font-size: var(--step--1);
+        text-decoration: none;
+      }
+      .toc a::before {
+        content: '';
+        flex: none;
+        width: 8px;
+        height: 8px;
+        box-shadow: inset 0 0 0 2px currentColor;
+      }
+      .toc a:hover {
+        color: var(--fg);
+      }
+      .toc a[aria-current] {
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .toc a[aria-current]::before {
+        background: var(--accent);
+        box-shadow: none;
+      }
+    @media (forced-colors: active) {
+      .toc a::before {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+      }
+      .toc a[aria-current]::before {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
+    }
+    .shot {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+    }
+    .shot--tall {
+      max-width: 360px;
+    }
+    .item {
+      display: grid;
+      place-items: center;
+      max-width: 480px;
+      aspect-ratio: 3 / 2;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+    }
+    .item app-quest-sprite {
+      width: 36%;
+      aspect-ratio: 1;
+    }

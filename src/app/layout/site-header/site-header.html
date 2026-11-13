@@ -1,0 +1,20 @@
+    <a class="skip-link" [attr.href]="toMain()" (click)="skipToMain($event)" i18n="@@a11y.skip">Skip to content</a>
+    <header class="site-header container">
+      <a class="logo" routerLink="/" i18n-aria-label="@@nav.home" aria-label="Emanuele Del Monte, home"
+        ><app-moai-mark class="mark" /><span class="name" translate="no"><span>Emanuele</span><span>Del Monte</span></span></a
+      >
+      <nav i18n-aria-label="@@nav.label" aria-label="Main">
+        <a data-magnetic routerLink="/" fragment="work" i18n="@@nav.work">Work</a>
+        <a data-magnetic routerLink="/" fragment="experience" i18n="@@nav.experience">Experience</a>
+        <a data-magnetic routerLink="/blog" routerLinkActive ariaCurrentWhenActive="page" i18n="@@nav.blog">Blog</a>
+      </nav>
+      <div class="controls">
+        <app-language-switch />
+        <app-pause-toggle />
+        <app-music-toggle />
+        <app-theme-toggle />
+      </div>
+      <!-- the bar's one action, from md; on phones it lives in the menu drawer (issue #468) -->
+      <a class="button button--primary cta" data-magnetic [href]="content.person.linkedin" target="_blank" rel="me noopener" aria-describedby="new-tab" i18n="@@home.cta.contact">Contact me</a>
+      <app-site-menu class="menu" />
+    </header>

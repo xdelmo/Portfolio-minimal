@@ -42,7 +42,9 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Pushes go over this deploy key: the devel/master ruleset requires `CI ok`, and on a
+          # personal repository only a deploy key (not GITHUB_TOKEN) can be on its bypass list.
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Setup Node
         uses: actions/setup-node@v4

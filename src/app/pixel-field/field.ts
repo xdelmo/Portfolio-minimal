@@ -64,7 +64,7 @@ export const PULL = 0.4;
 const BREATHE_SPEED = 0.0009;
 
 /** The wind: the cloud's noise crosses the hero's width in this many seconds, redrawn at most DRIFT_FPS times a second. */
-export const WIND_S = 40;
+export const WIND_S = 80;
 export const DRIFT_FPS = 24;
 
 /** How many cells the cloud's noise has drifted after `t` ms on a grid `cols` wide, in DRIFT_FPS steps; 0 at rest. */

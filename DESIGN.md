@@ -238,7 +238,7 @@ A hard-edged tag holding the pixel GitHub mark and the repository name.
 Full-bleed coloured backgrounds behind a section (see Colors). On desktop a band grows from an inset block with a hard clip; its top and bottom meet the page through a seam of crumbling pixels.
 
 ### Navigation
-A fixed header outside the scrolling content: the moai mark (with the full name in tracked capitals on two lines), three section links (Work, Experience, Blog; About is one scroll below the hero, so only the phone menu lists it), the language switch showing its code (`EN`), the single motion pause button, theme toggle and the primary "Contact me" button from 768px (on phones the bar keeps the logo on the left and the menu button on the right; the primary "Contact me" button lives prominently in the phone menu panel, along with the other links and the controls). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
+A fixed header outside the scrolling content: the moai mark (with the full name in tracked capitals on two lines), the section links (Work, Experience, Blog, and About from 1024px, where the bar has room for it; the phone menu lists them all), the language switch showing its code (`EN`), the single motion pause button, theme toggle and the primary "Contact me" button from 768px (on phones the bar keeps the logo on the left and the menu button on the right; the primary "Contact me" button lives prominently in the phone menu panel, along with the other links and the controls). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
 
 ### The living objects
 The hero pixel field, the voxel moai, the tool levels, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
@@ -251,6 +251,8 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 - **Do** use `steps()` for state transitions on buttons, tags and the language curtain.
 - **Do** reuse `PixelDissolve`, the seams and the thread before inventing a new transition.
 - **Do** put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.
+- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure`.
+- **Do** give secondary actions the primary button's 48px height and type size.
 - **Do** check every change at 1280px and 390px, in both themes.
 
 ### Don't:
@@ -259,4 +261,7 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 - **Don't** set text in a `pixel-*` colour.
 - **Don't** use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.
 - **Don't** add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.
+- **Don't** lay things out as a row of three identical tiles.
+- **Don't** let an entrance overshoot (`back.out`, elastic, bounce).
+- **Don't** write aphorisms after a colon, triads, idioms, or claims CI does not enforce (see Copy voice in edm-style).
 - **Don't** add hover-only behaviour on phones, or block vertical scrolling on anything swipeable.

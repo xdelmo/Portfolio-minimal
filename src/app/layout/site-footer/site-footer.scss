@@ -83,13 +83,12 @@
       align-items: center;
       min-height: 24px;
     }
-    // the console's start key, drawn in pixels: a small outline pointing right, "Start" beside it, on the line of the
+    // the console's start key, drawn in pixels: a small outline pointing right, on the line of the
     // links (the button is named "Press start" and opens the "Pause" screen; only the shape is borrowed: no logos, no
     // face-button symbols). An easter egg should be found, not shout: it fills only under the pointer or when pressed
     .press-start {
       display: inline-flex;
       align-items: center;
-      gap: var(--space-1);
       min-height: 24px;
       padding: 0;
       border: 0;

@@ -89,9 +89,9 @@ test.describe('footer', () => {
   test('"Press start" opens the player card, and closing it gives the focus back', async ({ page }) => {
     await page.goto('/en/');
     const start = page.locator('app-site-footer').getByRole('button', { name: 'Press start' });
-    // the console's start key in pixels, above its label
+    // the console's start key in pixels, with no visible label: the name stays in aria-label (issue #524)
     await expect(start.locator('svg[shape-rendering="crispEdges"]')).toHaveCount(1);
-    await expect(start).toHaveText('Start');
+    await expect(start).toHaveText('');
     await start.click();
     const card = page.getByRole('dialog', { name: 'Pause' });
     await expect(card).toBeVisible();

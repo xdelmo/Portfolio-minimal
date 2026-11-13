@@ -51,7 +51,7 @@ The cloud grows out of the existing `PixelField` rather than replacing it, so it
 
 - the vignette that fades the field towards the edges becomes a cloud mask: noise decides which cells are lit and which tone they get, dense at the edges, empty in the clearing;
 - the cloud breathes: its edge drifts slowly by a few cells;
-- the cloud drifts with the wind, as on andreas.vision: its noise slides sideways across the hero in about 40 s, a whole cell at a time on the hero seam's grid (redrawn at most 24 times a second), while the clearing stays put; the grid is the seam's, so the cloud's squares run on into the seam below;
+- the cloud drifts with the wind, as on andreas.vision: its noise slides sideways across the hero in about 80 s, a whole cell at a time on the hero seam's grid (redrawn at most 24 times a second), while the clearing stays put; the grid is the seam's, so the cloud's squares run on into the seam below;
 - the compose-in grows each cell late by its own random amount, so cells of one depth never grow in step and never draw the mask's contour;
 - with a mouse, the cloud near the pointer pulls back a little, as if the clearing widened (replaces today's pointer glow);
 - tap ripples and the Konami level-up rings (`GAME_START`) keep crossing the cloud as today;

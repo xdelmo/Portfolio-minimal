@@ -187,6 +187,36 @@ test.describe('project cards', () => {
     await expect.poll(pointer).toBe('pointer');
   });
 
+  // issue #534: scrolled under the header, the button is hidden, and the frame lets go of it instead of ringing it
+  // on top of the header
+  test('the frame lets go of a preview button the header covers', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const media = page.locator('#work .project .media').first();
+    const header = await page.locator('app-site-header').boundingBox();
+    if (!header) throw new Error('no header box');
+    // the picture's top 40px under the header
+    await media.evaluate((el, top) => { scrollBy(0, el.getBoundingClientRect().top - top); }, header.y + header.height + 40);
+    const box = await media.boundingBox();
+    if (!box) throw new Error('no media box');
+    const dot = page.locator('.pixel-cursor');
+    const x = box.x + box.width / 3;
+    const y = box.y + box.height * 0.6;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.move(x, y, { steps: 4 });
+    await expect.poll(async () => (await dot.boundingBox())?.width ?? 0).toBeGreaterThan(40);
+    // the button's top goes 20px under the header while the pointer stays on the picture
+    const arrow = await page.locator('#work .project .media-arrow').first().boundingBox();
+    if (!arrow) throw new Error('no arrow box');
+    await page.evaluate((dy) => { scrollBy(0, dy); }, arrow.y - (header.y + header.height) + 20);
+    // it is the pointer's frame again, under the pointer and clear of the header
+    await expect.poll(async () => {
+      const d = await dot.boundingBox();
+      if (!d) return Infinity;
+      return Math.hypot(d.x + d.width / 2 - x, d.y + d.height / 2 - y);
+    }).toBeLessThan(3);
+  });
+
   // inside the frame the screenshot drifts against the mouse, and settles back when it leaves (issue #523)
   test('the project picture drifts against the mouse while it is inside', async ({ page }) => {
     await page.goto('/en/');

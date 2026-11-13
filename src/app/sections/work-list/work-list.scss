@@ -156,12 +156,21 @@
       }
       .media-arrow-label {
         transition:
-          max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
-          margin-right 360ms cubic-bezier(0.22, 1, 0.36, 1),
-          opacity 200ms ease 80ms;
+          max-width 160ms steps(4),
+          margin-right 160ms steps(4),
+          opacity 160ms steps(2);
       }
       .media:hover .media-arrow app-pixel-arrow {
         transform: translate(2px, -2px);
+      }
+    }
+    // desktop: the title steps aside on hover, like every other hover (issue #521)
+    @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .project h3 {
+        transition: translate 160ms steps(2);
+      }
+      .project:hover h3 {
+        translate: 12px 0;
       }
     }
     .media:active .media-arrow {

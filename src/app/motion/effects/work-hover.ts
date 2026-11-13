@@ -1,7 +1,7 @@
 import type { Effect } from '../motion-host';
 
 /**
- * On desktop, hovering a project slides the title in subtly. Phones get the scroll gesture: a project below the fold
+ * On desktop the hover nudge is CSS (work-list.scss); this only undoes the phone gesture. Phones get the scroll gesture: a project below the fold
  * starts tipped back with its title aside, and straightens as it comes up.
  */
 export const workHoverEffect: Effect = (root, { gsap, desktop }) => {
@@ -19,28 +19,14 @@ export const workHoverEffect: Effect = (root, { gsap, desktop }) => {
     }
     return undefined;
   }
-  const offs: (() => void)[] = [];
   for (const project of root.querySelectorAll<HTMLElement>('#work .project')) {
     const media = project.querySelector<HTMLElement>('.media');
     const title = project.querySelector<HTMLElement>('h3');
     if (!media || !title) continue;
-    // reset mobile tilt and slide if the window was a phone one a moment ago (issue #109, see motion-host.ts)
+    // reset mobile tilt and slide if the window was a phone one a moment ago (issue #109, see motion-host.ts); the
+    // hover nudge itself is CSS, stepped like every other hover (work-list.scss, issue #521)
     gsap.set(media, { transformPerspective: 900, rotationX: 0, rotationY: 0 });
     gsap.set(title, { x: 0 });
-    const enter = (): void => {
-      gsap.to(title, { x: 12, duration: 0.5, ease: 'power3.out' });
-    };
-    const leave = (): void => {
-      gsap.to(title, { x: 0, duration: 0.5, ease: 'power3.out' });
-    };
-    project.addEventListener('pointerenter', enter);
-    project.addEventListener('pointerleave', leave);
-    offs.push(() => {
-      project.removeEventListener('pointerenter', enter);
-      project.removeEventListener('pointerleave', leave);
-    });
   }
-  return () => {
-    for (const off of offs) off();
-  };
+  return undefined;
 };

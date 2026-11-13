@@ -250,7 +250,7 @@ html.theme-switching::view-transition-old(root) {
   animation: none;
 }
 html.theme-switching::view-transition-new(root) {
-  animation: theme-reveal 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  animation: theme-reveal 0.7s var(--ease-cover);
 }
 @keyframes theme-reveal {
   from {
@@ -263,7 +263,7 @@ html.theme-switching::view-transition-new(root) {
 /* From light to dark the other way round (issue #116): the light page, on top, closes into the toggle */
 html.theme-switching.theme-to-dark::view-transition-old(root) {
   z-index: 1;
-  animation: theme-reveal 0.7s cubic-bezier(0.65, 0, 0.35, 1) reverse both;
+  animation: theme-reveal 0.7s var(--ease-cover) reverse both;
 }
 html.theme-switching.theme-to-dark::view-transition-new(root) {
   animation: none;
@@ -348,10 +348,10 @@ html[data-lang-swap]::after {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 3' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM7 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM0 1h1v1h-1zM5 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM0 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1z'/%3E%3C/svg%3E") bottom left / calc(12 * 16px) var(--fringe) repeat-x;
 }
 html[data-lang-phase='out']::after {
-  animation: lang-cover 0.5s cubic-bezier(0.7, 0, 0.3, 1) both;
+  animation: lang-cover 0.5s var(--ease-cover) both;
 }
 html[data-lang-phase='in']::after {
-  animation: lang-lift 0.55s cubic-bezier(0.7, 0, 0.3, 1) 0.1s both;
+  animation: lang-lift 0.55s var(--ease-cover) 0.1s both;
 }
 @keyframes lang-cover {
   from {
@@ -391,4 +391,11 @@ html.smooth app-site-header {
 }
 html.smooth #smooth-content {
   padding-top: var(--header-h);
+}
+
+// a box opening from its middle line in four steps: the case study's unlock notice and the player card
+@keyframes pixel-open {
+  from {
+    clip-path: inset(50% 0);
+  }
 }

@@ -1,4 +1,4 @@
-    <div class="reading-progress" data-sticky [style.width.%]="progress()" aria-hidden="true"></div>
+    <div class="reading-progress" data-sticky [style.scale]="progress() / 100 + ' 1'" aria-hidden="true"></div>
     <article class="container post" [appMotion]="effects">
       @if (article(); as a) {
         <header class="intro">

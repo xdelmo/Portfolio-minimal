@@ -117,7 +117,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
       snapped = snap;
       // the frame is sized from the button every frame: a CSS transition on top would trail its growth (issue #489)
       if (snap) {
-        dot.style.transition = 'background-color 0.25s ease';
+        dot.style.transition = 'background-color 120ms steps(2)';
         gsap.ticker.add(frame);
       } else {
         gsap.ticker.remove(frame);

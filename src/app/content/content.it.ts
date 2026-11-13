@@ -29,7 +29,7 @@ export const CONTENT_IT: SiteContent = {
   aboutVoice: 'una con dieci.',
   about: [
     'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di intelligence. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
-    "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, orientarmi in API nuove e tenere aggiornata la documentazione. Ho anche studiato come i modelli linguistici arrivano a strumenti e dati reali, e ho costruito un server MCP per provarlo.",
+    "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, tenere aggiornata la documentazione e orientarmi in API nuove. Ho anche studiato il Model Context Protocol e ho costruito un server MCP per provarlo.",
   ],
   figures: [
     { value: '€1M', label: 'di ordini passati dal configuratore Flexie che ho costruito' },
@@ -63,7 +63,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Per la tesi in Ingegneria Informatica volevo un progetto con problemi reali da risolvere. ApexFlow simula una piattaforma SaaS con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
         architecture: [
           'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
           'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
@@ -82,7 +82,7 @@ export const CONTENT_IT: SiteContent = {
           },
           {
             title: 'Spring Boot invece di un backend JavaScript',
-            body: 'Con NestJS avrei scritto tutto in TypeScript, ma Spring Boot era lo stack che la maggior parte degli annunci che leggevo chiedeva accanto ad Angular. Con due linguaggi il contratto tra client e server deve essere esplicito: ogni campo su cui conta il frontend è una scelta.',
+            body: 'Con NestJS avrei scritto tutto in TypeScript, ma Spring Boot era lo stack che la maggior parte degli annunci che leggevo chiedeva accanto ad Angular. Con due linguaggi il contratto tra client e server deve essere esplicito.',
           },
         ],
         outcome:
@@ -143,11 +143,11 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi rispondere a ogni domanda pratica: quando, dove, come arrivarci, cosa indossare e se ci sarai.",
+          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi dare agli ospiti data, luogo, indicazioni e dress code, e raccogliere l'RSVP.",
         architecture: [
           "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
           'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
-          'Undici slide a schermo intero con lo scroll snap di CSS: conto alla rovescia, salvataggio nel calendario, mappe, programma, dress code, trasporti e RSVP.',
+          'Undici slide a schermo intero con lo scroll snap di CSS, con il conto alla rovescia, le mappe e il salvataggio nel calendario.',
           "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
         ],
         decisions: [
@@ -290,7 +290,7 @@ export const CONTENT_IT: SiteContent = {
     },
     {
       title: 'Vano portaoggetti per la Volkswagen Up',
-      summary: 'Un inserto parametrico per il bracciolo della portiera della mia auto, con una pipeline che va dal codice al file pronto per la stampa con un solo comando.',
+      summary: 'Un inserto parametrico per il bracciolo della portiera della mia auto, dal codice al file pronto per la stampa con un solo comando.',
       tags: ['Python', 'build123d', 'Bambu Studio'],
       repo: 'https://github.com/xdelmo/volkswagen-up-door-storage-box',
       sprite: 'car',
@@ -303,7 +303,7 @@ export const CONTENT_IT: SiteContent = {
     xp: 0.6,
     achievements: [
       { title: 'Batterista', detail: 'Più di dieci anni dietro la batteria', sprite: 'drum' },
-      { title: 'Raider hardcore', detail: 'World of Warcraft: il lavoro di squadra è il mio pane quotidiano', sprite: 'sword' },
+      { title: 'Raider hardcore', detail: 'World of Warcraft, in squadra', sprite: 'sword' },
       { title: 'Team pizza', detail: 'Se potessi mangiare una cosa sola per sempre', sprite: 'pizza' },
     ],
     cheat: { title: 'Codice Konami', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },

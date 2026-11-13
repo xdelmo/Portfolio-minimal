@@ -467,8 +467,8 @@
         <target>Blog</target>
       </trans-unit>
       <trans-unit id="blog.lede" datatype="html">
-        <source>Notes from building Angular frontends: what I tried, what broke, what I would do again.</source>
-        <target>Appunti dal lavoro sui frontend in Angular: cosa ho provato, cosa si è rotto, cosa rifarei.</target>
+        <source>Notes from building Angular frontends.</source>
+        <target>Appunti dal lavoro sui frontend in Angular.</target>
       </trans-unit>
       <trans-unit id="blog.description" datatype="html">
         <source>Notes on Angular, Signals, RxJS and Spring Boot by <x id="name" equiv-text="person.name"/>.</source>

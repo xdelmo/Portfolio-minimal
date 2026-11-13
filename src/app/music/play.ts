@@ -58,6 +58,9 @@ export function play(ctx: AudioContext): () => void {
 
   const tone = ({ wave, midi, at, length, level, attack, release, chorus, send }: Tone): void => {
     const gain = ctx.createGain();
+    const fade = length * 0.12;
+    // six time constants after the fade starts the note is silent, so stopping it there cannot click
+    const end = at + length * release + fade * 6;
     for (const detune of chorus ? [0, chorus] : [0]) {
       const osc = ctx.createOscillator();
       if (!wave) osc.type = 'triangle';
@@ -66,12 +69,15 @@ export function play(ctx: AudioContext): () => void {
       osc.detune.value = detune;
       osc.connect(gain);
       osc.start(at);
-      osc.stop(at + length);
+      osc.stop(end);
+      osc.onended = () => {
+        gain.disconnect();
+      };
     }
     // a soft swell in and a long fade out: no clicks, nothing that pokes out of the page
     gain.gain.setValueAtTime(0, at);
     gain.gain.linearRampToValueAtTime(level, at + attack);
-    gain.gain.setTargetAtTime(0, at + length * release, length * 0.12);
+    gain.gain.setTargetAtTime(0, at + length * release, fade);
     gain.connect(warm);
     if (send) gain.connect(send);
   };
@@ -90,8 +96,8 @@ export function play(ctx: AudioContext): () => void {
   let last = 3;
   let next = ctx.currentTime + 0.05;
   const schedule = (): void => {
-    // after a long stall (a busy main thread) skip ahead instead of playing the missed notes in a burst
-    if (next < ctx.currentTime - STEP) next = ctx.currentTime;
+    // after a stall (a busy main thread) skip ahead: missed notes would burst, late ones would lose their attack
+    if (next < ctx.currentTime) next = ctx.currentTime;
     while (next < ctx.currentTime + AHEAD) {
       for (const event of byStep[step] ?? []) voice(event, next);
       const index = bell(last, Math.random);
@@ -128,7 +134,12 @@ export function play(ctx: AudioContext): () => void {
     clearInterval(timer);
     unwatch();
     document.removeEventListener('visibilitychange', sync);
-    void ctx.resume();
+    // already silent (hidden tab, site paused): cut it there, resuming would play a last bit of it
+    if (ctx.state === 'suspended') {
+      out.disconnect();
+      echo.disconnect();
+      return;
+    }
     out.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
     setTimeout(() => {
       out.disconnect();

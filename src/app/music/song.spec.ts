@@ -21,11 +21,15 @@ describe('song', () => {
     const rolls = [0, 0.99];
     expect(bell(0, () => rolls.shift() ?? 0)).toBe(2);
     expect(bell(BELLS.length - 1, () => 0)).toBe(BELLS.length - 3);
-    for (let i = 0; i < 200; i++) {
-      const next = bell(i % BELLS.length, () => Math.random() * DENSITY);
-      expect(next).toBeGreaterThanOrEqual(0);
-      expect(next).toBeLessThan(BELLS.length);
-      expect(next).not.toBe(i % BELLS.length);
+    // every note, every move: the second roll picks the move
+    for (let previous = 0; previous < BELLS.length; previous++) {
+      for (let move = 0; move < 4; move++) {
+        const rolls = [0, (move + 0.5) / 4];
+        const next = bell(previous, () => rolls.shift() ?? 0);
+        expect(next).toBeGreaterThanOrEqual(0);
+        expect(next).toBeLessThan(BELLS.length);
+        expect(next).not.toBe(previous);
+      }
     }
   });
 });

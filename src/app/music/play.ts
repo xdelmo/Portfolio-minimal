@@ -1,5 +1,5 @@
 import { watchPause } from '../motion/pause';
-import { BPM, SONG, STEPS_PER_BEAT, type NoteEvent } from './song';
+import { bell, BELLS, BPM, SONG, STEPS_PER_BEAT, type NoteEvent } from './song';
 
 const STEP = 60 / BPM / STEPS_PER_BEAT;
 // look-ahead scheduling: notes are queued on the audio clock 100 ms ahead, checked every 25 ms
@@ -8,9 +8,9 @@ const TICK_MS = 25;
 
 const hz = (midi: number): number => 440 * 2 ** ((midi - 69) / 12);
 
-/** A Game Boy style pulse wave with the given duty cycle (Fourier series of a rectangle wave). */
-function pulse(ctx: AudioContext, duty: number): PeriodicWave {
-  const real = new Float32Array(32);
+/** A Game Boy style pulse wave with the given duty cycle (Fourier series of a rectangle wave); fewer harmonics, softer. */
+function pulse(ctx: AudioContext, duty: number, harmonics = 32): PeriodicWave {
+  const real = new Float32Array(harmonics);
   for (let k = 1; k < real.length; k++) real[k] = (2 / (k * Math.PI)) * Math.sin(k * Math.PI * duty);
   return ctx.createPeriodicWave(real, new Float32Array(real.length));
 }
@@ -22,107 +22,84 @@ interface Tone {
   length: number;
   level: number;
   attack: number;
-  /** cents of vibrato, fading in after the attack */
-  vibrato?: number;
+  /** when the note starts fading out, as a share of its length */
+  release: number;
+  /** a second oscillator this many cents sharp, for a slow, airy shimmer */
+  chorus?: number;
   send?: AudioNode;
 }
 
-/** Plays SONG in a loop on `ctx`, quietly; returns the function that fades it out and stops it. */
+/** Plays the ambient loop on `ctx`, quietly; returns the function that fades it out and stops it. */
 export function play(ctx: AudioContext): () => void {
   // everything goes through a warm low-pass: the raw pulse waves are too bright for a background
   const out = ctx.createGain();
   out.gain.value = 0.22;
   const warm = ctx.createBiquadFilter();
   warm.type = 'lowpass';
-  warm.frequency.value = 2800;
+  warm.frequency.value = 2400;
   warm.connect(out).connect(ctx.destination);
 
-  // a dotted-eighth echo that fades out, for the arpeggio and a touch of the lead
-  const echo = ctx.createDelay(1);
-  echo.delayTime.value = STEP * 1.5;
+  // a long echo that keeps fading: the sky the bells float in
+  const echo = ctx.createDelay(3);
+  echo.delayTime.value = STEP * 3;
   const feedback = ctx.createGain();
-  feedback.gain.value = 0.35;
+  feedback.gain.value = 0.55;
   const dull = ctx.createBiquadFilter();
   dull.type = 'lowpass';
-  dull.frequency.value = 1500;
+  dull.frequency.value = 1800;
   echo.connect(dull).connect(feedback).connect(echo);
   dull.connect(warm);
 
-  const lead = pulse(ctx, 0.5);
-  const arp = pulse(ctx, 0.25);
-  const noise = ctx.createBuffer(1, Math.round(ctx.sampleRate * 0.05), ctx.sampleRate);
-  const samples = noise.getChannelData(0);
-  for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+  // the bells keep only their first harmonics: a round, soft 8-bit chime
+  const chime = pulse(ctx, 0.25, 8);
 
   const byStep: NoteEvent[][] = Array.from({ length: SONG.length }, () => []);
   for (const event of SONG.events) byStep[event.step]?.push(event);
 
-  const tone = ({ wave, midi, at, length, level, attack, vibrato, send }: Tone): void => {
-    const osc = ctx.createOscillator();
-    if (!wave) osc.type = 'triangle';
-    else osc.setPeriodicWave(wave);
-    osc.frequency.value = hz(midi);
+  const tone = ({ wave, midi, at, length, level, attack, release, chorus, send }: Tone): void => {
     const gain = ctx.createGain();
+    for (const detune of chorus ? [0, chorus] : [0]) {
+      const osc = ctx.createOscillator();
+      if (!wave) osc.type = 'triangle';
+      else osc.setPeriodicWave(wave);
+      osc.frequency.value = hz(midi);
+      osc.detune.value = detune;
+      osc.connect(gain);
+      osc.start(at);
+      osc.stop(at + length);
+    }
     // a soft swell in and a long fade out: no clicks, nothing that pokes out of the page
     gain.gain.setValueAtTime(0, at);
     gain.gain.linearRampToValueAtTime(level, at + attack);
-    gain.gain.setTargetAtTime(level * 0.5, at + attack, length / 2);
-    gain.gain.setTargetAtTime(0, at + length * 0.8, length * 0.08);
-    osc.connect(gain).connect(warm);
+    gain.gain.setTargetAtTime(0, at + length * release, length * 0.12);
+    gain.connect(warm);
     if (send) gain.connect(send);
-    if (vibrato) {
-      const lfo = ctx.createOscillator();
-      lfo.frequency.value = 4.5;
-      const depth = ctx.createGain();
-      depth.gain.setValueAtTime(0, at);
-      depth.gain.linearRampToValueAtTime(vibrato, at + Math.min(length, 0.8));
-      lfo.connect(depth).connect(osc.detune);
-      lfo.start(at);
-      lfo.stop(at + length);
-    }
-    osc.start(at);
-    osc.stop(at + length);
-  };
-
-  const tick = (at: number): void => {
-    const source = ctx.createBufferSource();
-    source.buffer = noise;
-    const band = ctx.createBiquadFilter();
-    band.type = 'highpass';
-    band.frequency.value = 8000;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.02, at);
-    gain.gain.exponentialRampToValueAtTime(0.001, at + 0.04);
-    source.connect(band).connect(gain).connect(warm);
-    source.start(at);
-    source.stop(at + 0.05);
   };
 
   const voice = (event: NoteEvent, at: number): void => {
     const length = event.length * STEP;
-    switch (event.voice) {
-      case 'lead':
-        tone({ wave: lead, midi: event.midi, at, length, level: 0.09, attack: 0.06, vibrato: 10, send: echo });
-        break;
-      case 'arp':
-        tone({ wave: arp, midi: event.midi, at, length: STEP * 0.9, level: 0.025, attack: 0.02, send: echo });
-        break;
-      case 'bass':
-        tone({ wave: null, midi: event.midi, at, length, level: 0.16, attack: 0.04 });
-        break;
-      case 'tick':
-        tick(at);
-        break;
+    if (event.voice === 'bass') {
+      tone({ wave: null, midi: event.midi, at, length: length + 1, level: 0.07, attack: 1.5, release: 0.7 });
+    } else {
+      // swells in over seconds and overlaps the next chord: one cloud slowly turning into the next
+      tone({ wave: null, midi: event.midi, at, length: length + 2, level: 0.035, attack: 3, release: 0.7, chorus: 7, send: echo });
     }
   };
 
   let step = 0;
+  let last = 3;
   let next = ctx.currentTime + 0.05;
   const schedule = (): void => {
     // after a long stall (a busy main thread) skip ahead instead of playing the missed notes in a burst
     if (next < ctx.currentTime - STEP) next = ctx.currentTime;
     while (next < ctx.currentTime + AHEAD) {
       for (const event of byStep[step] ?? []) voice(event, next);
+      const index = bell(last, Math.random);
+      if (index !== undefined) {
+        last = index;
+        const midi = BELLS[index] ?? 74;
+        tone({ wave: chime, midi, at: next, length: 2.5, level: 0.018, attack: 0.02, release: 0.1, send: echo });
+      }
       step = (step + 1) % SONG.length;
       next += STEP;
     }

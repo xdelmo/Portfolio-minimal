@@ -296,8 +296,8 @@ test('the first thing each project offers is its case study', async ({ page }) =
   }
 });
 
-// at 1024px a third of the column left the words two or three to a line beside the sprite
-test('the study tiles keep their words readable at 1024px', async ({ page }) => {
+// at 1024px the studies once sat in three tiles, a third of the column each, two or three words to a line; the rows (issue #533) keep the text wide
+test('the studies keep their words readable at 1024px', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 800 });
   await page.goto('/en/');
   const widths = await page.locator('#experience li .text').evaluateAll((els) => els.map((el) => (el as HTMLElement).offsetWidth));

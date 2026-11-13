@@ -164,6 +164,23 @@
         transform: translate(2px, -2px);
       }
     }
+    // desktop: inside the frame the picture drifts against the mouse (--px/--py from effects/work-hover.ts), scaled up a
+    // little so its edges never show (issue #523)
+    @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .shot,
+      .item {
+        translate: calc(var(--px, 0) * 1px) calc(var(--py, 0) * 1px);
+      }
+      .media .shot {
+        transition: scale 300ms var(--ease-arrive);
+      }
+      .media:hover .shot {
+        scale: 1.04;
+      }
+      .project--tall .media:hover .shot {
+        scale: 1;
+      }
+    }
     // desktop: the title steps aside on hover, like every other hover (issue #521)
     @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
       .project h3 {

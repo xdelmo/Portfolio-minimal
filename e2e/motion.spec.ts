@@ -180,6 +180,31 @@ test.describe('project cards', () => {
     expect(Math.abs(now.y - rest.y)).toBeLessThan(0.5);
     expect(Math.abs(now.x + now.width - (rest.x + rest.width))).toBeLessThan(0.5);
     expect(await dot.evaluate((el) => getComputedStyle(el).transitionProperty)).toBe('background-color');
+    // the frame is the only cursor: the system pointer hides over the picture, and comes back off it (issue #523)
+    const pointer = () => page.locator('#work .project .media').first().evaluate((el) => getComputedStyle(el).cursor);
+    expect(await pointer()).toBe('none');
+    await page.mouse.move(media.x - 40, media.y - 40);
+    await expect.poll(pointer).toBe('pointer');
+  });
+
+  // inside the frame the screenshot drifts against the mouse, and settles back when it leaves (issue #523)
+  test('the project picture drifts against the mouse while it is inside', async ({ page }) => {
+    await page.goto('/en/');
+    await ready(page);
+    const frame = page.locator('#work .project .media').first();
+    await frame.scrollIntoViewIfNeeded();
+    const box = await frame.boundingBox();
+    if (!box) throw new Error('no media box');
+    const drift = async () => {
+      const [x = 0, y = 0] = (await frame.locator('.shot').evaluate((el) => getComputedStyle(el).translate)).split(' ').map(parseFloat);
+      return { x, y };
+    };
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // right of and above the centre: the picture moves left and down
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.1, { steps: 4 });
+    await expect.poll(async () => { const d = await drift(); return d.x < -4 && d.y > 4; }).toBe(true);
+    await page.mouse.move(box.x - 40, box.y - 40);
+    await expect.poll(async () => { const d = await drift(); return Math.abs(d.x) + Math.abs(d.y) < 0.5; }).toBe(true);
   });
 });
 

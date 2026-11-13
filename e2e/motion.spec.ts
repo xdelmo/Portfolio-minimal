@@ -1,31 +1,10 @@
 import { type Locator, type Page, expect, test } from './fixtures';
 
 const ready = (page: Page) => expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
-// SplitText wraps each line in a masking element; the title is back to plain text once its reveal is over
-// (the headline's own two voice spans do not count)
+// SplitText wraps each line in a masking element; the headline is back to plain text once its reveal is over
+// (its own two voice spans do not count)
 const isPlainText = (el: Locator) =>
   el.evaluate((node) => [...node.children].every((child) => child.classList.contains('method') || child.classList.contains('voice')));
-
-test.describe('section titles', () => {
-  test('rise line by line when they scroll in, then go back to plain text', async ({ page }) => {
-    await page.goto('/en/');
-    await ready(page);
-    const title = page.locator('#experience h2');
-    await expect.poll(() => isPlainText(title)).toBe(false);
-    await expect(title).toHaveAccessibleName('Experience');
-    await title.scrollIntoViewIfNeeded();
-    await expect.poll(() => isPlainText(title)).toBe(true);
-    await expect(title).toHaveText('Experience');
-  });
-
-  test('a title already in view on load is left alone', async ({ page }) => {
-    await page.goto('/en/#work');
-    await ready(page);
-    expect(await isPlainText(page.locator('#work h2'))).toBe(true);
-    const where = await page.evaluate(() => `scrollY ${String(scrollY)}, #work top ${String(document.querySelector('#work')?.getBoundingClientRect().top)}, height ${String(document.documentElement.scrollHeight)}, hash ${location.hash}`);
-    await expect(page.locator('#work h2'), where).toBeInViewport();
-  });
-});
 
 test('the motion library downloads only after the first paint, out of the way of the headline', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'paint timing is read in Chromium');

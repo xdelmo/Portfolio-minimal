@@ -70,6 +70,7 @@ A new section gets **one** idea in this family, not a new visual language.
 
 - GSAP via the lazy `MOTION_LOADER`; effects live in `src/app/motion/effects/`, run by `[appMotion]` inside `gsap.matchMedia`, return a cleanup.
 - `prefers-reduced-motion: reduce` → no effects at all, still images, no pause button.
+- Two grammars, nothing in between (issue #521): small feedback (hover, focus, press, a notice opening) moves in `steps(2–4)` over 80–240 ms, in CSS where it can; a surface that covers or uncovers the page (intro lift, language curtain, theme circle) glides on `--ease-cover`; an entrance lands on `--ease-arrive` (GSAP `power3.out`); scrubbed tweens use `ease: 'none'`. One reveal per moment: section titles do not get their own entrance, the thread node and the seams already mark them.
 - Pointer effects only at `(min-width: 1024px) and (hover: hover)`. Phones get their own motion (scroll and tap driven), never hover-only behaviour.
 - Anything automatic that lasts more than 5s stops with the single header pause button (`MotionPause`, `watchPause()` for GSAP).
 - Use `gsap.set` + `.to()` for scrubbed tweens; move elements GSAP also transforms through CSS `translate` variables (`--mx/--my`, `--fy/--rx/--ry`).

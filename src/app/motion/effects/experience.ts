@@ -1,4 +1,5 @@
 import type { Effect } from '../motion-host';
+import { smoother } from '../smoother';
 
 /**
  * Desktop: the experience deck (title, chapters, cards; the studies stay below in the page flow) is pinned while its jobs arrive one by one and stack like a deck; the chapter track
@@ -61,13 +62,19 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
     },
   });
   track(0);
+  // scrolling from code goes through the smoother when it runs, or its lag would ride on the browser's own smoothing
+  const glide = (top: number, smooth: boolean): void => {
+    const s = smoother();
+    if (s) s.scrollTo(top, smooth);
+    else scrollTo(smooth ? { top, behavior: 'smooth' } : { top });
+  };
   // inside the pin a card's anchor is not where it arrives: go to that point of the pin instead
   const jump = (event: MouseEvent): void => {
     const i = chapters.indexOf(event.currentTarget as HTMLAnchorElement);
     const pin = deck.scrollTrigger;
     if (i < 0 || !pin) return;
     event.preventDefault();
-    scrollTo({ top: pin.start + ((pin.end - pin.start) * i) / steps, behavior: 'smooth' });
+    glide(pin.start + ((pin.end - pin.start) * i) / steps, true);
     items[i].focus({ preventScroll: true });
   };
   for (const chapter of chapters) chapter.addEventListener('click', jump);
@@ -81,7 +88,7 @@ export const experienceEffect: Effect = (root, { gsap, desktop }) => {
     requestAnimationFrame(() => {
       // the focus may have moved on meanwhile (a busy frame): never pull the page back to a card left behind
       if (!items[i].contains(document.activeElement)) return;
-      scrollTo({ top: pin.start + ((pin.end - pin.start) * i) / steps });
+      glide(pin.start + ((pin.end - pin.start) * i) / steps, false);
       // no scrub lag: the card is on top at once, where the scroll will keep it
       deck.progress(i / steps);
     });

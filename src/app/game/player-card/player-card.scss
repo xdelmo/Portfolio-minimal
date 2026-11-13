@@ -142,7 +142,7 @@
     }
     @media (prefers-reduced-motion: no-preference) {
       .card[open] {
-        animation: press-start 320ms steps(4);
+        animation: pixel-open 320ms steps(4);
       }
     }
     // the level up's pixels (issue #124): created and removed by levelUp(), outside Angular's style scope
@@ -151,9 +151,4 @@
       width: 8px;
       height: 8px;
       pointer-events: none;
-    }
-    @keyframes press-start {
-      from {
-        clip-path: inset(50% 0);
-      }
     }

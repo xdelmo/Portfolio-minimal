@@ -23,7 +23,6 @@ import { heroEffect } from '../../motion/effects/hero';
 import { moaiEffect } from '../../motion/effects/moai';
 import { stackLevelsEffect } from '../../motion/effects/stack-levels';
 import { threadEffect } from '../../motion/effects/thread';
-import { titlesEffect } from '../../motion/effects/titles';
 import { workHoverEffect } from '../../motion/effects/work-hover';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { MoaiFigure } from '../../voxel/moai-figure/moai-figure';
@@ -45,7 +44,7 @@ export class Home {
   protected readonly head = voices(this.content.hero.headline, this.content.hero.voice);
   protected readonly statement = voices(this.content.aboutStatement, this.content.aboutVoice);
   protected readonly lede = around(this.content.hero.lede, this.content.hero.peek);
-  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, titlesEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, figuresEffect, parallaxEffect];
+  protected readonly effects: readonly Effect[] = [heroEffect, moaiEffect, workHoverEffect, experienceEffect, stackLevelsEffect, finaleEffect, dissolveEffect, threadEffect, aboutWordsEffect, figuresEffect, parallaxEffect];
   // the band colour first (most cells), then the pixel tints that crumble off it
   protected readonly heroSeam = ['--px-3', '--px-2', '--px-4', '--px-5', '--px-6'];
   protected readonly aboutSeam = ['--band-pastel-bg', '--px-2', '--px-4', '--px-5'];

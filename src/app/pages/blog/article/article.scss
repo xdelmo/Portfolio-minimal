@@ -6,14 +6,16 @@
       left: 0;
       width: 100%;
       height: 2px;
+      scale: 0 1;
+      transform-origin: left;
       background: var(--accent);
       z-index: 50;
       pointer-events: none;
-      transition: width 100ms linear;
     }
-    @media (prefers-reduced-motion: reduce) {
+    // it tells where you are, so it stays with reduced motion: only the glide goes
+    @media (prefers-reduced-motion: no-preference) {
       app-article .reading-progress {
-        display: none;
+        transition: scale 100ms linear;
       }
     }
     app-article .post {

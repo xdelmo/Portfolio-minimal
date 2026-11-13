@@ -20,13 +20,8 @@
       }
       @media (prefers-reduced-motion: no-preference) {
         &:not(:empty) {
-          animation: unlock 320ms steps(4);
+          animation: pixel-open 320ms steps(4);
         }
-      }
-    }
-    @keyframes unlock {
-      from {
-        clip-path: inset(50% 0);
       }
     }
 

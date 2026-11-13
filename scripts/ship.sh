@@ -6,6 +6,17 @@ set -eu
 branch=$(git branch --show-current)
 case "$branch" in devel|master) echo "ship: refusing to ship $branch" >&2; exit 1 ;; esac
 
+# Docs travel with the change (issue #542): code changed and no doc did → stop and ask.
+# SHIP_NO_DOCS=1 says the change makes no doc stale.
+git fetch -q origin devel
+changed=$(git diff --name-only "$(git merge-base origin/devel HEAD)" HEAD)
+if [ "${SHIP_NO_DOCS:-}" != 1 ] && printf '%s\n' "$changed" | grep -Eq '^(src|scripts|e2e|\.github|\.githooks)/|^(package\.json|angular\.json|netlify\.toml|lighthouserc\.json)$' \
+  && ! printf '%s\n' "$changed" | grep -Eq '^[^/]+\.md$|^(docs|handbook|\.claude/skills)/'; then
+  echo "ship: code changed but no doc did. Update the docs this change makes stale (CLAUDE.md, DESIGN.md," >&2
+  echo "      edm-style, CODING_STANDARDS.md, handbook/, the spec's §17), or rerun with SHIP_NO_DOCS=1 if none is." >&2
+  exit 1
+fi
+
 git push -q -u origin "$branch"
 gh pr view --json number >/dev/null 2>&1 || gh pr create --base devel "$@"
 pr=$(gh pr view --json number -q .number)

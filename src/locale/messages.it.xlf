@@ -114,6 +114,10 @@
           <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="home.hero.next" datatype="html">
+        <source>Start with the <x id="INTERPOLATION" equiv-text="{{ lead.title }}"/> case study</source>
+        <target>Comincia dal case study di <x id="INTERPOLATION" equiv-text="{{ lead.title }}"/></target>
+      </trans-unit>
       <trans-unit id="home.cta.contact" datatype="html">
         <source>Contact me</source>
         <target>Scrivimi</target>

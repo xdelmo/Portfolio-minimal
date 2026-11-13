@@ -31,11 +31,12 @@ import { GithubMark } from '../../layout/github-mark';
 import { PixelArrow } from '../../layout/pixel-arrow';
 import { LinkedinMark } from '../../layout/linkedin-mark';
 import { Depixelate } from '../../depixelate/depixelate.directive';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, Depixelate],
+  imports: [MotionHost, PixelField, PixelDissolve, Thread, WorkList, SideQuests, AtAGlance, ExperienceTimeline, ExperienceStudies, StackList, MoaiFigure, MoaiPeek, GithubMark, LinkedinMark, PixelArrow, Depixelate, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

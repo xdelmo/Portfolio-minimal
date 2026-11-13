@@ -5,7 +5,7 @@ date: 2026-11-12
 ---
 Quando si sceglie lo stack per un portfolio personale nel 2026, la maggior parte degli sviluppatori si orienta su Astro, Next.js o semplice HTML statico. Angular viene spesso etichettato come uno strumento pensato solo per grandi applicazioni enterprise, troppo pesante per un sito vetrina.
 
-Ho costruito questo portfolio per verificare il contrario: spingere l'architettura di Angular 22 verso un modello interamente statico, reattivo con i Signals, senza Zone.js, con la performance mobile a 95 o più su Lighthouse CI e animazioni fluide mantenendo accessibilità WCAG 2.2 AA.
+Ho costruito questo portfolio per verificare il contrario: spingere l'architettura di Angular 22 verso un modello interamente statico, reattivo con i Signals, senza Zone.js, con la performance mobile a 95 o più su Lighthouse CI, e con animazioni fluide e accessibilità WCAG 2.2 AA.
 
 ## Prerendering statico e architettura zoneless
 

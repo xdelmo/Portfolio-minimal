@@ -28,7 +28,7 @@ export const CONTENT_EN: SiteContent = {
   aboutVoice: 'like one with ten.',
   about: [
     'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
-    "Claude Code is part of my day: I use it to write and review code. I also studied the Model Context Protocol and built an MCP server to try it.",
+    "Claude Code is part of my day: I use it to write and review code, draft tests, keep documentation up to date and find my way around new APIs. I also studied the Model Context Protocol and built an MCP server to try it.",
   ],
   figures: [
     { value: '€1M', label: 'in orders placed through the Flexie configurator I built' },
@@ -65,7 +65,7 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'ApexFlow is my Computer Engineering thesis: a simulated SaaS platform where a tech company manages customers, subscriptions, products and orders, under the constraints of a production system.',
+          'ApexFlow is my Computer Engineering thesis: a simulated SaaS platform of the kind a tech company uses to manage customers, subscriptions, products and orders, under the constraints of a production system.',
         architecture: [
           'Angular 19 single-page app with standalone components and Signals for state.',
           'PrimeNG for data-heavy components: tables, forms, dialogs and toasts.',
@@ -151,11 +151,11 @@ export const CONTENT_EN: SiteContent = {
       },
       caseStudy: {
         context:
-          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the phone their guests already hold. It has to feel like opening a real envelope, then answer everything a guest needs to know, up to the RSVP.',
+          'Two friends of mine wanted their paper wedding invitation, in lace and pearls, rebuilt for the phone their guests already hold. It has to feel like opening a real envelope, then give guests the date, the place, directions and dress code, and take their RSVP.',
         architecture: [
           'A React and TypeScript single-page app built with Vite and styled with Tailwind CSS, mobile first; on a desktop the invitation sits in a phone-sized frame.',
           'The envelope is a Three.js scene: lace flaps that open, a wax seal that lifts away and pearls with physically based materials.',
-          'Eleven full-screen slides with CSS scroll snap, from the countdown to the RSVP.',
+          'Eleven full-screen slides with CSS scroll snap, with a countdown, maps and an export to the calendar.',
           'RSVP answers go to a Google Sheet through Google Apps Script, so there is no server to run; a service worker keeps the invitation working offline as a PWA.',
         ],
         decisions: [
@@ -312,7 +312,7 @@ export const CONTENT_EN: SiteContent = {
     achievements: [
       // what the rest of the site does not say: the old About, the GitHub profile, a LinkedIn post
       { title: 'Drummer', detail: 'More than ten years behind the kit', sprite: 'drum' },
-      { title: 'Hardcore raider', detail: 'World of Warcraft: teamwork in raids', sprite: 'sword' },
+      { title: 'Hardcore raider', detail: 'World of Warcraft, as part of a team', sprite: 'sword' },
       { title: 'Team pizza', detail: 'If I could eat one thing forever', sprite: 'pizza' },
     ],
     cheat: { title: 'Konami code', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },

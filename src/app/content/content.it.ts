@@ -29,7 +29,7 @@ export const CONTENT_IT: SiteContent = {
   aboutVoice: 'una con dieci.',
   about: [
     'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di intelligence. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
-    "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice. Ho anche studiato il Model Context Protocol e ho costruito un server MCP per provarlo.",
+    "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, tenere aggiornata la documentazione e orientarmi in API nuove. Ho anche studiato il Model Context Protocol e ho costruito un server MCP per provarlo.",
   ],
   figures: [
     { value: '€1M', label: 'di ordini passati dal configuratore Flexie che ho costruito' },
@@ -63,7 +63,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
         architecture: [
           'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
           'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
@@ -143,11 +143,11 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi dire all'ospite tutto quello che gli serve, fino all'RSVP.",
+          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi dare agli ospiti data, luogo, indicazioni e dress code, e raccogliere l'RSVP.",
         architecture: [
           "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
           'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
-          'Undici slide a schermo intero con lo scroll snap di CSS, dal conto alla rovescia all\'RSVP.',
+          'Undici slide a schermo intero con lo scroll snap di CSS, con il conto alla rovescia, le mappe e il salvataggio nel calendario.',
           "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
         ],
         decisions: [
@@ -190,7 +190,7 @@ export const CONTENT_IT: SiteContent = {
       summary: 'Sono entrato nel team frontend mentre finivo la laurea.',
       highlights: [
         'Ho costruito ApexFlow, una dashboard CRM con tabelle lato server, in Angular 19 con Signals.',
-        'Ho aggiunto filtri e paginazione lato server, permessi per ruolo e unit test.',
+        'Ho aggiunto filtri e paginazione lato server su grandi dataset, permessi per ruolo e unit test.',
       ],
       tags: ['Angular', 'Signals', 'RxJS', 'PrimeNG', 'Tailwind CSS'],
       caseStudy: { slug: 'apexflow', label: 'Case study di ApexFlow' },
@@ -290,7 +290,7 @@ export const CONTENT_IT: SiteContent = {
     },
     {
       title: 'Vano portaoggetti per la Volkswagen Up',
-      summary: 'Un inserto parametrico per il bracciolo della portiera della mia auto, dal codice al file pronto per la stampa con un comando.',
+      summary: 'Un inserto parametrico per il bracciolo della portiera della mia auto, dal codice al file pronto per la stampa con un solo comando.',
       tags: ['Python', 'build123d', 'Bambu Studio'],
       repo: 'https://github.com/xdelmo/volkswagen-up-door-storage-box',
       sprite: 'car',
@@ -303,7 +303,7 @@ export const CONTENT_IT: SiteContent = {
     xp: 0.6,
     achievements: [
       { title: 'Batterista', detail: 'Più di dieci anni dietro la batteria', sprite: 'drum' },
-      { title: 'Raider hardcore', detail: 'World of Warcraft: lavoro di squadra nei raid', sprite: 'sword' },
+      { title: 'Raider hardcore', detail: 'World of Warcraft, in squadra', sprite: 'sword' },
       { title: 'Team pizza', detail: 'Se potessi mangiare una cosa sola per sempre', sprite: 'pizza' },
     ],
     cheat: { title: 'Codice Konami', detail: '↑ ↑ ↓ ↓ ← → ← → B A', sprite: 'trophy' },

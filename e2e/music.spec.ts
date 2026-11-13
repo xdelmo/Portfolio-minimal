@@ -24,7 +24,7 @@ const trackAudioContext = async (page: Page) => {
   });
 };
 
-test('muted by default and no AudioContext created before click', async ({ page, isMobile }) => {
+test('muted by default and no AudioContext created before click', async ({ page, isMobile, browserName }) => {
   test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await trackAudioContext(page);
   await page.goto('/en/');
@@ -35,7 +35,10 @@ test('muted by default and no AudioContext created before click', async ({ page,
   await music(page).click();
   await expect(music(page)).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => page.evaluate(() => window.__audioContexts ?? 0)).toBe(1);
-  await expect.poll(() => page.evaluate(() => window.__audio?.state)).toBe('running');
+  // Playwright's Firefox never resolves resume(), not even on a blank page: it has no audio output to start
+  if (browserName !== 'firefox') {
+    await expect.poll(() => page.evaluate(() => window.__audio?.state)).toBe('running');
+  }
 
   // second click mutes the music
   await music(page).click();

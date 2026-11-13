@@ -8,7 +8,7 @@ La CI richiede Lighthouse mobile ≥ 0.95 (il migliore di tre run). L'LCP della 
 - **Le immagini dei progetti** non sono mai `priority`: l'hero riempie il primo schermo.
 - **`index.preloadInitial` è spento.**
 - **Gli script di Angular**: `scripts/after-paint.mjs` (nel postbuild) sostituisce i module script e i modulepreload con un unico loader inline che li avvia dopo il primo frame. Risultato: FCP da 1.9 a 1.2 s.
-- **Three.js e il player card** sono chunk lazy.
+- **Three.js, il player card e la musica** sono chunk lazy; il sintetizzatore si scarica solo alla prima accensione.
 
 ## CLS a zero
 

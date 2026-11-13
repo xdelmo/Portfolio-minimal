@@ -29,7 +29,8 @@ flowchart LR
 | `src/app/content/` | i contenuti per lingua, i post del blog e i file generati |
 | `src/app/pages/`, `sections/`, `layout/` | pagine, sezioni della home, header e footer |
 | `src/app/motion/` | il caricatore di GSAP, la direttiva `[appMotion]` e gli effetti |
-| `src/app/pixel-field/`, `pixel-dissolve/`, `voxel/` | la nuvola di pixel, le cuciture tra sezioni, il moai 3D |
+| `src/app/pixel-field/`, `pixel-dissolve/`, `depixelate/`, `voxel/` | la nuvola di pixel, le cuciture tra sezioni, il reveal delle immagini, il moai 3D |
+| `src/app/music/` | la musica di sottofondo a 8 bit (Web Audio) |
 | `src/app/game/` | l'easter egg «Press start» |
 | `src/styles/` | token di colore, breakpoint, font |
 | `scripts/` | build, postbuild, controlli e i loro test |
@@ -39,7 +40,7 @@ flowchart LR
 
 - **La logica che può rompersi vive in funzioni pure** accanto a servizi sottili: `core/theme/theme.ts`, `core/i18n/locale.ts`, `core/seo/seo.ts` hanno test unitari, i servizi si limitano a collegarle ad Angular.
 - **Un solo sorgente per ogni contenuto**: pagine, Markdown per gli agenti, `llms.txt` e immagini Open Graph nascono dagli stessi file.
-- **Tutto ciò che è pesante è lazy**: GSAP, Three.js, il player card e i contenuti di ogni lingua sono chunk separati.
+- **Tutto ciò che è pesante è lazy**: GSAP, Three.js, il player card, la musica e i contenuti di ogni lingua sono chunk separati.
 - **Ogni regressione arrivata in CI lascia una guardia**: una regola di lint, un test o un controllo in uno script.
 
 ## Netlify

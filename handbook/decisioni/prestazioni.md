@@ -10,6 +10,12 @@ La CI richiede Lighthouse mobile ≥ 0.95 (il migliore di tre run). L'LCP della 
 - **Gli script di Angular**: `scripts/after-paint.mjs` (nel postbuild) sostituisce i module script e i modulepreload con un unico loader inline che li avvia dopo il primo frame. Risultato: FCP da 1.9 a 1.2 s.
 - **Three.js, il player card e la musica** sono chunk lazy; il sintetizzatore si scarica solo alla prima accensione.
 
+## Cambio pagina
+
+- `withPreloading(IdlePreload)` scarica i chunk di tutte le pagine quando la pagina è caricata e il browser è inattivo; mai con Save-Data.
+- Se un cambio pagina richiede comunque più di 200 ms, nell'header compare una barra a scatti. Il ritardo è in CSS, non in un timer, e la barra non compare mai alla prima navigazione.
+- La transizione fa salire la nuova pagina come un foglio sopra la vecchia, che si scurisce, mentre l'header resta fermo.
+
 ## CLS a zero
 
 - Instrument Sans è self-hosted con `font-display: optional`, e il postbuild inietta un `<link rel="preload">` del file latino in ogni pagina. Il CSS del pacchetto usa `swap`, che sposterebbe il testo.

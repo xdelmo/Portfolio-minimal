@@ -269,6 +269,31 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
   animation: none;
 }
 
+/* Page change (router view transition, issue #205): the header stays put and the new page rises over the old one
+   from the bottom edge, a surface uncovering like the language curtain; the project title travels to its heading on
+   the same beat. Not during the theme circle above. */
+app-site-header {
+  view-transition-name: site-header;
+}
+html:not(.theme-switching)::view-transition-group(*) {
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-cover);
+}
+html:not(.theme-switching)::view-transition-old(root) {
+  animation: none;
+}
+html:not(.theme-switching)::view-transition-new(root) {
+  animation: page-rise 0.5s var(--ease-cover) both;
+}
+@keyframes page-rise {
+  from {
+    clip-path: inset(100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
    (text, links, focus ring, rules) follows. --band-inset lets GSAP grow the band from an inset block, hard-edged
    like everything else (rounded corners were off the design, issue #173). */

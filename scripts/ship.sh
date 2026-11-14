@@ -25,7 +25,8 @@ sha=$(git rev-parse HEAD)
 # A PR can show only Netlify's checks because no Actions workflow started (CLAUDE.md, 2026-11-08):
 # wait up to 10 minutes for the head commit's runs, then stop instead of merging without CI.
 i=0
-until [ "$(gh api "repos/{owner}/{repo}/actions/runs?head_sha=$sha" -q .total_count)" -gt 0 ]; do
+# a failed gh api call (network, rate limit) prints its error and counts as no run yet (issue #549)
+until [ "$(gh api "repos/{owner}/{repo}/actions/runs?head_sha=$sha" -q .total_count || echo 0)" -gt 0 ]; do
   i=$((i + 1))
   [ "$i" -le 20 ] || { echo "ship: no Actions run started for $sha on PR #$pr; push a new non-empty commit" >&2; exit 1; }
   sleep 30

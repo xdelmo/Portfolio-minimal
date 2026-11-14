@@ -5,10 +5,12 @@ import {
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
+  withPreloading,
   withViewTransitions,
 } from '@angular/router';
 import { routes } from './app.routes';
 import { withChunkReload } from './core/chunk-error';
+import { IdlePreload } from './core/idle-preload';
 import { provideContent } from './content/content';
 import { workImageLoader } from './content/image-loader';
 import { smoother } from './motion/smoother';
@@ -23,6 +25,8 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions({ skipInitialTransition: true }),
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
       withChunkReload(),
+      // the next page's chunk is already there when the visitor clicks (issue #322)
+      withPreloading(IdlePreload),
     ),
     provideClientHydration(withEventReplay(), withI18nSupport()),
     provideContent(),

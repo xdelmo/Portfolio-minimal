@@ -14,8 +14,9 @@ export function fontPreloads(html, { sans, serif }) {
 /** Initial JavaScript of a page: the module entry points plus what the page preloads. */
 // gzip bytes, under spec §12's 150: the home was 138.7 KB once each language's content became its own chunk (issue
 // #359); importing both again (about +6 KB) must fail here. 143 since the moai stands on every page (issue #393): its
-// figure left the home's lazy chunk for the shell, 141.2 KB
-export const INITIAL_JS_BUDGET = 144 * 1024;
+// figure left the home's lazy chunk for the shell, 141.2 KB. 146 since the route preloading and the page-change bar
+// (issue #322), 144.4 KB
+export const INITIAL_JS_BUDGET = 146 * 1024;
 
 export function initialScripts(html) {
   const found = new Set();

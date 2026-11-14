@@ -91,6 +91,18 @@ test('project titles have no view-transition name so they do not slide across th
   await expect(page.locator('.case-study h1')).toHaveCSS('view-transition-name', 'none');
 });
 
+test('a page change slides the new page up as a sheet over the dimming old one (issue #555)', async ({ page }) => {
+  await page.addInitScript(() => {
+    const seen: string[] = [];
+    (window as unknown as { seen: string[] }).seen = seen;
+    document.addEventListener('animationstart', (e) => { seen.push(e.animationName); }, true);
+  });
+  await page.goto('/en/blog/');
+  await page.locator('main a[href*="/blog/"]').first().click();
+  await expect(page.locator('.post h1')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(expect.arrayContaining(['page-rise', 'page-sink']));
+});
+
 test('project screenshots have no view-transition name so they do not scroll across the screen (issue #256)', async ({ page }) => {
   await page.goto('/en/');
   const shot = page.locator('#work .shot').first();

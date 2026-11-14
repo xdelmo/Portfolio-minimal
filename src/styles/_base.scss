@@ -283,18 +283,22 @@ html:not(.theme-switching)::view-transition-group(*) {
   animation-duration: 0.5s;
   animation-timing-function: var(--ease-cover);
 }
+/* the old page dims under the rising sheet, so the two never read as one torn page (issue #555) */
 html:not(.theme-switching)::view-transition-old(root) {
-  animation: none;
+  animation: page-sink 0.5s var(--ease-cover) both;
+}
+@keyframes page-sink {
+  to {
+    opacity: 0.2;
+  }
 }
 html:not(.theme-switching)::view-transition-new(root) {
   animation: page-rise 0.5s var(--ease-cover) both;
 }
 @keyframes page-rise {
+  /* a sheet, not a window: its top (the title) leads, instead of the page's bottom showing first (issue #555) */
   from {
-    clip-path: inset(100% 0 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
+    translate: 0 100%;
   }
 }
 

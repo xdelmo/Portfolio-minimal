@@ -108,6 +108,11 @@
   /* the one overlay (DESIGN.md scrim): black at 60% behind the player card, in both themes */
   --scrim: rgb(0 0 0 / 0.6);
 
+  /* text selection: a peach highlighter under ink, the same in both themes (issue #568); peach is the one pastel no
+     band uses as its background, so a selection never vanishes into a band */
+  --selection-bg: #ffb88f;
+  --selection-fg: #1d1d1c;
+
   /* modular scale 1.25 on 18px */
   --step--2: 0.72rem;    /* 11.5px: micro-labels, code tags, header subline */
   --step--1: 0.9rem;     /* 14.4px: rem counts from the root's 16px, not the body's 18px */

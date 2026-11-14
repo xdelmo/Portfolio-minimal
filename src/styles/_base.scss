@@ -35,6 +35,11 @@ body {
   overflow-x: clip;
 }
 
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
 h1,
 h2,
 h3 {

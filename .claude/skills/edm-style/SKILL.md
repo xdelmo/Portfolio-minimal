@@ -18,12 +18,13 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 
 | Role | Token | Light | Dark |
 |---|---|---|---|
-| Page | `--bg` | `#e5e5e5` concrete | `#121212` night |
-| Surface | `--surface` | `#f2f2f2` paper | `#1c1c1c` slate |
-| Text | `--fg` | `#1d1d1c` ink | white 87% |
+| Page | `--bg` | `#dedede` concrete | `#121212` night |
+| Surface | `--surface` | `#f2f2f2` paper | `#202020` slate |
+| Text | `--fg` | `#1d1d1c` ink | `#dedede` |
 | Secondary text | `--fg-muted` | `#555` | `#aaa` |
-| Accent (buttons, focus, pixels) | `--accent` | `#0066d4` | `#0066d4` |
-| Links | `--link` | `#005fc5` | `#4d9bf0` |
+| Accent (button fill) | `--accent` | `#0058b8` | `#0066d4` |
+| Links, focus | `--link`, `--focus` | `#0058b8` | `#4d9bf0` |
+| Thin accent lines (thread, pixel cursor, current slot, blockquote) | `--accent-line` | `#0058b8` | `#4d9bf0` |
 | Pixel palette, decoration only | `--px-1`…`--px-6` | blue, blue tints, lavender ×2, peach | brighter versions |
 | Moai | `--stone*`, `--moai-eye-white` | warm greys | darker greys |
 

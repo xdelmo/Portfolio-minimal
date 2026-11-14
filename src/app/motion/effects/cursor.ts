@@ -93,10 +93,38 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   let magnet: HTMLElement | null = null;
   let snapped: HTMLElement | null = null;
   let bare: HTMLElement | null = null; // the snap zone whose system pointer is hidden
+  let lastX = 0;
+  let lastY = 0;
+  // the sticky header hides whatever scrolls under it; the frame (above it) must not ring a button it hides (issue #534)
+  const header = document.querySelector('app-site-header');
+  const covered = (b: DOMRect): boolean => b.top < (header?.getBoundingClientRect().bottom ?? 0);
+  const snapTo = (snap: HTMLElement | null, zone: HTMLElement | null): void => {
+    if (snap === snapped) return;
+    snapped = snap;
+    // the frame is the cursor now: the system pointer hides over the zone, so only one cursor shows (issue #523)
+    if (bare) bare.style.cursor = '';
+    bare = snap ? zone : null;
+    if (bare) bare.style.cursor = 'none';
+    // the frame is sized from the button every frame: a CSS transition on top would trail its growth (issue #489)
+    if (snap) {
+      dot.style.transition = 'background-color 120ms steps(2)';
+      gsap.ticker.add(frame);
+    } else {
+      gsap.ticker.remove(frame);
+      dot.style.width = dot.style.height = dot.style.margin = dot.style.transition = '';
+    }
+  };
   // every frame while snapped: the button grows into its pill and leans, and the frame follows it without a move
   const frame = (): void => {
     if (!snapped) return;
     const b = snapped.getBoundingClientRect();
+    // scrolling sends no pointermove: a button that slid under the header lets the frame go back to the pointer
+    if (covered(b)) {
+      snapTo(null, null);
+      toX(lastX);
+      toY(lastY);
+      return;
+    }
     dot.style.width = `${String(b.width + FRAME)}px`;
     dot.style.height = `${String(b.height + FRAME)}px`;
     dot.style.margin = `${String(-(b.height + FRAME) / 2)}px 0 0 ${String(-(b.width + FRAME) / 2)}px`;
@@ -111,25 +139,14 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
       gsap.set(arrow, { x: e.clientX, y: e.clientY });
       shown = true;
     }
+    lastX = e.clientX;
+    lastY = e.clientY;
     const target = e.target instanceof Element ? e.target : null;
     // over a snap zone (a project's picture) the pixel leaves the pointer and frames the zone's button
     const zone = target?.closest<HTMLElement>('[data-snap-zone]') ?? null;
-    const snap = zone?.querySelector<HTMLElement>('[data-snap]') ?? null;
-    if (snap !== snapped) {
-      snapped = snap;
-      // the frame is the cursor now: the system pointer hides over the zone, so only one cursor shows (issue #523)
-      if (bare) bare.style.cursor = '';
-      bare = snap ? zone : null;
-      if (bare) bare.style.cursor = 'none';
-      // the frame is sized from the button every frame: a CSS transition on top would trail its growth (issue #489)
-      if (snap) {
-        dot.style.transition = 'background-color 120ms steps(2)';
-        gsap.ticker.add(frame);
-      } else {
-        gsap.ticker.remove(frame);
-        dot.style.width = dot.style.height = dot.style.margin = dot.style.transition = '';
-      }
-    }
+    const found = zone?.querySelector<HTMLElement>('[data-snap]') ?? null;
+    const snap = found && !covered(found.getBoundingClientRect()) ? found : null;
+    snapTo(snap, zone);
     if (!snap) {
       toX(e.clientX);
       toY(e.clientY);

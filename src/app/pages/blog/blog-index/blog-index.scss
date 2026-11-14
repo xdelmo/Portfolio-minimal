@@ -7,6 +7,10 @@
       display: grid;
       gap: var(--space-3);
     }
+    .item {
+      width: var(--space-8);
+      height: var(--space-8);
+    }
     .lede {
       max-width: 56ch;
       margin: 0;

@@ -9,18 +9,19 @@
     }
     ul {
       display: grid;
-      gap: var(--space-3);
+      gap: var(--space-4);
       margin: 0;
       padding: 0;
       list-style: none;
     }
+    // each study a row under a 1px rule, like the tool levels: a list to read, not three tiles (issue #533)
     li {
       display: grid;
-      grid-template-columns: var(--space-8) 1fr;
+      grid-template-columns: var(--space-8) minmax(0, var(--measure));
       column-gap: var(--space-3);
       align-items: start;
-      padding: var(--space-3);
-      border: 1px solid var(--rule);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--rule);
     }
     .sprite {
       width: var(--space-8);
@@ -45,16 +46,4 @@
     a {
       justify-self: start;
       margin-top: 4px;
-    }
-    // three tiles side by side, never two and an orphan
-    @include bp.up(lg) {
-      ul {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      // a third of the column is too narrow for a sprite beside the words: it sits above them
-      li {
-        grid-template-columns: 1fr;
-        align-content: start;
-        row-gap: var(--space-2);
-      }
     }

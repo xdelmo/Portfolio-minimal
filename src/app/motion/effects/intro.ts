@@ -21,7 +21,7 @@ export const introEffect: Effect = (root, { gsap, desktop }) => {
       root.querySelectorAll('.px'),
       { scale: 0 },
       // the colour site-intro.ts gives each square
-      { scale: 1, backgroundColor: (_: number, px: HTMLElement) => getComputedStyle(px).getPropertyValue('--c').trim(), duration: 0.3, stagger: 0.03, ease: 'back.out(3)' },
+      { scale: 1, backgroundColor: (_: number, px: HTMLElement) => getComputedStyle(px).getPropertyValue('--c').trim(), duration: 0.3, stagger: 0.03, ease: 'power3.out' },
       0.1,
     )
     .addLabel('lift')

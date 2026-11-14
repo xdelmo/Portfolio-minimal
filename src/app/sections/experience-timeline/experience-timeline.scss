@@ -62,8 +62,10 @@
       display: grid;
       gap: var(--space-2);
     }
+    // the points keep the reading measure: full-width lines were hard to read and ran under the parked moai (issue #533)
     .highlights {
       display: grid;
+      max-width: var(--measure);
       gap: var(--space-1);
       padding-left: 1.2em;
       list-style: square;

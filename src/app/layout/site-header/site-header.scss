@@ -128,7 +128,14 @@
         font-size: inherit;
       }
     }
+    // About joins the links only where the bar has room for it (at md it ran into the name, issue #532)
+    nav a.nav-about {
+      display: none;
+    }
     @include bp.up(lg) {
+      nav a.nav-about {
+        display: inline-flex;
+      }
       nav,
       .site-header {
         gap: var(--space-3);

@@ -91,6 +91,12 @@ test('project titles have no view-transition name so they do not slide across th
   await expect(page.locator('.case-study h1')).toHaveCSS('view-transition-name', 'none');
 });
 
+test('the pixel cursor has its own view-transition name so it does not rise with the page (issue #560)', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('.pixel-cursor')).toHaveCSS('view-transition-name', 'pixel-cursor');
+  await expect(page.locator('.pixel-arrow')).toHaveCSS('view-transition-name', 'pixel-arrow');
+});
+
 test('a page change slides the new page up as a sheet over the dimming old one (issue #555)', async ({ page }) => {
   await page.addInitScript(() => {
     const seen: string[] = [];

@@ -270,10 +270,22 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
 }
 
 /* Page change (router view transition, issue #205): the header stays put and the new page rises over the old one
-   from the bottom edge, a surface uncovering like the language curtain. Nothing else is named: a named element would
+   from the bottom edge, a surface uncovering like the language curtain. Only fixed things are named (header, cursor): any other would
    slide across the rising page (issues #256, #551). Not during the theme circle above. */
 app-site-header {
   view-transition-name: site-header;
+}
+/* the pixel cursor and its arrow stay under the pointer: left in the root snapshot they rose with the page (issue #560) */
+.pixel-cursor {
+  view-transition-name: pixel-cursor;
+}
+.pixel-arrow {
+  view-transition-name: pixel-arrow;
+}
+/* it comes before the header in the DOM, so without this the header's group would cover it */
+::view-transition-group(pixel-cursor),
+::view-transition-group(pixel-arrow) {
+  z-index: 1;
 }
 /* the open mobile menu is a fixed panel inside the header: it would stretch the header's snapshot, so it goes with the page */
 app-site-header:has(.site-menu[open]) {

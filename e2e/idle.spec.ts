@@ -56,3 +56,25 @@ test('a menu link clicked while its letters shuffle still navigates', async ({ p
   await page.mouse.up();
   await expect(page).toHaveURL(/\/en\/#experience$/);
 });
+
+// A page change is a view transition, a still picture of the page: a shuffle caught half way froze in it and started
+// again once the page arrived (issue #572). The click settles the link, and it stays still while the pointer rests.
+test('a clicked menu link shows its real name and does not shuffle again on the new page', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the menu is hidden on phones');
+  await page.goto('/en/');
+  await expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
+  const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Blog' });
+  await link.hover();
+  await link.evaluate((el) => {
+    el.addEventListener('click', () => {
+      const seen: string[] = [el.textContent];
+      Object.assign(window, { seen });
+      new MutationObserver(() => seen.push(el.textContent)).observe(el, { subtree: true, childList: true, characterData: true });
+    });
+  });
+  await link.click();
+  await expect(page).toHaveURL(/\/en\/blog/);
+  await page.waitForTimeout(800);
+  const seen = await page.evaluate(() => (window as unknown as { seen: string[] }).seen);
+  expect(seen.every((text) => text === 'Blog')).toBe(true);
+});

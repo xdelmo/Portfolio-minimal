@@ -74,12 +74,17 @@
       transform-origin: left;
     }
     nav a:hover::after,
+    nav a[data-settled]::after,
     nav a[aria-current]::after {
       transform: scaleX(1);
     }
     @media (hover: hover) and (prefers-reduced-motion: no-preference) {
       nav a::after {
         transition: transform 120ms steps(4);
+      }
+      // a clicked link is drawn whole at once, before the page change takes its picture (issue #572)
+      nav a[data-settled]::after {
+        transition: none;
       }
     }
     .controls {

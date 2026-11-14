@@ -168,6 +168,8 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus` and `--rule` to its own AA-checked set (`band-link` on the pastel bands; `band-pastel-muted`, `band-lavender-muted`, `band-ink-muted` for secondary text and `band-ink-link` for links on ink), so its content follows by itself. In dark theme the bands turn deep navy and violet.
 
 ### Named Rules
+**The Highlighter Rule.** Selected text is ink (`#1d1d1c`) on Pixel Peach (`#ffb88f`), about 10:1, in both themes and on every band (`--selection-bg`, `--selection-fg`). Peach is the one pastel no band sits on, so a selection never vanishes into its background.
+
 **The No Green Rule.** No green anywhere: not for success, not in syntax colours, not as a pastel. The brand is greys, the blue family, lavender and peach.
 
 **The Silent Pastel Rule.** The `pixel-*` colours never carry text or a control's state; text on a pastel band uses that band's own ink tokens.

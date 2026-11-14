@@ -1,7 +1,7 @@
 // Checks a Netlify deploy against the redirect, 404, SEO/GEO and security header rules (spec §8, §9, §14).
 // Usage: npm run verify:deploy -- https://deploy-preview-<n>--<site>.netlify.app
 import { argv, exit } from 'node:process';
-import { URL } from 'node:url';
+import { URL, pathToFileURL } from 'node:url';
 
 const it = { 'accept-language': 'it-IT,it;q=0.9,en;q=0.8' };
 
@@ -82,7 +82,7 @@ export async function runChecks(base, fetchImpl = globalThis.fetch, checks = CHE
   return rows;
 }
 
-if (import.meta.url === `file://${argv[1]}`) {
+if (import.meta.url === pathToFileURL(argv[1]).href) {
   const base = argv[2];
   if (!base) {
     console.error('Usage: npm run verify:deploy -- <base-url>');

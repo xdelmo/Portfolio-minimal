@@ -17,6 +17,12 @@
         "value": "instrument sans",
         "createdAt": "2026-11-11T12:16:01.437Z",
         "reason": "the site's brand font, reused by the handbook on purpose, issue #454"
+      },
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "createdAt": "2026-11-14T00:31:23.145Z",
+        "reason": "design system: DESIGN.md sanctions Instrument Serif italic for the voice role only (Typography, Don'ts)"
       }
     ]
   }

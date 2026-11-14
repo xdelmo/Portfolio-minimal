@@ -1,11 +1,11 @@
 ---
 title: Architecting this portfolio with Angular 22
-description: Zoneless static prerendering, zero server runtime on Netlify, deferred GSAP motion, and canvas shaders while maintaining a 100 Lighthouse score.
+description: Zoneless static prerendering, zero server runtime on Netlify, deferred GSAP motion, and canvas shaders, with Lighthouse CI holding mobile performance at 95 or more.
 date: 2026-11-12
 ---
 When choosing a tech stack for a personal developer portfolio in 2026, most engineers reach for Astro, Next.js, or plain static HTML. Angular is frequently typecast as an enterprise-only framework—powerful for complex internal dashboards, but too heavy and opinionated for a personal showcase.
 
-I built this portfolio to prove the opposite: pushing Angular 22 toward a completely static, zoneless model driven by Signals, achieving a 100 Lighthouse mobile score, and delivering rich interactive motion alongside strict WCAG 2.2 AA accessibility.
+I built this portfolio to prove the opposite: pushing Angular 22 toward a completely static, zoneless model driven by Signals, holding mobile performance at 95 or more on Lighthouse CI, and delivering rich interactive motion alongside strict WCAG 2.2 AA accessibility.
 
 ## Static prerendering and a zoneless architecture
 

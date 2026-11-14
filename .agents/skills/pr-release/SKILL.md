@@ -50,7 +50,8 @@ flowchart TD
     K --> L["Crea Tag Annotato Git vX.Y.Z"]
     L --> M["Push su origin/master e Push Tag"]
     M --> N["gh release create con Note Categorizzate"]
-    N --> P["Pulizia: node scripts/cleanup-branches.mjs, poi --apply"]
+    N --> Q["Chiudi le issue rimaste aperte (sezione 4)"]
+    Q --> P["Pulizia: node scripts/cleanup-branches.mjs, poi --apply"]
     P --> O["✅ Release Pubblicata con Successo"]
 ```
 
@@ -94,6 +95,22 @@ node scripts/cleanup-branches.mjs --apply
 ```
 Toglie solo ciò che è sicuramente già entrato: un branch se una PR **merged** su GitHub ha come head esattamente la sua punta. Il controllo tramite PR verificate su GitHub assicura che solo i branch effettivamente mergiati vengano rimossi, mentre un commit aggiunto dopo il merge lo tiene in vita. Un worktree va via solo se sta su un branch così, è pulito (nemmeno file non tracciati), non è `locked`, non è il checkout principale, nessun processo ha la cwd al suo interno (lsof, quindi le sessioni aperte in altri worktree restano) e non contiene un worktree annidato da tenere. Non tocca mai `master`, `devel`, `v2` o `archive/*`: i branch di release non si eliminano da origin. Mostra il piano all'utente prima di `--apply`, e riporta ciò che lo script segnala come `kept` invece di forzarlo: niente `--force` e niente `git worktree remove --force`. Il worktree della sessione corrente resta, perché ci sta dentro questo processo; a fine sessione lo toglie l'utente.
 
+### 4. Chiudere le issue rimaste aperte (dopo ogni rilascio, prima della pulizia)
+GitHub esegue il `Closes #n` di una PR solo quando la PR viene mergiata nel branch di default (`master`). Le PR di lavoro vanno in `devel`, quindi le loro issue restano aperte. La PR di release `devel → master` non rilegge i `Closes` dei commit che porta dentro: dopo v2.7.0 erano rimaste aperte 17 issue già risolte (issue #529). A tag pubblicato, raccogli le issue delle PR entrate nella release e chiudi quelle ancora aperte:
+```bash
+new=vX.Y.Z; prev=$(git describe --tags --abbrev=0 "$new^")
+git log --merges --format=%s "$prev..$new" | grep -oE 'pull request #[0-9]+' | grep -oE '[0-9]+' |
+  while read pr; do
+    gh pr view "$pr" --json closingIssuesReferences,headRefName \
+      -q '(.closingIssuesReferences[].number), (.headRefName | capture("/(?<n>[0-9]+)-").n // empty)'
+  done | sort -un |
+  while read n; do
+    [ "$(gh issue view "$n" --json state -q .state)" = OPEN ] || continue
+    gh issue close "$n" --reason completed --comment "Released in $new (https://github.com/xdelmo/Portfolio-minimal/releases/tag/$new). Its PR targeted \`devel\`, so GitHub did not close it."
+  done
+```
+Le fonti sono due: i `Closes #n` nel corpo delle PR (`closingIssuesReferences`) e il numero nel nome del branch (`fix/<n>-topic`). Prima di chiudere, rileggi l'elenco: un branch `<prefix>/<n>-…` che ha risolto solo una parte dell'issue la chiuderebbe troppo presto, e in quel caso la lasci aperta con un commento. In zsh usa `while read`, non `for n in $var`, che non divide le parole. L'esecuzione è finita quando, rilanciato senza `gh issue close`, il ciclo non stampa più issue `OPEN`.
+
 ---
 
 ## 📋 Regole Conventional Commits per SemVer
@@ -129,7 +146,8 @@ Dopo aver completato un rilascio, verificare:
 5. `npm run test:scripts` (i test degli script rimangono al 100% verdi).
 6. Le info della repo erano già aggiornate prima del merge (vedi sotto).
    Se la release tocca `handbook/**` o `mkdocs.yml` (solo allora `docs.yml` parte su `master`), l'handbook è ripubblicato: `gh run list --workflow docs.yml --branch master --limit 1` è verde e https://xdelmo.github.io/Portfolio-minimal/ mostra le pagine aggiornate.
-7. `node scripts/cleanup-branches.mjs` non elenca più niente da togliere, a parte ciò che `--apply` ha segnalato come `kept` e i worktree ancora in uso (sezione "Pulizia di Branch e Worktree").
+7. Nessuna issue risolta dalla release è ancora aperta (sezione "Chiudere le issue rimaste aperte").
+8. `node scripts/cleanup-branches.mjs` non elenca più niente da togliere, a parte ciò che `--apply` ha segnalato come `kept` e i worktree ancora in uso (sezione "Pulizia di Branch e Worktree").
 
 ---
 

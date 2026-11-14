@@ -3,6 +3,10 @@
       <div class="copy" #copy>
       <h1 id="hero-title"><span class="method">{{ head[0] }}</span>&ngsp;<span class="voice">{{ head[1] }}</span></h1>
       <p class="lede">{{ lede[0] }}<app-moai-peek [word]="lede[1]" />{{ lede[2] }}</p>
+      <!-- one way in from the first screen, a line of text rather than buttons (issue #339 took those out, #532) -->
+      @if (content.projects[0]; as lead) {
+        <p class="next"><a class="next-link" [routerLink]="['/work', lead.slug]"><span class="next-label" i18n="@@home.hero.next">Start with the {{ lead.title }} case study</span><app-pixel-arrow class="next-arrow" /></a></p>
+      }
       </div>
       <app-pixel-field class="field" [clear]="copy" />
       <app-pixel-dissolve class="seam seam--hero" data-scrub [cols]="120" [rows]="3" [colors]="heroSeam" grow="up" />

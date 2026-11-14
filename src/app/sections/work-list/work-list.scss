@@ -49,6 +49,12 @@
         align-items: center;
       }
     }
+    // the demo and the code at the button's height and size, so the row reads as one set of actions (issue #533)
+    .actions .repo-link {
+      min-height: 48px;
+      padding-inline: var(--space-3);
+      font-size: inherit;
+    }
     .repos {
       display: flex;
       flex-wrap: wrap;

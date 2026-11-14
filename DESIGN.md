@@ -2,23 +2,23 @@
 name: edm.
 description: Emanuele Del Monte's portfolio, a calm 8px pixel grid with a hidden arcade inside.
 colors:
-  concrete: "#e5e5e5"
+  concrete: "#dedede"
   paper: "#f2f2f2"
   ink: "#1d1d1c"
   ink-muted: "#555555"
-  signal-blue: "#0066d4"
+  signal-blue: "#0058b8"
+  signal-blue-bright: "#0066d4"
   on-signal: "#ffffff"
-  link-blue: "#005fc5"
   night: "#121212"
-  slate: "#1c1c1c"
-  night-ink: "rgb(255 255 255 / 0.87)"
+  slate: "#202020"
+  night-ink: "#dedede"
   night-muted: "#aaaaaa"
   night-link: "#4d9bf0"
   pixel-sky: "#7fb2ec"
   pixel-mist: "#b9d5f5"
   pixel-lavender: "#c9b8f5"
   pixel-lilac: "#dccff8"
-  pixel-peach: "#ffc9a8"
+  pixel-peach: "#ffb88f"
   band-pastel: "#b9d5f5"
   band-lavender: "#dccff8"
   band-ink: "#1d1d1c"
@@ -151,8 +151,9 @@ Density is low and text-first. Sections alternate with full-bleed bands (pastel,
 Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tints, lavender, peach) that never carries text.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the primary button's fill, the focus ring in light theme, the pixel thread and the strongest pixel. The same value in both themes.
-- **Link Blue** (`link-blue`, `night-link` in dark): inline links, a step darker than Signal Blue in light theme for AA on concrete.
+- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and the thin accent lines (pixel thread, pixel cursor, current inventory slot, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
+- **Bright Signal** (`signal-blue-bright`): the primary button's fill in dark theme and the strongest pixel (`--px-1`) in both themes. Never text on concrete.
+- **Night Link** (`night-link`): in dark theme links, the focus ring and `--accent-line`, because the fill blue is too dark to read as a thin line on night.
 
 ### Neutral
 - **Concrete** (`concrete`) and **Night** (`night`): the page in light and dark.
@@ -238,7 +239,7 @@ A hard-edged tag holding the pixel GitHub mark and the repository name.
 Full-bleed coloured backgrounds behind a section (see Colors). On desktop a band grows from an inset block with a hard clip; its top and bottom meet the page through a seam of crumbling pixels.
 
 ### Navigation
-A fixed header outside the scrolling content: the moai mark (with the full name in tracked capitals on two lines), three section links (Work, Experience, Blog; About is one scroll below the hero, so only the phone menu lists it), the language switch showing its code (`EN`), the single motion pause button, theme toggle and the primary "Contact me" button from 768px (on phones the bar keeps the logo on the left and the menu button on the right; the primary "Contact me" button lives prominently in the phone menu panel, along with the other links and the controls). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble.
+A fixed header outside the scrolling content: the moai mark (with the full name in tracked capitals on two lines), the section links (Work, Experience, Blog, and About from 1024px, where the bar has room for it; the phone menu lists them all), the language switch showing its code (`EN`), the single motion pause button, theme toggle and the primary "Contact me" button from 768px (on phones the bar keeps the logo on the left and the menu button on the right; the primary "Contact me" button lives prominently in the phone menu panel, along with the other links and the controls). Control icons are all 16px, two pixels per cell. A link's hover and the current page share one hard 2px underline that draws itself in steps. Theme changes reveal in a circle, the language switch drops a curtain in pixel steps, the menu links scramble. A page change slower than 200ms shows a 4px accent bar on the header's bottom edge, creeping in steps until the page arrives.
 
 ### The living objects
 The hero pixel field, the voxel moai, the tool levels, the pixel thread and seams, the side quest sprites and the Press start player card. They are specified, with their behaviour on desktop, phones and reduced motion, in `.claude/skills/edm-style/SKILL.md`. A new section gets one idea from this family, not a new visual language.
@@ -248,9 +249,12 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 ### Do:
 - **Do** read colours through the CSS custom properties (`--bg`, `--fg`, `--accent`, `--link`, band tokens); never hard-code a hex in a component.
 - **Do** keep every space and size on the 8px scale.
-- **Do** use `steps()` for state transitions on buttons, tags and the language curtain.
+- **Do** use `steps()` for state transitions on buttons and tags.
+- **Do** let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header has a `view-transition-name`: a named title would slide across the page.
 - **Do** reuse `PixelDissolve`, the seams and the thread before inventing a new transition.
 - **Do** put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.
+- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure`.
+- **Do** give secondary actions the primary button's 48px height and type size.
 - **Do** check every change at 1280px and 390px, in both themes.
 
 ### Don't:
@@ -259,4 +263,7 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 - **Don't** set text in a `pixel-*` colour.
 - **Don't** use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.
 - **Don't** add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.
+- **Don't** lay things out as a row of three identical tiles.
+- **Don't** let an entrance overshoot (`back.out`, elastic, bounce).
+- **Don't** write aphorisms after a colon, triads, idioms, or claims CI does not enforce (see Copy voice in edm-style).
 - **Don't** add hover-only behaviour on phones, or block vertical scrolling on anything swipeable.

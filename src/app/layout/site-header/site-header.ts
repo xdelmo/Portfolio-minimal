@@ -7,12 +7,13 @@ import { ThemeToggle } from '../../core/theme/theme-toggle';
 import { MoaiMark } from '../moai-mark';
 import { MusicToggle } from '../music-toggle';
 import { PauseToggle } from '../pause-toggle';
+import { RouteProgress } from '../route-progress';
 import { SiteMenu } from '../site-menu/site-menu';
 
 @Component({
   selector: 'app-site-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, MusicToggle, SiteMenu, MoaiMark],
+  imports: [RouterLink, RouterLinkActive, LanguageSwitch, ThemeToggle, PauseToggle, MusicToggle, SiteMenu, MoaiMark, RouteProgress],
   templateUrl: './site-header.html',
   styleUrl: './site-header.scss',
 })

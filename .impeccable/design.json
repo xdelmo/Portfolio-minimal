@@ -4,16 +4,17 @@
   "title": "Design System: edm.",
   "extensions": {
     "colorMeta": {
-      "signal-blue": { "role": "primary", "displayName": "Signal Blue", "canonical": "#0066d4", "tonalRamp": ["#0a1f3d", "#0b3a73", "#0b4f96", "#0066d4", "#2f86ea", "#7fb2ec", "#b9d5f5", "#e3effc"] },
-      "link-blue": { "role": "primary", "displayName": "Link Blue", "canonical": "#005fc5" },
-      "concrete": { "role": "neutral", "displayName": "Concrete", "canonical": "#e5e5e5", "tonalRamp": ["#121212", "#1c1c1c", "#1d1d1c", "#555555", "#aaaaaa", "#d0d0d0", "#e5e5e5", "#f2f2f2"] },
+      "signal-blue": { "role": "primary", "displayName": "Signal Blue", "canonical": "#0058b8", "tonalRamp": ["#0a1f3d", "#0b3a73", "#0b4f96", "#0066d4", "#2f86ea", "#7fb2ec", "#b9d5f5", "#e3effc"] },
+      "signal-blue-bright": { "role": "primary", "displayName": "Bright Signal", "canonical": "#0066d4" },
+      "night-link": { "role": "primary", "displayName": "Night Link", "canonical": "#4d9bf0" },
+      "concrete": { "role": "neutral", "displayName": "Concrete", "canonical": "#dedede", "tonalRamp": ["#121212", "#1d1d1c", "#202020", "#555555", "#aaaaaa", "#d0d0d0", "#dedede", "#f2f2f2"] },
       "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f2f2f2" },
       "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1d1d1c" },
       "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#555555" },
       "night": { "role": "neutral", "displayName": "Night", "canonical": "#121212" },
-      "slate": { "role": "neutral", "displayName": "Slate", "canonical": "#1c1c1c" },
+      "slate": { "role": "neutral", "displayName": "Slate", "canonical": "#202020" },
       "pixel-lavender": { "role": "tertiary", "displayName": "Pixel Lavender", "canonical": "#c9b8f5" },
-      "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffc9a8" },
+      "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffb88f" },
       "band-pastel": { "role": "secondary", "displayName": "Pastel Band", "canonical": "#b9d5f5" },
       "band-lavender": { "role": "secondary", "displayName": "Lavender Band", "canonical": "#dccff8" },
       "band-ink": { "role": "secondary", "displayName": "Ink Band", "canonical": "#1d1d1c" },
@@ -49,7 +50,7 @@
       "refersTo": "button-primary",
       "description": "The main action of a section; lifts onto a hard ink shadow on hover.",
       "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#work\">See my work</a>",
-      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; cursor: pointer; transition: transform 120ms steps(2), box-shadow 120ms steps(2); } .ds-btn-primary { border-color: var(--accent, #0066d4); background: var(--accent, #0066d4); color: var(--on-accent, #ffffff); } .ds-btn-primary:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0 var(--fg, #1d1d1c); } .ds-btn:active { transform: translate(2px, 2px); box-shadow: none; } .ds-btn:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; cursor: pointer; transition: transform 120ms steps(2), box-shadow 120ms steps(2); } .ds-btn-primary { border-color: var(--accent, #0058b8); background: var(--accent, #0058b8); color: var(--on-accent, #ffffff); } .ds-btn-primary:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0 var(--fg, #1d1d1c); } .ds-btn:active { transform: translate(2px, 2px); box-shadow: none; } .ds-btn:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
     },
     {
       "name": "Secondary Button",
@@ -57,7 +58,7 @@
       "refersTo": "button-secondary",
       "description": "A second action next to the primary one: ink outline, no fill.",
       "html": "<a class=\"ds-btn-secondary\" href=\"#contact\">Contact me</a>",
-      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; } .ds-btn-secondary:active { transform: translate(2px, 2px); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; } .ds-btn-secondary:active { transform: translate(2px, 2px); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
     },
     {
       "name": "Repository Tag",
@@ -65,7 +66,7 @@
       "refersTo": "repo-tag",
       "description": "A link to a GitHub repository: pixel mark and name in a hard-edged tag that inverts on hover.",
       "html": "<a class=\"ds-repo-tag\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" shape-rendering=\"crispEdges\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M5 1h6v1h2v2h1v6h-1v2h-2v1h-1v2H6v-2H5v-1H3v-2H2V4h1V2h2z\"/></svg>dashboard-tesi</a>",
-      "css": ".ds-repo-tag { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background-color 120ms steps(2), color 120ms steps(2); } .ds-repo-tag:hover { background: var(--fg, #1d1d1c); color: var(--bg, #e5e5e5); } .ds-repo-tag:active { transform: translate(2px, 2px); } .ds-repo-tag:focus-visible { outline: 3px solid var(--focus, #0066d4); outline-offset: 3px; }"
+      "css": ".ds-repo-tag { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background-color 120ms steps(2), color 120ms steps(2); } .ds-repo-tag:hover { background: var(--fg, #1d1d1c); color: var(--bg, #dedede); } .ds-repo-tag:active { transform: translate(2px, 2px); } .ds-repo-tag:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
     },
     {
       "name": "Ink Band",

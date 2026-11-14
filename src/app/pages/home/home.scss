@@ -72,6 +72,37 @@
 .muted {
   color: var(--fg-muted);
 }
+// the hero's one way in (issue #532): a line of text with the site's pixel arrow, the contact finale's link in small
+.next {
+  margin: 0;
+}
+.next-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 48px; // touch target (WCAG 2.5.8)
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: none;
+}
+.next-label {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+.next-arrow {
+  flex-shrink: 0;
+  width: 0.75em;
+  height: 0.75em;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .next-arrow {
+    transition: transform 160ms steps(2);
+  }
+  .next-link:hover .next-arrow {
+    transform: translate(0.12em, -0.12em);
+  }
+}
 // the field sits behind the hero text: a cloud around a clearing for it (issue #304)
 .hero {
   isolation: isolate;

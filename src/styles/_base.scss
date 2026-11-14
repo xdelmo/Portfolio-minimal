@@ -269,6 +269,39 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
   animation: none;
 }
 
+/* Page change (router view transition, issue #205): the header stays put and the new page rises over the old one
+   from the bottom edge, a surface uncovering like the language curtain. Nothing else is named: a named element would
+   slide across the rising page (issues #256, #551). Not during the theme circle above. */
+app-site-header {
+  view-transition-name: site-header;
+}
+/* the open mobile menu is a fixed panel inside the header: it would stretch the header's snapshot, so it goes with the page */
+app-site-header:has(.site-menu[open]) {
+  view-transition-name: none;
+}
+html:not(.theme-switching)::view-transition-group(*) {
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-cover);
+}
+/* the old page dims under the rising sheet, so the two never read as one torn page (issue #555) */
+html:not(.theme-switching)::view-transition-old(root) {
+  animation: page-sink 0.5s var(--ease-cover) both;
+}
+@keyframes page-sink {
+  to {
+    opacity: 0.2;
+  }
+}
+html:not(.theme-switching)::view-transition-new(root) {
+  animation: page-rise 0.5s var(--ease-cover) both;
+}
+@keyframes page-rise {
+  /* a sheet, not a window: its top (the title) leads, instead of the page's bottom showing first (issue #555) */
+  from {
+    translate: 0 100%;
+  }
+}
+
 /* A full-bleed coloured band behind a section. The section re-points the colour tokens, so everything inside
    (text, links, focus ring, rules) follows. --band-inset lets GSAP grow the band from an inset block, hard-edged
    like everything else (rounded corners were off the design, issue #173). */

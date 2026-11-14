@@ -58,7 +58,7 @@
       background: currentColor;
       opacity: 0.9;
       animation: intro-px calc(0.3s / var(--k)) calc(var(--d) + (0.1s + var(--i) * 0.03s) / var(--k))
-        cubic-bezier(0.34, 1.8, 0.64, 1) both;
+        var(--ease-arrive) both;
     }
     // the colour each square ends on; effects/intro.ts reads it back
     .px:nth-child(5n + 1) {

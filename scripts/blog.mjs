@@ -55,8 +55,12 @@ export function articleParts(body) {
   const pieces = marked.parse(body).split(CODE);
   const parts = [];
   pieces.forEach((piece, i) => {
-    if (i % 2) parts.push(blocks[Number(piece)]);
-    else if (piece.trim()) parts.push({ html: piece });
+    if (i % 2) {
+      const block = blocks[Number(piece)];
+      // the marker written in a post's own text, not by the renderer (issue #565)
+      if (!block) throw new Error(`blog: "<!--code:${piece}-->" in the text of a post`);
+      parts.push(block);
+    } else if (piece.trim()) parts.push({ html: piece });
   });
   return parts;
 }

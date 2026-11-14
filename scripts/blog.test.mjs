@@ -38,6 +38,10 @@ test('code blocks are parts of their own, with their raw text, between runs of H
   assert.deepEqual(articleParts('```\nplain\n```'), [{ code: 'plain' }]);
 });
 
+test('stops on the code marker written in the text of a post (issue #565)', () => {
+  assert.throws(() => articleParts('a <!--code:99--> b'), /in the text of a post/);
+});
+
 test('reading time rounds up, at least one minute', () => {
   assert.equal(minutes('word'), 1);
   assert.equal(minutes(Array(221).fill('w').join(' ')), 2);

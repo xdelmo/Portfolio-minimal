@@ -206,6 +206,10 @@
         <source>What will you do?</source>
         <target>Cosa vuoi fare?</target>
       </trans-unit>
+      <trans-unit id="a11y.loadingPage" datatype="html">
+        <source>Loading the page</source>
+        <target>Caricamento della pagina</target>
+      </trans-unit>
       <trans-unit id="a11y.newTab" datatype="html">
         <source>Opens in a new tab</source>
         <target>Si apre in una nuova scheda</target>

@@ -66,28 +66,31 @@ export const scrambleEffect: Effect = (root, { desktop }) => {
     settle(e.currentTarget);
     e.currentTarget.setAttribute('data-settled', '');
   };
-  const onLeave = (e: PointerEvent): void => {
-    const link = e.currentTarget;
-    if (!(link instanceof HTMLElement)) return;
-    // while the transition runs the pointer is over its picture, not the link: that is not leaving. Its hover only
-    // comes back a while after the transition ends, so a pointer that really left now keeps the link settled until
-    // it leaves again (shortcut: the next hover skips one shuffle, fine for a menu link)
+  // while the transition runs the pointer is over its picture, not the link: that is not leaving. The pointer
+  // usually leaves during it, and no pointerleave follows (issue #574), so any move off the link once the page is
+  // live again ends the settled state (shortcut: a pointer that stops dead during the transition keeps the underline
+  // until its next move, fine for a menu link)
+  const onMove = (e: PointerEvent): void => {
     if (document.activeViewTransition) return;
-    link.removeAttribute('data-settled');
+    for (const link of links) {
+      if (link.hasAttribute('data-settled') && !(e.target instanceof Node && link.contains(e.target))) {
+        link.removeAttribute('data-settled');
+      }
+    }
   };
+  document.addEventListener('pointermove', onMove, { passive: true });
   for (const link of links) {
     link.addEventListener('pointerenter', onEnter);
     link.addEventListener('focus', onEnter);
     link.addEventListener('click', onClick);
-    link.addEventListener('pointerleave', onLeave);
   }
 
   return () => {
+    document.removeEventListener('pointermove', onMove);
     for (const link of links) {
       link.removeEventListener('pointerenter', onEnter);
       link.removeEventListener('focus', onEnter);
       link.removeEventListener('click', onClick);
-      link.removeEventListener('pointerleave', onLeave);
       link.removeAttribute('data-settled');
       const word = link.getAttribute('aria-label');
       const timer = timers.get(link);

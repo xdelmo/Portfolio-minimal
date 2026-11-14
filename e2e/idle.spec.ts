@@ -78,3 +78,18 @@ test('a clicked menu link shows its real name and does not shuffle again on the 
   const seen = await page.evaluate(() => (window as unknown as { seen: string[] }).seen);
   expect(seen.every((text) => text === 'Blog')).toBe(true);
 });
+
+// The pointer usually leaves the link while the transition runs, when its leaving is ignored, and no later
+// pointerleave came: the clicked link kept its underline on the new page (issue #574).
+test('a clicked menu link loses its underline once the pointer moves away on the new page', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the menu is hidden on phones');
+  await page.goto('/en/');
+  await expect(page.locator('app-pixel-cursor')).toHaveAttribute('data-motion', 'ready');
+  const link = page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Blog' });
+  await link.click();
+  await page.mouse.move(400, 500);
+  await expect(page).toHaveURL(/\/en\/blog/);
+  await page.waitForFunction(() => !document.activeViewTransition);
+  await page.mouse.move(420, 520);
+  await expect(link).not.toHaveAttribute('data-settled');
+});

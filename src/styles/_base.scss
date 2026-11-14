@@ -275,6 +275,10 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
 app-site-header {
   view-transition-name: site-header;
 }
+/* the open mobile menu is a fixed panel inside the header: it would stretch the header's snapshot, so it goes with the page */
+app-site-header:has(.site-menu[open]) {
+  view-transition-name: none;
+}
 html:not(.theme-switching)::view-transition-group(*) {
   animation-duration: 0.5s;
   animation-timing-function: var(--ease-cover);
@@ -287,10 +291,10 @@ html:not(.theme-switching)::view-transition-new(root) {
 }
 @keyframes page-rise {
   from {
-    clip-path: inset(100% 0 0);
+    clip-path: inset(100% 0 0 0);
   }
   to {
-    clip-path: inset(0);
+    clip-path: inset(0 0 0 0);
   }
 }
 

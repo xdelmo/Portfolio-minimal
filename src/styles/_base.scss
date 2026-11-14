@@ -270,8 +270,8 @@ html.theme-switching.theme-to-dark::view-transition-new(root) {
 }
 
 /* Page change (router view transition, issue #205): the header stays put and the new page rises over the old one
-   from the bottom edge, a surface uncovering like the language curtain; the project title travels to its heading on
-   the same beat. Not during the theme circle above. */
+   from the bottom edge, a surface uncovering like the language curtain. Nothing else is named: a named element would
+   slide across the rising page (issues #256, #551). Not during the theme circle above. */
 app-site-header {
   view-transition-name: site-header;
 }

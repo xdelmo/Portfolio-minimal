@@ -84,13 +84,11 @@ test.describe('hero', () => {
   });
 });
 
-test('project title and case-study heading share a view-transition name', async ({ page }) => {
+test('project titles have no view-transition name so they do not slide across the rising page (issue #551)', async ({ page }) => {
   await page.goto('/en/');
-  const card = page.locator('#work h3').first();
-  const name = await card.evaluate((el) => getComputedStyle(el).viewTransitionName);
-  expect(name).toMatch(/^title-/);
-  await card.locator('a').click();
-  await expect(page.locator('h1')).toHaveCSS('view-transition-name', name);
+  await expect(page.locator('#work h3').first()).toHaveCSS('view-transition-name', 'none');
+  await page.locator('#work h3 a').first().click();
+  await expect(page.locator('.case-study h1')).toHaveCSS('view-transition-name', 'none');
 });
 
 test('project screenshots have no view-transition name so they do not scroll across the screen (issue #256)', async ({ page }) => {

@@ -1,7 +1,7 @@
     <article class="container case-study" [appMotion]="effects">
       @if (project(); as p) {
         <header class="intro">
-          <h1 [style.view-transition-name]="'title-' + p.slug">{{ p.title }}</h1>
+          <h1>{{ p.title }}</h1>
           <p class="summary">{{ p.summary }}</p>
           <!-- whose project and in what context, before the details (issue #229) -->
           <p class="role">{{ p.role }}</p>

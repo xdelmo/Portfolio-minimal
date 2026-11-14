@@ -250,7 +250,7 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 - **Do** read colours through the CSS custom properties (`--bg`, `--fg`, `--accent`, `--link`, band tokens); never hard-code a hex in a component.
 - **Do** keep every space and size on the 8px scale.
 - **Do** use `steps()` for state transitions on buttons and tags.
-- **Do** let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header has a `view-transition-name`: a named title would slide across the page.
+- **Do** let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header and the fixed pixel cursor (and its arrow) have a `view-transition-name` (issue #560): a named title would slide across the page.
 - **Do** reuse `PixelDissolve`, the seams and the thread before inventing a new transition.
 - **Do** put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.
 - **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure`.

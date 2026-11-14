@@ -290,11 +290,11 @@ export const CONTENT_EN: SiteContent = {
       sprite: 'robot',
     },
     {
-      title: 'MagSafe card holder',
-      summary: 'A 3D-printed holder for one Pokémon card on the back of an iPhone, modelled entirely in Python code with automatic fit checks.',
-      tags: ['Python', 'build123d', '3D printing'],
-      repo: 'https://github.com/xdelmo/magsafe-cardholder',
-      sprite: 'cardholder',
+      title: 'Risacca mod',
+      summary: 'A mod for The Binding of Isaac: Repentance dedicated to the YouTuber Risacca, with sixteen new items, a transformation and his catchphrases on screen.',
+      tags: ['Lua', 'Modding'],
+      repo: 'https://github.com/xdelmo/risacca-mod',
+      sprite: 'turkey',
     },
     {
       title: 'Volkswagen Up storage tray',

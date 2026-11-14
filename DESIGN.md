@@ -2,23 +2,23 @@
 name: edm.
 description: Emanuele Del Monte's portfolio, a calm 8px pixel grid with a hidden arcade inside.
 colors:
-  concrete: "#e5e5e5"
+  concrete: "#dedede"
   paper: "#f2f2f2"
   ink: "#1d1d1c"
   ink-muted: "#555555"
-  signal-blue: "#0066d4"
+  signal-blue: "#0058b8"
+  signal-blue-bright: "#0066d4"
   on-signal: "#ffffff"
-  link-blue: "#005fc5"
   night: "#121212"
-  slate: "#1c1c1c"
-  night-ink: "rgb(255 255 255 / 0.87)"
+  slate: "#202020"
+  night-ink: "#dedede"
   night-muted: "#aaaaaa"
   night-link: "#4d9bf0"
   pixel-sky: "#7fb2ec"
   pixel-mist: "#b9d5f5"
   pixel-lavender: "#c9b8f5"
   pixel-lilac: "#dccff8"
-  pixel-peach: "#ffc9a8"
+  pixel-peach: "#ffb88f"
   band-pastel: "#b9d5f5"
   band-lavender: "#dccff8"
   band-ink: "#1d1d1c"
@@ -151,8 +151,9 @@ Density is low and text-first. Sections alternate with full-bleed bands (pastel,
 Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tints, lavender, peach) that never carries text.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the primary button's fill, the focus ring in light theme, the pixel thread and the strongest pixel. The same value in both themes.
-- **Link Blue** (`link-blue`, `night-link` in dark): inline links, a step darker than Signal Blue in light theme for AA on concrete.
+- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and the thin accent lines (pixel thread, pixel cursor, current inventory slot, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
+- **Bright Signal** (`signal-blue-bright`): the primary button's fill in dark theme and the strongest pixel (`--px-1`) in both themes. Never text on concrete.
+- **Night Link** (`night-link`): in dark theme links, the focus ring and `--accent-line`, because the fill blue is too dark to read as a thin line on night.
 
 ### Neutral
 - **Concrete** (`concrete`) and **Night** (`night`): the page in light and dark.

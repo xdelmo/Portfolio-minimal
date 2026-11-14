@@ -18,6 +18,6 @@ Il selettore di lingua scrive il cookie `nf_lang`, che Netlify rispetta nel redi
 
 ## Palette
 
-Grigi, una famiglia di blu (`--accent` `#0066d4`), lavanda e pesca. Nessun verde. Le sezioni cambiano tono con delle bande (pastello, lavanda, inchiostro) che ridefiniscono `--fg`, `--link`, `--focus` e `--rule`: i contenuti si adattano da soli. Ogni combinazione è verificata AA.
+Grigi, una famiglia di blu (`--accent` `#0058b8` nel tema chiaro), lavanda e pesca. Nessun verde. Le sezioni cambiano tono con delle bande (pastello, lavanda, inchiostro) che ridefiniscono `--fg`, `--link`, `--focus` e `--rule`: i contenuti si adattano da soli. Ogni combinazione è verificata AA.
 
 Questo handbook usa la stessa palette: l'header è la banda inchiostro, come il footer del sito.

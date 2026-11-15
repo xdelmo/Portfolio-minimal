@@ -24,8 +24,10 @@ export const figuresEffect: Effect = (root, { gsap, ScrollTrigger }) => {
           delay: 0.1 * i,
           ease: 'power2.out',
           onUpdate: () => {
-            const n = String(Math.round(counter.n));
-            el.textContent = thousands ? `${pre}${n}K` : `${pre}${n}${unit}`;
+            const n = Math.round(counter.n);
+            // €1000K would be wider than both its neighbours and shift the page (issue #579): it is already €1M
+            if (thousands && n >= 1000) el.textContent = finals[i];
+            else el.textContent = thousands ? `${pre}${String(n)}K` : `${pre}${String(n)}${unit}`;
           },
           onComplete: () => {
             el.textContent = finals[i];

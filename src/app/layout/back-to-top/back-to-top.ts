@@ -21,16 +21,15 @@ export class BackToTop {
   constructor() {
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
-      // hidden while the footer is on screen: its own link is there, and the button would cover its links (issue #326)
-      let footerSeen = false;
+      // hidden while the footer is on screen: its own link is there, and the button would cover its links (issue #326).
+      // Measured on every scroll, not taken from the observer: that reports a frame or more late, so a jump to the footer
+      // showed the button over "Press start" for a moment and a tap there hit it instead (issue #579)
+      const footer = document.querySelector('app-site-footer');
       const update = (): void => {
+        const footerSeen = (footer?.getBoundingClientRect().top ?? Infinity) < window.innerHeight;
         this.shown.set(!footerSeen && window.scrollY > window.innerHeight * SHOW_AFTER_SCREENS);
       };
-      const footer = document.querySelector('app-site-footer');
-      const observer = new IntersectionObserver(([entry]) => {
-        footerSeen = entry.isIntersecting;
-        update();
-      });
+      const observer = new IntersectionObserver(update);
       if (footer) observer.observe(footer);
       update();
       window.addEventListener('scroll', update, { passive: true });

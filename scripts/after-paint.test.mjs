@@ -25,3 +25,7 @@ test('drops the modulepreloads and leaves the other inline scripts alone', () =>
 test('leaves a page without module scripts as it is', () => {
   assert.equal(withScriptsAfterPaint('<body></body>'), '<body></body>');
 });
+
+test('stops on a module script in a shape it does not recognise (issue #564)', () => {
+  assert.throws(() => withScriptsAfterPaint('<script type="module" src="main.js"></script>'), /does not recognise/);
+});

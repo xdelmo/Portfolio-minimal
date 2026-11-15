@@ -105,3 +105,25 @@ test('on phones the button steps aside while the footer shows', async ({ page, i
   });
   await expect(button).toHaveCount(0);
 });
+
+// issue #579: a jump straight to the footer showed the button for a moment over "Press start", and a tap there hit it
+test('on phones a jump to the footer never shows the button', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'phones');
+  await page.goto('/en/');
+  const shown = await page.evaluate(
+    () =>
+      new Promise<boolean>((resolve) => {
+        const host = document.querySelector('app-back-to-top');
+        const watch = new MutationObserver(() => {
+          if (host?.querySelector('button')) resolve(true);
+        });
+        if (host) watch.observe(host, { childList: true, subtree: true });
+        window.scrollTo(0, document.documentElement.scrollHeight);
+        setTimeout(() => {
+          watch.disconnect();
+          resolve(false);
+        }, 1000);
+      }),
+  );
+  expect(shown).toBe(false);
+});

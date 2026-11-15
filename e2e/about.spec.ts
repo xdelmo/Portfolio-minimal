@@ -75,6 +75,8 @@ test('the big numbers count up from zero once they scroll into view, and end on 
   });
   await expect.poll(() => page.evaluate(() => (window as unknown as { seen: string[] }).seen.some((t) => t.endsWith('K')))).toBe(true);
   await expect(values).toHaveText(['€1M', '20', '450', '40']);
+  // issue #579: never €1000K on the way to €1M; the wider text moved the page under a click on the footer
+  expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen.filter((t) => /\d{4}K/.test(t)))).toEqual([]);
 });
 
 test.describe('the big numbers with reduced motion', () => {

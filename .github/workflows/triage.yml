@@ -1,6 +1,6 @@
 name: Triage
 
-# Every new issue and pull request is assigned to the owner and labelled by its kind; a pull request from a branch
+# Every new issue and pull request is labelled by its kind, and a pull request is assigned to the owner (issues stay unassigned); a pull request from a branch
 # named like fix/45-topic gets "Closes #45" when its description does not close it already (GitHub turns that into a
 # Development link, and closes the issue, only for pull requests into the default branch; into devel it is a reference, and the issue closes when devel reaches master).
 # GitHub runs issue events from the default branch's copy of this file (master), pull requests from their base's.
@@ -37,7 +37,8 @@ jobs:
             *) grep -qiE 'bug|errore|rott|non funziona|broken|fail|crash' <<< "$TITLE $BODY" && label=bug || label=enhancement ;;
           esac
           labels="\"$label\""
-          gh api "repos/$GH_REPO/issues/$NUMBER/assignees" --input - <<< "{\"assignees\":[\"$OWNER\"]}" > /dev/null
+          # issues stay unassigned (user rule, 2026-11-14); HEAD is set only on pull_request events
+          [ -n "$HEAD" ] && gh api "repos/$GH_REPO/issues/$NUMBER/assignees" --input - <<< "{\"assignees\":[\"$OWNER\"]}" > /dev/null
           gh api "repos/$GH_REPO/issues/$NUMBER/labels" --input - <<< "{\"labels\":[$labels]}" > /dev/null
           issue=$(grep -oE '^[a-z]+/[0-9]+' <<< "$HEAD" | grep -oE '[0-9]+$' || true)
           # only an open issue that exists: a number in a branch name may mean something else (feat/404-page)

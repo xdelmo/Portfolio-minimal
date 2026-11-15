@@ -61,7 +61,7 @@ Struttura di un case study: problema → architettura → scelte tecniche (es. S
 
 ### 3.2 Side quests
 
-PokèVerba (`pokeverba-site`, WordPress + React), oggetti CAD parametrici stampati in 3D (`magsafe-cardholder`, `volkswagen-up-door-storage-box`).
+PokèVerba (`pokeverba-site`, WordPress + React), oggetti CAD parametrici stampati in 3D (`volkswagen-up-door-storage-box`), la mod `risacca-mod` per The Binding of Isaac.
 
 ### 3.3 Esclusi
 
@@ -440,3 +440,4 @@ Per i prossimi sviluppi: le domande aperte (titolo ufficiale, livello delle ling
 | 2026-11-14 | Cambio pagina (issue #322): il router precarica i chunk delle pagine quando il browser è libero (`core/idle-preload.ts`, non con Save-Data) e, se un cambio pagina dura oltre 200 ms, una barra di 4 px in `--accent-line` sul bordo inferiore dell'header avanza a gradini (`steps(16)`) fino all'arrivo della pagina, ferma con reduced motion, mai alla prima navigazione | benchmark dei siti di riferimento: la transizione (#205) fa da indicatore, la barra è solo la rete di sicurezza sulle reti lente |
 | 2026-11-14 | Cambio pagina (issue #551): i titoli dei progetti (h3 in home, h1 nel case study) non hanno più un `view-transition-name`; il loro morph scorreva in verticale per 230–770 px sopra la pagina che sale, solo l'header resta nominato | "gli h3 dei progetti si muovono in verticale" |
 | 2026-11-14 | Cambio pagina (issue #555): la nuova pagina sale come un foglio intero (`translate` 100% → 0) invece che da una finestra `clip-path`, così arriva prima il titolo; la vecchia si attenua a 0,2 sotto di essa. Da una pagina scrollata il clip mostrava prima il fondo della nuova pagina e lasciava strisce della vecchia (il bottone in fondo) | "c'è qualche flash in mezzo di componenti" |
+| 2026-11-14 | Side quest: il porta-carte MagSafe lascia il sito (diventerà un prodotto in vendita, il repo resta privato) e al suo posto entra `risacca-mod`, la mod pubblica per The Binding of Isaac: Repentance, con uno sprite originale (il tacchino dei suoi tormentoni) al posto di `cardholder` | "togli la side quest del porta carta e sostituiscilo con risacca-mod" |

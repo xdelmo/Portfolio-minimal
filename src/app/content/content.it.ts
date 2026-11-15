@@ -282,11 +282,11 @@ export const CONTENT_IT: SiteContent = {
       sprite: 'robot',
     },
     {
-      title: 'Porta-carte MagSafe',
-      summary: "Un supporto stampato in 3D per una carta Pokémon sul retro dell'iPhone, modellato interamente in codice Python con controlli automatici degli incastri.",
-      tags: ['Python', 'build123d', 'Stampa 3D'],
-      repo: 'https://github.com/xdelmo/magsafe-cardholder',
-      sprite: 'cardholder',
+      title: 'Mod di Risacca',
+      summary: 'Una mod per The Binding of Isaac: Repentance dedicata allo youtuber Risacca, con sedici oggetti nuovi, una trasformazione e i suoi tormentoni a schermo.',
+      tags: ['Lua', 'Modding'],
+      repo: 'https://github.com/xdelmo/risacca-mod',
+      sprite: 'turkey',
     },
     {
       title: 'Vano portaoggetti per la Volkswagen Up',

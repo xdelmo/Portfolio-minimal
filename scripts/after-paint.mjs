@@ -9,7 +9,11 @@ const MODULE = /<script src="([^"]+)" type="module"><\/script>/g;
 
 export function withScriptsAfterPaint(html) {
   const srcs = [...html.matchAll(MODULE)].map(([, src]) => src);
-  if (srcs.length === 0) return html;
+  if (srcs.length === 0) {
+    // a module script in another shape would skip the after-paint start without a word (issue #564)
+    if (/<script\b[^>]*type="module"/.test(html)) throw new Error('after-paint: a module script it does not recognise');
+    return html;
+  }
   const loader =
     `<script>requestAnimationFrame(()=>setTimeout(()=>{for(const s of ${JSON.stringify(srcs)}){` +
     `const e=document.createElement("script");e.type="module";e.async=false;e.src=s;document.body.append(e)}}))</script>`;

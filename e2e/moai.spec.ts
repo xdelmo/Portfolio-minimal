@@ -808,7 +808,7 @@ test.describe('the gags', () => {
     await page.clock.install();
     await ready(page, study);
     await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-    await expect(line(page)).toHaveText("Lights off. I'll keep watch.");
+    await expect(line(page)).toHaveText("Lights off. I’ll keep watch.");
     // the bubble and its tail sit on the moai's left (issue #405)
     const bubble = await line(page).boundingBox();
     const moai = await scene(page).boundingBox();
@@ -835,7 +835,7 @@ test.describe('the gags', () => {
   test('knew you would find the Konami code', async ({ page }) => {
     await ready(page, study);
     for (const key of ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']) await page.keyboard.press(key);
-    await expect(line(page)).toHaveText("I knew you'd find it.");
+    await expect(line(page)).toHaveText("I knew you’d find it.");
   });
 
   test('pays its respects when the last case study is read', async ({ page }) => {

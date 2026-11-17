@@ -268,4 +268,5 @@ The hero pixel field, the voxel moai, the tool levels, the pixel thread and seam
 - **Don't** lay things out as a row of three identical tiles.
 - **Don't** let an entrance overshoot (`back.out`, elastic, bounce).
 - **Don't** write aphorisms after a colon, triads, idioms, or claims CI does not enforce (see Copy voice in edm-style).
+- **Don't** type straight apostrophes or quotes in visible copy: `’` and `“…”` (issue #583).
 - **Don't** add hover-only behaviour on phones, or block vertical scrolling on anything swipeable.

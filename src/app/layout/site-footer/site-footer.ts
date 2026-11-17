@@ -17,13 +17,15 @@ import { APP_VERSION } from '../../core/version.generated';
 })
 export class SiteFooter {
   protected readonly content = inject(CONTENT);
-  protected readonly year = new Date().getFullYear();
+  // the prerendered page carries the build year; the visitor's clock corrects it after New Year (issue #583)
+  protected readonly year = signal(new Date().getFullYear());
   protected readonly version = APP_VERSION;
   protected readonly ready = signal(false);
 
   constructor() {
     afterNextRender(() => {
       this.ready.set(true);
+      this.year.set(new Date().getFullYear());
     });
   }
 

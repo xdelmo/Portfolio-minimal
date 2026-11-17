@@ -48,7 +48,7 @@
   --band-ink-link: #9ccaff;
 }
 
-:root[data-theme='dark'] {
+@mixin dark-tokens {
   color-scheme: dark;
   --bg: #121212;
   --surface: #202020;
@@ -87,6 +87,17 @@
   --band-ink-fg: #eef4fc;
   --band-ink-muted: #a9bdd6;
   --band-ink-link: #9ccaff;
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+// without JS (the inline script in index.html never ran) the page still follows the system (issue #581)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark-tokens;
+  }
 }
 
 :root {

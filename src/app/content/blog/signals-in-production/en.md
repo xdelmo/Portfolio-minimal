@@ -42,7 +42,7 @@ export const authGuard: CanActivateFn = () => {
 };
 ```
 
-Logging in and out reduce to direct `.set()` calls. Dependent components update automatically through Angular's fine-grained reactivity, without manual notification dispatches or re-evaluating the entire component tree.
+Logging in and out reduce to direct `.set()` calls. Dependent components update automatically through Angular’s fine-grained reactivity, without manual notification dispatches or re-evaluating the entire component tree.
 
 ## What disappears from the codebase
 

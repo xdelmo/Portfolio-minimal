@@ -102,4 +102,5 @@ Patterns that read as generated, removed in issue #531; keep them out:
 - No idioms or stock phrases ("my daily bread", "under the hood").
 - No pleonasm with the title (a "Raider" who plays "in raids").
 - Claims match what CI enforces: Lighthouse mobile ≥ 95 (`lighthouserc.json`), never "100".
+- Typographic punctuation in visible copy, both languages: `’` not `'` (“I’m”, “l’articolo”), `“…”` not `"…"`, `…` not `...`; code spans and code blocks keep ASCII. `scripts/typography.test.mjs` checks the content files, the Italian units and the blog posts (issue #583).
 - Rewriting a line for tone keeps every fact it carried (tools, numbers, features); change the phrasing, not the content. Italian is written as Italian, not translated word for word.

@@ -25,6 +25,21 @@ describe('ThemeService', () => {
     expect(localStorage.getItem('theme')).toBe(after);
   });
 
+  it('toggling back to the system theme clears the stored choice, so the site follows the system again', () => {
+    const service = TestBed.inject(ThemeService);
+    service.toggle();
+    service.toggle();
+    expect(localStorage.getItem('theme')).toBeNull();
+  });
+
+  it('follows a toggle made in another tab', () => {
+    const service = TestBed.inject(ThemeService);
+    const other = service.theme() === 'dark' ? 'light' : 'dark';
+    window.dispatchEvent(new StorageEvent('storage', { key: 'theme', newValue: other, storageArea: localStorage }));
+    expect(service.theme()).toBe(other);
+    expect(document.documentElement.dataset['theme']).toBe(other);
+  });
+
   it('toggle still works when storage is blocked', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('denied', 'QuotaExceededError');

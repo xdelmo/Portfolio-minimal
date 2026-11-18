@@ -14,6 +14,9 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
     const split = SplitText.create(title, { type: 'lines', mask: 'lines' });
     // the lede paragraph fades in right after the headline lines rise (issue #231, #339)
     const rest = hero.querySelectorAll('.copy > p');
+    // the masks are as tall as a line (line-height 0.98): their overflow cut the descenders, which popped in on revert
+    // (issue #586). Clip 0.3em below instead, and start the lines low enough (135%) to stay hidden under it
+    gsap.set(split.masks, { overflow: 'visible', clipPath: 'inset(-0.5em -0.5em -0.3em -0.5em)' });
     const entrance = gsap
       .timeline({
         paused: true,
@@ -21,7 +24,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
           split.revert();
         },
       })
-      .from(split.lines, { yPercent: 110, duration: 1.1, stagger: 0.08, ease: 'expo.out' })
+      .from(split.lines, { yPercent: 135, duration: 1.1, stagger: 0.08, ease: 'expo.out' })
       .from(rest, { autoAlpha: 0, y: 24, duration: 0.8, stagger: 0.08, ease: 'power3.out', clearProps: 'all' }, 0.2);
     afterIntro(() => {
       entrance.play();

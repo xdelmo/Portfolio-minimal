@@ -46,6 +46,19 @@ test.describe('intro', () => {
     await expect(page).toHaveURL(/#work$/);
   });
 
+  // the line masks were as tall as a line: they cut the descenders until the split reverted (issue #586)
+  test('the hero headline masks leave room below for the descenders', async ({ page }) => {
+    await page.goto('/en/');
+    // read the first mask in the same frame it is seen: the split reverts once the entrance ends
+    const mask = await page.waitForFunction(() => {
+      const div = document.querySelector('.hero h1 > div');
+      return div && { overflow: getComputedStyle(div).overflowY, clip: getComputedStyle(div).clipPath };
+    });
+    const { overflow, clip } = (await mask.jsonValue()) as { overflow: string; clip: string };
+    expect(overflow).toBe('visible');
+    expect(clip).toMatch(/inset\(-[\d.]+[a-z]+ -[\d.]+[a-z]+ -[\d.]+[a-z]+/);
+  });
+
   test('is shown once per session', async ({ page }) => {
     await page.goto('/en/');
     await expect(page.locator('.site-intro')).toBeHidden({ timeout: 6000 });

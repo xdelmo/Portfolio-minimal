@@ -1,6 +1,6 @@
 import { ErrorHandler } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { PixelField } from './pixel-field';
+import { FIELD_EXIT, PixelField } from './pixel-field';
 import { endIntro } from '../motion/intro-state';
 
 describe('PixelField', () => {
@@ -81,6 +81,18 @@ describe('PixelField', () => {
     panel.dispatchEvent(new Event('animationend', { bubbles: true }));
     expect(frames()).toBe(150);
     panel.remove();
+    fixture.destroy();
+  });
+
+  // the hero's scroll drives the cloud's exit, clamped to [0, 1] (issue #593)
+  it('takes the exit progress from the hero and clamps it', async () => {
+    const { fixture } = await renderUnderIntro();
+    const host = fixture.nativeElement as HTMLElement;
+    const canvas = host.querySelector('canvas');
+    host.dispatchEvent(new CustomEvent(FIELD_EXIT, { detail: 0.5 }));
+    expect(canvas?.dataset['exit']).toBe('0.50');
+    host.dispatchEvent(new CustomEvent(FIELD_EXIT, { detail: 2 }));
+    expect(canvas?.dataset['exit']).toBe('1.00');
     fixture.destroy();
   });
 

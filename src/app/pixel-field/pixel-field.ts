@@ -20,6 +20,9 @@ import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
 const MAX_STEP_MS = 100; // a long pause between frames must not jump the animation
 
+/** A `CustomEvent<number>` on the host: how far the hero has scrolled away, 0 → 1 (issue #593). */
+export const FIELD_EXIT = 'pixel-field-exit';
+
 @Component({
   selector: 'app-pixel-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +56,7 @@ export class PixelField {
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly animated = signal(false);
   private readonly pause = inject(MotionPause);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   private paint: Paint | null = null;
   private grid: FieldLayout | null = null;
@@ -175,6 +179,17 @@ export class PixelField {
       for (const ring of levelUp(centre, this.frame.t)) this.frame.ripples = addRipple(this.frame.ripples, ring, this.frame.t);
       e.preventDefault();
     };
+    // the scroll is the visitor's own input: it repaints even while the loop is stopped (paused, hidden, off screen)
+    const onExit = (e: Event): void => {
+      const exit = Math.min(1, Math.max(0, (e as CustomEvent<number>).detail));
+      this.frame.exit = exit;
+      canvas.dataset['exit'] = exit.toFixed(2);
+      if (!this.raf) this.render();
+    };
+    this.host.addEventListener(FIELD_EXIT, onExit);
+    this.cleanups.push(() => {
+      this.host.removeEventListener(FIELD_EXIT, onExit);
+    });
     document.addEventListener(GAME_START, onGameStart);
     this.cleanups.push(() => {
       document.removeEventListener(GAME_START, onGameStart);

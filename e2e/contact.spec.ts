@@ -34,7 +34,8 @@ test.describe('contact finale', () => {
     // the masks clip only below: sideways they would cut the italic last letter (issue #352)
     const mask = label.locator('div').first();
     await expect(mask).toHaveCSS('overflow-x', 'visible');
-    await expect(mask).toHaveCSS('clip-path', /inset/);
+    // and 0.3em below the line, or a descender would stay cut (issue #588)
+    await expect(mask).toHaveCSS('clip-path', /inset\(-[\d.]+[a-z]+ -[\d.]+[a-z]+ -[\d.]+[a-z]+/);
     const text = ((await label.textContent()) ?? '').replace(/\s+/g, ' ').trim();
     await expect(page.locator('#contact .contact-link')).toHaveAccessibleName(text);
   });

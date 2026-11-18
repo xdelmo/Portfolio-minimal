@@ -74,11 +74,11 @@ export const CONTENT_IT: SiteContent = {
         decisions: [
           {
             title: 'Signals per lo stato, RxJS dove conta il tempo',
-            body: "Lo stato dell'autenticazione vive nei signal, così i componenti non si iscrivono né si disiscrivono a mano. RxJS resta dove è lo strumento giusto: il debounce dei filtri e l'annullamento delle richieste non più attuali.",
+            body: "Lo stato dell’autenticazione vive nei signal, così i componenti non si iscrivono né si disiscrivono a mano. RxJS resta dove è lo strumento giusto: il debounce dei filtri e l’annullamento delle richieste non più attuali.",
           },
           {
             title: 'Tabelle lato server con una sola classe di stato riutilizzabile',
-            body: "Una classe TablePaginationState tiene pagina, ordinamento e filtri nell'URL e collega signal e observable con toSignal e toObservable. Cambiare un filtro o una pagina fa partire una sola chiamata, e ogni tabella dell'app riusa la stessa logica.",
+            body: "Una classe TablePaginationState tiene pagina, ordinamento e filtri nell’URL e collega signal e observable con toSignal e toObservable. Cambiare un filtro o una pagina fa partire una sola chiamata, e ogni tabella dell’app riusa la stessa logica.",
           },
           {
             title: 'Spring Boot invece di un backend JavaScript',
@@ -106,14 +106,14 @@ export const CONTENT_IT: SiteContent = {
           'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l\'uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
           'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
-          "Un'app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
+          "Un’app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
           'Un generatore lato server dispone da 10 a 15 parole in una griglia fino a 15 × 15, con il seme dato dalla data e nessun Pokémon ripetuto entro 30 giorni.',
           'Italiano e inglese senza plugin multilingua; i progressi restano nel browser, nel local storage.',
         ],
         decisions: [
           {
             title: 'Le risposte non arrivano mai al browser',
-            body: "L'app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
+            body: "L’app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
           },
           {
             title: 'Indizi originali composti da fatti',
@@ -137,27 +137,27 @@ export const CONTENT_IT: SiteContent = {
       repos: [{ label: 'Codice su GitHub', url: 'https://github.com/xdelmo/wedding-3d-invite' }],
       image: {
         src: 'images/work/wedding-invite.webp',
-        alt: "L'invito chiuso da vicino: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L",
+        alt: "L’invito chiuso da vicino: una busta di pizzo cosparsa di perle, chiusa da un sigillo di ceralacca bordeaux con le iniziali G&L",
         width: 1536,
         height: 1024,
       },
       caseStudy: {
         context:
-          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi dare agli ospiti data, luogo, indicazioni e dress code, e raccogliere l'RSVP.",
+          "Due miei amici volevano il loro invito di nozze di carta, in pizzo e perle, ricostruito per il telefono che gli ospiti hanno già in mano. Deve dare la sensazione di aprire una busta vera, poi dare agli ospiti data, luogo, indicazioni e dress code, e raccogliere l’RSVP.",
         architecture: [
-          "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l'invito sta in una cornice grande come uno smartphone.",
+          "Single-page app in React e TypeScript, compilata con Vite e con lo stile in Tailwind CSS, pensata prima per il telefono; su desktop l’invito sta in una cornice grande come uno smartphone.",
           'La busta è una scena Three.js: lembi di pizzo che si aprono, un sigillo di ceralacca che si solleva e perle con materiali fisicamente realistici.',
           'Undici slide a schermo intero con lo scroll snap di CSS, con il conto alla rovescia, le mappe e il salvataggio nel calendario.',
-          "Le risposte all'RSVP finiscono in un foglio Google tramite Google Apps Script, così non c'è un server da gestire; un service worker fa funzionare l'invito anche offline, come PWA.",
+          "Le risposte all’RSVP finiscono in un foglio Google tramite Google Apps Script, così non c’è un server da gestire; un service worker fa funzionare l’invito anche offline, come PWA.",
         ],
         decisions: [
           {
-            title: "Ogni parola dell'invito in un solo file di configurazione",
-            body: "Nomi, data, luoghi, programma e RSVP stanno in una configurazione tipizzata, così la demo gira con nomi di esempio mentre l'invito vero tiene i suoi. Titolo, tag Open Graph, JSON-LD dell'evento, manifest e service worker nascono dalla stessa configurazione.",
+            title: "Ogni parola dell’invito in un solo file di configurazione",
+            body: "Nomi, data, luoghi, programma e RSVP stanno in una configurazione tipizzata, così la demo gira con nomi di esempio mentre l’invito vero tiene i suoi. Titolo, tag Open Graph, JSON-LD dell’evento, manifest e service worker nascono dalla stessa configurazione.",
           },
           {
             title: 'La scena 3D si ferma quando la busta è aperta',
-            body: "Finita l'animazione di apertura il ciclo di rendering si congela, così leggere l'invito non costa GPU né batteria. Un pulsante nel footer fa rivedere l'apertura.",
+            body: "Finita l’animazione di apertura il ciclo di rendering si congela, così leggere l’invito non costa GPU né batteria. Un pulsante nel footer fa rivedere l’apertura.",
           },
           {
             title: 'Una sola palette, con il contrasto sotto test',
@@ -165,7 +165,7 @@ export const CONTENT_IT: SiteContent = {
           },
         ],
         outcome:
-          "L'invito vero è dei miei amici e resta privato; la demo pubblica su Vercel mostra lo stesso invito con nomi di esempio.",
+          "L’invito vero è dei miei amici e resta privato; la demo pubblica su Vercel mostra lo stesso invito con nomi di esempio.",
       },
     },
   ],
@@ -246,14 +246,14 @@ export const CONTENT_IT: SiteContent = {
         paragraphs: [
           'Il cookie nf_lang ricorda la lingua che hai scelto con il selettore, così la home si apre in quella lingua la volta successiva. Dura un anno e arriva al server solo per scegliere la lingua.',
           "Due voci nel local storage: theme ricorda se hai scelto il tema chiaro o quello scuro, explored quali case study hai letto, per un traguardo nel gioco nascosto del sito.",
-          "Tre voci nel session storage (intro, pausa delle animazioni e tenda della lingua) ricordano, finché non chiudi la scheda, se l'intro iniziale è già stata mostrata, se hai messo in pausa le animazioni e verso quale lingua stai passando.",
+          "Tre voci nel session storage (intro, pausa delle animazioni e tenda della lingua) ricordano, finché non chiudi la scheda, se l’intro iniziale è già stata mostrata, se hai messo in pausa le animazioni e verso quale lingua stai passando.",
           'Sono preferenze tecniche: non identificano nessuno, non vengono condivise e non richiedono consenso. Puoi cancellarle quando vuoi dalle impostazioni del browser.',
         ],
       },
       {
         heading: 'Hosting',
         paragraphs: [
-          "Il sito è ospitato da Netlify, Inc. Come ogni server web, tratta i dati tecnici di ogni richiesta (indirizzo IP, browser, pagina e orario) per consegnare le pagine e tenere il servizio sicuro. La base giuridica è il mio legittimo interesse a far funzionare il sito. Netlify ha sede negli Stati Uniti e il suo accordo sul trattamento dei dati copre i trasferimenti fuori dall'UE.",
+          "Il sito è ospitato da Netlify, Inc. Come ogni server web, tratta i dati tecnici di ogni richiesta (indirizzo IP, browser, pagina e orario) per consegnare le pagine e tenere il servizio sicuro. La base giuridica è il mio legittimo interesse a far funzionare il sito. Netlify ha sede negli Stati Uniti e il suo accordo sul trattamento dei dati copre i trasferimenti fuori dall’UE.",
         ],
       },
       {
@@ -277,7 +277,7 @@ export const CONTENT_IT: SiteContent = {
   sideQuests: [
     {
       title: 'Bot Telegram',
-      summary: "Tre bot che uso ogni giorno, ognuno risponde solo a me: scadenze dell'auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
+      summary: "Tre bot che uso ogni giorno, ognuno risponde solo a me: scadenze dell’auto, il mio raccoglitore di carte Pokémon e i fogli presenze.",
       tags: ['TypeScript', 'Python', 'grammY', 'SQLite'],
       sprite: 'robot',
     },

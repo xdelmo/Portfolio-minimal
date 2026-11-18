@@ -17,6 +17,9 @@
     }
     .card::backdrop {
       background: var(--scrim);
+      // a drag on the scrim does not scroll the page behind (issue #581)
+      overflow: hidden;
+      overscroll-behavior: contain;
     }
     // the rhythm by proximity (issue #383): blocks 24px apart, a new section (the achievements, the action) 32px,
     // a heading 16px from the list it names

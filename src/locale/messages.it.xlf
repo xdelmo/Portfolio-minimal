@@ -248,7 +248,7 @@
       </trans-unit>
       <trans-unit id="case.architecture" datatype="html">
         <source>How it is built</source>
-        <target>Com'è costruito</target>
+        <target>Com’è costruito</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
           <context context-type="linenumber">42,43</context>
@@ -444,7 +444,7 @@
       </trans-unit>
       <trans-unit id="blog.project" datatype="html">
         <source>The project behind it</source>
-        <target>Il progetto dietro l'articolo</target>
+        <target>Il progetto dietro l’articolo</target>
       </trans-unit>
       <trans-unit id="blog.linkedin" datatype="html">
         <source>First posted on LinkedIn</source>
@@ -484,7 +484,7 @@
       </trans-unit>
       <trans-unit id="blog.readMore" datatype="html">
         <source>Read article</source>
-        <target>Leggi l'articolo</target>
+        <target>Leggi l’articolo</target>
       </trans-unit>
       <trans-unit id="blog.backToAll" datatype="html">
         <source>All posts</source>
@@ -500,7 +500,7 @@
       </trans-unit>
       <trans-unit id="blog.linkCopiedStatus" datatype="html">
         <source>Article link copied to clipboard</source>
-        <target>Link dell'articolo copiato negli appunti</target>
+        <target>Link dell’articolo copiato negli appunti</target>
       </trans-unit>
       <trans-unit id="blog.adjacent" datatype="html">
         <source>Adjacent articles</source>
@@ -538,15 +538,15 @@
       <trans-unit id="moai.line.hop.1" datatype="html"><source>Hey.</source><target>Ehi.</target></trans-unit>
       <trans-unit id="moai.line.hop.2" datatype="html"><source>Yes?</source><target>Sì?</target></trans-unit>
       <trans-unit id="moai.line.gum.1" datatype="html"><source>Gum gum.</source><target>Gomma gomma.</target></trans-unit>
-      <trans-unit id="moai.line.drag.1" datatype="html"><source>Easy, I'm made of stone.</source><target>Piano, sono di pietra.</target></trans-unit>
+      <trans-unit id="moai.line.drag.1" datatype="html"><source>Easy, I’m made of stone.</source><target>Piano, sono di pietra.</target></trans-unit>
       <trans-unit id="moai.line.dizzy.1" datatype="html"><source>Eight hundred years still, and now this.</source><target>Ottocento anni fermo, e ora questo.</target></trans-unit>
       <trans-unit id="moai.line.shake.1" datatype="html"><source>My pukao!</source><target>Il mio pukao!</target></trans-unit>
       <trans-unit id="moai.line.sulk.1" datatype="html"><source>Hmph. Not talking to you.</source><target>Uffa. Non ti parlo.</target></trans-unit>
       <trans-unit id="moai.line.sneeze.1" datatype="html"><source>Ah… ah… Achoo!</source><target>Ah… ah… Etciù!</target></trans-unit>
-      <trans-unit id="moai.line.dark.1" datatype="html"><source>Lights off. I'll keep watch.</source><target>Luci spente. Faccio io la guardia.</target></trans-unit>
+      <trans-unit id="moai.line.dark.1" datatype="html"><source>Lights off. I’ll keep watch.</source><target>Luci spente. Faccio io la guardia.</target></trans-unit>
       <trans-unit id="moai.line.light.1" datatype="html"><source>Morning already?</source><target>Già mattina?</target></trans-unit>
       <trans-unit id="moai.line.hello.1" datatype="html"><source>Hello!</source><target>Ciao!</target></trans-unit>
-      <trans-unit id="moai.line.found.1" datatype="html"><source>I knew you'd find it.</source><target>Lo sapevo che l'avresti trovato.</target></trans-unit>
+      <trans-unit id="moai.line.found.1" datatype="html"><source>I knew you’d find it.</source><target>Lo sapevo che l’avresti trovato.</target></trans-unit>
       <trans-unit id="moai.line.explorer.1" datatype="html"><source>You read them all. Respect.</source><target>Li hai letti tutti. Rispetto.</target></trans-unit>
       <trans-unit id="moai.line.wake.1" datatype="html"><source>Five more minutes…</source><target>Altri cinque minuti…</target></trans-unit>
     </body>

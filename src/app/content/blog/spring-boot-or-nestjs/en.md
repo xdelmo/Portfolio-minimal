@@ -5,9 +5,9 @@ date: 2026-03-19
 linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7440413562331860992/
 project: apexflow
 ---
-"Why learn Java and Spring Boot from scratch if you already master the TypeScript ecosystem?"
+“Why learn Java and Spring Boot from scratch if you already master the TypeScript ecosystem?”
 
-A senior backend engineer posed this question during an informal review of ApexFlow's architecture. I was outlining my technical stack: Angular 19 with Signals on the client, Spring Boot 3 on Java 21 on the server. His point was pragmatic: with NestJS, I would have maintained a single unified language, sharing type models, tooling, and lint configurations end to end.
+A senior backend engineer posed this question during an informal review of ApexFlow’s architecture. I was outlining my technical stack: Angular 19 with Signals on the client, Spring Boot 3 on Java 21 on the server. His point was pragmatic: with NestJS, I would have maintained a single unified language, sharing type models, tooling, and lint configurations end to end.
 
 It was a completely legitimate question. It challenged me to articulate the core trade-offs behind a stack choice deliberately geared toward enterprise software engineering.
 
@@ -16,7 +16,7 @@ It was a completely legitimate question. It challenged me to articulate the core
 NestJS was unequivocally the lower-friction path for a solo engineer:
 - **Language uniformity:** TypeScript in both browser and runtime, minimizing context switching.
 - **Shared typing:** The same `Customer` interface could seamlessly flow from database queries to presentation tables, eliminating redundant type declarations.
-- **Familiar conventions:** Modules, decorators, and dependency injection in NestJS mirror Angular's architecture, offering a virtually flat learning curve.
+- **Familiar conventions:** Modules, decorators, and dependency injection in NestJS mirror Angular’s architecture, offering a virtually flat learning curve.
 
 If the goal were purely initial delivery speed, NestJS would have been the obvious choice.
 

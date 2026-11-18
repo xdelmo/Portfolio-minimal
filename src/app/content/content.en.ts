@@ -21,7 +21,7 @@ export const CONTENT_EN: SiteContent = {
   hero: {
     headline: 'Engineer by method, curious by nature',
     voice: 'curious by nature',
-    lede: "I'm Emanuele, Frontend Engineer at IPS S.p.A. I\u00a0build Angular interfaces that stay fast when the data gets big, and I\u00a0leave an easter egg for whoever looks closely.",
+    lede: "I’m Emanuele, Frontend Engineer at IPS S.p.A. I\u00a0build Angular interfaces that stay fast when the data gets big, and I\u00a0leave an easter egg for whoever looks closely.",
     peek: 'closely',
   },
   aboutStatement: 'A table with thousands of rows should feel like one with ten.',
@@ -103,7 +103,7 @@ export const CONTENT_EN: SiteContent = {
       demoUrl: 'https://sbustiamobro.it',
       image: {
         src: 'images/work/pokeverba.webp',
-        alt: "PokèVerba's daily Pokémon crossword with two words filled in: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
+        alt: "PokèVerba’s daily Pokémon crossword with two words filled in: the grid, the across and down clues, the region tabs and the catch streak, caught and token counters",
         width: 1536,
         height: 1024,
       },
@@ -127,7 +127,7 @@ export const CONTENT_EN: SiteContent = {
           },
           {
             title: 'One puzzle a day, cached until midnight',
-            body: "Today's puzzle is cached until midnight in Rome, when the next one is generated, so the server does the work once a day.",
+            body: "Today’s puzzle is cached until midnight in Rome, when the next one is generated, so the server does the work once a day.",
           },
         ],
         outcome: 'Live at sbustiamobro.it and at version 1.18 in October 2026, with a regional crossword, coins and achievements.',

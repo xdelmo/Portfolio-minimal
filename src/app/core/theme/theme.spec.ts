@@ -1,4 +1,4 @@
-import { readStoredTheme, resolveTheme } from './theme.service';
+import { readStoredTheme, resolveTheme, storedAfterToggle } from './theme.service';
 
 describe('resolveTheme', () => {
   it('uses a valid stored choice over the system preference', () => {
@@ -29,5 +29,17 @@ describe('readStoredTheme', () => {
       },
     };
     expect(readStoredTheme(blocked)).toBeNull();
+  });
+});
+
+describe('storedAfterToggle', () => {
+  it('stores a theme that differs from the system', () => {
+    expect(storedAfterToggle('dark', false)).toBe('dark');
+    expect(storedAfterToggle('light', true)).toBe('light');
+  });
+
+  it('stores nothing when the theme is back to the system one', () => {
+    expect(storedAfterToggle('light', false)).toBeNull();
+    expect(storedAfterToggle('dark', true)).toBeNull();
   });
 });

@@ -29,6 +29,10 @@
       padding: var(--space-1) var(--gutter) var(--space-2);
       background: var(--bg);
       box-shadow: 0 1px 0 var(--rule);
+      // a phone held sideways is shorter than the menu: it scrolls on its own, without moving the page (issue #583)
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
     @media (forced-colors: active) {
       nav {

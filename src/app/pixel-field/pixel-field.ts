@@ -57,7 +57,7 @@ export class PixelField {
   private paint: Paint | null = null;
   private grid: FieldLayout | null = null;
   private palette: Palette = { dot: '', tones: [], alpha: 1 };
-  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null };
+  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null, exit: 0 };
   private visible = true;
   private covered = false;
   private raf = 0;

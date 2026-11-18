@@ -22,7 +22,7 @@ const palette: Palette = {
   alpha: 0.78,
 };
 const grid = layout(600, 240);
-const still: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null };
+const still: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null, exit: 0 };
 
 const cloud = (i: number): boolean => cloudDepth(i % grid.cols, Math.floor(i / grid.cols), grid, null) > 0;
 const cells = Array.from({ length: grid.cols * grid.rows }, (_, i) => i);
@@ -114,6 +114,46 @@ describe('drawFrame', () => {
     const { ctx, rects } = fakeContext();
     drawFrame(ctx, grid, palette, { ...still, pointer: { x: 300, y: 120 } });
     expect(rects).toHaveLength(cells.filter(cloud).length);
+  });
+});
+
+describe('drawFrame during the hero exit', () => {
+  const box = { x: 200, y: 60, w: 200, h: 120 };
+  const lastRow = grid.y0 + (grid.rows - 1) * CLOUD_CELL;
+  const draw = (f: Partial<FrameState>): Rect[] => {
+    const { ctx, rects } = fakeContext();
+    drawFrame(ctx, grid, palette, { ...still, clear: [box], ...f });
+    return rects;
+  };
+
+  it('exit 0 draws exactly as today', () => {
+    const { ctx, rects } = fakeContext();
+    drawFrame(ctx, grid, palette, { ...still, t: 50 });
+    expect(rects).toHaveLength(cells.filter(cloud).length);
+    expect(draw({ exit: 0 })).toHaveLength(draw({}).length);
+  });
+
+  it('at exit 0.6 every cell is lit, the padded text box and the sky channels included', () => {
+    expect(draw({ exit: 0 }).length).toBeLessThan(grid.cols * grid.rows);
+    expect(draw({ exit: 0.6 })).toHaveLength(grid.cols * grid.rows);
+  });
+
+  it('at exit 1 nothing is drawn', () => {
+    expect(draw({ exit: 1 })).toHaveLength(0);
+  });
+
+  it('between 0.6 and 1 the top row empties before the bottom one', () => {
+    const rects = draw({ exit: 0.8 });
+    const top = rects.filter((r) => r.y < grid.y0 + CLOUD_CELL).length;
+    const bottom = rects.filter((r) => r.y >= lastRow).length;
+    expect(top).toBeLessThan(bottom);
+  });
+
+  it('a crumbled cell is lit only by a ripple', () => {
+    const t = COMPOSE_MS * 3;
+    const ripples = [{ x: 300, y: 120, start: t }];
+    expect(draw({ animate: true, t, exit: 1 })).toHaveLength(0);
+    expect(draw({ animate: true, t, exit: 1, ripples }).length).toBeGreaterThan(0);
   });
 });
 

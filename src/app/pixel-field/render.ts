@@ -1,4 +1,4 @@
-import { Box, CLOUD_CELL, COMPOSE_MS, PULL, FieldLayout, breathe, cloudDepth, composeIn, drift, easeOutCubic, falloff, hash, ripple, tone } from './field';
+import { Box, CLOUD_CELL, COMPOSE_MS, PULL, FieldLayout, breathe, closeAt, cloudDepth, composeIn, crumbleAt, drift, easeOutCubic, exitDepth, falloff, hash, openDepth, ripple, tone, windShift } from './field';
 
 export interface Palette {
   dot: string;
@@ -25,6 +25,8 @@ export interface FrameState {
   ripples: readonly Ripple[];
   /** The text's line boxes, which the cloud leaves clear; null until measured. */
   clear: readonly Box[] | null;
+  /** The hero's exit progress, 0 at rest → 1 when the hero has scrolled away (issue #593). */
+  exit: number;
 }
 
 
@@ -38,9 +40,9 @@ export function readPalette(style: Pick<CSSStyleDeclaration, 'getPropertyValue'>
   };
 }
 
-/** The cells of frame `f`: the noise drifts only while the field animates. */
+/** The cells of frame `f`: the noise drifts while the field animates, and the scroll's wind pushes it during the exit. */
 export function frameCells(l: FieldLayout, f: FrameState): Cells {
-  return cellsOf(l, f.clear, f.animate ? drift(f.t, l.cols) : 0);
+  return cellsOf(l, f.clear, (f.animate ? drift(f.t, l.cols) : 0) + windShift(f.exit));
 }
 
 /** What each cell keeps from frame to frame: computed once per layout, clearing and drift step (issue #150). */
@@ -52,6 +54,10 @@ export interface Cells {
   phase: Float64Array;
   /** Picks the tone among the lavender and peach ones. */
   shade: Float64Array;
+  /** The depth with no clearing, and the exit progress at which the cell closes and crumbles. */
+  open: Float64Array;
+  close: Float64Array;
+  crumble: Float64Array;
 }
 
 const MAX_CACHE_ENTRIES = 48;
@@ -67,11 +73,14 @@ export function cellsOf(l: FieldLayout, clear: readonly Box[] | null, shift = 0)
   const hit = entries.get(key);
   if (hit) return hit;
   const n = l.cols * l.rows;
-  const cells: Cells = { depth: new Float64Array(n), speed: new Float64Array(n), phase: new Float64Array(n), shade: new Float64Array(n) };
+  const cells: Cells = { depth: new Float64Array(n), speed: new Float64Array(n), phase: new Float64Array(n), shade: new Float64Array(n), open: new Float64Array(n), close: new Float64Array(n), crumble: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const col = i % l.cols;
     const row = Math.floor(i / l.cols);
     cells.depth[i] = cloudDepth(col, row, l, clear, shift);
+    cells.open[i] = openDepth(col, row, shift);
+    cells.close[i] = closeAt(col, row);
+    cells.crumble[i] = crumbleAt(col, row, l.rows);
     const cShift = col - Math.round(shift);
     cells.speed[i] = 0.0006 + hash((cShift * 19 + row * 43 + 21) & 0xffff) * 0.0018;
     cells.phase[i] = hash((cShift * 29 + row * 53 + 29) & 0xffff) * Math.PI * 2;
@@ -104,8 +113,10 @@ export function drawFrame(ctx: CanvasRenderingContext2D, l: FieldLayout, p: Pale
       for (const r of f.ripples) energy = Math.max(energy, ripple(Math.hypot(x - r.x, y - r.y), t - r.start));
 
       // the cloud breathes both ways and the pointer pulls it back; the clearing and the holes show only ripple energy
-      let depth = breathe(cells.depth[i], cells.phase[i], breath);
+      let depth = breathe(exitDepth(cells.depth[i], cells.open[i], f.exit, cells.close[i]), cells.phase[i], breath);
       if (pointer) depth -= falloff(Math.hypot(x - pointer.x, y - pointer.y)) * PULL;
+      // after breath and pointer, so neither can lift a crumbled cell back; strict, so at CLOSE_END the cloud is whole
+      if (f.exit > cells.crumble[i]) depth = -1;
       let size: number;
       let alpha: number;
       let color: string;

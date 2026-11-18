@@ -165,6 +165,14 @@ test.describe('project cards', () => {
     await expect(page).toHaveURL(/\/work\/apexflow/);
   });
 
+  // the label folds sideways only: hidden overflow on both axes cut what fell below its 14px line box (issue #589)
+  test('the preview arrow label clips only sideways', async ({ page }) => {
+    await page.goto('/en/');
+    const label = page.locator('#work .project .media-arrow-label').first();
+    await expect(label).toHaveCSS('overflow-x', 'clip');
+    await expect(label).toHaveCSS('overflow-y', 'visible');
+  });
+
   // issue #340, #376, #489: the pixel cursor snaps to the preview's arrow button from anywhere in the picture; the
   // button holds still and the frame grows with it, frame for frame
   test('the cursor snaps to the preview arrow button, which holds still while the frame rings it', async ({ page }) => {

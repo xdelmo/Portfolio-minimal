@@ -130,7 +130,8 @@
     // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
     .media-arrow-label {
       max-width: 0;
-      overflow: hidden;
+      // clip only the fold: the 14px line box is shorter than the glyphs, a descender would be cut (issue #589)
+      overflow-x: clip;
       margin-right: calc(-1 * var(--space-1)); // cancels the gap while folded
       opacity: 0;
       font-size: 14px;

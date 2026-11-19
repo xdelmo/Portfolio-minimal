@@ -6,9 +6,11 @@ Il sito ha una vita sua: piccoli oggetti che reagiscono a chi lo visita. Tutti c
 
 L'hero disegna su un canvas una nuvola di pixel pastello, calcolata da funzioni pure con test unitari. Deriva con il vento attorno a una radura che segue il titolo, si ritrae dal puntatore e increspa al tocco; si mette in pausa fuori schermo.
 
+Quando l'hero scorre via, tutto avviene in un unico movimento legato allo scroll con circa un secondo di ritardo (`scrub: 1`): il testo secondario sfuma (ma torna visibile su `:focus-within` se un link prende il fuoco), la nuvola richiude la radura cella per cella mentre il vento accelera appena, poi nuvola e cucitura dell'hero si sbriciolano insieme dall'alto verso il basso. Tornando su il movimento si riavvolge; con reduced motion resta ferma.
+
 ## Cuciture e filo
 
-- `PixelDissolve` (`src/app/pixel-dissolve/`) disegna le cuciture di pixel dove una banda incontra la pagina: livelli SVG a gradini guidati da una sola variabile `--p`, che `effects/dissolve.ts` lega allo scroll. Si formano entrando e si sbriciolano salendo verso l'header.
+- `PixelDissolve` (`src/app/pixel-dissolve/`) disegna le cuciture di pixel dove una banda incontra la pagina: livelli SVG a gradini guidati da una sola variabile `--p`, che `effects/dissolve.ts` lega allo scroll. Si formano entrando e si sbriciolano salendo verso l'header. Fa eccezione `.seam--hero`, che `effects/dissolve.ts` salta perché la sua `--p` appartiene a `effects/hero.ts`, così da sbriciolarsi insieme alla nuvola (un solo padrone per ogni `--p` scrubbata).
 - Sulla home una linea accent scende lungo il margine sinistro e accende un nodo per sezione (`effects/thread.ts`).
 
 ## Le immagini che si rivelano

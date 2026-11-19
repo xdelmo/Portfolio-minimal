@@ -33,3 +33,9 @@ ScrollSmoother (`motion/smoother.ts`) è attivo solo su desktop con mouse e mai 
 
 !!! note "Una sola pausa"
     `MotionPause` (`motion/pause.ts`) è l'unico interruttore: il codice Angular lo inietta, gli effetti GSAP usano `watchPause()`. È il pulsante dell'header che ferma tutto il movimento automatico (WCAG 2.2.2).
+
+!!! note "Un solo padrone per proprietà scrubbata"
+    Due ScrollTrigger sulla stessa `--p` finiscono per contendersela a seconda dell'altezza della finestra: su telefoni in orizzontale la cucitura dell'hero parte sotto la piega, quindi `effects/dissolve.ts` salta `.seam--hero` e la lascia solo a `effects/hero.ts`.
+
+!!! note "Scrub con ritardo e ridisegni fuori schermo"
+    Uno scrub con ritardo (`scrub: 1`) continua a chiamare `onUpdate` per circa un secondo dopo che lo scroll si ferma: chi disegna su canvas salta i ridisegni fuori dallo schermo e si riallinea appena rientra in vista.

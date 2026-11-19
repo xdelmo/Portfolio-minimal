@@ -26,6 +26,11 @@
 .copy {
   max-width: var(--container);
 }
+// the exit fades .copy while its link is still on screen, where focusing it scrolls nothing: a focused link shows
+// its text (WCAG 2.4.7, issue #593); !important beats GSAP's inline opacity
+.copy:focus-within {
+  opacity: 1 !important;
+}
 // GSAP came after the intro's CSS fallback lifted the panel (a slow network): heroEffect never ran under the
 // intro, so the copy rises right after the lift on the same first-render clock (2s on phones, 3.6s on desktop, site-intro.ts) instead
 // of being already there (issue #329). endIntro() removes the class, so GSAP's own entrance wins when it is in time.

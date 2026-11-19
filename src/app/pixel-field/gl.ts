@@ -1,4 +1,4 @@
-import { BREATHE, CLOUD_CELL, PULL, COMPOSE_MS, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
+import { BREATHE, CLOSED_MIN, CLOUD_CELL, PULL, COMPOSE_MS, FieldLayout, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, RIPPLE_SPEED, RIPPLE_WIDTH, easeOutCubic } from './field';
 import { Cells, FrameState, Palette, frameCells } from './render';
 
 /**
@@ -8,12 +8,14 @@ import { Cells, FrameState, Palette, frameCells } from './render';
 const VERTEX = `
 attribute vec2 a_pos;
 attribute vec4 a_cell; // static cloud depth, twinkle speed, twinkle phase, shade (0-1)
+attribute vec3 a_exit; // depth with no clearing, close and crumble thresholds (issue #593)
 uniform vec2 u_size;
 uniform float u_dpr;
 uniform float u_t;
 uniform float u_breath; // the breathing clock, 0 when time is frozen
 uniform float u_alpha;
 uniform float u_wave;
+uniform float u_exit; // the hero's exit progress, 0-1
 uniform vec3 u_pointer; // x, y, 1 when it counts
 uniform vec3 u_ripples[${String(MAX_RIPPLES)}]; // x, y, start
 uniform int u_count;
@@ -37,8 +39,10 @@ void main() {
   }
   float depth = a_cell.x;
   float shade = a_cell.w;
+  if (depth <= 0.0 && u_exit >= a_exit.y) depth = max(a_exit.x, ${CLOSED_MIN.toFixed(2)});
   if (u_breath > 0.0) depth += ${BREATHE.toFixed(2)} * sin(u_breath * 0.0009 + a_cell.z);
   if (u_pointer.z > 0.5) depth -= falloff(length(p - u_pointer.xy)) * ${PULL.toFixed(2)};
+  if (u_exit > a_exit.z) depth = -1.0;
   bool cloud = depth > 0.0;
   float size;
   float alpha;
@@ -122,6 +126,7 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
     t: at('u_t'),
     wave: at('u_wave'),
     breath: at('u_breath'),
+    exit: at('u_exit'),
     alpha: at('u_alpha'),
     pointer: at('u_pointer'),
     ripples: at('u_ripples'),
@@ -132,10 +137,13 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   const pos = gl.getAttribLocation(program, 'a_pos');
   const cell = gl.getAttribLocation(program, 'a_cell');
+  const exit = gl.getAttribLocation(program, 'a_exit');
   gl.enableVertexAttribArray(pos);
   gl.enableVertexAttribArray(cell);
-  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 24, 0);
-  gl.vertexAttribPointer(cell, 4, gl.FLOAT, false, 24, 8);
+  gl.enableVertexAttribArray(exit);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 36, 0);
+  gl.vertexAttribPointer(cell, 4, gl.FLOAT, false, 36, 8);
+  gl.vertexAttribPointer(exit, 3, gl.FLOAT, false, 36, 24);
 
   let built: Cells | null = null;
   let palette: Palette | null = null;
@@ -145,9 +153,9 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
     const cells = frameCells(l, f);
     if (cells !== built) {
       // what each dot keeps until the layout, the clearing or the drift step changes: its place and the values `drawFrame` caches per cell
-      const data = new Float32Array(l.cols * l.rows * 6);
+      const data = new Float32Array(l.cols * l.rows * 9);
       for (let i = 0; i < l.cols * l.rows; i++) {
-        data.set([l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2, l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i]], i * 6);
+        data.set([l.x0 + (i % l.cols) * CLOUD_CELL + CLOUD_CELL / 2, l.y0 + Math.floor(i / l.cols) * CLOUD_CELL + CLOUD_CELL / 2, cells.depth[i], cells.speed[i], cells.phase[i], cells.shade[i], cells.open[i], cells.close[i], cells.crumble[i]], i * 9);
       }
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
       built = cells;
@@ -164,6 +172,7 @@ export function glPaint(canvas: HTMLCanvasElement, dpr: () => number): Paint | n
     gl.uniform1f(u.dpr, scale);
     gl.uniform1f(u.t, t);
     gl.uniform1f(u.breath, f.animate ? f.t : 0);
+    gl.uniform1f(u.exit, f.exit);
     gl.uniform1f(u.wave, f.animate ? easeOutCubic((t - COMPOSE_MS) / 800) : 0);
     gl.uniform3f(u.pointer, f.pointer?.x ?? 0, f.pointer?.y ?? 0, f.animate && f.pointer ? 1 : 0);
     f.ripples.forEach((r, i) => {

@@ -53,7 +53,8 @@ for (const id of ['#about', '#side-quests', '#contact']) {
   });
 }
 
-for (const where of ['.hero', '#about', '#side-quests']) {
+// the hero seam crumbles with the cloud, on the hero's own range: e2e/hero-exit.spec.ts (issue #593)
+for (const where of ['#about', '#side-quests']) {
   test(`the ${where} seam crumbles away as it scrolls out under the header, and forms again on the way back`, async ({ page }) => {
     await page.goto('/en/');
     await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');

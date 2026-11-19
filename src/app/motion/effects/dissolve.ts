@@ -7,6 +7,9 @@ import type { Effect } from '../motion-host';
  */
 export const dissolveEffect: Effect = (root, { gsap }) => {
   for (const el of root.querySelectorAll<HTMLElement>('[data-scrub]')) {
+    // the hero seam has one owner, the hero's timeline (effects/hero.ts, issue #593): on a short window it starts
+    // below the fold, and forming it here too made two tweens fight over its --p
+    if (el.matches('.seam--hero')) continue;
     if (el.getBoundingClientRect().top >= innerHeight) {
       gsap.set(el, { '--p': 0 });
       gsap.to(el, { '--p': 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 45%', scrub: true } });

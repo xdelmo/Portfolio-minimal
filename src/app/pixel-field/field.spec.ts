@@ -1,4 +1,4 @@
-import { CLOUD_CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, DRIFT_FPS, WIND_S, breathe, cloudDepth, drift, tone } from './field';
+import { CLOUD_CELL, LEVEL_UP_GAP_MS, MAX_RIPPLES, POINTER_RADIUS, RIPPLE_MS, addRipple, easeOutCubic, levelUp, falloff, hash, layout, ripple, twinkle, BREATHE, CLEAR_PAD, DRIFT_FPS, WIND_S, breathe, cloudDepth, drift, tone, CLOSE_END, CLOSE_START, CLOSED_MIN, CRUMBLE_STEPS, WIND_CELLS, closeAt, crumbleAt, exitDepth, openDepth, windShift } from './field';
 
 describe('pixel field maths', () => {
   it('covers the canvas on the hero seam\'s grid: a cell edge on the centre line, the last row on the bottom edge', () => {
@@ -182,5 +182,60 @@ describe('the Konami level up', () => {
     const rings = levelUp({ x: 300, y: 200 }, 1000);
     expect(rings.map((r) => r.start)).toEqual([0, 1, 2, 3].map((i) => 1000 + i * LEVEL_UP_GAP_MS));
     expect(rings.every((r) => r.x === 300 && r.y === 200)).toBe(true);
+  });
+});
+
+describe('the hero exit', () => {
+  it('closeAt is a stable threshold in [CLOSE_START, CLOSE_END)', () => {
+    for (let i = 0; i < 2000; i++) {
+      const v = closeAt(i % 80, Math.floor(i / 80));
+      expect(v).toBeGreaterThanOrEqual(CLOSE_START);
+      expect(v).toBeLessThan(CLOSE_END);
+      expect(closeAt(i % 80, Math.floor(i / 80))).toBe(v);
+    }
+  });
+
+  it('crumbleAt steps through [CLOSE_END, 1), top rows first', () => {
+    const rows = 40;
+    const values = new Set<number>();
+    const mean = (row: number): number => {
+      let sum = 0;
+      for (let col = 0; col < 80; col++) sum += crumbleAt(col, row, rows);
+      return sum / 80;
+    };
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < 80; col++) {
+        const v = crumbleAt(col, row, rows);
+        expect(v).toBeGreaterThanOrEqual(CLOSE_END);
+        expect(v).toBeLessThan(1);
+        values.add(v);
+      }
+    }
+    expect(values.size).toBeLessThanOrEqual(CRUMBLE_STEPS);
+    expect(mean(0)).toBeLessThan(mean(rows - 1));
+  });
+
+  it('windShift adds whole cells that grow with the scroll', () => {
+    expect(windShift(0)).toBe(0);
+    let last = 0;
+    for (let p = 0; p <= 1.0001; p += 0.05) {
+      const s = windShift(p);
+      expect(Number.isInteger(s)).toBe(true);
+      expect(s).toBeGreaterThanOrEqual(last);
+      last = s;
+    }
+    expect(windShift(1)).toBe(WIND_CELLS);
+  });
+
+  it('exitDepth closes a clear cell once the exit passes its threshold', () => {
+    for (const d of [-0.2, 0.3, 1]) expect(exitDepth(d, 0.5, 0, 0.3)).toBe(d);
+    expect(exitDepth(-0.2, 0.5, 0.6, 0.3)).toBe(0.5);
+    expect(exitDepth(-0.2, -0.4, 0.6, 0.3)).toBe(CLOSED_MIN);
+    expect(exitDepth(-0.2, 0.5, 0.2, 0.3)).toBe(-0.2);
+  });
+
+  it('openDepth matches cloudDepth far from any clearing', () => {
+    const l = layout(1200, 720);
+    for (const shift of [0, 3]) expect(openDepth(0, 0, shift)).toBe(cloudDepth(0, 0, l, null, shift));
   });
 });

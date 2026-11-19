@@ -1,4 +1,4 @@
-import { CLOUD_CELL, CLEAR_PAD, COMPOSE_MS, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
+import { CLOSE_END, CLOUD_CELL, CLEAR_PAD, COMPOSE_MS, RIPPLE_MS, breathe, cloudDepth, layout, tone } from './field';
 import { FrameState, Palette, cellsOf, drawFrame, frameCells, readPalette } from './render';
 
 interface Rect { x: number; y: number; size: number; alpha: number; color: string }
@@ -133,17 +133,17 @@ describe('drawFrame during the hero exit', () => {
     expect(draw({ exit: 0 })).toHaveLength(draw({}).length);
   });
 
-  it('at exit 0.6 every cell is lit, the padded text box and the sky channels included', () => {
+  it('at exit CLOSE_END every cell is lit, the padded text box and the sky channels included', () => {
     expect(draw({ exit: 0 }).length).toBeLessThan(grid.cols * grid.rows);
-    expect(draw({ exit: 0.6 })).toHaveLength(grid.cols * grid.rows);
+    expect(draw({ exit: CLOSE_END })).toHaveLength(grid.cols * grid.rows);
   });
 
   it('at exit 1 nothing is drawn', () => {
     expect(draw({ exit: 1 })).toHaveLength(0);
   });
 
-  it('between 0.6 and 1 the top row empties before the bottom one', () => {
-    const rects = draw({ exit: 0.8 });
+  it('between CLOSE_END and 1 the top row empties before the bottom one', () => {
+    const rects = draw({ exit: (CLOSE_END + 1) / 2 });
     const top = rects.filter((r) => r.y < grid.y0 + CLOUD_CELL).length;
     const bottom = rects.filter((r) => r.y >= lastRow).length;
     expect(top).toBeLessThan(bottom);

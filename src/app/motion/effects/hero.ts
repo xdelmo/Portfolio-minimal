@@ -41,7 +41,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
   };
   if (seam) gsap.set(seam, { '--p': 1 });
   const tl = gsap.timeline({
-    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
+    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1 },
     defaults: { ease: 'none' },
     onUpdate: () => {
       exit(tl.progress());

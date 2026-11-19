@@ -14,6 +14,8 @@ const scrollHero = (page: Page, fraction: number) =>
 for (const [width, height] of [
   [1440, 900],
   [390, 844],
+  // a phone held sideways: the hero is taller than the window, so its seam starts below the fold
+  [844, 390],
 ] as const) {
   test(`at ${String(width)}×${String(height)} the hero closes and crumbles as it scrolls away, and comes back`, async ({ page }) => {
     await page.setViewportSize({ width, height });
@@ -21,6 +23,7 @@ for (const [width, height] of [
     await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
     await expect.poll(() => exit(page)).not.toBe('1.00');
     expect(await opacity(page)).toBe(1);
+    expect(await seamP(page)).toBe(1);
 
     await scrollHero(page, 0.5);
     await expect.poll(async () => parseFloat((await exit(page)) ?? '0')).toBeGreaterThan(0);
@@ -29,7 +32,8 @@ for (const [width, height] of [
     await scrollHero(page, 1);
     await expect.poll(() => exit(page)).toBe('1.00');
     await expect.poll(() => opacity(page)).toBe(0);
-    await expect.poll(() => seamP(page)).toBe(0);
+    // the scroll can land a fraction of a pixel short of the end (fractional svh height): near 0, not exactly 0
+    await expect.poll(() => seamP(page)).toBeLessThan(0.01);
 
     await page.evaluate(() => { window.scrollTo(0, 0); });
     await expect.poll(() => exit(page)).toBe('0.00');
@@ -37,6 +41,15 @@ for (const [width, height] of [
     await expect.poll(() => seamP(page)).toBe(1);
   });
 }
+
+test('a focused hero link shows its text even after the copy has faded', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('app-home [data-motion]')).toHaveAttribute('data-motion', 'ready');
+  await scrollHero(page, 0.5);
+  await expect.poll(() => opacity(page)).toBe(0);
+  await page.locator('.hero .copy a').first().focus();
+  await expect.poll(() => opacity(page)).toBe(1);
+});
 
 test.describe('with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });

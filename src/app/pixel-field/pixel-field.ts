@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
+import { FIELD_EXIT, FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
 import { afterIntro } from '../motion/intro-state';
 import { MotionPause } from '../motion/pause';
@@ -53,11 +53,12 @@ export class PixelField {
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   private readonly animated = signal(false);
   private readonly pause = inject(MotionPause);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   private paint: Paint | null = null;
   private grid: FieldLayout | null = null;
   private palette: Palette = { dot: '', tones: [], alpha: 1 };
-  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null };
+  private readonly frame: FrameState = { t: 0, animate: false, pointer: null, ripples: [], clear: null, exit: 0 };
   private visible = true;
   private covered = false;
   private raf = 0;
@@ -131,6 +132,8 @@ export class PixelField {
 
     const views = new IntersectionObserver(([entry]) => {
       this.visible = entry.isIntersecting;
+      // catch up on the exit frames skipped off screen, when the loop is stopped (paused)
+      if (this.visible && !this.raf) this.render();
       this.sync();
     });
     views.observe(canvas);
@@ -175,6 +178,17 @@ export class PixelField {
       for (const ring of levelUp(centre, this.frame.t)) this.frame.ripples = addRipple(this.frame.ripples, ring, this.frame.t);
       e.preventDefault();
     };
+    // the scroll is the visitor's own input: it repaints even while the loop is paused, but not off screen (scrub's lag keeps it coming after the hero has left)
+    const onExit = (e: Event): void => {
+      const exit = Math.min(1, Math.max(0, (e as CustomEvent<number>).detail));
+      this.frame.exit = exit;
+      canvas.dataset['exit'] = exit.toFixed(2);
+      if (!this.raf && this.visible) this.render();
+    };
+    this.host.addEventListener(FIELD_EXIT, onExit);
+    this.cleanups.push(() => {
+      this.host.removeEventListener(FIELD_EXIT, onExit);
+    });
     document.addEventListener(GAME_START, onGameStart);
     this.cleanups.push(() => {
       document.removeEventListener(GAME_START, onGameStart);

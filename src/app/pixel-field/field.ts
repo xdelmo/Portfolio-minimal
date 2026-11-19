@@ -187,8 +187,15 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
   const i = row * l.cols + col;
   const base = s.base[i];
   if (Number.isNaN(base)) return -0.2;
-  const near = s.near[i];
+  return depthAt(col, row, s.near[i], shift);
+}
 
+/** The depth a cell would have far from any clearing: what a clear cell becomes when the hero's exit closes it. */
+export function openDepth(col: number, row: number, shift = 0): number {
+  return depthAt(col, row, 1, shift);
+}
+
+function depthAt(col: number, row: number, near: number, shift: number): number {
   // Broken cloud structure with atmospheric shear (impeccable motion):
   // Macro breaks drift at 0.75x speed relative to the foreground puff clusters (shift),
   // producing continuous multi-speed parallax and organic morphing across open sky channels.
@@ -202,6 +209,38 @@ export function cloudDepth(col: number, row: number, l: FieldLayout, clear: read
 
   if (d > 1) return Math.min(1, (d - 1) * 1.6);
   return d > 0.9 && near > 0.5 && hash(col * 61 + row * 17 + 5) > 0.55 ? 0.1 : d - 1;
+}
+
+/** The hero's exit (issue #593), scroll progress 0 → 1: clear cells close in [CLOSE_START, CLOSE_END), then every cell crumbles in [CLOSE_END, 1). */
+/** A `CustomEvent<number>` on the field's host: how far the hero has scrolled away, 0 → 1 (issue #593). */
+export const FIELD_EXIT = 'pixel-field-exit';
+export const CLOSE_START = 0.4;
+export const CLOSE_END = 0.7;
+export const CRUMBLE_STEPS = 8;
+/** Extra cells of wind the whole exit adds to the drift. */
+export const WIND_CELLS = 3;
+/** The lowest depth of a closed cell: above BREATHE, so breathing never blinks it off. */
+export const CLOSED_MIN = 0.1;
+
+/** Progress at which a clear cell closes; a fixed stride, so it does not depend on the grid's width. */
+export function closeAt(col: number, row: number): number {
+  return CLOSE_START + hash(row * 4099 + col) * (CLOSE_END - CLOSE_START);
+}
+
+/** Progress at which a cell crumbles: top rows first, in CRUMBLE_STEPS steps as the seam (`dissolveThresholds`). */
+export function crumbleAt(col: number, row: number, rows: number): number {
+  const v = Math.min(0.999, 0.7 * (rows > 1 ? row / (rows - 1) : 0) + 0.3 * hash(row * 4099 + col + 911));
+  return CLOSE_END + (Math.floor(v * CRUMBLE_STEPS) / CRUMBLE_STEPS) * (1 - CLOSE_END);
+}
+
+/** Whole cells of wind the scroll adds to `drift()`, so the `cellsOf` cache sees only a handful of new keys. */
+export function windShift(p: number): number {
+  return Math.round(WIND_CELLS * p * p);
+}
+
+/** A cell's depth during the exit: an unlit cell becomes its open-sky depth once the exit passes its close threshold. */
+export function exitDepth(depth: number, open: number, exit: number, close: number): number {
+  return depth <= 0 && exit >= close ? Math.max(open, CLOSED_MIN) : depth;
 }
 
 /** `depth` plus a slow drift of at most BREATHE; unchanged when time is frozen (`t` 0). */

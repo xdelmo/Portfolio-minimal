@@ -48,7 +48,7 @@ export const heroEffect: Effect = (root, { gsap, SplitText }) => {
     },
   });
   tl.to(title, { yPercent: -18, scale: 1.08, transformOrigin: '0% 100%', duration: 1 }, 0);
-  // plain opacity, not autoAlpha: the link stays focusable, and focusing it scrolls the text back
+  // plain opacity, not autoAlpha: the link stays focusable, and home.scss shows the text again on :focus-within
   if (copy) tl.to(copy, { opacity: 0, duration: CLOSE_START }, 0);
   if (seam) tl.to(seam, { '--p': 0, duration: 1 - CLOSE_END }, CLOSE_END);
   // reduced motion switched on mid-page: matchMedia reverts the tweens, the cloud opens again too

@@ -1,6 +1,6 @@
 # Hero: the cloud closes and crumbles on scroll (issue #593)
 
-Status: approaches chosen in the brainstorming of 2026-11-18, design awaiting the owner's approval.
+Status: built on branch `feat/593-hero-scroll` (2026-11-19). Rulings: the field's exit arrives as a `FIELD_EXIT` event on its host (not a method), and the constant lives in `pixel-field/field.ts`.
 
 ## Why
 

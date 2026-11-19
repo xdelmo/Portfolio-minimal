@@ -132,6 +132,8 @@ export class PixelField {
 
     const views = new IntersectionObserver(([entry]) => {
       this.visible = entry.isIntersecting;
+      // catch up on the exit frames skipped off screen, when the loop is stopped (paused)
+      if (this.visible && !this.raf) this.render();
       this.sync();
     });
     views.observe(canvas);
@@ -176,12 +178,12 @@ export class PixelField {
       for (const ring of levelUp(centre, this.frame.t)) this.frame.ripples = addRipple(this.frame.ripples, ring, this.frame.t);
       e.preventDefault();
     };
-    // the scroll is the visitor's own input: it repaints even while the loop is stopped (paused, hidden, off screen)
+    // the scroll is the visitor's own input: it repaints even while the loop is paused, but not off screen (scrub's lag keeps it coming after the hero has left)
     const onExit = (e: Event): void => {
       const exit = Math.min(1, Math.max(0, (e as CustomEvent<number>).detail));
       this.frame.exit = exit;
       canvas.dataset['exit'] = exit.toFixed(2);
-      if (!this.raf) this.render();
+      if (!this.raf && this.visible) this.render();
     };
     this.host.addEventListener(FIELD_EXIT, onExit);
     this.cleanups.push(() => {

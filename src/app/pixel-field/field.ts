@@ -212,6 +212,8 @@ function depthAt(col: number, row: number, near: number, shift: number): number 
 }
 
 /** The hero's exit (issue #593), scroll progress 0 → 1: clear cells close in [CLOSE_START, CLOSE_END), then every cell crumbles in [CLOSE_END, 1). */
+/** A `CustomEvent<number>` on the field's host: how far the hero has scrolled away, 0 → 1 (issue #593). */
+export const FIELD_EXIT = 'pixel-field-exit';
 export const CLOSE_START = 0.25;
 export const CLOSE_END = 0.6;
 export const CRUMBLE_STEPS = 8;

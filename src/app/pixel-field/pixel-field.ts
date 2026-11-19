@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
+import { FIELD_EXIT, FieldLayout, RIPPLE_MS, addRipple, bounds, layout, levelUp } from './field';
 import { GAME_START } from '../game/game-start';
 import { afterIntro } from '../motion/intro-state';
 import { MotionPause } from '../motion/pause';
@@ -19,9 +19,6 @@ import { Paint, glPaint } from './gl';
 import { FrameState, Palette, Point, drawFrame, readPalette } from './render';
 
 const MAX_STEP_MS = 100; // a long pause between frames must not jump the animation
-
-/** A `CustomEvent<number>` on the host: how far the hero has scrolled away, 0 → 1 (issue #593). */
-export const FIELD_EXIT = 'pixel-field-exit';
 
 @Component({
   selector: 'app-pixel-field',

@@ -11,7 +11,8 @@ export const dissolveEffect: Effect = (root, { gsap }) => {
       gsap.set(el, { '--p': 0 });
       gsap.to(el, { '--p': 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 45%', scrub: true } });
     }
-    if (el.matches('app-pixel-dissolve')) {
+    // the hero seam crumbles with the cloud, on the hero's own timeline (effects/hero.ts, issue #593)
+    if (el.matches('app-pixel-dissolve:not(.seam--hero)')) {
       // after the entry in scroll order, so it only renders once its own range is reached
       gsap.fromTo(el, { '--p': 1 }, { '--p': 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 30%', end: 'top 10%', scrub: true } });
     }

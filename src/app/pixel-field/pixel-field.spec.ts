@@ -1,6 +1,7 @@
 import { ErrorHandler } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FIELD_EXIT, PixelField } from './pixel-field';
+import { PixelField } from './pixel-field';
+import { FIELD_EXIT } from './field';
 import { endIntro } from '../motion/intro-state';
 
 describe('PixelField', () => {

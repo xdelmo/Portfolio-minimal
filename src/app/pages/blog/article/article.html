@@ -1,5 +1,8 @@
-    <div class="reading-progress" data-sticky [style.scale]="progress() / 100 + ' 1'" aria-hidden="true"></div>
-    <article class="container post" [appMotion]="effects">
+    <div class="article-shell" [appMotion]="effects">
+      <div class="reading-progress" data-sticky aria-hidden="true">
+        <div class="reading-progress-fill" [style.scale]="progress() / 100 + ' 1'"></div>
+      </div>
+      <article class="container post">
       @if (article(); as a) {
         <header class="intro">
           <div class="breadcrumb-bar">
@@ -85,4 +88,5 @@
         <h1 i18n="@@blog.notFound">Post not found</h1>
         <p><a routerLink="/blog" i18n="@@blog.all">All posts</a></p>
       }
-    </article>
+      </article>
+    </div>

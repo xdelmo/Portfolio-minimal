@@ -52,10 +52,10 @@
       background: transparent;
     }
     meter::-webkit-meter-optimum-value {
-      background: var(--accent);
+      background: var(--accent-line);
     }
     meter::-moz-meter-bar {
-      background: var(--accent);
+      background: var(--accent-line);
     }
     .foe {
       grid-area: foe;

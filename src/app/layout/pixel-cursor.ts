@@ -22,7 +22,7 @@ import { MotionHost } from '../motion/motion-host';
       width: 8px;
       height: 8px;
       margin: -4px 0 0 -4px;
-      background: var(--accent);
+      background: var(--accent-line);
       pointer-events: none;
       transition:
         width 120ms steps(2),

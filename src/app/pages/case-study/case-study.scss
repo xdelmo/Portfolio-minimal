@@ -160,7 +160,7 @@
         font-weight: 600;
       }
       .toc a[aria-current]::before {
-        background: var(--accent);
+        background: var(--accent-line);
         box-shadow: none;
       }
     @media (forced-colors: active) {

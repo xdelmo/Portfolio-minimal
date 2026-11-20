@@ -341,6 +341,7 @@ html:not(.theme-switching)::view-transition-new(root) {
   --fg-muted: var(--band-pastel-muted);
   --link: var(--band-pastel-link);
   --focus: var(--band-pastel-link);
+  --accent-line: var(--band-pastel-link);
   --rule: color-mix(in srgb, var(--band-pastel-fg) 20%, transparent);
 }
 .band--lavender {
@@ -349,6 +350,7 @@ html:not(.theme-switching)::view-transition-new(root) {
   --fg-muted: var(--band-lavender-muted);
   --link: var(--band-lavender-link);
   --focus: var(--band-lavender-link);
+  --accent-line: var(--band-lavender-link);
   --rule: color-mix(in srgb, var(--band-lavender-fg) 20%, transparent);
 }
 .band--ink {
@@ -357,6 +359,7 @@ html:not(.theme-switching)::view-transition-new(root) {
   --fg-muted: var(--band-ink-muted);
   --link: var(--band-ink-link);
   --focus: var(--band-ink-link);
+  --accent-line: var(--band-ink-link);
   --rule: color-mix(in srgb, var(--band-ink-fg) 20%, transparent);
 }
 

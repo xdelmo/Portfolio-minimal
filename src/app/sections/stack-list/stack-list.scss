@@ -34,8 +34,8 @@
       border: 1px solid currentColor;
     }
     .meter .on {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--accent-line);
+      border-color: var(--accent-line);
     }
     ul {
       display: flex;

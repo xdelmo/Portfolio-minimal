@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ViewEncapsulation, afterNextRender, computed, inject, input, signal } from '@angular/core';
 
 /** How long the button says "Copied" before it offers to copy again. */
 export const COPIED_MS = 2000;
@@ -60,6 +60,7 @@ export function highlightCode(raw: string, lang?: string): string {
 @Component({
   selector: 'app-code-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './code-block.html',
   styleUrl: './code-block.scss',
 })

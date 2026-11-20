@@ -84,3 +84,24 @@ test('article copy link button copies current URL to clipboard (issue #315)', as
   await expect(copyBtn).toContainText('Copied');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(`/en/blog/${POST}`);
 });
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`code blocks apply syntax colors in the ${colorScheme} theme (issue #597)`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/blog/signals-in-production');
+    const colors = await page.evaluate(() => {
+      const code = document.querySelector('app-code-block pre code');
+      const kw = document.querySelector('app-code-block .tok-kw');
+      const str = document.querySelector('app-code-block .tok-str');
+      return {
+        code: code ? getComputedStyle(code).color : null,
+        kw: kw ? getComputedStyle(kw).color : null,
+        str: str ? getComputedStyle(str).color : null,
+      };
+    });
+    expect(colors.kw).not.toBeNull();
+    expect(colors.str).not.toBeNull();
+    expect(colors.kw).not.toBe(colors.code);
+    expect(colors.str).not.toBe(colors.code);
+  });
+}

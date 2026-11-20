@@ -94,7 +94,7 @@
       left: calc(var(--space-1) + 4px);
       width: 8px;
       height: 8px;
-      background: var(--accent);
+      background: var(--accent-line);
     }
     ul.languages [aria-current]::before {
       left: 0;

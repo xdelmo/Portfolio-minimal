@@ -24,14 +24,14 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 | Secondary text | `--fg-muted` | `#555` | `#aaa` |
 | Accent (button fill) | `--accent` | `#0058b8` | `#0066d4` |
 | Links, focus | `--link`, `--focus` | `#0058b8` | `#4d9bf0` |
-| Thin accent lines (thread, pixel cursor, current slot, blockquote) | `--accent-line` | `#0058b8` | `#4d9bf0` |
+| Thin accent lines and UI indicators (thread, pixel cursor, current slot/toc/language markers, meters, timeline/combo cells, blockquote) | `--accent-line` | `#0058b8` | `#4d9bf0` |
 | Pixel palette, decoration only | `--px-1`…`--px-6` | blue, blue tints, lavender ×2, peach | brighter versions |
 | Moai | `--stone*`, `--moai-eye-white` | warm greys | darker greys |
 
 - **No green, ever** (the user's brand is greys, the blue family, lavender, peach). This includes "success" states and syntax colours.
 - The `--px-*` colours never carry text. Text on pastel uses the band ink tokens (`--band-pastel-*`).
 - Text selection is a peach highlighter: `--selection-bg` (`#ffb88f`) under `--selection-fg` (ink `#1d1d1c`), the same in both themes and on every band (issue #568). Never the pastel blue or lavender: they are band backgrounds, and a selection on them would vanish.
-- Sections change mood through **bands** (`.band--pastel` for About, `.band--lavender` for the side quests, `.band--ink` for the contact finale and footer); on the home page plain sections and bands alternate; a band re-points `--fg`, `--link`, `--focus`, `--rule`, so the contents follow by themselves.
+- Sections change mood through **bands** (`.band--pastel` for About, `.band--lavender` for the side quests, `.band--ink` for the contact finale and footer); on the home page plain sections and bands alternate; a band re-points `--fg`, `--link`, `--focus`, `--accent-line`, `--rule`, so the contents and meters follow by themselves.
 
 ## Type
 

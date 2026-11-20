@@ -23,7 +23,7 @@ A red CI is fixed on the branch. It never gets merged "to fix later".
 
 ## Docs travel with the change
 
-An agent forgets everything between sessions. Whatever it learned has to end up in a file the next session reads, so the docs are part of the change. A new command goes in `CLAUDE.md`, a visual rule in the style guide, a spec change in the spec's changelog.
+An agent forgets everything between sessions. Whatever it learned has to end up in a file the next session reads, so the docs are part of the change. A new command goes in `CLAUDE.md`, a visual rule in the style guide, a spec change in the spec’s changelog.
 
 `ship.sh` enforces it: when code changed and no doc did, it stops. Skipping that check takes an explicit flag, which means a decision instead of an oversight.
 
@@ -31,7 +31,7 @@ An agent forgets everything between sessions. Whatever it learned has to end up 
 
 When something breaks in CI and no automatic guard can prevent it, the fix comes with a rule in `CODING_STANDARDS.md`. Agents read that file before writing tests or motion code.
 
-The clearest example is WebKit. Most red CI runs used to be Safari and iPhone failures nobody had seen locally, because WebKit does not run natively on my Mac. Now `npm run e2e:webkit` runs the same tests in CI's Linux Playwright image through a container, and it is part of the local `verify`. Another rule came from a fanless laptop sleeping halfway through the suite: wrap long runs in `caffeinate`.
+The clearest example is WebKit. Most red CI runs used to be Safari and iPhone failures nobody had seen locally, because WebKit does not run natively on my Mac. Now `npm run e2e:webkit` runs the same tests in CI’s Linux Playwright image through a container, and it is part of the local `verify`. Another rule came from a fanless laptop sleeping halfway through the suite: wrap long runs in `caffeinate`.
 
 Each rule is small. Together they mean the same mistake rarely reaches CI twice.
 

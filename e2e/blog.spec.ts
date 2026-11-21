@@ -162,3 +162,19 @@ for (const colorScheme of ['light', 'dark'] as const) {
     expect(colors.str).not.toBe(colors.code);
   });
 }
+
+// the blog follows the design system: no transition with reduced motion, `/` separators, 16px icons, 32px tags (issue #604)
+test('the blog keeps still with reduced motion and follows the design system', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en/blog/');
+  await expect(page.locator('.post-item').first()).toHaveCSS('transition-duration', '0s');
+  const tag = page.locator('.project-tag').first();
+  await expect(tag).toHaveCSS('transition-duration', '0s');
+  expect((await tag.boundingBox())?.height).toBeGreaterThanOrEqual(32);
+  await page.goto(`/en/blog/${POST}`);
+  await expect(page.locator('.byline .meta-sep')).toHaveText('/');
+  await expect(page.locator('.adjacent-card').first()).toHaveCSS('transition-duration', '0s');
+  await expect(page.locator('app-site-footer .to-top svg')).toHaveCSS('width', '16px');
+  const icon = page.locator('.action-btn svg');
+  if (await icon.count()) await expect(icon).toHaveAttribute('width', '16');
+});

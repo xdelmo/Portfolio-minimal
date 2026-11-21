@@ -89,6 +89,59 @@ test('article copy link button copies current URL to clipboard (issue #315)', as
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(`/en/blog/${POST}`);
 });
 
+async function expectProgressBelowHeader(page: import('@playwright/test').Page): Promise<void> {
+  const bar = page.locator('.reading-progress');
+  const fill = page.locator('.reading-progress-fill');
+  await expect(async () => {
+    const [headerBox, barBox, scale] = await Promise.all([
+      page.locator('app-site-header').boundingBox(),
+      bar.boundingBox(),
+      fill.evaluate((el) => getComputedStyle(el).scale),
+    ]);
+    expect(headerBox).not.toBeNull();
+    expect(barBox).not.toBeNull();
+    if (!headerBox || !barBox) return;
+    expect(barBox.width).toBeGreaterThan(200);
+    expect(barBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height - 1);
+    expect(barBox.y).toBeLessThanOrEqual(headerBox.y + headerBox.height + 4);
+    expect(parseFloat(scale)).toBeGreaterThan(0.1);
+  }).toPass();
+}
+
+test('reading progress sits below the header and fills while keeping full width (issue #598)', async ({ page }) => {
+  await page.goto(`/en/blog/${POST}`);
+  const bar = page.locator('.reading-progress');
+  await expect(bar).toBeAttached();
+  const initialBox = await bar.boundingBox();
+  expect(initialBox?.width ?? 0).toBeGreaterThan(200);
+
+  await page.evaluate(() => {
+    window.scrollTo(0, Math.round(document.documentElement.scrollHeight * 0.5));
+  });
+  await expectProgressBelowHeader(page);
+});
+
+test.describe('reading progress under ScrollSmoother (issue #598)', () => {
+  test.use({ smoothScroll: true });
+
+  test('pins below the fixed header on desktop scroll', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'ScrollSmoother runs on desktop pointers only');
+    await page.goto(`/en/blog/${POST}`);
+    await page.mouse.move(640, 400);
+    await page.mouse.wheel(0, 800);
+    await expect
+      .poll(async () => {
+        const [y, m] = await page.evaluate(() => [
+          window.scrollY,
+          new DOMMatrix(getComputedStyle(document.getElementById('smooth-content') ?? document.body).transform).m42,
+        ]);
+        return y > 400 && Math.abs(y + m) < 2;
+      })
+      .toBe(true);
+    await expectProgressBelowHeader(page);
+  });
+});
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`code blocks apply syntax colors in the ${colorScheme} theme (issue #597)`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });

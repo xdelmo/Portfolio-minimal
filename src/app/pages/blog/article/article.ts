@@ -83,6 +83,7 @@ export class ArticlePage {
         const p = Math.min(100, Math.max(0, (window.scrollY / total) * 100));
         this.progress.set(Math.round(p));
       };
+      updateProgress();
       window.addEventListener('scroll', updateProgress, { passive: true });
       destroyRef.onDestroy(() => {
         window.removeEventListener('scroll', updateProgress);

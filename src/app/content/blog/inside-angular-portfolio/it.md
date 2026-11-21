@@ -68,13 +68,13 @@ La soluzione adottata si basa su un caricamento a livelli:
 2. **MOTION_LOADER sequenziale**: il servizio carica GSAP e i suoi plugin uno alla volta in microtask separati. Suddividere l’inizializzazione evita blocchi prolungati della CPU durante la fase di avvio.
 3. **Rispetto delle preferenze utente**: se il sistema rileva `prefers-reduced-motion: reduce` o uno schermo touch (`pointer: coarse`), ScrollSmoother e gli effetti di parallasse vengono disabilitati all’origine, lasciando spazio allo scorrimento nativo del sistema operativo.
 
-Tra le sezioni della home page, giunzioni a gradini disegnate su canvas (`PixelDissolve`) si formano e si dissolvono in sincronia con la posizione di scroll tramite una variabile CSS `--p`:
+Tra le sezioni della home page, giunzioni a gradini disegnate con livelli di path SVG (`PixelDissolve`) si formano e si dissolvono in sincronia con la posizione di scroll tramite una variabile CSS `--p`:
 
 ```scss
-app-pixel-dissolve.seam {
-  display: block;
-  width: 100%;
-  height: 24px;
+.seam {
+  position: absolute;
+  inset-inline: calc(50% - 50vw);
+  height: var(--space-6); // 48px: three rows of 16px cells
 }
 ```
 

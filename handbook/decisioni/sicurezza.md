@@ -11,7 +11,7 @@ Qualsiasi risorsa caricata da un'altra origine va aggiunta alla policy. Un test 
 
 ## Privacy
 
-Nessun analytics e nessuno script di terze parti. La pagina `/privacy` elenca esattamente cosa conserva il browser: il cookie `nf_lang`, il tema e tre voci di sessione. Va aggiornata prima di aggiungere qualsiasi strumento di misura.
+Nessun analytics e nessuno script di terze parti. La pagina `/privacy` elenca esattamente cosa conserva il browser: il cookie `nf_lang`, due voci nel local storage (`theme`, `explored`) e quattro nel session storage (`intro`, `motion-paused`, `lang-swap`, `moai-hello`). Va aggiornata prima di aggiungere qualsiasi strumento di misura.
 
 Questo handbook usa lo stesso font del sito, servito da GitHub Pages insieme alle pagine. L'unica richiesta a terzi è quella di Material per Mermaid (da unpkg), e parte solo sulle pagine con un diagramma.
 

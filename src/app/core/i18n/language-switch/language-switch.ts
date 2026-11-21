@@ -38,14 +38,18 @@ export class LanguageSwitch {
   protected switchTo(event: MouseEvent): void {
     this.doc.cookie = `nf_lang=${this.target}; path=/; max-age=31536000; samesite=lax`;
     const win = this.doc.defaultView;
-    try {
-      // the moai on the page it opens says hello (issue #393)
-      win?.sessionStorage.setItem(HELLO_KEY, '1');
-    } catch {
-      // no storage: no hello
+    // reduced motion keeps the moai still, so nothing is kept for its hello (issue #607)
+    const reduce = win?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? true;
+    if (!reduce) {
+      try {
+        // the moai on the page it opens says hello (issue #393)
+        win?.sessionStorage.setItem(HELLO_KEY, '1');
+      } catch {
+        // no storage: no hello
+      }
     }
     const plain = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-    if (!win || !plain || win.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!win || !plain || reduce) return;
     event.preventDefault();
     const name = this.names[this.target];
     try {

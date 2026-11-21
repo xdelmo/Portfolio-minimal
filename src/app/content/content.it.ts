@@ -51,7 +51,7 @@ export const CONTENT_IT: SiteContent = {
       role: 'La mia tesi in Ingegneria Informatica, costruita durante il tirocinio in IPS S.p.A. nel 2026.',
       result: 'Una sola chiamata API per ogni cambio di filtro, su ogni tabella.',
       summary:
-        'Una dashboard CRM e di analisi con tabelle che ordinano, filtrano e paginano sul server, e ogni vista salvata nell\'URL.',
+        'Una dashboard CRM e di analisi con tabelle che ordinano, filtrano e paginano sul server, e ogni vista salvata nell’URL.',
       repos: [
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
@@ -63,7 +63,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un’azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
         architecture: [
           'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
           'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
@@ -103,7 +103,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l\'uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l’uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
           'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
           "Un’app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
@@ -259,7 +259,7 @@ export const CONTENT_IT: SiteContent = {
       {
         heading: 'Se mi scrivi',
         paragraphs: [
-          'Se mi mandi un\'email, uso il tuo indirizzo e il tuo messaggio solo per risponderti, e li conservo per il tempo che serve alla conversazione. Non li condivido mai.',
+          'Se mi mandi un’email, uso il tuo indirizzo e il tuo messaggio solo per risponderti, e li conservo per il tempo che serve alla conversazione. Non li condivido mai.',
         ],
       },
       {

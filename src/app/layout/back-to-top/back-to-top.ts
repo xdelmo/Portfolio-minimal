@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, inject, signal } from '@angular/core';
+import { scrollToTop } from '../../motion/smoother';
 
 /** It shows once the page has scrolled this many screens down. */
 export const SHOW_AFTER_SCREENS = 1.5;
@@ -42,8 +43,6 @@ export class BackToTop {
 
   /** Like the footer's link: up at once with reduced motion, and the focus to the start of the content. */
   protected toTop(): void {
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: 0, behavior: reduce ? 'instant' : 'smooth' });
-    document.getElementById('main')?.focus({ preventScroll: true });
+    scrollToTop();
   }
 }

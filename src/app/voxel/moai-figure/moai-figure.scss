@@ -45,6 +45,11 @@
     :host-context([data-theme='dark']) .still--dark {
       display: block;
     }
+    // mirrors _tokens.scss for pages without JavaScript (issue #608)
+    @media (prefers-color-scheme: dark) {
+      :host-context(html:not([data-theme])) .still--light { display: none; }
+      :host-context(html:not([data-theme])) .still--dark { display: block; }
+    }
     // wider than the figure on both sides, the moai drawn at the same size: the bubble is not cut when it turns
     app-moai-scene.layer {
       left: calc(-100% * var(--moai-bleed));

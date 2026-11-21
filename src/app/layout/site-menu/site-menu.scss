@@ -34,8 +34,9 @@
       overflow-y: auto;
       overscroll-behavior: contain;
     }
+    // the panel's rule is a box-shadow, which forced colours drop (issues #431, #603)
     @media (forced-colors: active) {
-      nav {
+      .panel {
         border-bottom: 1px solid CanvasText;
       }
     }

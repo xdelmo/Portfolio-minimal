@@ -92,3 +92,11 @@
         --gap-x: var(--space-3);
       }
     }
+    // forced colours repaint backgrounds and drop box-shadows: indicators take a system colour (issue #603)
+    @media (forced-colors: active) {
+      .meter .on {
+        forced-color-adjust: none;
+        background: Highlight;
+        border-color: Highlight;
+      }
+    }

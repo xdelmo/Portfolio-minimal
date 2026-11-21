@@ -202,3 +202,22 @@
         clip-path: inset(0);
       }
     }
+    // forced colours repaint backgrounds and drop box-shadows: indicators take a system colour (issue #603)
+    @media (forced-colors: active) {
+      meter {
+        border-color: CanvasText;
+      }
+      // one rule per engine: a selector list with an unknown pseudo-element is dropped whole
+      meter::-webkit-meter-optimum-value {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+      meter::-moz-meter-bar {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+      .move::before {
+        forced-color-adjust: none;
+        background: CanvasText;
+      }
+    }

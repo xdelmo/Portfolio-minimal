@@ -11,7 +11,7 @@ for (const [lang, link, title] of [
     await expect(page.locator('h1')).toHaveText(title);
     const main = page.locator('main');
     // every browser storage key the code uses is named, and nothing else is claimed
-    for (const key of ['nf_lang', 'theme', 'intro', 'Netlify', 'info@emanueledelmonte.it', 'Garante']) {
+    for (const key of ['nf_lang', 'theme', 'explored', 'intro', 'motion-paused', 'lang-swap', 'moai-hello', 'Netlify', 'info@emanueledelmonte.it', 'Garante']) {
       await expect(main).toContainText(key);
     }
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');

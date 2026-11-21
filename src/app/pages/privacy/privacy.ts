@@ -22,7 +22,8 @@ import { SeoService } from '../../core/seo/seo.service';
         </section>
       }
       <!-- a way on, as at the end of the other pages to read (issue #229) -->
-      <p class="more"><a class="touch-line" routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
+      <!-- a block, not a <p>: an inline .touch-line only reaches 44px as a grid item (issue #602) -->
+      <div class="more"><a class="touch-line" routerLink="/" i18n="@@notFound.home">Go to the home page</a></div>
     </article>
   `,
   styles: `
@@ -43,6 +44,9 @@ import { SeoService } from '../../core/seo/seo.service';
       margin: 0;
     }
 .more {
+      display: grid;
+      justify-items: start;
+      max-width: var(--measure);
       padding-top: var(--space-4);
       border-top: 1px solid var(--rule);
     }

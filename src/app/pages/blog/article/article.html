@@ -11,7 +11,7 @@
           <h1>{{ a.title }}</h1>
           <p class="byline">
             <span class="author-name">{{ content.person.name }}</span>
-            <span class="meta-sep" aria-hidden="true">·</span>
+            <span class="meta-sep" aria-hidden="true">/</span>
             <span class="author-role">{{ content.person.role }}</span>
           </p>
           <div class="meta-row">
@@ -23,12 +23,12 @@
             @if (canCopy()) {
               <button type="button" class="action-btn" [class.is-copied]="copied()" (click)="copyLink()">
                 @if (copied()) {
-                  <svg viewBox="0 0 8 8" width="14" height="14" shape-rendering="crispEdges" aria-hidden="true">
+                  <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
                     <path fill="currentColor" d="M7 1h1v2H7zM6 3h1v1H6zM5 4h1v1H5zM4 5h1v1H4zM3 6h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" />
                   </svg>
                   <span i18n="@@blog.linkCopied">Copied</span>
                 } @else {
-                  <svg viewBox="0 0 8 8" width="14" height="14" shape-rendering="crispEdges" aria-hidden="true">
+                  <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
                     <path fill="currentColor" fill-rule="evenodd" d="M0 0h6v1H1v5H0zM2 2h6v6H2zM3 3v4h4V3z" />
                   </svg>
                   <span i18n="@@blog.copyLink">Copy link</span>

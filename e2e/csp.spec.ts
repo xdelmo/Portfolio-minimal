@@ -28,7 +28,7 @@ async function withCsp(page: Page): Promise<string[]> {
   return violations;
 }
 
-for (const path of ['/en/work/apexflow', '/it/privacy/', '/en/404']) {
+for (const path of ['/en/work/apexflow', '/it/privacy/', '/en/blog/signals-in-production', '/en/404']) {
   test(`${path} runs under the site's Content Security Policy`, async ({ page }) => {
     const violations = await withCsp(page);
     await page.goto(path);

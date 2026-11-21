@@ -10,7 +10,7 @@ for (const width of WIDTHS) {
   test(`no horizontal scroll at ${String(width)}px`, async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba']) {
+    for (const path of ['/en/', '/it/', '/en/work/apexflow', '/it/work/pokeverba', '/en/blog/', '/en/blog/server-side-tables']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${path} at ${String(width)}px`).toBeLessThanOrEqual(0);
@@ -370,3 +370,14 @@ for (const width of [768, 1024, 1099, 1100]) {
     expect(new Set(tops).size).toBe(1);
   });
 }
+
+// the previous/next cards stack below the md breakpoint and sit side by side from it (issue #604)
+test('the post navigation stacks below 768px and splits from it', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'widths are checked once, in Chromium');
+  const columns = () => page.locator('app-article .adjacent').evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  await page.setViewportSize({ width: 767, height: 900 });
+  await page.goto('/en/blog/server-side-tables');
+  expect(await columns()).toBe(1);
+  await page.setViewportSize({ width: 768, height: 900 });
+  expect(await columns()).toBe(2);
+});

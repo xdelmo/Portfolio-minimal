@@ -51,6 +51,10 @@
       ul:not(.languages) {
         outline: 1px solid CanvasText;
       }
+      [aria-current]::before {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
     }
     li > * {
       position: relative;
@@ -94,7 +98,7 @@
       left: calc(var(--space-1) + 4px);
       width: 8px;
       height: 8px;
-      background: var(--accent);
+      background: var(--accent-line);
     }
     ul.languages [aria-current]::before {
       left: 0;

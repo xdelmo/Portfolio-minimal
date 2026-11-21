@@ -241,7 +241,7 @@ export const CONTENT_EN: SiteContent = {
     },
   ],
   privacy: {
-    updated: 'Last updated: 10 October 2026',
+    updated: 'Last updated: 21 November 2026',
     intro:
       'This site is my personal portfolio. It loads only its own scripts, without analytics or ads, and keeps in your browser only what it needs to remember your choices.',
     sections: [
@@ -253,8 +253,8 @@ export const CONTENT_EN: SiteContent = {
         heading: 'What the site keeps in your browser',
         paragraphs: [
           'The nf_lang cookie remembers the language you chose with the language switch, so the home page opens in it next time. It lasts one year and is sent to the server only to pick the language.',
-          'Two entries in local storage: theme remembers whether you chose the light or the dark theme, explored which case studies you have read, for an achievement in the site\'s hidden game.',
-          'Three entries in session storage (intro, motion pause and the language curtain) remember, until you close the tab, whether the opening intro was already shown, whether you paused the animations and which language you are switching to.',
+          'Two entries in local storage: theme remembers whether you chose the light or the dark theme, explored which case studies you have read, for an achievement in the site’s hidden game.',
+          'Four entries in session storage last until you close the tab: intro remembers whether the opening intro was already shown, motion-paused whether you paused the animations, lang-swap which language you are switching to, moai-hello that the moai should say hello on the page the language switch opens.',
           'These are technical preferences: they identify nobody, are never shared and need no consent. You can delete them at any time from your browser settings.',
         ],
       },

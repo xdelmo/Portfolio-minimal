@@ -1,5 +1,5 @@
-    <!-- on phones the list scrolls sideways: focusable so arrow keys scroll it too, and labelled by the section title -->
-    <ul #list class="quests" tabindex="0" aria-labelledby="side-quests-title">
+    <!-- on phones the list scrolls sideways: focusable only then, so arrow keys scroll it too, and labelled by the section title -->
+    <ul #list class="quests" [attr.tabindex]="scrollable() ? 0 : null" aria-labelledby="side-quests-title">
       @for (quest of items(); track quest.title) {
         <li>
           <div class="slot"><app-quest-sprite class="sprite" [name]="quest.sprite" /></div>

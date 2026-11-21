@@ -51,7 +51,7 @@ export const CONTENT_IT: SiteContent = {
       role: 'La mia tesi in Ingegneria Informatica, costruita durante il tirocinio in IPS S.p.A. nel 2026.',
       result: 'Una sola chiamata API per ogni cambio di filtro, su ogni tabella.',
       summary:
-        'Una dashboard CRM e di analisi con tabelle che ordinano, filtrano e paginano sul server, e ogni vista salvata nell\'URL.',
+        'Una dashboard CRM e di analisi con tabelle che ordinano, filtrano e paginano sul server, e ogni vista salvata nell’URL.',
       repos: [
         { label: 'Codice del frontend', url: 'https://github.com/xdelmo/dashboard-tesi' },
       ],
@@ -63,7 +63,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un\'azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
+          'ApexFlow è la mia tesi in Ingegneria Informatica: una piattaforma SaaS simulata, di quelle con cui un’azienda tecnologica gestisce clienti, abbonamenti, prodotti e ordini, con i vincoli di un sistema in produzione.',
         architecture: [
           'Single-page app in Angular 19 con componenti standalone e Signals per lo stato.',
           'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
@@ -103,7 +103,7 @@ export const CONTENT_IT: SiteContent = {
       },
       caseStudy: {
         context:
-          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l\'uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
+          'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l’uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
           'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
           "Un’app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
@@ -233,7 +233,7 @@ export const CONTENT_IT: SiteContent = {
     },
   ],
   privacy: {
-    updated: 'Ultimo aggiornamento: 10 ottobre 2026',
+    updated: 'Ultimo aggiornamento: 21 novembre 2026',
     intro:
       'Questo sito è il mio portfolio personale. Carica solo i propri script, senza statistiche né pubblicità, e tiene nel tuo browser solo quello che serve a ricordare le tue scelte.',
     sections: [
@@ -246,7 +246,7 @@ export const CONTENT_IT: SiteContent = {
         paragraphs: [
           'Il cookie nf_lang ricorda la lingua che hai scelto con il selettore, così la home si apre in quella lingua la volta successiva. Dura un anno e arriva al server solo per scegliere la lingua.',
           "Due voci nel local storage: theme ricorda se hai scelto il tema chiaro o quello scuro, explored quali case study hai letto, per un traguardo nel gioco nascosto del sito.",
-          "Tre voci nel session storage (intro, pausa delle animazioni e tenda della lingua) ricordano, finché non chiudi la scheda, se l’intro iniziale è già stata mostrata, se hai messo in pausa le animazioni e verso quale lingua stai passando.",
+          "Quattro voci nel session storage durano finché non chiudi la scheda: intro ricorda se l’intro iniziale è già stata mostrata, motion-paused se hai messo in pausa le animazioni, lang-swap verso quale lingua stai passando, moai-hello che il moai deve salutarti nella pagina aperta dal selettore di lingua.",
           'Sono preferenze tecniche: non identificano nessuno, non vengono condivise e non richiedono consenso. Puoi cancellarle quando vuoi dalle impostazioni del browser.',
         ],
       },
@@ -259,7 +259,7 @@ export const CONTENT_IT: SiteContent = {
       {
         heading: 'Se mi scrivi',
         paragraphs: [
-          'Se mi mandi un\'email, uso il tuo indirizzo e il tuo messaggio solo per risponderti, e li conservo per il tempo che serve alla conversazione. Non li condivido mai.',
+          'Se mi mandi un’email, uso il tuo indirizzo e il tuo messaggio solo per risponderti, e li conservo per il tempo che serve alla conversazione. Non li condivido mai.',
         ],
       },
       {

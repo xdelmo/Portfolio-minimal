@@ -34,8 +34,8 @@
       border: 1px solid currentColor;
     }
     .meter .on {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--accent-line);
+      border-color: var(--accent-line);
     }
     ul {
       display: flex;
@@ -90,5 +90,13 @@
       .level--2 {
         --size: var(--step-1);
         --gap-x: var(--space-3);
+      }
+    }
+    // forced colours repaint backgrounds and drop box-shadows: indicators take a system colour (issue #603)
+    @media (forced-colors: active) {
+      .meter .on {
+        forced-color-adjust: none;
+        background: Highlight;
+        border-color: Highlight;
       }
     }

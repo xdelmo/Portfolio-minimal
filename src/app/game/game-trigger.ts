@@ -64,7 +64,7 @@ const TAP_WINDOW_MS = 2000;
       box-shadow: inset 0 0 0 2px var(--fg-muted);
     }
     .on {
-      background: var(--accent);
+      background: var(--accent-line);
       box-shadow: none;
     }
     @media (forced-colors: active) {

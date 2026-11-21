@@ -73,6 +73,12 @@
       transform: scaleX(0);
       transform-origin: left;
     }
+    @media (forced-colors: active) {
+      nav a::after {
+        forced-color-adjust: none;
+        background: LinkText;
+      }
+    }
     nav a:hover::after,
     nav a[data-settled]::after,
     nav a[aria-current]::after {

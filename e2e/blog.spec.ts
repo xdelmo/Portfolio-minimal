@@ -1,4 +1,8 @@
 import { expect, test } from './fixtures';
+import { readdirSync } from 'node:fs';
+
+// every post folder, so a new post does not break the count
+const POST_COUNT = readdirSync('src/app/content/blog', { withFileTypes: true }).filter((d) => d.isDirectory()).length;
 
 const POST = 'server-side-tables';
 
@@ -9,7 +13,7 @@ test('the menu leads to the blog, which lists every post with its date and readi
   await expect(page).toHaveURL(/\/en\/blog\/?$/);
   await expect(page.locator('h1')).toHaveText('Blog');
   const posts = page.locator('.posts li');
-  await expect(posts).toHaveCount(4);
+  await expect(posts).toHaveCount(POST_COUNT);
   await expect(posts.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(posts.first()).toContainText(/\d+ min read/);
 });
@@ -83,4 +87,94 @@ test('article copy link button copies current URL to clipboard (issue #315)', as
   await copyBtn.click();
   await expect(copyBtn).toContainText('Copied');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(`/en/blog/${POST}`);
+});
+
+async function expectProgressBelowHeader(page: import('@playwright/test').Page): Promise<void> {
+  const bar = page.locator('.reading-progress');
+  const fill = page.locator('.reading-progress-fill');
+  await expect(async () => {
+    const [headerBox, barBox, scale] = await Promise.all([
+      page.locator('app-site-header').boundingBox(),
+      bar.boundingBox(),
+      fill.evaluate((el) => getComputedStyle(el).scale),
+    ]);
+    expect(headerBox).not.toBeNull();
+    expect(barBox).not.toBeNull();
+    if (!headerBox || !barBox) return;
+    expect(barBox.width).toBeGreaterThan(200);
+    expect(barBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height - 1);
+    expect(barBox.y).toBeLessThanOrEqual(headerBox.y + headerBox.height + 4);
+    expect(parseFloat(scale)).toBeGreaterThan(0.1);
+  }).toPass();
+}
+
+test('reading progress sits below the header and fills while keeping full width (issue #598)', async ({ page }) => {
+  await page.goto(`/en/blog/${POST}`);
+  const bar = page.locator('.reading-progress');
+  await expect(bar).toBeAttached();
+  const initialBox = await bar.boundingBox();
+  expect(initialBox?.width ?? 0).toBeGreaterThan(200);
+
+  await page.evaluate(() => {
+    window.scrollTo(0, Math.round(document.documentElement.scrollHeight * 0.5));
+  });
+  await expectProgressBelowHeader(page);
+});
+
+test.describe('reading progress under ScrollSmoother (issue #598)', () => {
+  test.use({ smoothScroll: true });
+
+  test('pins below the fixed header on desktop scroll', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'ScrollSmoother runs on desktop pointers only');
+    await page.goto(`/en/blog/${POST}`);
+    await page.mouse.move(640, 400);
+    await page.mouse.wheel(0, 800);
+    await expect
+      .poll(async () => {
+        const [y, m] = await page.evaluate(() => [
+          window.scrollY,
+          new DOMMatrix(getComputedStyle(document.getElementById('smooth-content') ?? document.body).transform).m42,
+        ]);
+        return y > 400 && Math.abs(y + m) < 2;
+      })
+      .toBe(true);
+    await expectProgressBelowHeader(page);
+  });
+});
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`code blocks apply syntax colors in the ${colorScheme} theme (issue #597)`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/blog/signals-in-production');
+    const colors = await page.evaluate(() => {
+      const code = document.querySelector('app-code-block pre code');
+      const kw = document.querySelector('app-code-block .tok-kw');
+      const str = document.querySelector('app-code-block .tok-str');
+      return {
+        code: code ? getComputedStyle(code).color : null,
+        kw: kw ? getComputedStyle(kw).color : null,
+        str: str ? getComputedStyle(str).color : null,
+      };
+    });
+    expect(colors.kw).not.toBeNull();
+    expect(colors.str).not.toBeNull();
+    expect(colors.kw).not.toBe(colors.code);
+    expect(colors.str).not.toBe(colors.code);
+  });
+}
+
+// the blog follows the design system: no transition with reduced motion, `/` separators, 16px icons, 32px tags (issue #604)
+test('the blog keeps still with reduced motion and follows the design system', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en/blog/');
+  await expect(page.locator('.post-item').first()).toHaveCSS('transition-duration', '0s');
+  const tag = page.locator('.project-tag').first();
+  await expect(tag).toHaveCSS('transition-duration', '0s');
+  expect((await tag.boundingBox())?.height).toBeGreaterThanOrEqual(32);
+  await page.goto(`/en/blog/${POST}`);
+  await expect(page.locator('.byline .meta-sep')).toHaveText('/');
+  await expect(page.locator('.adjacent-card').first()).toHaveCSS('transition-duration', '0s');
+  await expect(page.locator('app-site-footer .to-top svg')).toHaveCSS('width', '16px');
+  const icon = page.locator('.action-btn svg');
+  if (await icon.count()) await expect(icon).toHaveAttribute('width', '16');
 });

@@ -118,3 +118,14 @@
         scale: 1;
       }
     }
+    // forced colours repaint backgrounds and drop box-shadows: indicators take a system colour (issue #603)
+    @media (forced-colors: active) {
+      .moai-line {
+        outline: 4px solid CanvasText;
+      }
+      .moai-line::after {
+        forced-color-adjust: none;
+        background: CanvasText;
+        box-shadow: 8px 8px CanvasText;
+      }
+    }

@@ -20,8 +20,8 @@
       gap: var(--space-1);
     }
     .to-top svg {
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
     }
     // as the contact arrow (home.scss): it moves only with a mouse and no reduced-motion preference (issue #442)
     @media (hover: hover) and (prefers-reduced-motion: no-preference) {

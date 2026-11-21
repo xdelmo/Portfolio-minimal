@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { currentUrl, inPageHref } from '../../core/current-url';
 import { CONTENT } from '../../content/content';
 import { APP_VERSION } from '../../core/version.generated';
+import { scrollToTop } from '../../motion/smoother';
 
 /**
  * The end of every page: the year, a way back up, my profiles, the privacy page, and the door to the easter egg (craft.wild.as closes
@@ -35,8 +36,6 @@ export class SiteFooter {
   // with JavaScript, scroll in place and move the focus to the content
   protected toTop(event: Event): void {
     event.preventDefault();
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: 0, behavior: reduce ? 'instant' : 'smooth' });
-    document.getElementById('main')?.focus({ preventScroll: true });
+    scrollToTop();
   }
 }

@@ -1,4 +1,8 @@
 import { expect, test } from './fixtures';
+import { readdirSync } from 'node:fs';
+
+// every post folder, so a new post does not break the count
+const POST_COUNT = readdirSync('src/app/content/blog', { withFileTypes: true }).filter((d) => d.isDirectory()).length;
 
 const POST = 'server-side-tables';
 
@@ -9,7 +13,7 @@ test('the menu leads to the blog, which lists every post with its date and readi
   await expect(page).toHaveURL(/\/en\/blog\/?$/);
   await expect(page.locator('h1')).toHaveText('Blog');
   const posts = page.locator('.posts li');
-  await expect(posts).toHaveCount(4);
+  await expect(posts).toHaveCount(POST_COUNT);
   await expect(posts.first().locator('time')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(posts.first()).toContainText(/\d+ min read/);
 });
@@ -137,3 +141,24 @@ test.describe('reading progress under ScrollSmoother (issue #598)', () => {
     await expectProgressBelowHeader(page);
   });
 });
+
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`code blocks apply syntax colors in the ${colorScheme} theme (issue #597)`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/en/blog/signals-in-production');
+    const colors = await page.evaluate(() => {
+      const code = document.querySelector('app-code-block pre code');
+      const kw = document.querySelector('app-code-block .tok-kw');
+      const str = document.querySelector('app-code-block .tok-str');
+      return {
+        code: code ? getComputedStyle(code).color : null,
+        kw: kw ? getComputedStyle(kw).color : null,
+        str: str ? getComputedStyle(str).color : null,
+      };
+    });
+    expect(colors.kw).not.toBeNull();
+    expect(colors.str).not.toBeNull();
+    expect(colors.kw).not.toBe(colors.code);
+    expect(colors.str).not.toBe(colors.code);
+  });
+}

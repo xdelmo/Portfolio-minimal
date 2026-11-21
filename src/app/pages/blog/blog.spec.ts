@@ -49,16 +49,18 @@ describe('ArticlePage', () => {
 });
 
 describe('CodeBlock', () => {
-  it('renders language tag and pre formatted code', async () => {
+  it('renders language tag, pre formatted code, and token spans', async () => {
     TestBed.configureTestingModule({});
     const fixture = TestBed.createComponent(CodeBlock);
-    fixture.componentRef.setInput('code', 'const x = 42;');
+    fixture.componentRef.setInput('code', "const x = '42';");
     fixture.componentRef.setInput('lang', 'ts');
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
 
     expect(el.querySelector('.lang-tag')?.textContent).toBe('ts');
-    expect(el.querySelector('pre code')?.textContent).toBe('const x = 42;');
+    expect(el.querySelector('pre code')?.textContent).toBe("const x = '42';");
     expect(el.querySelector('code')?.classList).toContain('language-ts');
+    expect(el.querySelector('.tok-kw')?.textContent).toBe('const');
+    expect(el.querySelector('.tok-str')?.textContent).toBe("'42'");
   });
 });

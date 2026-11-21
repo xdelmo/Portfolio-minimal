@@ -151,9 +151,9 @@ Density is low and text-first. Sections alternate with full-bleed bands (pastel,
 Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tints, lavender, peach) that never carries text.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and the thin accent lines (pixel thread, pixel cursor, current inventory slot, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
-- **Bright Signal** (`signal-blue-bright`): the primary button's fill in dark theme and the strongest pixel (`--px-1`) in both themes. Never text on concrete.
-- **Night Link** (`night-link`): in dark theme links, the focus ring and `--accent-line`, because the fill blue is too dark to read as a thin line on night.
+- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and non-text accent indicators (pixel thread line and nodes, pixel cursor, current inventory slot/toc/language markers, meters, timeline cells, combo cells, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
+- **Bright Signal** (`signal-blue-bright`): the primary button's fill in dark theme and the strongest pixel (`--px-1`) in both themes. Never text or a 1–4px UI indicator on night/bands.
+- **Night Link** (`night-link`): in dark theme links, the focus ring and `--accent-line`, because the fill blue fails contrast (`< 3:1`) as a thin line or meter bar on night.
 
 ### Neutral
 - **Concrete** (`concrete`) and **Night** (`night`): the page in light and dark.
@@ -165,7 +165,7 @@ Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tin
 - **Pixel Sky, Mist, Lavender, Lilac, Peach** (`pixel-*`): dots of the hero field, sprites, seams. Brighter variants in dark theme (`--px-1` … `--px-6`).
 
 ### Bands
-- **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus` and `--rule` to its own AA-checked set (`band-link` on the pastel bands; `band-pastel-muted`, `band-lavender-muted`, `band-ink-muted` for secondary text and `band-ink-link` for links on ink), so its content follows by itself. In dark theme the bands turn deep navy and violet.
+- **Pastel** (`band-pastel`, About), **Lavender** (`band-lavender`, side quests) and **Ink** (`band-ink` with `band-ink-text`, contact and footer) are full-bleed section backgrounds. A band re-points `--fg`, `--fg-muted`, `--link`, `--focus`, `--accent-line` and `--rule` to its own AA-checked set (`band-link` on the pastel bands; `band-pastel-muted`, `band-lavender-muted`, `band-ink-muted` for secondary text and `band-ink-link` for links and meters on ink), so its content and UI indicators follow by themselves. In dark theme the bands turn deep navy and violet.
 
 ### Named Rules
 **The Highlighter Rule.** Selected text is ink (`#1d1d1c`) on Pixel Peach (`#ffb88f`), about 10:1, in both themes and on every band (`--selection-bg`, `--selection-fg`). Peach is the one pastel no band sits on, so a selection never vanishes into its background.

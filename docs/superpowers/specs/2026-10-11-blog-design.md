@@ -22,7 +22,7 @@ Una sezione blog che parte da tre post tecnici pubblicati su LinkedIn (Signals n
   - ferma il build su lingua mancante, campo mancante, data non valida, date o progetto diversi tra le lingue, progetto sconosciuto;
   - converte il Markdown con `marked` (dipendenza di sviluppo, niente JavaScript in più per chi legge);
   - scrive `src/app/content/blog.generated.ts` (escluso da git): per lingua, gli articoli dal più recente, con HTML, Markdown sorgente, data formattata (`Intl.DateTimeFormat`, `dateStyle: long`) e minuti di lettura (parole / 220, arrotondato in su).
-- Nessun colore di sintassi: i blocchi di codice sono monocromi, in inchiostro su superficie (il sito è testo prima di tutto, e il sanitizer di Angular toglierebbe gli `style` di un evidenziatore).
+- Evidenziazione sintassi leggera senza dipendenze esterne (`CodeBlock` con `ViewEncapsulation.None` e token di marca AA su `--surface`, nessun verde).
 - I `<pre>` hanno `tabindex="0"`: scorrono in orizzontale e la tastiera deve raggiungerli (axe `scrollable-region-focusable`).
 
 ## Pagine
@@ -51,4 +51,8 @@ Una sezione blog che parte da tre post tecnici pubblicati su LinkedIn (Signals n
 
 ## Fuori dalla v1
 
-Commenti, RSS, tag, ricerca, evidenziazione della sintassi.
+Commenti, RSS, tag, ricerca.
+
+## Modifiche
+
+- `2026-11-20`: issue #597 — `CodeBlock` usa `ViewEncapsulation.None` così gli span `.tok-*` ricevono gli stili, con `--band-lavender-muted` su `.tok-str` e `--link` su `.tok-dec` per il contrasto WCAG 2.2 AA in tema scuro.

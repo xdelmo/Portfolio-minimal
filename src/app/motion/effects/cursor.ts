@@ -35,7 +35,7 @@ export const cursorEffect: Effect = (root, { gsap, desktop }) => {
   const draw = (): void => {
     if (step === null) return;
     const ring = Math.round(grow.ring);
-    const color = getComputedStyle(dot).backgroundColor; // the pixel's --accent, never framed while the arrow shows
+    const color = getComputedStyle(dot).backgroundColor; // the pixel's --accent-line, never framed while the arrow shows
     const key = `${String(step)} ${String(ring)} ${color}`;
     if (key === drawn) return;
     drawn = key;

@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import { SideQuest } from '../../content/content.model';
 import { GithubMark } from '../../layout/github-mark';
 import { QuestSprite } from './quest-sprite';
@@ -14,6 +14,8 @@ import { QuestSprite } from './quest-sprite';
 export class SideQuests {
   readonly items = input.required<readonly SideQuest[]>();
   private readonly list = viewChild.required<ElementRef<HTMLElement>>('list');
+  /** True when the bar overflows (phones): only then is it a tab stop, for its arrow keys (issue #601). */
+  protected readonly scrollable = signal(false);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -27,7 +29,9 @@ export class SideQuests {
         { root: list, rootMargin: '0px -49% 0px -49%' },
       );
       for (const item of list.children) middle.observe(item);
-      destroyRef.onDestroy(() => { middle.disconnect(); });
+      const size = new ResizeObserver(() => { this.scrollable.set(list.scrollWidth > list.clientWidth); });
+      size.observe(list);
+      destroyRef.onDestroy(() => { middle.disconnect(); size.disconnect(); });
     });
   }
 }

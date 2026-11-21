@@ -41,6 +41,10 @@
       animation: node-on 0.24s steps(3);
     }
     @media (forced-colors: active) {
+      app-thread .line {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
       app-thread .node {
         outline: 2px solid CanvasText;
         outline-offset: -2px;

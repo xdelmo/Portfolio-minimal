@@ -11,7 +11,8 @@ test('under forced colours the header keeps its rule and the pixel decoration hi
 });
 
 // indicators drawn with a background would be repainted as Canvas: each keeps its own system colour (issue #603)
-test('under forced colours the meters, the timeline and the current markers keep their colour', async ({ page }) => {
+test('under forced colours the meters, the timeline and the current markers keep their colour', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit has no forced-color-adjust property to read back');
   await page.goto('/en/');
   const adjust = (selector: string, pseudo?: string) =>
     page.locator(selector).first().evaluate((el, p) => getComputedStyle(el, p).forcedColorAdjust, pseudo ?? null);
@@ -21,7 +22,8 @@ test('under forced colours the meters, the timeline and the current markers keep
   expect(await adjust('app-language-switch [aria-current]', '::before')).toBe('none');
 });
 
-test('under forced colours the 404 battle cursor keeps its colour', async ({ page }) => {
+test('under forced colours the 404 battle cursor keeps its colour', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit has no forced-color-adjust property to read back');
   await page.goto('/en/404');
   const cursor = await page.locator('.move').first().evaluate((el) => getComputedStyle(el, '::before').forcedColorAdjust);
   expect(cursor).toBe('none');

@@ -68,13 +68,13 @@ The solution relies on layered lazy loading:
 2. **Sequential MOTION_LOADER**: The service imports GSAP and each required plugin one by one across separate microtasks. Spreading initialization prevents long CPU execution tasks during startup.
 3. **User preferences first**: When `prefers-reduced-motion: reduce` is enabled or a touch screen (`pointer: coarse`) is in use, ScrollSmoother and pinned parallax effects are disabled entirely, letting native browser scrolling take over.
 
-Between home sections, canvas-rendered stepped seams (`PixelDissolve`) form and dissolve synchronously with scroll progress via a CSS variable (`--p`):
+Between home sections, stepped seams drawn as layered SVG paths (`PixelDissolve`) form and dissolve synchronously with scroll progress via a CSS variable (`--p`):
 
 ```scss
-app-pixel-dissolve.seam {
-  display: block;
-  width: 100%;
-  height: 24px;
+.seam {
+  position: absolute;
+  inset-inline: calc(50% - 50vw);
+  height: var(--space-6); // 48px: three rows of 16px cells
 }
 ```
 

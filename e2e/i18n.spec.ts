@@ -95,6 +95,8 @@ test.describe('switching language', () => {
       await (await openLanguages(page)).getByRole('link', { name: 'Italiano' }).click();
       await page.waitForURL('**/it/');
       expect(await overlay(page)).toEqual({ name: null, phase: null });
+      // the moai stays still, so nothing is kept for its hello (issue #607)
+      expect(await page.evaluate(() => sessionStorage.getItem('moai-hello'))).toBeNull();
     });
   });
 });

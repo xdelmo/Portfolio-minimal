@@ -235,6 +235,16 @@ test.describe('without JavaScript', () => {
   });
 });
 
+test.describe('moai still without JavaScript (issue #608)', () => {
+  test.use({ javaScriptEnabled: false, colorScheme: 'dark' });
+
+  test('shows the dark still moai in a dark system theme', async ({ page }) => {
+    await page.goto('/en/');
+    await expect(page.locator('app-moai-figure img.still--dark')).not.toHaveCSS('display', 'none');
+    await expect(page.locator('app-moai-figure img.still--light')).toHaveCSS('display', 'none');
+  });
+});
+
 test.describe('in dark theme with reduced motion', () => {
   test.use({ reducedMotion: 'reduce', colorScheme: 'dark' });
 

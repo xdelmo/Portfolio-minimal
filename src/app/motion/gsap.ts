@@ -21,7 +21,15 @@ async function load(): Promise<MotionLib> {
   if (wantsSmooth()) {
     const { ScrollSmoother } = await import('gsap/ScrollSmoother');
     gsap.registerPlugin(ScrollSmoother);
-    setSmoother(ScrollSmoother.create({ wrapper: '#smooth-wrapper', content: '#smooth-content', smooth: 1 }));
+    // focusing #main after a jump to the top must not snap the smoother to it mid-scroll (issue #609)
+    setSmoother(
+      ScrollSmoother.create({
+        wrapper: '#smooth-wrapper',
+        content: '#smooth-content',
+        smooth: 1,
+        onFocusIn: (_s, e) => (e.target as Element).id !== 'main',
+      }),
+    );
     document.documentElement.classList.add('smooth');
   }
   return { gsap, ScrollTrigger, SplitText };

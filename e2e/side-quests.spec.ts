@@ -64,6 +64,9 @@ test.describe('on a phone', () => {
 
   test('the keyboard reaches the bar and its arrow keys scroll it', async ({ page }) => {
     await page.goto('/en/');
+    await expect(list(page)).toHaveAttribute('tabindex', '0');
+    // pinch zoom and double-tap stay with the browser, only the sideways swipe is the bar's (issue #601)
+    expect(await list(page).evaluate((el) => getComputedStyle(el).touchAction)).toBe('manipulation');
     await list(page).focus();
     await expect(list(page)).toBeFocused();
     await page.keyboard.press('ArrowRight');
@@ -78,4 +81,6 @@ test('on desktop the side quests stay a grid of three columns that never scrolls
   const list = page.locator('#side-quests .quests');
   expect(await list.evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length)).toBe(3);
   expect(await list.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  // a grid that never scrolls is not a tab stop (issue #601)
+  await expect(list).not.toHaveAttribute('tabindex');
 });

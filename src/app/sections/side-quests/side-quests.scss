@@ -68,7 +68,7 @@
         scroll-snap-type: x mandatory;
         scroll-padding-inline: var(--gutter);
         overscroll-behavior-x: contain;
-        touch-action: pan-x pan-y;
+        touch-action: manipulation;
         scrollbar-width: none;
       }
       li {

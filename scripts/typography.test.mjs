@@ -13,16 +13,26 @@ export function proseLines(markdown) {
   });
 }
 
+/** A straight apostrophe between letters, escaped (`site\'s`) or not (issue #605). */
+export const STRAIGHT = /(?<=[A-Za-zÀ-ÿ])\\?'(?=[A-Za-zÀ-ÿ])/;
+
 const offenders = (file, lines) =>
-  lines.filter(([, line]) => /(?<=[A-Za-zÀ-ÿ])'(?=[A-Za-zÀ-ÿ])/.test(line)).map(([n]) => `${file}:${String(n)}`);
+  lines.filter(([, line]) => STRAIGHT.test(line)).map(([n]) => `${file}:${String(n)}`);
 
 test('proseLines skips code', () => {
   assert.deepEqual(proseLines("a `it's`\n```\nx = 'y'\n```\nb"), [[1, 'a '], [5, 'b']]);
 });
 
+test('STRAIGHT catches escaped apostrophes', () => {
+  assert.ok(STRAIGHT.test("site\\'s"));
+  assert.ok(STRAIGHT.test("it's"));
+  assert.ok(!STRAIGHT.test("site’s"));
+  assert.ok(!STRAIGHT.test("'a', 'b'"));
+});
+
 test('no straight apostrophes in visible copy', () => {
   const found = [];
-  for (const file of ['src/app/content/content.en.ts', 'src/app/content/content.it.ts']) {
+  for (const file of ['src/app/content/content.en.ts', 'src/app/content/content.it.ts', 'src/app/voxel/lines.ts']) {
     const lines = readFileSync(file, 'utf8').split('\n').map((line, i) => [i + 1, line]);
     found.push(...offenders(file, lines.filter(([, l]) => !/^\s*(\/\/|\*|\/\*|import )/.test(l))));
   }

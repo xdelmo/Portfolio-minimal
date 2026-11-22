@@ -62,20 +62,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ALLOW_PROTECTED_PUSH: '1'
+          # inputs reach the script as variables, never as code (issue #627)
+          PR_NUM: ${{ github.event.pull_request.number || inputs.pr_number }}
+          BUMP: ${{ inputs.bump || 'auto' }}
         run: |
-          PR_NUM="${{ github.event.pull_request.number || inputs.pr_number }}"
-          BUMP="${{ inputs.bump || 'auto' }}"
-
-          CMD="node scripts/release.mjs"
-          if [ -n "$PR_NUM" ]; then
-            CMD="$CMD --pr-number $PR_NUM"
-          fi
-          if [ "$BUMP" != "auto" ] && [ -n "$BUMP" ]; then
-            CMD="$CMD --bump $BUMP"
-          fi
-
-          echo "Executing: $CMD"
-          eval "$CMD"
+          [[ "$PR_NUM" =~ ^[0-9]*$ ]] || { echo "pr_number must be digits: $PR_NUM" >&2; exit 1; }
+          args=()
+          if [ -n "$PR_NUM" ]; then args+=(--pr-number "$PR_NUM"); fi
+          if [ "$BUMP" != "auto" ] && [ -n "$BUMP" ]; then args+=(--bump "$BUMP"); fi
+          echo "Executing: node scripts/release.mjs ${args[*]}"
+          node scripts/release.mjs "${args[@]}"
 
       # Keep devel on top of master so the next release PR neither conflicts
       # nor lists old commits again (issue #298). A conflict fails the job.

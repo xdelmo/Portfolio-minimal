@@ -10,7 +10,7 @@ When the time came for the real backend, I set myself one rule: the frontend doe
 
 ## The stack
 
-Spring Boot 4 on Java 21, Spring Data JPA on PostgreSQL, Maven, a Docker image on Eclipse Temurin. Five resources (customers, orders, products, users, customer statistics), each with a controller, a service and a repository. Nothing exotic: the interesting part is the edge where the API meets the dashboard.
+Spring Boot 4 on Java 21, Spring Data JPA on PostgreSQL, Maven, a Docker image on Eclipse Temurin. Five resources (customers, orders, products, users, customer statistics), each with a controller, a service and a repository.
 
 ## One parser for every list
 
@@ -32,11 +32,11 @@ The body is a plain array, as json-server returns it, and the total travels in t
 - A key ending in `_like` becomes a case-insensitive `LIKE '%value%'` on that field.
 - Any other key that names a field of the entity becomes an exact match; a key that names no field is ignored instead of failing the request.
 
-With this, the five list endpoints share the same behaviour, and a new filter in the dashboard needs no new code on the server, as long as it filters on a field the entity has.
+So the five list endpoints behave the same way. A new dashboard filter on a field the entity already has needs no server code.
 
 ## Where the dialect ran out
 
-json-server can filter on a related record, such as orders by customer name, because everything sits in one JSON file. A relational database needs a decision. For `customer.name_like` the order service first finds the matching customers, then filters the orders by their ids:
+json-server can filter on a related record, such as orders by customer name, because everything sits in one JSON file. In a relational database an order holds only the customer’s id. For `customer.name_like` the order service first finds the matching customers, then filters the orders by their ids:
 
 ```java
 List<String> customerIds = customerRepository.findAll((root, query, cb) ->
@@ -54,17 +54,17 @@ spec = spec.and((root, query, cb) ->
 The mock could only store what it was sent. The real backend is where the rules of the domain went:
 
 - **An order extends a subscription.** Creating an order with monthly or yearly products adds the months to the customer’s end date, from today or from a date still in the future, and marks the customer active. In the same transaction it updates the customer’s totals: number of orders, revenue, date of the last order.
-- **Subscriptions expire on their own.** A `@Scheduled` job runs every night, and once at startup, and marks as expired every active customer whose end date has passed.
-- **Errors have one shape.** A `@RestControllerAdvice` turns validation errors and bad arguments into a 400 with a fixed JSON body, and any unexpected exception into a 500 with a generic message, while the stack trace goes only to the log.
+- **Subscriptions expire on their own.** A `@Scheduled` job runs every night at 1:00, and once at startup, and marks as expired every active customer whose end date has passed.
+- **Errors have one shape.** A `@RestControllerAdvice` turns validation errors and bad arguments into a 400 with a fixed JSON body, and any unexpected exception into a 500 with a generic message. The stack trace stays in the log.
 
 ## What I would change
 
-Building it taught me as much as the result did, and some things I would do differently:
+Three things I would do differently:
 
 - **Sorting on a related field.** The parser ignores `_sort=customerStats.totalRevenue`; the customer service handles that case on its own, sorting and paging in memory. A join in the `Specification` would bring it back to the shared code.
 - **Totals in the database.** Total and monthly revenue load every order and sum them in Java. With seven orders it does not matter; with seventy thousand it would be a `SUM` with `GROUP BY` month in a repository query.
-- **Server-made ids.** Order ids come from a random four-digit number, which is fine for a demo and a collision waiting to happen in production. A sequence or a UUID removes the problem.
+- **Server-made ids.** Order ids come from a random four-digit number, fine for a demo; in production, sooner or later, two orders would get the same id. A sequence or a UUID removes the problem.
 
 ## What the rule gave me
 
-The rule "the frontend does not change" kept the contract in one place, a parser and a header, and made the switch from mock to real API a non-event. It also showed me the limit of starting from a mock: json-server decided the shape of the API, and some of its conveniences, such as filters on related records, are harder in SQL than they look in a JSON file. The code is on GitHub, in [xdelmo/backend-tesi](https://github.com/xdelmo/backend-tesi).
+The rule “the frontend does not change” kept the contract in one place, a parser and a header, and made the switch from mock to real API a non-event. It also showed me the limit of starting from a mock: json-server decided the shape of the API. Some of its conveniences, such as filters on related records, are harder in SQL than they look in a JSON file. The code is on GitHub, in [xdelmo/backend-tesi](https://github.com/xdelmo/backend-tesi).

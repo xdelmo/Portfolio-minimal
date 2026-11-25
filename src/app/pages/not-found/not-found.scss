@@ -66,6 +66,12 @@
         height: 192px;
       }
     }
+    // the scene, the pixel stand-in and the placeholder fill the slot
+    .foe > * {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
     .text {
       grid-area: text;
       display: grid;

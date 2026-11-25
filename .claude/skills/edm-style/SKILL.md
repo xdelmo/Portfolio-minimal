@@ -27,6 +27,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 | Thin accent lines and UI indicators (thread, pixel cursor, current slot/toc/language markers, meters, timeline/combo cells, blockquote) | `--accent-line` | `#0058b8` | `#4d9bf0` |
 | Pixel palette, decoration only | `--px-1`…`--px-6` | blue, blue tints, lavender ×2, peach | brighter versions |
 | Moai | `--stone*`, `--moai-eye-white` | warm greys | darker greys |
+| Nutella, the 404's chihuahua | `--nutella-*` (cream, white, tan, saddle, ear, black) | her coat from the photo | slightly darker |
 
 - **No green, ever** (the user's brand is greys, the blue family, lavender, peach). This includes "success" states and syntax colours.
 - The `--px-*` colours never carry text. Text on pastel uses the band ink tokens (`--band-pastel-*`).
@@ -65,6 +66,8 @@ Spend boldness here, keep everything else calm:
 7. Transitions answering the user: theme circle reveal, language curtain in pixel steps, menu scramble (a clicked menu link settles on its word and full underline at once, before the page change's view transition takes its picture, and stays still until the pointer moves off it once the new page is live: issues #572, #574), pixel cursor and magnetic targets. Near a section `h2` the pixel cursor grows into a pixel arrow pointing at the title's words, ring by ring out of the square and back into it (`motion/arrow.ts`): drawn as lines on 8px cells, in eight directions only, because in between it smudges; never over the words themselves.
 
 8. **Background music** (`layout/music-toggle.ts`, `src/app/music/`, issue #516): an 8-bit ambient loop on Game Boy style pulse waves behind a 16px speaker icon in the header and the phone menu (`aria-pressed`). Off on every page load and started only by a press; the player and the song are a lazy chunk loaded on that first press; it keeps playing across in-app navigation and stops with the motion pause (`watchPause()`), fading out rather than cutting.
+
+9. **Nutella on the 404** (`voxel/nutella-scene/`, issue #632): the user's chihuahua as the wild creature, voxels drawn like the moai (same cube size, lights, isometric camera and `--moai-shadow`), symmetric and with no loose cube (`nutella.model.spec.ts`). She wags her tail and tilts her head every few seconds; still with reduced motion, under the pause button or out of sight. Three.js loads only once she is in view (`@defer (on viewport)`), the canvas is decorative, and without WebGL the old `wild404` sprite takes her place. The battle's appear and idle steps stay on the `.foe` wrapper.
 
 Photos load depixelating (`src/app/depixelate/`, as on locomotive.ca): a canvas draws them in ever finer blocks as they scroll in, then the photo shows; put `appDepixelate` on any new photo.
 

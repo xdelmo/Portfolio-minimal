@@ -19,6 +19,7 @@ import { articleJsonLd } from '../../../core/seo/seo';
 import { SeoService } from '../../../core/seo/seo.service';
 import { ContactPrompt } from '../../../layout/contact-prompt';
 import { type Effect, MotionHost } from '../../../motion/motion-host';
+import { burstPixels } from '../../../motion/pixel-burst';
 import { stickyEffect } from '../../../motion/effects/sticky';
 import { CodeBlock } from '../code-block/code-block';
 
@@ -92,13 +93,14 @@ export class ArticlePage {
     });
   }
 
-  protected async copyLink(): Promise<void> {
+  protected async copyLink(btn?: HTMLElement): Promise<void> {
     try {
       await navigator.clipboard.writeText(window.location.href);
     } catch {
       return;
     }
     this.copied.set(true);
+    if (btn) burstPixels(btn);
     clearTimeout(this.copyTimer);
     this.copyTimer = setTimeout(() => {
       this.copied.set(false);

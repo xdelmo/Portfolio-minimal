@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ViewEncapsulation, afterNextRender, computed, inject, input, signal } from '@angular/core';
+import { burstPixels } from '../../../motion/pixel-burst';
 
 /** How long the button says "Copied" before it offers to copy again. */
 export const COPIED_MS = 2000;
@@ -81,13 +82,14 @@ export class CodeBlock {
     });
   }
 
-  protected async copy(): Promise<void> {
+  protected async copy(btn?: HTMLElement): Promise<void> {
     try {
       await navigator.clipboard.writeText(this.code());
     } catch {
       return;
     }
     this.copied.set(true);
+    if (btn) burstPixels(btn);
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
       this.copied.set(false);

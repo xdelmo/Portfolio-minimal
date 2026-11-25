@@ -56,7 +56,21 @@ test('every code block copies its code to the clipboard and says so', async ({ p
   await expect(blocks.locator('button')).toHaveCount(await blocks.count());
   const first = blocks.first();
   const button = first.getByRole('button', { name: 'Copy code' });
+  await first.locator('.code-bar').evaluate((bar) => {
+    (window as unknown as { __burstSeen?: number }).__burstSeen = 0;
+    new MutationObserver((records) => {
+      for (const r of records) {
+        for (const n of r.addedNodes) {
+          if (n instanceof HTMLElement && n.classList.contains('pixel-burst')) {
+            (window as unknown as { __burstSeen: number }).__burstSeen += 1;
+          }
+        }
+      }
+    }).observe(bar, { childList: true });
+  });
   await button.click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __burstSeen?: number }).__burstSeen ?? 0)).toBe(6);
+  await expect(first.locator('.pixel-burst')).toHaveCount(0);
   await expect(first.getByRole('button', { name: 'Copied' })).toBeVisible();
   await expect(first.getByRole('status')).toHaveText('Code copied');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(await first.locator('pre code').textContent());
@@ -164,7 +178,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 }
 
 // the blog follows the design system: no transition with reduced motion, `/` separators, 16px icons, 32px tags (issue #604)
-test('the blog keeps still with reduced motion and follows the design system', async ({ page }) => {
+test('the blog keeps still with reduced motion and follows the design system', async ({ page, context, browserName }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/en/blog/');
   await expect(page.locator('.post-item').first()).toHaveCSS('transition-duration', '0s');
@@ -179,6 +193,25 @@ test('the blog keeps still with reduced motion and follows the design system', a
   await expect(page.locator('app-site-footer .to-top svg')).toHaveCSS('width', '16px');
   const icon = page.locator('.action-btn svg');
   if (await icon.count()) await expect(icon).toHaveAttribute('width', '16');
+  if (browserName === 'chromium') {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    const firstBar = page.locator('app-code-block .code-bar').first();
+    await firstBar.evaluate((bar) => {
+      (window as unknown as { __burstReduced?: number }).__burstReduced = 0;
+      new MutationObserver((records) => {
+        for (const r of records) {
+          for (const n of r.addedNodes) {
+            if (n instanceof HTMLElement && n.classList.contains('pixel-burst')) {
+              (window as unknown as { __burstReduced: number }).__burstReduced += 1;
+            }
+          }
+        }
+      }).observe(bar, { childList: true });
+    });
+    await firstBar.getByRole('button', { name: 'Copy code' }).click();
+    await expect(page.locator('app-code-block').first().getByRole('button', { name: 'Copied' })).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { __burstReduced?: number }).__burstReduced ?? 0)).toBe(0);
+  }
 });
 
 test('hovering a linked blog row reveals the project preview on desktop only (issue #641)', async ({ page, isMobile }) => {

@@ -104,3 +104,35 @@ for (const width of [390, 1024, 1280, 1600]) {
     for (const s of seams) expect(s, s.seam).toMatchObject({ left: 0, right: edge });
   });
 }
+
+// inner pages close onto the ink footer with a full-bleed pixel seam, while the home keeps its seamless contact band (issue #642)
+for (const path of ['/en/work/apexflow', '/en/blog/']) {
+  test(`${path}: the footer grows a full-width pixel seam as it scrolls in`, async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(path);
+    const footerSeam = page.locator('app-site-footer .seam--footer');
+    await expect(footerSeam).toHaveCount(1);
+    const box = await footerSeam.boundingBox();
+    const edge = await page.evaluate(() => document.documentElement.clientWidth);
+    expect(Math.round(box?.x ?? -1)).toBe(0);
+    expect(Math.round((box?.x ?? 0) + (box?.width ?? 0))).toBe(edge);
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    await expect.poll(() => footerSeam.evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue('--p') || '1'))).toBe(1);
+  });
+}
+
+test('the home page footer carries no duplicate pixel seam', async ({ page }) => {
+  await page.goto('/en/');
+  await expect(page.locator('app-site-footer .seam--footer')).toHaveCount(0);
+});
+
+test.describe('inner footer seam with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' });
+  test('the inner footer seam starts formed', async ({ page }) => {
+    await page.goto('/en/work/apexflow');
+    await expect(page.locator('app-site-footer .seam--footer')).toHaveCount(1);
+    expect(await progress(page, 'app-site-footer')).toBe(1);
+  });
+});

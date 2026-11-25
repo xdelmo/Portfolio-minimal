@@ -1,4 +1,7 @@
-    <footer class="site-footer container band band--ink">
+    <footer class="site-footer container band band--ink" [class.site-footer--inner]="innerPage()">
+      @if (innerPage()) {
+        <app-pixel-dissolve class="seam seam--footer" [cols]="120" [rows]="3" [colors]="footerSeam" grow="up" />
+      }
       <p>© {{ year() }} {{ content.person.name }} · v{{ version }}</p>
       <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
         ><span i18n="@@footer.top">Back to top</span

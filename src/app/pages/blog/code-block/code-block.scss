@@ -3,6 +3,7 @@ app-code-block {
   min-width: 0;
 }
 app-code-block .code-bar {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: stretch;

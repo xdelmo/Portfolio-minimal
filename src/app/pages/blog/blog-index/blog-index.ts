@@ -1,23 +1,33 @@
+import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, LOCALE_ID, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ContactPrompt } from '../../../layout/contact-prompt';
 import { QuestSprite } from '../../../sections/side-quests/quest-sprite';
 import { BLOG } from '../../../content/blog';
 import { CONTENT } from '../../../content/content';
+import type { Project } from '../../../content/content.model';
 import { toLocale } from '../../../core/i18n/locale';
 import { blogJsonLd } from '../../../core/seo/seo';
 import { SeoService } from '../../../core/seo/seo.service';
+import { blogPreviewEffect } from '../../../motion/effects/blog-preview';
+import { type Effect, MotionHost } from '../../../motion/motion-host';
 
 /** The blog (issue #1, issue #315): every post, newest first. */
 @Component({
   selector: 'app-blog-index',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ContactPrompt, QuestSprite],
+  imports: [RouterLink, NgOptimizedImage, ContactPrompt, QuestSprite, MotionHost],
   templateUrl: './blog-index.html',
   styleUrl: './blog-index.scss',
 })
 export class BlogIndex {
   protected readonly articles = inject(BLOG);
+  private readonly projects = inject(CONTENT).projects;
+  protected readonly effects: readonly Effect[] = [blogPreviewEffect];
+
+  protected projectFor(slug?: string): Project | undefined {
+    return slug ? this.projects.find((p) => p.slug === slug) : undefined;
+  }
 
   constructor() {
     const seo = inject(SeoService);

@@ -168,6 +168,8 @@ test('the blog keeps still with reduced motion and follows the design system', a
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/en/blog/');
   await expect(page.locator('.post-item').first()).toHaveCSS('transition-duration', '0s');
+  const preview = page.locator('.post-item .post-preview').first();
+  if (await preview.count()) await expect(preview).toHaveCSS('transition-duration', '0s');
   const tag = page.locator('.project-tag').first();
   await expect(tag).toHaveCSS('transition-duration', '0s');
   expect((await tag.boundingBox())?.height).toBeGreaterThanOrEqual(32);
@@ -177,4 +179,20 @@ test('the blog keeps still with reduced motion and follows the design system', a
   await expect(page.locator('app-site-footer .to-top svg')).toHaveCSS('width', '16px');
   const icon = page.locator('.action-btn svg');
   if (await icon.count()) await expect(icon).toHaveAttribute('width', '16');
+});
+
+test('hovering a linked blog row reveals the project preview on desktop only (issue #641)', async ({ page, isMobile }) => {
+  await page.goto('/en/blog/');
+  const item = page.locator('.post-item', { has: page.locator('.post-preview') }).first();
+  const preview = item.locator('.post-preview');
+  await expect(preview).toBeAttached();
+  if (isMobile) {
+    await expect(preview).toBeHidden();
+    return;
+  }
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.locator('.blog[data-motion]')).toHaveAttribute('data-motion', 'ready');
+  await expect(preview).toHaveCSS('opacity', '0');
+  await item.hover();
+  await expect(preview).toHaveCSS('opacity', '1');
 });

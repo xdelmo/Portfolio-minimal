@@ -32,7 +32,7 @@ export const CONTENT_IT: SiteContent = {
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, tenere aggiornata la documentazione e orientarmi in API nuove. Ho anche studiato il Model Context Protocol e ho costruito un server MCP per provarlo.",
   ],
   figures: [
-    { value: '€1M', label: 'di ordini passati dal configuratore Flexie che ho costruito' },
+    { value: '€1M', label: 'di ordini l’anno dal configuratore Flexie che ho costruito' },
     { value: '20', label: 'componenti legacy portati su Signals' },
     { value: '450', label: 'pagine in sei lingue, nella guida in-app che ho costruito' },
     { value: '40', label: 'paesi in cui si usa la piattaforma IPS su cui lavoro' },

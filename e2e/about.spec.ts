@@ -47,8 +47,8 @@ for (const [lang, sentence, daily] of [
 }
 
 for (const [lang, label] of [
-  ['en', '€1M+ in orders placed through the Flexie configurator I built'],
-  ['it', '€1M+ di ordini passati dal configuratore Flexie che ho costruito'],
+  ['en', '€1M+ in orders a year placed through the Flexie configurator I built'],
+  ['it', '€1M+ di ordini l’anno dal configuratore Flexie che ho costruito'],
 ] as const) {
   test(`${lang}: the About proves the statement with four big numbers that fit a phone`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

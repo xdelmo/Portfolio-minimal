@@ -120,6 +120,8 @@ test.describe('with reduced motion', () => {
     await page.goto('/en/404');
     await expect(page.locator('h1')).toBeVisible();
     expect(await idle(page)).toEqual([]);
+    await expect(page.locator('app-nutella-scene')).toHaveCount(0);
+    await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
   });
 });
 
@@ -130,6 +132,54 @@ test.describe('without JavaScript', () => {
     await page.goto('/en/');
     await expect(page.locator('h1')).toContainText('curious by nature');
     await expect(page.getByRole('link', { name: 'ApexFlow', exact: true })).toBeVisible();
+  });
+
+  test('Nutella still render is visible on the 404', async ({ page }) => {
+    await page.goto('/en/404');
+    await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
+  });
+});
+
+const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
+
+function collectErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('console', (m) => {
+    if (m.type() === 'error' || (m.type() === 'warning' && m.text().includes('Too many active WebGL contexts'))) errors.push(m.text());
+  });
+  page.on('pageerror', (e) => errors.push(e.message));
+  return errors;
+}
+
+test.describe('Nutella', () => {
+  test('renders the still images from prerender', async ({ page }) => {
+    await page.goto('/en/404');
+    await expect(page.locator('app-nutella-figure img.still')).toHaveCount(2);
+  });
+
+  test('shifts mood with the battle menu and returns to idle', async ({ page }) => {
+    await page.goto('/en/404');
+    const figure = page.locator('app-nutella-figure');
+    await expect(figure).toHaveAttribute('data-mood', 'idle');
+    await page.locator('.move', { hasText: 'Run' }).focus();
+    await expect(figure).toHaveAttribute('data-mood', 'down');
+    await page.locator('.move', { hasText: 'Contact' }).focus();
+    await expect(figure).toHaveAttribute('data-mood', 'curious');
+    await page.locator('.move', { hasText: 'Contact' }).blur();
+    await expect(figure).toHaveAttribute('data-mood', 'idle');
+  });
+
+  test('swaps to the 3D scene and barks on click', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/en/404');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    const canvas = page.locator('app-nutella-scene canvas');
+    await expect(canvas).toBeVisible();
+    await expect(page.locator('app-nutella-figure img.still.covered')).toHaveCount(2);
+    await canvas.click();
+    await expect(page.locator('.says')).toHaveText('Nutella used Bark!');
+    await expect(page.locator('.says')).toHaveText('What will you do?');
+    expect(errors).toEqual([]);
   });
 });
 

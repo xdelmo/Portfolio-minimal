@@ -43,18 +43,17 @@ export class FooterSeam {
         kill?.();
       });
 
-      void loadMotion().then(({ gsap, ScrollTrigger }) => {
+      void loadMotion().then(({ gsap }) => {
         if (cancelled) return;
         const footer = host.closest('footer');
         const seam = host.querySelector<HTMLElement>('app-pixel-dissolve.seam--footer');
         if (!footer || !seam) return;
-        ScrollTrigger.refresh();
         if (seam.getBoundingClientRect().top < window.innerHeight) return;
         gsap.set(seam, { '--p': 0 });
         const tween = gsap.to(seam, {
           '--p': 1,
           ease: 'none',
-          scrollTrigger: { trigger: footer, start: 'top-=48 bottom', end: 'clamp(bottom bottom)', scrub: true },
+          scrollTrigger: { trigger: footer, start: 'top-=48 bottom', end: 'clamp(bottom bottom)', scrub: true, invalidateOnRefresh: true },
         });
         kill = () => {
           tween.scrollTrigger?.kill();

@@ -28,11 +28,11 @@ export const CONTENT_IT: SiteContent = {
   aboutStatement: 'Una tabella con migliaia di righe deve sembrare una con dieci.',
   aboutVoice: 'una con dieci.',
   about: [
-    'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e Flexie, un configuratore B2B di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di intelligence. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
+    'Ho iniziato a costruire frontend nel 2022 in una web agency: CRM, e-commerce e il configuratore B2B di Flexie, un’azienda di imballaggi. Nel 2026 sono entrato in IPS S.p.A. come tirocinante, lì ho scritto la tesi e sono rimasto nel team di prodotto di una piattaforma di intelligence. La tesi, ApexFlow, è una dashboard CRM full-stack in Angular e Spring Boot.',
     "Claude Code fa parte della mia giornata: lo uso per scrivere e rivedere codice, impostare i test, tenere aggiornata la documentazione e orientarmi in API nuove. Ho anche studiato il Model Context Protocol e ho costruito un server MCP per provarlo.",
   ],
   figures: [
-    { value: '€1M', label: 'di ordini l’anno dal configuratore Flexie che ho costruito' },
+    { value: '€1M', label: 'di ordini l’anno dal configuratore Flexie di cui ho curato il frontend' },
     { value: '20', label: 'componenti legacy portati su Signals' },
     { value: '450', label: 'pagine in sei lingue, nella guida in-app che ho costruito' },
     { value: '40', label: 'paesi in cui si usa la piattaforma IPS su cui lavoro' },
@@ -177,7 +177,7 @@ export const CONTENT_IT: SiteContent = {
       org: 'Web agency',
       summary: 'Circa due anni a costruire CRM, single-page app ed e-commerce per i clienti.',
       highlights: [
-        'Ho costruito Flexie, un configuratore B2B per packaging flessibile: più di 100 combinazioni di materiali, formati e accessori, con il prezzo calcolato in tempo reale.',
+        'Ho sviluppato il frontend del configuratore B2B di Flexie, un’azienda di packaging flessibile: più di 100 combinazioni di materiali, formati e accessori, con il prezzo calcolato in tempo reale.',
         'Ho scritto plugin WordPress su misura per gli e-commerce e li ho collegati ad API REST di terze parti.',
       ],
       tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],

@@ -110,7 +110,7 @@ for (const path of ['/en/work/apexflow', '/en/blog/']) {
   test(`${path}: the footer grows a full-width pixel seam as it scrolls in`, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(path);
-    const footerSeam = page.locator('app-site-footer .seam--footer');
+    const footerSeam = page.locator('app-site-footer app-pixel-dissolve.seam--footer');
     await expect(footerSeam).toHaveCount(1);
     const box = await footerSeam.boundingBox();
     const edge = await page.evaluate(() => document.documentElement.clientWidth);
@@ -132,7 +132,7 @@ test.describe('inner footer seam with reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
   test('the inner footer seam starts formed', async ({ page }) => {
     await page.goto('/en/work/apexflow');
-    await expect(page.locator('app-site-footer .seam--footer')).toHaveCount(1);
+    await expect(page.locator('app-site-footer app-pixel-dissolve.seam--footer')).toHaveCount(1);
     expect(await progress(page, 'app-site-footer')).toBe(1);
   });
 });

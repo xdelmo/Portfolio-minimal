@@ -12,6 +12,7 @@
     "test": "ng test",
     "start:it": "npm run generate && ng serve -c development-it --port 4201",
     "i18n:extract": "ng extract-i18n --output-path src/locale",
+    "nutella:image": "node --import ./scripts/ts-resolve.mjs scripts/nutella-image.mjs",
     "og:images": "node --import ./scripts/ts-resolve.mjs scripts/og-images.mjs",
     "verify:deploy": "node scripts/verify-deploy.mjs",
     "test:scripts": "node --test scripts/*.test.mjs",

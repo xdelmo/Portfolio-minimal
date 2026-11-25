@@ -206,6 +206,10 @@
         <source>What will you do?</source>
         <target>Cosa vuoi fare?</target>
       </trans-unit>
+      <trans-unit id="notFound.bark" datatype="html">
+        <source>Nutella used Bark!</source>
+        <target>Nutella usa Abbaio!</target>
+      </trans-unit>
       <trans-unit id="a11y.loadingPage" datatype="html">
         <source>Loading the page</source>
         <target>Caricamento della pagina</target>

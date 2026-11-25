@@ -1,0 +1,10 @@
+<!-- the still render stays underneath until the 3D scene has drawn its first frame -->
+<img class="still still--light" [class.covered]="drawn()" [src]="image.src" [width]="image.size" [height]="image.size" alt="" decoding="async" />
+<img class="still still--dark" [class.covered]="drawn()" [src]="image.darkSrc" [width]="image.size" [height]="image.size" alt="" decoding="async" />
+@if (live() && !failed()) {
+  @defer (on viewport) {
+    <app-nutella-scene class="layer" [mood]="mood()" (drawn)="drawn.set(true)" (failed)="drawn.set(false); failed.set(true)" (barked)="barked.emit()" />
+  } @placeholder {
+    <span class="layer"></span>
+  }
+}

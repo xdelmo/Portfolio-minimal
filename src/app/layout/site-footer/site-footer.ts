@@ -4,6 +4,7 @@ import { currentUrl, inPageHref } from '../../core/current-url';
 import { CONTENT } from '../../content/content';
 import { APP_VERSION } from '../../core/version.generated';
 import { scrollToTop } from '../../motion/smoother';
+import { FooterSeam } from './footer-seam';
 
 /**
  * The end of every page: the year, a way back up, my profiles, the privacy page, and the door to the easter egg (craft.wild.as closes
@@ -12,7 +13,7 @@ import { scrollToTop } from '../../motion/smoother';
 @Component({
   selector: 'app-site-footer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, FooterSeam],
   templateUrl: './site-footer.html',
   styleUrl: './site-footer.scss',
 })
@@ -23,15 +24,20 @@ export class SiteFooter {
   protected readonly version = APP_VERSION;
   protected readonly ready = signal(false);
 
+  private readonly url = currentUrl();
+  protected readonly routePath = computed(() => this.url().split(/[?#]/)[0]);
+  protected readonly innerPage = computed(() => {
+    const path = this.routePath();
+    return path !== '' && path !== '/';
+  });
+  protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
+
   constructor() {
     afterNextRender(() => {
       this.ready.set(true);
       this.year.set(new Date().getFullYear());
     });
   }
-
-  private readonly url = currentUrl();
-  protected readonly toMain = computed(() => inPageHref(this.url(), 'main'));
 
   // with JavaScript, scroll in place and move the focus to the content
   protected toTop(event: Event): void {

@@ -10,7 +10,7 @@
       @include bp.up(md) {
         grid-template-areas: 'status foe' 'text menu';
         gap: var(--space-4);
-        padding-block: var(--space-16);
+        padding-block: var(--space-8) var(--space-16);
       }
     }
     .box {
@@ -58,16 +58,52 @@
       background: var(--accent-line);
     }
     .foe {
+      position: relative;
       grid-area: foe;
       width: 128px;
       height: 128px;
       @include bp.up(md) {
-        width: 192px;
-        height: 192px;
+        width: 240px;
+        height: 240px;
       }
     }
-    // the scene, the pixel stand-in and the placeholder fill the slot
+    // stepped pixel ground ellipse under Nutella, like a battle platform
+    .foe::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6%;
+      width: 100%;
+      height: 22%;
+      background: var(--surface);
+      clip-path: polygon(
+        25% 0%,
+        75% 0%,
+        75% 17%,
+        87.5% 17%,
+        87.5% 33%,
+        100% 33%,
+        100% 67%,
+        87.5% 67%,
+        87.5% 83%,
+        75% 83%,
+        75% 100%,
+        25% 100%,
+        25% 83%,
+        12.5% 83%,
+        12.5% 67%,
+        0% 67%,
+        0% 33%,
+        12.5% 33%,
+        12.5% 17%,
+        25% 17%
+      );
+      pointer-events: none;
+    }
+    // the figure sits above the platform
     .foe > * {
+      position: relative;
+      z-index: 1;
       display: block;
       width: 100%;
       height: 100%;

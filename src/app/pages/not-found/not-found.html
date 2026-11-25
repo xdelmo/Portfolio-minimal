@@ -25,15 +25,7 @@
         </p>
       </div>
       <div class="foe">
-        @defer (on viewport) {
-          @if (dogFailed()) {
-            <app-quest-sprite name="wild404" />
-          } @else {
-            <app-nutella-scene (failed)="dogFailed.set(true)" />
-          }
-        } @placeholder {
-          <span></span>
-        }
+        <app-nutella-figure [mood]="mood()" (barked)="bark()" />
       </div>
       <nav class="box frame menu" i18n-aria-label="@@notFound.menu" aria-label="What to do">
         @for (corner of corners; track corner) {
@@ -43,15 +35,15 @@
           </svg>
         }
         <ul>
-          <li><a class="move" routerLink="/" fragment="work" i18n="@@notFound.work" i18n-data-hint="@@notFound.workHint" data-hint="Go and see the projects.">My work</a></li>
-          <li><a class="move" routerLink="/" fragment="contact" i18n="@@notFound.contact" i18n-data-hint="@@notFound.contactHint" data-hint="Write to me.">Contact</a></li>
+          <li><a class="move" routerLink="/" fragment="work" data-mood="eager" i18n="@@notFound.work" i18n-data-hint="@@notFound.workHint" data-hint="Go and see the projects.">My work</a></li>
+          <li><a class="move" routerLink="/" fragment="contact" data-mood="curious" i18n="@@notFound.contact" i18n-data-hint="@@notFound.contactHint" data-hint="Write to me.">Contact</a></li>
           <li>
-            <button class="move" type="button" data-press-start i18n-aria-label="@@notFound.bagLabel" aria-label="Bag: the player card" i18n-data-hint="@@notFound.bagHint" data-hint="Open the player card.">
+            <button class="move" type="button" data-press-start data-mood="eager" i18n-aria-label="@@notFound.bagLabel" aria-label="Bag: the player card" i18n-data-hint="@@notFound.bagHint" data-hint="Open the player card.">
               <span i18n="@@notFound.bag">Bag</span>
             </button>
           </li>
           <li>
-            <a class="move" routerLink="/" i18n-aria-label="@@notFound.runLabel" aria-label="Run: to the home page" i18n-data-hint="@@notFound.runHint" data-hint="Back to the home page.">
+            <a class="move" routerLink="/" data-mood="down" i18n-aria-label="@@notFound.runLabel" aria-label="Run: to the home page" i18n-data-hint="@@notFound.runHint" data-hint="Back to the home page.">
               <span i18n="@@notFound.run">Run</span>
             </a>
           </li>

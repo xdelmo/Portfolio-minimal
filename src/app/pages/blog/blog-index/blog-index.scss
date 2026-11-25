@@ -24,6 +24,7 @@
       list-style: none;
     }
     .post-item {
+      position: relative;
       display: grid;
       gap: var(--space-2);
       padding-top: var(--space-4);
@@ -32,9 +33,54 @@
     .post-item:hover {
       border-top-color: var(--fg);
     }
-    .post-item > * {
+    .post-item > :not(.post-preview) {
       max-width: var(--measure);
       margin: 0;
+    }
+    .post-preview {
+      display: none;
+    }
+    @media (min-width: 1024px) and (hover: hover) {
+      .post-preview {
+        position: absolute;
+        top: var(--space-4);
+        right: 0;
+        display: grid;
+        place-items: center;
+        width: 240px;
+        aspect-ratio: 3 / 2;
+        overflow: hidden;
+        border: 2px solid var(--fg);
+        background: var(--surface);
+        box-shadow: 4px 4px 0 var(--fg);
+        pointer-events: none;
+        opacity: 0;
+        translate: calc(var(--px, 0) * 1px) calc(var(--py, 0) * 1px);
+      }
+      .post-item:hover .post-preview,
+      .post-item:focus-within .post-preview {
+        opacity: 1;
+      }
+      .preview-shot {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .preview-sprite {
+        width: 40%;
+        aspect-ratio: 1;
+      }
+    }
+    @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .post-preview {
+        transition: opacity 160ms steps(3);
+      }
+    }
+    @media (forced-colors: active) {
+      .post-preview {
+        border-color: CanvasText;
+        box-shadow: none;
+      }
     }
     .post-meta-row {
       display: flex;

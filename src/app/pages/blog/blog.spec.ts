@@ -19,6 +19,10 @@ describe('BlogIndex', () => {
     expect(items.length).toBeGreaterThan(0);
     expect(items[0].querySelector('time')).not.toBeNull();
     expect(items[0].querySelector('.read-link')).not.toBeNull();
+    const linked = [...items].find((item) => item.querySelector('.project-tag'));
+    const unlinked = [...items].find((item) => !item.querySelector('.project-tag'));
+    expect(linked?.querySelector('.post-preview')).not.toBeNull();
+    expect(unlinked?.querySelector('.post-preview')).toBeNull();
   });
 });
 

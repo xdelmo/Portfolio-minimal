@@ -2,18 +2,21 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/seo/seo.service';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
+import { NutellaScene } from '../../voxel/nutella-scene/nutella-scene';
 
 /**
  * The 404 as a wild encounter in a Game Boy battle (issue #45): the broken link is the creature, the dialog box
  * says so and the battle menu leads back into the site. Only a homage to the style: no original sprites, fonts or
  * sounds. The menu is the game's two-by-two box in the site's frame: my work, contact, the bag (the player card of
  * the Press start easter egg) and run; it moves with the arrow keys as well as Tab, like a real one. As in the game,
- * the dialog box says what the move under the cursor does, so the game words are never the only hint.
+ * the dialog box says what the move under the cursor does, so the game words are never the only hint. The wild one is
+ * Nutella, a voxel chihuahua drawn like the moai (issue #632): Three.js loads only once she is in view, and without
+ * WebGL the pixel creature takes her place.
  */
 @Component({
   selector: 'app-not-found',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, QuestSprite],
+  imports: [RouterLink, QuestSprite, NutellaScene],
   host: { '(keydown)': 'move($event)', '(mouseover)': 'say($event)', '(focusin)': 'say($event)', '(mouseleave)': 'hint.set(null)', '(focusout)': 'hint.set(null)' },
   templateUrl: './not-found.html',
   styleUrl: './not-found.scss',
@@ -32,6 +35,8 @@ export class NotFound {
 
   /** What the move under the cursor does; the dialog box shows it in place of its prompt. */
   protected readonly hint = signal<string | null>(null);
+  /** Without WebGL the old pixel creature stands in for her. */
+  protected readonly dogFailed = signal(false);
 
   protected say(event: Event): void {
     this.hint.set((event.target as Element).closest('.move')?.getAttribute('data-hint') ?? null);

@@ -24,7 +24,17 @@
           <meter id="not-found-hp" min="0" max="1" value="1">100%</meter>
         </p>
       </div>
-      <app-quest-sprite class="foe" name="wild404" />
+      <div class="foe">
+        @defer (on viewport) {
+          @if (dogFailed()) {
+            <app-quest-sprite name="wild404" />
+          } @else {
+            <app-nutella-scene (failed)="dogFailed.set(true)" />
+          }
+        } @placeholder {
+          <span></span>
+        }
+      </div>
       <nav class="box frame menu" i18n-aria-label="@@notFound.menu" aria-label="What to do">
         @for (corner of corners; track corner) {
           <svg class="corner" [class]="corner" viewBox="0 0 8 8" aria-hidden="true" shape-rendering="crispEdges">

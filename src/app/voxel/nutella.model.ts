@@ -73,11 +73,11 @@ export function lidColor(voxels: readonly NutellaVoxel[], eye: NutellaVoxel): Nu
   return behind?.color ?? 'cream';
 }
 
-/** Ground cells under the feet and one cell round them, like the moai's shadow. */
+/** Ground cells under the torso and feet and one cell round them, like the moai's shadow. */
 export function nutellaShadowCells(voxels: readonly NutellaVoxel[]): { x: number; z: number }[] {
   const cells = new Set<string>();
   for (const v of voxels) {
-    if (v.y > 1) continue;
+    if (v.y > 4) continue;
     for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) cells.add(`${String(v.x + dx)},${String(v.z + dz)}`);
   }
   return [...cells].map((k) => {

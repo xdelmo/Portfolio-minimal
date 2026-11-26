@@ -47,6 +47,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - Spacing only from `--space-1` (8px) … `--space-16` (128px). Home sections pad 64px above and below; projects sit 64px apart. Sizes of icons, cells and images are multiples of 8.
 - Vertical rhythm: 64px (`--space-8`) from a section's edge to its title and from its last line to what follows; a section followed by a band adds the band's 48px pixel seam (`home.ts`, `.section:has(+ .band > .seam)`). Pinned blocks keep their own height (a pin stretched to the screen leaves its spare room on the page once it ends).
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
+- A row of short links on touch screens reaches the 44px target with the same side padding on every link (the row moving back by it to keep its left edge), never with `min-width` alone: that pads only the short words, on one side, and their gap looks wider (footer, issue #665, guarded by `e2e/touch.spec.ts`).
 - No row of three identical tiles (icon or title over a short text, repeated): list things as full-width rows under a 1px `--rule`, so the words keep their width (issue #533).
 - Secondary actions beside a primary button match its 48px height and type size; body text and bullet lists keep to `--measure`.
 - No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.

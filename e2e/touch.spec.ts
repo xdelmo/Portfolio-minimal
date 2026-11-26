@@ -25,3 +25,20 @@ for (const path of PAGES) {
     expect(small).toEqual([]);
   });
 }
+
+// the footer links' words stay evenly apart on a touch screen: min-width once padded only the short "Email" (issue #665)
+test('the footer links are evenly spaced on a touch screen', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch screens');
+  await page.goto('/en/');
+  const gaps = await page.evaluate(() => {
+    const boxes = [...document.querySelectorAll('footer ul a')].map((a) => {
+      const range = document.createRange();
+      range.selectNodeContents(a);
+      return range.getBoundingClientRect();
+    });
+    // only neighbours on the same line: a wrapped link starts the next one
+    return boxes.slice(1).flatMap((box, i) => (box.top === boxes[i].top ? [box.left - boxes[i].right] : []));
+  });
+  expect(gaps.length).toBeGreaterThan(1);
+  expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThan(2);
+});

@@ -23,6 +23,10 @@
     p {
       margin: 0;
     }
+    // Instrument Sans draws the space and the middle dot narrow: without room the dot looks glued to the words (issue #663)
+    .sep {
+      margin-inline: 0.25em;
+    }
     .to-top {
       display: inline-flex;
       align-items: center;

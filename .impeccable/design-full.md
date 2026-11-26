@@ -212,7 +212,7 @@ Spacing comes only from the 8px scale (`space-1` … `space-16`). Home sections 
 
 ## Elevation & Depth
 
-Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the hard 4px offset (`4px 4px 0` in ink), used on the primary button hover and the desktop blog index project preview card (`blog-index.scss`), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
+Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the hard 4px offset (`4px 4px 0` in ink), used on the primary button hover, the case study next-project card hover (`case-study.scss`), and the desktop blog index project preview card (`blog-index.scss`), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
 
 **The Hard Shadow Rule.** No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.
 
@@ -255,7 +255,7 @@ The hero pixel field (which closes over the clearing and crumbles with the hero 
 - **Do** let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header and the fixed pixel cursor (and its arrow) have a `view-transition-name` (issue #560): a named title would slide across the page.
 - **Do** reuse `PixelDissolve`, the seams and the thread before inventing a new transition.
 - **Do** put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.
-- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure`.
+- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure` (including the stepped case study diagram rows in `case-diagram.scss`, issue #645).
 - **Do** give secondary actions the primary button's 48px height and type size.
 - **Do** check every change at 1280px and 390px, in both themes.
 

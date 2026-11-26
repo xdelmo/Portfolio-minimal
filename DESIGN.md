@@ -32,7 +32,7 @@ colors:
 typography:
   display:
     fontFamily: "Instrument Sans Variable, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.747rem, 1.6rem + 5.2vw, 6rem)"
+    fontSize: "clamp(2.747rem, 5.3vw, 6rem)"
     fontWeight: 600
     lineHeight: 1.02
     letterSpacing: "-0.01em"

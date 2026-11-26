@@ -35,6 +35,19 @@ import { MotionPause } from '../motion/pause';
       color: var(--fg);
       cursor: pointer;
     }
+    @media (hover: hover) {
+      .pause-toggle:hover {
+        color: var(--link);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .pause-toggle {
+        transition: color 120ms steps(2);
+      }
+    }
+    .pause-toggle:active svg {
+      translate: 0 2px;
+    }
     @media (prefers-reduced-motion: reduce) {
       :host {
         display: none;

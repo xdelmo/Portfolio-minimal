@@ -69,7 +69,7 @@ export const CONTENT_IT: SiteContent = {
           'PrimeNG per i componenti che mostrano molti dati: tabelle, form, dialog e notifiche.',
           'Accesso basato sui ruoli con route guard (impostazioni solo per gli admin, pagine profilo visibili al proprietario o a un admin).',
           'Interceptor HTTP che aggiungono il token e trasformano gli errori delle API in notifiche, in un unico punto.',
-          'API REST in Spring Boot 3 su Java 21 con Spring Data JPA, PostgreSQL e Docker; frontend su Vercel, backend su Render.',
+          'API REST in Spring Boot 4 su Java 21 con Spring Data JPA, PostgreSQL e Docker; frontend su Vercel, backend su Render.',
         ],
         decisions: [
           {
@@ -105,7 +105,7 @@ export const CONTENT_IT: SiteContent = {
         context:
           'Un cruciverba sui Pokémon che cambia ogni giorno e si gioca nel browser. Il sito avrà pubblicità e link di affiliazione, quindi l’uso è commerciale: nessun testo o immagine ufficiale può comparire, e ogni indizio deve essere nostro.',
         architecture: [
-          'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, una API REST e comandi WP-CLI.',
+          'Un tema WordPress classico per tutto il sito (home, blog, pagine) e un plugin con le sue tabelle, un’API REST e comandi WP-CLI.',
           "Un’app React compilata con Vite, inserita con uno shortcode: la griglia, la Collezione dei Pokémon catturati, traguardi e gettoni.",
           'Un generatore lato server dispone da 10 a 15 parole in una griglia fino a 15 × 15, con il seme dato dalla data e nessun Pokémon ripetuto entro 30 giorni.',
           'Italiano e inglese senza plugin multilingua; i progressi restano nel browser, nel local storage.',
@@ -113,7 +113,7 @@ export const CONTENT_IT: SiteContent = {
         decisions: [
           {
             title: 'Le risposte non arrivano mai al browser',
-            body: "L’app conosce solo la lunghezza di ogni parola. La verifica passa dalla API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
+            body: "L’app conosce solo la lunghezza di ogni parola. La verifica passa dall’API, che giudica solo parole intere, così il pulsante Verifica non svela le lettere una alla volta.",
           },
           {
             title: 'Indizi originali composti da fatti',

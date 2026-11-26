@@ -49,7 +49,7 @@ Concrete grey page, ink text, one Signal Blue; pastel pixels (blue tints, lavend
 - Content column left-aligned, max 1200px, gutter 16px (32px from md). Breakpoints through `@use 'styles/breakpoints' as bp; @include bp.up(md)`.
 - No row of three identical tiles (icon or title over a short text, repeated): list things as full-width rows under a 1px `--rule`, so the words keep their width (issue #533).
 - Secondary actions beside a primary button match its 48px height and type size; body text and bullet lists keep to `--measure`.
-- No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the primary button's hard 4px offset on hover.
+- No rounded cards, no soft drop shadows, no gradients as decoration. Hard edges; the only shadow is the hard 4px offset on the primary button hover and stepped preview/next cards (`.next:hover`, `.post-preview`).
 - **Stepped shapes instead of smooth ones**: icons are 8×8 SVGs (brand marks 16×16: `github-mark.ts`, `linkedin-mark.ts`; the site's own logo is the moai, `moai-mark.ts`, one colour through `currentColor`, the same drawing as the favicon from `scripts/favicon.mjs`, never below 16 px or in a second colour) with `shape-rendering="crispEdges"` and `fill="currentColor"`; round things are pixel circles (see the contact photo mask, 16 cells across); transitions use `steps()` where they suit (buttons, the language curtain).
 - Soft round things are allowed only as **light** (radial gradients, no `filter: blur`).
 

@@ -29,20 +29,17 @@ import { MoaiCues } from '../../voxel/moai-cues';
       cursor: pointer;
     }
     /* on hover the sun turns its rays, the moon rocks: in steps, like the site's other controls (issue #229) */
-    svg {
-      transition: transform 240ms steps(3);
-    }
-    .theme-toggle:hover .sun,
-    .theme-toggle:focus-visible .sun {
-      transform: rotate(90deg) scale(1.15);
-    }
-    .theme-toggle:hover .moon,
-    .theme-toggle:focus-visible .moon {
-      transform: rotate(-25deg) scale(1.15);
-    }
-    @media (prefers-reduced-motion: reduce) {
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
       svg {
-        transition: none;
+        transition: transform 240ms steps(3);
+      }
+      .theme-toggle:hover .sun,
+      .theme-toggle:focus-visible .sun {
+        transform: rotate(90deg) scale(1.15);
+      }
+      .theme-toggle:hover .moon,
+      .theme-toggle:focus-visible .moon {
+        transform: rotate(-25deg) scale(1.15);
       }
     }
   `,

@@ -146,7 +146,7 @@
   --step-3: 2.197rem;    /* 35.2px */
   --step-4: 2.747rem;    /* 44px   */
   --step-5: 3.433rem;    /* 55px   */
-  --step-hero: clamp(2.747rem, 1.6rem + 5.2vw, 6rem); /* 44px → 96px */
+  --step-hero: clamp(2.747rem, 5.3vw, 6rem); /* 44px → 96px */
 
   --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-voice: 'Instrument Serif', ui-serif, Georgia, serif;

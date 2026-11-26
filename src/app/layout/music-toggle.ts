@@ -68,6 +68,19 @@ function toggle(): void {
       color: var(--fg);
       cursor: pointer;
     }
+    @media (hover: hover) {
+      .music-toggle:hover {
+        color: var(--link);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .music-toggle {
+        transition: color 120ms steps(2);
+      }
+    }
+    .music-toggle:active svg {
+      translate: 0 2px;
+    }
   `,
 })
 export class MusicToggle {

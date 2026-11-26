@@ -1,6 +1,6 @@
 ---
 title: Pubblicare un portfolio con gli agenti AI e una CI che decide
-description: Quasi tutte le modifiche a questo sito le scrivono agenti AI e vengono mergiate senza una review umana. Il flusso che lo rende sicuro: prima l’issue, branch con un nome preciso, un solo comando per pubblicare e una CI che ha l’ultima parola.
+description: Quasi tutti i commit di questo sito li scrivono agenti AI senza review umana, protetti da issue obbligatorie, controlli sui branch e una CI che decide.
 date: 2026-11-21
 ---
 Quasi tutti i commit di questo sito li scrivono agenti AI. Io descrivo un problema, un agente apre un’issue, scrive la modifica, e la pull request si mergia da sola quando la CI passa. Non rivedo ogni pull request.
@@ -9,7 +9,7 @@ Funziona solo perché è il repository a decidere cosa vuol dire “finito”. U
 
 ## Ogni modifica parte da un’issue
 
-Ogni problema diventa un’issue su GitHub prima che qualcuno lo indaghi. Il branch porta il numero dell’issue e un prefisso che dice di che tipo di modifica si tratta: `fix/599-accent-contrast`, `feat/1-blog`, `docs/542-…`. Uno script, `scripts/branch-name.mjs`, impone il formato nell’hook `pre-push` e di nuovo in CI, così un branch con il nome scelto da un tool per i worktree viene rinominato prima di lasciare la macchina.
+Ogni problema diventa un’issue su GitHub prima che qualcuno lo indaghi. Il branch porta il numero dell’issue e un prefisso che dice di che tipo di modifica si tratta: `fix/599-accent-contrast` o `feat/1-blog`. Uno script, `scripts/branch-name.mjs`, impone prefisso e formato dello slug nell’hook `pre-push` e di nuovo in CI, così un branch creato da un tool per i worktree viene rinominato prima di lasciare la macchina.
 
 L’hook rifiuta anche i push diretti su `devel` e `master`. Tutto passa da una pull request.
 
@@ -25,7 +25,7 @@ Una CI rossa si sistema sul branch. Non si mergia mai “per poi sistemare”.
 
 Un agente dimentica tutto tra una sessione e l’altra. Quello che ha imparato deve finire in un file che la sessione successiva legge, quindi i docs fanno parte della modifica. Un nuovo comando va in `CLAUDE.md`, una regola visiva nella guida di stile, una modifica alla spec nel suo registro delle modifiche.
 
-`ship.sh` lo impone: se il codice è cambiato e nessun doc sì, si ferma. Per saltare il controllo serve un flag esplicito, cioè una decisione invece di una dimenticanza.
+`ship.sh` lo impone: se il codice è cambiato senza toccare nessun doc, si ferma. Per saltare il controllo serve un flag esplicito, cioè una decisione invece di una dimenticanza.
 
 ## I fallimenti diventano regole
 

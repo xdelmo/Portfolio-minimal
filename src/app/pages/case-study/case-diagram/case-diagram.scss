@@ -31,6 +31,12 @@
   background: var(--fg);
   color: var(--bg);
 }
+@media (hover: hover) {
+  .diagram-btn:not(.is-active):hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .diagram-btn {
     transition: background-color 120ms steps(2), color 120ms steps(2);
@@ -99,7 +105,7 @@
 }
 .step-copy {
   display: grid;
-  gap: 2px;
+  gap: var(--space-1);
   font-size: var(--step--1);
   line-height: 1.45;
 }

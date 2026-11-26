@@ -117,25 +117,24 @@
       gap: var(--space-1);
       min-width: 40px;
       height: 40px;
-      padding-inline: 11px; // 16px arrow + 2 * 11 + 2 * 1 border = the 40px square
+      padding-inline: var(--space-1);
       border: 1px solid var(--rule);
       background: var(--bg);
       color: var(--fg);
       @media (pointer: coarse) {
         min-width: 44px;
         height: 44px;
-        padding-inline: 13px;
       }
     }
     // on hover the square becomes a labelled pill that grows to the left, like a button saying what it does
     .media-arrow-label {
       max-width: 0;
-      // clip only the fold: the 14px line box is shorter than the glyphs, a descender would be cut (issue #589)
+      // clip only the fold: the line box can be shorter than the glyphs, a descender would be cut (issue #589)
       overflow-x: clip;
       margin-right: calc(-1 * var(--space-1)); // cancels the gap while folded
       opacity: 0;
-      font-size: 14px;
-      line-height: 1;
+      font-size: var(--step--1);
+      line-height: 1.2;
       white-space: nowrap;
     }
     .media-arrow app-pixel-arrow {
@@ -194,7 +193,7 @@
         transition: translate 160ms steps(2);
       }
       .project:hover h3 {
-        translate: 12px 0;
+        translate: var(--space-1) 0;
       }
     }
     .media:active .media-arrow {

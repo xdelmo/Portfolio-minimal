@@ -23,7 +23,7 @@
     }
     .chapters a {
       display: grid;
-      gap: 4px;
+      gap: var(--space-1);
       min-height: var(--space-3);
       padding-block: var(--space-1);
       color: var(--fg);
@@ -67,7 +67,7 @@
       display: grid;
       max-width: var(--measure);
       gap: var(--space-1);
-      padding-left: 1.2em;
+      padding-left: var(--space-3);
       list-style: square;
     }
     .tags {
@@ -76,7 +76,7 @@
       gap: var(--space-1);
     }
     .tags li {
-      padding: 2px var(--space-1);
+      padding: 0 var(--space-1);
       border: 1px solid var(--rule);
       background: var(--bg);
       font-size: var(--step--1);
@@ -89,7 +89,7 @@
     .timeline.is-stacked {
       // room for the cards stepping back above the deck (14px each), so they never cover the chapter track
       margin-top: var(--space-4);
-      clip-path: inset(calc(-1 * var(--space-4)) -2rem 0 -2rem);
+      clip-path: inset(calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) 0 calc(-1 * var(--space-4)));
     }
     .timeline.is-stacked > li {
       grid-area: 1 / 1;

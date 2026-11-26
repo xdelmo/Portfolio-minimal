@@ -1,15 +1,15 @@
 ---
 title: Shipping a portfolio with AI agents and a CI gate
-description: Most changes to this site are written by AI coding agents and merged without a human review. The workflow that makes that safe: issues first, named branches, one ship command and a CI that has the last word.
+description: Most commits on this site are written by AI agents and merged without human review, kept safe by issues first, branch guards and a blocking CI gate.
 date: 2026-11-21
 ---
 Most commits on this site are written by AI coding agents. I describe a problem, an agent opens an issue, writes the change, and the pull request merges on its own when CI passes. I do not review every pull request.
 
-That only works because the repository decides what "done" means. An agent can be confident and wrong, so no single step trusts it. The process does the checking.
+That only works because the repository decides what “done” means. An agent can be confident and wrong, so no single step trusts it. The process does the checking.
 
 ## Every change starts as an issue
 
-Every problem gets a GitHub issue before anyone investigates it. The branch carries the issue number and a prefix that says what kind of change it is: `fix/599-accent-contrast`, `feat/1-blog`, `docs/542-…`. A script, `scripts/branch-name.mjs`, enforces the format in the `pre-push` hook and again in CI, so a branch named by a worktree tool gets renamed before it leaves the machine.
+Every problem gets a GitHub issue before anyone investigates it. The branch carries the issue number and a prefix that says what kind of change it is: `fix/599-accent-contrast` or `feat/1-blog`. A script, `scripts/branch-name.mjs`, enforces the prefix and slug format in the `pre-push` hook and again in CI, so a branch named by a worktree tool gets renamed before it leaves the machine.
 
 The hook also refuses direct pushes to `devel` and `master`. Everything goes through a pull request.
 
@@ -19,7 +19,7 @@ The hook also refuses direct pushes to `devel` and `master`. Everything goes thr
 
 The full gate runs in CI, not on the laptop: lint with zero warnings, unit tests, script tests, the static build of both languages and Playwright end to end tests with axe accessibility checks in both themes. Specs changed by the pull request run five more times to catch flaky tests before they land.
 
-A red CI is fixed on the branch. It never gets merged "to fix later".
+A red CI is fixed on the branch. It never gets merged “to fix later”.
 
 ## Docs travel with the change
 

@@ -14,7 +14,7 @@ Spring Boot 4 su Java 21, Spring Data JPA su PostgreSQL, Maven, un’immagine Do
 
 ## Un solo parser per tutte le liste
 
-Ogni endpoint di lista prende tutti i parametri della query come mappa e li passa a una sola classe di utilità, `QueryFilterParser`. Lei trasforma la mappa nelle due cose che Spring Data capisce: un `Pageable` per pagina, dimensione e ordinamento, e una `Specification` per i filtri.
+Ogni endpoint di lista prende tutti i parametri della query come mappa e li passa a una sola classe di utilità, `QueryFilterParser`. Trasforma la mappa nelle due cose che Spring Data capisce: un `Pageable` per pagina, dimensione e ordinamento, e una `Specification` per i filtri.
 
 ```java
 @GetMapping
@@ -67,4 +67,4 @@ Tre cose le farei diversamente:
 
 ## Cosa mi ha dato la regola
 
-La regola “il frontend non cambia” ha tenuto il contratto in un posto solo, un parser e un header, e ha reso il passaggio dal mock all’API vera un non-evento. Mi ha anche mostrato il limite di partire da un mock: è json-server ad aver deciso la forma dell’API. Alcune sue comodità, come i filtri sui record collegati, in SQL sono più difficili di quanto sembrino in un file JSON. Il codice è su GitHub, in [xdelmo/backend-tesi](https://github.com/xdelmo/backend-tesi).
+La regola “il frontend non cambia” ha tenuto il contratto in un posto solo, un parser e un header, e ha reso il passaggio dal mock all’API vera quasi invisibile. Mi ha anche mostrato il limite di partire da un mock: è json-server ad aver deciso la forma dell’API. Alcune sue comodità, come i filtri sui record collegati, in SQL sono più difficili di quanto sembrino in un file JSON. Il codice è su GitHub, in [xdelmo/backend-tesi](https://github.com/xdelmo/backend-tesi).

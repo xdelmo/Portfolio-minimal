@@ -33,7 +33,7 @@ describe('CaseStudy', () => {
     const el = await render('apexflow');
     const headings = [...el.querySelectorAll('h2')].map((h) => h.textContent.trim());
     // ApexFlow has blog posts (issue #1): they close the case study
-    expect(headings).toEqual(['Context', 'How it is built', 'Key decisions', 'Outcome', 'I wrote about it']);
+    expect(headings).toEqual(['Context', 'How it’s built', 'Key decisions', 'Outcome', 'I wrote about it']);
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
     expect(el.querySelector('#architecture app-case-diagram')).not.toBeNull();
   });
@@ -90,7 +90,7 @@ describe('CaseStudy', () => {
   it('labels each repository link', async () => {
     const el = await render('apexflow');
     const labels = [...el.querySelectorAll('.links a')].map((a) => a.textContent.trim());
-    expect(labels).toEqual(['Frontend code', 'Open the live demo']);
+    expect(labels).toEqual(['Frontend code', 'Open the demo']);
   });
 
   it('leads with the demo when no code is public, and drops the row when there is neither', async () => {
@@ -102,7 +102,7 @@ describe('CaseStudy', () => {
     fixture.componentRef.setInput('slug', 'apexflow');
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
-    expect([...el.querySelectorAll('.links a')].map((a) => [a.textContent.trim(), a.classList.contains('button--primary')])).toEqual([['Open the live demo', true]]);
+    expect([...el.querySelectorAll('.links a')].map((a) => [a.textContent.trim(), a.classList.contains('button--primary')])).toEqual([['Open the demo', true]]);
     fixture.componentRef.setInput('slug', 'pokeverba');
     await fixture.whenStable();
     expect(el.querySelector('.links')).toBeNull();
@@ -116,7 +116,7 @@ describe('CaseStudy', () => {
     fixture.componentRef.setInput('slug', 'pokeverba');
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
-    expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub', 'Open the live demo']);
+    expect([...el.querySelectorAll('.links a')].map((a) => a.textContent.trim())).toEqual(['Code on GitHub', 'Open the demo']);
     expect(el.querySelector('img')).toBeNull();
     expect(el.querySelector('.item app-quest-sprite')).not.toBeNull();
   });

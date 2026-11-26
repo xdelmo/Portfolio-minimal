@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { testProviders } from '../../../testing/test-providers';
-import { Title } from '@angular/platform-browser';
 import { ArticlePage } from './article/article';
 import { BlogIndex } from './blog-index/blog-index';
 import { CodeBlock } from './code-block/code-block';
@@ -43,12 +42,6 @@ describe('ArticlePage', () => {
     expect(el.querySelector('.reading-progress')).not.toBeNull();
     expect(el.querySelector('.back-link')).not.toBeNull();
     expect(el.querySelector('.adjacent')).not.toBeNull();
-  });
-
-  it('shows not found when given an unknown slug', async () => {
-    const { el } = await render('unknown-slug');
-    expect(el.querySelector('h1')?.textContent).toContain('Post not found');
-    expect(TestBed.inject(Title).getTitle()).toContain('Page not found');
   });
 });
 

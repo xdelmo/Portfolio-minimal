@@ -4,7 +4,14 @@
   min-height: 100svh;
 }
 
+#smooth-wrapper,
+#smooth-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
 main {
-  flex: 1;
+  flex: 1 0 auto;
   outline: none;
 }

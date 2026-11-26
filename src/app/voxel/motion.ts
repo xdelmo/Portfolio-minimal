@@ -180,3 +180,10 @@ export function wobble(t: number): number {
   if (t < 0 || t >= DIZZY_MS) return 0;
   return [0.08, 0, -0.08, 0][Math.floor(t / 150) % 4];
 }
+
+const FRONTIER_TOKENS = ['--px-1', '--px-4', '--px-6'] as const;
+
+/** Deterministic pastel pixel token for a voxel on the active scanline row. */
+export function frontierToken(x: number, y: number, z: number): '--px-1' | '--px-4' | '--px-6' {
+  return FRONTIER_TOKENS[Math.abs(x * 7 + y * 13 + z * 19) % FRONTIER_TOKENS.length];
+}

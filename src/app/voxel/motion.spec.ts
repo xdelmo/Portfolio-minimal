@@ -1,7 +1,8 @@
 import { HOP_MS, STRETCH_MS, hop, stretch } from './motion';
 import { DIZZY_MS, PUKAO_MS, SNEEZE_MS, pukaoFall, sneeze, wobble } from './motion';
-import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SLEEP_MS, WAVE_MS, breath, follow, gaze, glance, isPupil, wave } from './motion';
-import { moaiCell } from './moai.model';
+import { BUBBLE_GROW_MS, BUBBLE_HOLD_MS, BUBBLE_MS, GUM_LIPS, bubble, bubbleCells, BREATH_MS, GLANCE_MS, SLEEP_MS, WAVE_MS, breath, follow, frontierToken, gaze, glance, isPupil, wave } from './motion';
+import { MOAI_TRANSIT_GAP, MOAI_TRANSIT_ROWS, moaiTransit } from './moai-transit';
+import { MOAI_BOUNDS, moaiCell } from './moai.model';
 
 describe('moai motion', () => {
   it('waves hello once: a small roll that starts and ends level, and is still outside its second', () => {
@@ -163,5 +164,96 @@ describe('the gags', () => {
     expect(sneeze(SNEEZE_MS)).toBe(0);
     expect(new Set(Array.from({ length: 10 }, (_, i) => wobble(i * 150)))).toEqual(new Set([0.08, 0, -0.08]));
     expect(wobble(DIZZY_MS)).toBe(0);
+  });
+});
+
+describe('moaiTransit', () => {
+  it('rests whole in About at 0 and in the corner at 1', () => {
+    expect(MOAI_TRANSIT_ROWS).toBe(MOAI_BOUNDS.maxY + 1);
+    expect(moaiTransit(-0.2)).toEqual({
+      phase: 'about',
+      corner: false,
+      cutY: MOAI_BOUNDS.maxY + 1,
+      frontier: false,
+      pukaoVisible: true,
+      pukaoLift: 0,
+      shadow: 1,
+      tilt: 0,
+      sy: 1,
+    });
+    expect(moaiTransit(0)).toEqual(moaiTransit(-0.2));
+    expect(moaiTransit(1)).toEqual({
+      phase: 'corner',
+      corner: true,
+      cutY: MOAI_BOUNDS.maxY + 1,
+      frontier: false,
+      pukaoVisible: true,
+      pukaoLift: 0,
+      shadow: 1,
+      tilt: 0,
+      sy: 1,
+    });
+    expect(moaiTransit(1.4)).toEqual(moaiTransit(1));
+  });
+
+  it('unbuilds monotonically top-down during the About exit phase', () => {
+    const [exitEnd] = MOAI_TRANSIT_GAP;
+    let prevY = MOAI_BOUNDS.maxY + 1;
+    for (let p = 0.02; p < exitEnd; p += 0.03) {
+      const s = moaiTransit(p);
+      expect(s.phase).toBe('about');
+      expect(s.corner).toBe(false);
+      expect(s.frontier).toBe(true);
+      expect(s.cutY).toBeLessThanOrEqual(prevY);
+      expect(s.cutY).toBeGreaterThanOrEqual(0);
+      expect(s.pukaoVisible).toBe(s.cutY >= 22);
+      prevY = s.cutY;
+    }
+    expect(prevY).toBeLessThanOrEqual(2);
+  });
+
+  it('clears the scene during the seam gap and flips corner placement at 0.5', () => {
+    const [exitEnd, enterStart] = MOAI_TRANSIT_GAP;
+    const beforeMid = moaiTransit(exitEnd);
+    const afterMid = moaiTransit(enterStart);
+    expect(beforeMid.phase).toBe('gap');
+    expect(beforeMid.corner).toBe(false);
+    expect(beforeMid.pukaoVisible).toBe(false);
+    expect(beforeMid.shadow).toBe(0);
+    expect(moaiTransit(0.5).corner).toBe(true);
+    expect(afterMid.phase).toBe('gap');
+    expect(afterMid.corner).toBe(true);
+    expect(afterMid.cutY).toBe(-1);
+  });
+
+  it('rematerializes bottom-up in the corner, keeps pukao hidden until body finishes, then drops it and settles', () => {
+    const [, enterStart] = MOAI_TRANSIT_GAP;
+    let prevY = 0;
+    for (let t = 0.05; t < 0.8; t += 0.08) {
+      const s = moaiTransit(enterStart + t * (1 - enterStart));
+      expect(s.phase).toBe('corner');
+      expect(s.corner).toBe(true);
+      expect(s.frontier).toBe(true);
+      expect(s.pukaoVisible).toBe(false);
+      expect(s.cutY).toBeGreaterThanOrEqual(prevY);
+      expect(s.cutY).toBeLessThanOrEqual(21);
+      prevY = s.cutY;
+    }
+    const drops = [0.81, 0.86, 0.91].map((t) => moaiTransit(enterStart + t * (1 - enterStart)));
+    expect(drops.every((d) => d.pukaoVisible && !d.frontier)).toBe(true);
+    expect(drops.map((d) => d.pukaoLift)).toEqual([5, 2.5, 0.5]);
+
+    const settleSquash = moaiTransit(enterStart + 0.95 * (1 - enterStart));
+    const settleStretch = moaiTransit(enterStart + 0.98 * (1 - enterStart));
+    expect(settleSquash.pukaoLift).toBe(0);
+    expect(settleSquash.sy).toBeLessThan(1);
+    expect(settleStretch.sy).toBeGreaterThan(1);
+  });
+
+  it('picks a deterministic pastel token for frontier voxels', () => {
+    const a = frontierToken(1, 14, 2);
+    const b = frontierToken(1, 14, 2);
+    expect(a).toBe(b);
+    expect(['--px-1', '--px-4', '--px-6']).toContain(a);
   });
 });

@@ -28,10 +28,11 @@ import {
   WebGLRenderer,
 } from 'three';
 import { COS30, isoBounds, isoFaces } from '../iso';
-import { MOAI_BLEED, MOAI_FRAME, VoxelColor, moaiShadowCells, moaiVoxels } from '../moai.model';
+import { MOAI_BLEED, MOAI_BOUNDS, MOAI_FRAME, VoxelColor, moaiShadowCells, moaiVoxels } from '../moai.model';
 import { MotionPause } from '../../motion/pause';
 import { afterIntro } from '../../motion/intro-state';
-import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from '../motion';
+import { BUBBLE_MS, DIZZY_MS, GUM_LIPS, Gaze, HOP_MS, IDLE_GUM_MS, LOOK_DOWN, PHONE_GAZE, PUKAO_MS, SLEEP_MS, SNEEZE_MS, SULK_MS, WAVE_MS, bubble, bubbleCells, breath, follow, frontierToken, gaze, glance, hop, isPupil, pukaoFall, sneeze, stretch, wave, wobble } from '../motion';
+import { MOAI_TRANSIT, MoaiTransitState, moaiTransit } from '../moai-transit';
 import { Sample, isDizzy, isShake, isSneeze, isTickle } from '../gestures';
 import { LINE_MS, QUIET, Reaction, VoiceState, speak } from '../voice';
 import { LINES } from '../lines';
@@ -126,6 +127,7 @@ export class MoaiScene {
   private lineTimer = 0;
   private introDone = false;
   // its idle life (breath, the phones' glances) stops with the one header pause button (WCAG 2.2.2)
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly pause = inject(MotionPause);
   private readonly cues = inject(MoaiCues);
 
@@ -279,6 +281,11 @@ export class MoaiScene {
     camera.position.copy(target).add(new Vector3(50, 50, 50));
     camera.lookAt(target);
 
+    const figure = this.host.nativeElement.closest('app-moai-figure');
+    let transitProgress = Number(figure?.getAttribute('data-transit-progress') ?? 0);
+    if (!Number.isFinite(transitProgress)) transitProgress = 0;
+    let transit = moaiTransit(transitProgress);
+
     const eyes = voxels.filter((v) => v.color === 'eye');
     const paint = (): void => {
       const style = getComputedStyle(root);
@@ -289,7 +296,14 @@ export class MoaiScene {
       const g = rolling ?? (this.scrolling() ? looking ? (looking.replace('-up', '-down') as Gaze) : PHONE_GAZE : looking);
       voxels.forEach((v, i) => {
         const eye = v.color === 'eye';
-        const token = eye && asleep ? LIDS : eye && g && !isPupil(eyes, v, g) ? SCLERA : CSS_COLORS[v.color];
+        const token =
+          transit.frontier && v.y === transit.cutY
+            ? frontierToken(v.x, v.y, v.z)
+            : eye && asleep
+              ? LIDS
+              : eye && g && !isPupil(eyes, v, g)
+                ? SCLERA
+                : CSS_COLORS[v.color];
         mesh.setColorAt(i, color.set(style.getPropertyValue(token).trim()));
       });
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -312,12 +326,75 @@ export class MoaiScene {
       const at = off ? `${String(off.x)},${String(off.y)}` : '0,0';
       if (at === pukaoAt) return;
       pukaoAt = at;
+      dummy.scale.set(1, 1, 1);
       for (const i of pukao) {
         dummy.position.copy(base[i]).add(new Vector3(off?.x ?? 0, off?.y ?? 0, 0));
         dummy.updateMatrix();
         mesh.setMatrixAt(i, dummy.matrix);
       }
       mesh.instanceMatrix.needsUpdate = true;
+    };
+    let lastScanKey = '';
+    const applyTransitVoxels = (state: MoaiTransitState): void => {
+      const key =
+        state.phase === 'gap'
+          ? 'gap'
+          : state.cutY > MOAI_BOUNDS.maxY && state.pukaoLift === 0
+            ? ''
+            : `${state.phase}:${String(state.cutY)}:${String(state.pukaoLift)}`;
+      if (key === lastScanKey) return;
+      lastScanKey = key;
+      pivot.visible = state.phase !== 'gap';
+      shadow.visible = state.shadow > 0;
+      if (state.shadow > 0) shadow.scale.setScalar(state.shadow);
+      if (key === '') {
+        dummy.scale.set(1, 1, 1);
+        base.forEach((p, i) => {
+          dummy.position.copy(p);
+          dummy.updateMatrix();
+          mesh.setMatrixAt(i, dummy.matrix);
+        });
+        pukaoAt = '0,0';
+        mesh.instanceMatrix.needsUpdate = true;
+        paint();
+        return;
+      }
+      if (state.phase === 'gap') return;
+      voxels.forEach((v, i) => {
+        const p = base[i];
+        if (v.y >= 22) {
+          if (!state.pukaoVisible) {
+            dummy.scale.set(0, 0, 0);
+            dummy.position.copy(p);
+          } else if (state.pukaoLift > 0) {
+            dummy.scale.set(1, 1, 1);
+            dummy.position.set(p.x, p.y + state.pukaoLift, p.z);
+          } else if (state.frontier && v.y === state.cutY) {
+            dummy.scale.set(0.65, 0.65, 0.65);
+            dummy.position.set(p.x, p.y + 0.35, p.z);
+          } else if (v.y > state.cutY) {
+            dummy.scale.set(0, 0, 0);
+            dummy.position.copy(p);
+          } else {
+            dummy.scale.set(1, 1, 1);
+            dummy.position.copy(p);
+          }
+        } else if (v.y > state.cutY) {
+          dummy.scale.set(0, 0, 0);
+          dummy.position.copy(p);
+        } else if (state.frontier && v.y === state.cutY) {
+          dummy.scale.set(0.68, 0.68, 0.68);
+          dummy.position.set(p.x, p.y + (state.phase === 'about' ? 0.35 : -0.25), p.z);
+        } else {
+          dummy.scale.set(1, 1, 1);
+          dummy.position.copy(p);
+        }
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      });
+      dummy.scale.set(1, 1, 1);
+      mesh.instanceMatrix.needsUpdate = true;
+      paint();
     };
     // the gags (issue #393): each one a state held on a timer, like the bubble; the frame loop reads when it started
     const gagTimers: number[] = [];
@@ -410,19 +487,21 @@ export class MoaiScene {
         // back to rest after a pause past ten seconds (issue #203)
         look = this.desktop() ? follow(look, lookTarget, elapsed) : follow(look, paused ? 0 : glance(idle), elapsed, 700);
         down = follow(down, scrolling ? LOOK_DOWN : 0, elapsed);
-        pivot.rotation.x = breath(idle) + down + (this.sneezing() ? sneeze(now - sneezeStart) : 0);
+        transit = moaiTransit(transitProgress);
+        applyTransitVoxels(transit);
+        pivot.rotation.x = breath(idle) + down + transit.tilt + (this.sneezing() ? sneeze(now - sneezeStart) : 0);
         // sulking it turns its back, and holds still
         pivot.rotation.y = this.drag + (this.sulking() ? Math.PI : look);
         shadow.rotation.y = pivot.rotation.y;
         pivot.rotation.z = wave(waveT) + (this.dizzy() ? wobble(now - dizzyStart) : 0);
-        placePukao(this.pukaoOff() ? pukaoFall(now - pukaoStart) : null);
+        if (lastScanKey === '') placePukao(this.pukaoOff() ? pukaoFall(now - pukaoStart) : null);
         const roll = this.dizzy() ? ROLL[Math.floor((now - dizzyStart) / 150) % ROLL.length] : null;
         if (roll !== rolling) {
           rolling = roll;
           paint();
         }
         const pose = (hopStart === null ? null : hop(now - hopStart)) ?? (stretchStart === null ? null : stretch(now - stretchStart));
-        pivot.scale.y = pose?.sy ?? 1;
+        pivot.scale.y = (pose?.sy ?? 1) * transit.sy;
         pivot.position.y = pose?.y ?? 0;
         // it blinks as it crouches for the hop, and keeps its eyes shut while it asks for five more minutes (issue #444)
         const blinking = (hopStart !== null && now - hopStart < HOP_MS / 2) || this.line()?.reaction === 'wake';
@@ -692,6 +771,11 @@ export class MoaiScene {
     addEventListener('pointermove', onLook, { passive: true });
     desktopQuery.addEventListener('change', onDesktop);
     document.addEventListener('visibilitychange', onVisibility);
+    const onTransit = (e: Event): void => {
+      const next = (e as CustomEvent<number>).detail;
+      transitProgress = typeof next === 'number' && Number.isFinite(next) ? next : 0;
+    };
+    figure?.addEventListener(MOAI_TRANSIT, onTransit);
     const unlisten = this.cues.listen((reaction) => this.say(reaction));
     this.cleanups.push(() => {
       sizes.disconnect();
@@ -709,6 +793,7 @@ export class MoaiScene {
       removeEventListener('pointermove', onLook);
       desktopQuery.removeEventListener('change', onDesktop);
       document.removeEventListener('visibilitychange', onVisibility);
+      figure?.removeEventListener(MOAI_TRANSIT, onTransit);
       for (const type of WAKE_EVENTS) removeEventListener(type, onInput);
       removeEventListener('scroll', onScroll);
       removeEventListener('wheel', onWheel);

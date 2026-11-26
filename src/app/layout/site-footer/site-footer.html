@@ -6,7 +6,7 @@
           <div class="seam seam--footer" aria-hidden="true"></div>
         }
       }
-      <p>© {{ year() }} {{ content.person.name }} · v{{ version }}</p>
+      <p>© {{ year() }} {{ content.person.name }} <span class="sep">·</span> v{{ version }}</p>
       <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
         ><span i18n="@@footer.top">Back to top</span
         ><svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">

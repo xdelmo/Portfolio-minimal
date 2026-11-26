@@ -1,0 +1,51 @@
+<figure class="diagram">
+  <div class="diagram-modes" role="group" [attr.aria-label]="diagram().label">
+    @for (mode of diagram().modes; track mode.label; let i = $index) {
+      <button
+        type="button"
+        class="diagram-btn"
+        [class.is-active]="active() === i"
+        [attr.aria-pressed]="active() === i"
+        (click)="active.set(i)"
+      >
+        {{ mode.label }}
+      </button>
+    }
+  </div>
+
+  @if (current(); as mode) {
+    <svg class="diagram-svg" viewBox="0 0 96 20" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+      <!-- three 24x12 pipeline blocks on the 8px-proportional stepped grid -->
+      <path
+        class="svg-frame"
+        fill-rule="evenodd"
+        d="M2 4h24v12H2zM4 6v8h20V6zM35 4h24v12H35zM37 6v8h20V6zM68 4h24v12H68zM70 6v8h20V6z"
+      />
+      @if (mode.built) {
+        <g class="diagram-flow">
+          <path class="svg-accent" d="M8 9h12v2H8zM26 9h9v2h-9zM41 9h12v2H41zM59 9h9v2h-9zM76 8h6v4h-6z" />
+          <path class="svg-soft" d="M4 6h2v2H4zM37 6h2v2h-2zM70 6h2v2h-2z" />
+        </g>
+      } @else {
+        <g class="diagram-flow">
+          <path class="svg-warn" d="M6 7h16v2H6zM6 11h16v2H6zM39 7h16v2H39zM39 11h16v2H39zM59 9h4v2h-4zM66 9h2v2h-2z" />
+          <path class="svg-muted" d="M26 9h9v2h-9zM76 9h6v2h-6z" />
+        </g>
+      }
+    </svg>
+
+    <ol class="diagram-steps">
+      @for (step of mode.steps; track step.node) {
+        <li>
+          <span class="step-cell" [class.is-built]="mode.built" aria-hidden="true"></span>
+          <div class="step-copy">
+            <strong>{{ step.node }}</strong>
+            <span>{{ step.detail }}</span>
+          </div>
+        </li>
+      }
+    </ol>
+
+    <figcaption class="diagram-caption">{{ mode.caption }}</figcaption>
+  }
+</figure>

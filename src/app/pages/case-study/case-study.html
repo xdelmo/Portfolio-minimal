@@ -58,6 +58,9 @@
               <li>{{ item }}</li>
             }
           </ul>
+          @if (diagram(); as d) {
+            <app-case-diagram [diagram]="d" />
+          }
         </section>
 
         <section id="decisions" aria-labelledby="decisions-title">

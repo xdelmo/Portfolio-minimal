@@ -73,7 +73,7 @@ Photos load depixelating (`src/app/depixelate/`, as on locomotive.ca): a canvas 
 
 Projects without a screenshot show their pixel sprite in the same 3:2 frame as the screenshots (`Project.sprite`).
 
-A new section gets **one** idea in this family, not a new visual language. Every page carries at least one (the blog index has its terminal sprite and, on desktop, a stepped project preview card on hover for rows linked to a project via `effects/blog-preview.ts`): a page with none reads as a template.
+A new section gets **one** idea in this family, not a new visual language. Every page carries at least one (the blog index has its terminal sprite and, on desktop, a stepped project preview card on hover for rows linked to a project via `effects/blog-preview.ts`; case studies carry the stepped architecture diagram `app-case-diagram`, issue #645): a page with none reads as a template.
 
 ## Motion rules
 

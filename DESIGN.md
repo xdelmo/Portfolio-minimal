@@ -255,7 +255,7 @@ The hero pixel field (which closes over the clearing and crumbles with the hero 
 - **Do** let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header and the fixed pixel cursor (and its arrow) have a `view-transition-name` (issue #560): a named title would slide across the page.
 - **Do** reuse `PixelDissolve`, the seams and the thread before inventing a new transition.
 - **Do** put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.
-- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure`.
+- **Do** list things as full-width rows under a 1px rule, with body text and lists within `--measure` (including the stepped case study diagram rows in `case-diagram.scss`, issue #645).
 - **Do** give secondary actions the primary button's 48px height and type size.
 - **Do** check every change at 1280px and 390px, in both themes.
 

@@ -46,7 +46,7 @@
       "code": { "displayName": "Code", "purpose": "System monospace stack, used only inside code in blog posts." }
     },
     "shadows": [
-      { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "Hard 4px offset in ink on primary button hover and desktop blog index project preview card; the single shadow in the system." }
+      { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "Hard 4px offset in ink on primary button hover, the case study next-project card hover and the desktop blog index project preview card; the single shadow in the system." }
     ],
     "motion": [
       { "name": "step-state", "value": "120ms steps(2)", "purpose": "Small feedback (hover, focus, press, notices) moves in steps(2-4) over 80-240ms." },
@@ -126,7 +126,7 @@
       "Do let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header and the fixed pixel cursor (and its arrow) have a `view-transition-name` (issue #560): a named title would slide across the page.",
       "Do reuse `PixelDissolve`, the seams and the thread before inventing a new transition.",
       "Do put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.",
-      "Do list things as full-width rows under a 1px rule, with body text and lists within `--measure`.",
+      "Do list things as full-width rows under a 1px rule, with body text and lists within `--measure` (including the stepped case study diagram rows in `case-diagram.scss`, issue #645).",
       "Do give secondary actions the primary button's 48px height and type size.",
       "Do check every change at 1280px and 390px, in both themes."
     ],

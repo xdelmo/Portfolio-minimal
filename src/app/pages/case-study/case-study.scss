@@ -109,16 +109,41 @@
     }
     .more {
       display: grid;
-      justify-items: start;
+      justify-items: stretch;
       gap: var(--space-3);
       padding-top: var(--space-4);
       border-top: 1px solid var(--rule);
     }
+    .more app-contact-prompt,
+    .more .touch-line {
+      justify-self: start;
+    }
     .next {
       display: grid;
-      gap: var(--space-1);
+      gap: var(--space-3);
+      max-width: 46rem;
+      padding: var(--space-3);
+      border: 2px solid var(--fg);
+      background: var(--surface);
       color: inherit;
       text-decoration: none;
+      @include bp.up(md) {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: var(--space-4);
+        align-items: center;
+      }
+    }
+    // the small moai stands in the window's bottom-right corner on desktop (moai-guest.ts): 16px from the edge
+    // and ~62px wide, so .next steps aside where the page margin is narrower than 96px (issue #393, #644)
+    @media (min-width: 1024px) and (pointer: fine) {
+      .next {
+        margin-right: max(0px, calc(96px - var(--gutter) - (100vw - min(100vw, var(--container) + 2 * var(--gutter))) / 2));
+      }
+    }
+    .next-text {
+      display: grid;
+      gap: var(--space-1);
+      align-content: center;
     }
     .next-label {
       color: var(--fg-muted);
@@ -130,47 +155,140 @@
       font-variation-settings: 'wdth' 85;
       line-height: 1.1;
     }
+    .next-result {
+      max-width: 42ch;
+      color: var(--fg-muted);
+      font-size: var(--step--1);
+    }
+    .next-media {
+      position: relative;
+      display: grid;
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+      place-items: center;
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      background: var(--bg);
+    }
+    .next-shot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .next--tall .next-shot {
+      width: auto;
+      max-width: 180px;
+      height: calc(100% - 2 * var(--space-2));
+      object-fit: contain;
+    }
+    .next-sprite {
+      width: 36%;
+      aspect-ratio: 1;
+    }
+    .next-arrow {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      min-width: 40px;
+      height: 40px;
+      padding-inline: 11px;
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      color: var(--fg);
+      @media (pointer: coarse) {
+        min-width: 44px;
+        height: 44px;
+        padding-inline: 13px;
+      }
+    }
+    .next-arrow-label {
+      max-width: 0;
+      overflow-x: clip;
+      margin-right: calc(-1 * var(--space-1));
+      opacity: 0;
+      font-size: 14px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .next-arrow app-pixel-arrow {
+      width: 16px;
+      height: 16px;
+    }
     .next:hover .next-title {
       text-decoration: underline;
       text-decoration-thickness: 0.06em;
       text-underline-offset: 0.1em;
+    }
+    @media (hover: hover) {
+      .next:hover .next-arrow-label {
+        max-width: 5em;
+        margin-right: 0;
+        opacity: 1;
+      }
+      .next:hover .next-arrow {
+        border-color: var(--fg);
+        background: var(--fg);
+        color: var(--bg);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .next {
+        transition: transform 120ms steps(2), box-shadow 120ms steps(2);
+      }
+      .next:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 4px 4px 0 var(--fg);
+      }
+      .next-arrow {
+        transition: background-color 120ms steps(2), color 120ms steps(2), border-color 120ms steps(2);
+      }
+      .next-arrow app-pixel-arrow {
+        transition: transform 160ms steps(2);
+      }
+      .next-arrow-label {
+        transition: max-width 160ms steps(4), margin-right 160ms steps(4), opacity 160ms steps(2);
+      }
+      .next:hover .next-arrow app-pixel-arrow {
+        transform: translate(2px, -2px);
+      }
+    }
+    @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .next-shot,
+      .next-sprite {
+        translate: calc(var(--px, 0) * 1px) calc(var(--py, 0) * 1px);
+      }
+      .next-media .next-shot {
+        transition: scale 300ms var(--ease-arrive);
+      }
+      .next:hover .next-shot {
+        scale: 1.04;
+      }
+      .next--tall:hover .next-shot {
+        scale: 1;
+      }
+    }
+    .next:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+    @media (forced-colors: active) {
+      .next {
+        border-color: CanvasText;
+        box-shadow: none;
+      }
     }
     .toc {
       display: none;
     }
     @include bp.up(lg) {
       // the intro and the image across the page; the index in a narrow column, the sections and what follows beside it
-      .case-shell {
-      display: block;
-    }
-    .reading-progress {
-      position: sticky;
-      top: var(--header-h);
-      left: 0;
-      z-index: 35;
-      width: 100%;
-      height: 2px;
-      pointer-events: none;
-    }
-    .reading-progress-fill {
-      width: 100%;
-      height: 100%;
-      scale: 0 1;
-      transform-origin: left;
-      background: var(--accent-line);
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .reading-progress-fill {
-        transition: scale 100ms linear;
-      }
-    }
-    @media (forced-colors: active) {
-      .reading-progress-fill {
-        forced-color-adjust: none;
-        background: Highlight;
-      }
-    }
-    .case-study {
+      .case-study {
         grid-template-columns: 13rem minmax(0, 1fr);
       }
       .intro,

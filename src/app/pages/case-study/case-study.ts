@@ -16,6 +16,8 @@ import { Depixelate } from '../../depixelate/depixelate.directive';
 import { type Effect, MotionHost } from '../../motion/motion-host';
 import { caseNextEffect } from '../../motion/effects/case-next';
 import { stickyEffect } from '../../motion/effects/sticky';
+import { CaseDiagram } from './case-diagram/case-diagram';
+import { caseDiagramFor } from './case-diagram/diagrams';
 import { smoother } from '../../motion/smoother';
 
 /**
@@ -49,7 +51,7 @@ const UNLOCK_NOTICE_MS = 4000;
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, PixelArrow, QuestSprite, Depixelate, MotionHost],
+  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, PixelArrow, QuestSprite, Depixelate, MotionHost, CaseDiagram],
   templateUrl: './case-study.html',
   styleUrl: './case-study.scss',
 })
@@ -69,6 +71,7 @@ export class CaseStudy {
   private readonly seo = inject(SeoService);
   private readonly cues = inject(MoaiCues);
   private readonly locale = toLocale(inject(LOCALE_ID));
+  protected readonly diagram = computed(() => caseDiagramFor(this.locale, this.slug()));
 
   /** The section being read, for the index (#96). */
   private readonly reading = signal<string | null>(null);

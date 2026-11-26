@@ -35,6 +35,7 @@ describe('CaseStudy', () => {
     // ApexFlow has blog posts (issue #1): they close the case study
     expect(headings).toEqual(['Context', 'How it is built', 'Key decisions', 'Outcome', 'I wrote about it']);
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
+    expect(el.querySelector('#architecture app-case-diagram')).not.toBeNull();
   });
 
   it('says whose project it is before the details, and ends with a way to get in touch (#229)', async () => {

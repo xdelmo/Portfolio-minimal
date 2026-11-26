@@ -32,7 +32,7 @@ test('STRAIGHT catches escaped apostrophes', () => {
 
 test('no straight apostrophes in visible copy', () => {
   const found = [];
-  for (const file of ['src/app/content/content.en.ts', 'src/app/content/content.it.ts', 'src/app/voxel/lines.ts']) {
+  for (const file of ['src/app/content/content.en.ts', 'src/app/content/content.it.ts', 'src/app/voxel/lines.ts', 'src/app/pages/case-study/case-diagram/diagrams.ts']) {
     const lines = readFileSync(file, 'utf8').split('\n').map((line, i) => [i + 1, line]);
     found.push(...offenders(file, lines.filter(([, l]) => !/^\s*(\/\/|\*|\/\*|import )/.test(l))));
   }

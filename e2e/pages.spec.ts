@@ -97,21 +97,42 @@ for (const [locale, { title, menu: label, moves, hints, prompt }] of Object.entr
   });
 }
 
-const idle = (page: Page) =>
+const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
+
+const infiniteFoeAnimations = (page: Page) =>
   page.locator('.foe').evaluate((el) =>
     el
       .getAnimations()
-      .map((a) => `${(a as CSSAnimation).animationName}:${a.playState}`)
-      .filter((a) => a.includes('idle:'))
-      // Angular prefixes keyframe names with the component's scope
-      .map((a) => a.replace(/^.*idle:/, 'idle:')),
+      .filter((a) => a.effect?.getComputedTiming().iterations === Infinity)
+      .map((a) => (a as CSSAnimation).animationName),
   );
 
-test('the wild 404 bobs while it waits, and the pause button stops it', async ({ page }) => {
+async function countNutellaDraws(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const w = window as unknown as { nutellaDraws: number };
+    w.nutellaDraws = 0;
+    const gl = WebGL2RenderingContext.prototype;
+    const clear = Object.getOwnPropertyDescriptor(gl, 'clear')?.value as (this: WebGL2RenderingContext, mask: number) => void;
+    gl.clear = function (mask: number) {
+      if (this.canvas instanceof HTMLCanvasElement && this.canvas.closest('app-nutella-scene')) w.nutellaDraws++;
+      clear.call(this, mask);
+    };
+  });
+}
+
+const nutellaDraws = (page: Page): Promise<number> => page.evaluate(() => (window as unknown as { nutellaDraws: number }).nutellaDraws);
+
+test('Nutella animates without a continuous CSS bob, and the pause button stops her', async ({ page }) => {
+  await countNutellaDraws(page);
   await page.goto('/en/404');
-  await expect.poll(() => idle(page)).toEqual(['idle:running']);
+  expect(await infiniteFoeAnimations(page)).toEqual([]);
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  const before = await nutellaDraws(page);
+  await expect.poll(() => nutellaDraws(page), { timeout: 15_000 }).toBeGreaterThan(before + 2);
   await press(page, 'Pause animations');
-  await expect.poll(() => idle(page)).toEqual(['idle:paused']);
+  const atPause = await nutellaDraws(page);
+  await page.waitForTimeout(400);
+  expect(await nutellaDraws(page)).toBe(atPause);
 });
 
 test.describe('with reduced motion', () => {
@@ -119,7 +140,7 @@ test.describe('with reduced motion', () => {
   test('the wild 404 stands still', async ({ page }) => {
     await page.goto('/en/404');
     await expect(page.locator('h1')).toBeVisible();
-    expect(await idle(page)).toEqual([]);
+    expect(await infiniteFoeAnimations(page)).toEqual([]);
     await expect(page.locator('app-nutella-scene')).toHaveCount(0);
     await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
   });
@@ -139,8 +160,6 @@ test.describe('without JavaScript', () => {
     await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
   });
 });
-
-const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
 
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];

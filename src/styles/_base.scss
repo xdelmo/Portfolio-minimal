@@ -442,7 +442,11 @@ html.smooth app-site-header {
   position: fixed;
   inset: 0 0 auto;
 }
+html.smooth #smooth-wrapper {
+  display: block;
+}
 html.smooth #smooth-content {
+  min-height: 100%;
   padding-top: var(--header-h);
 }
 

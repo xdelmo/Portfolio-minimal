@@ -470,10 +470,6 @@
         <source>Code copied</source>
         <target>Codice copiato</target>
       </trans-unit>
-      <trans-unit id="blog.notFound" datatype="html">
-        <source>Post not found</source>
-        <target>Articolo non trovato</target>
-      </trans-unit>
       <trans-unit id="blog.title" datatype="html">
         <source>Blog</source>
         <target>Blog</target>

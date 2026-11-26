@@ -64,12 +64,9 @@ export class ArticlePage {
     const destroyRef = inject(DestroyRef);
     effect(() => {
       const a = this.article();
-      seo.setJsonLd('ld-page', a ? articleJsonLd(a, this.content.person, locale) : null);
-      seo.update(
-        a
-          ? { path: `/blog/${a.slug}`, title: `${a.title} — ${this.content.person.name}`, description: a.description, ogImage: `blog-${a.slug}` }
-          : { path: `/blog/${this.slug()}`, title: $localize`:@@notFound.pageTitle:Page not found — Emanuele Del Monte`, description: '', noindex: true },
-      );
+      if (!a) return;
+      seo.setJsonLd('ld-page', articleJsonLd(a, this.content.person, locale));
+      seo.update({ path: `/blog/${a.slug}`, title: `${a.title} — ${this.content.person.name}`, description: a.description, ogImage: `blog-${a.slug}` });
     });
 
     afterNextRender(() => {

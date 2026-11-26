@@ -20,6 +20,7 @@ Un effetto con due versioni imposta, in ciascuna, ogni proprietà di transform c
 ScrollSmoother (`motion/smoother.ts`) è attivo solo su desktop con mouse e mai con reduced motion. Sposta `#smooth-content` con un transform, quindi:
 
 - gli elementi fissi e l'header stanno fuori da `#smooth-wrapper`;
+- `#smooth-wrapper` e `#smooth-content` mantengono il layout flex verticale (`flex: 1 0 auto`) così il footer resta attaccato al fondo sulle pagine corte, e sotto `html.smooth` (applicata prima di `ScrollSmoother.create()`) il wrapper torna `display: block` con `min-height: 100%` su `#smooth-content` per non tagliare le pagine lunghe;
 - `position: sticky` lì dentro non funziona e viene sostituito da `effects/sticky.ts` (attributo `data-sticky`);
 - lo scroll da codice (ancore, cambi di pagina) passa da `smoother()`.
 

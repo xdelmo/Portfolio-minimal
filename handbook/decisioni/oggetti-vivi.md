@@ -27,6 +27,10 @@ Un moai a voxel in Three.js (`InstancedMesh`), caricato solo quando entra in vis
 
 Al suo posto c'è un'immagine ferma prerenderizzata con reduced motion, con il risparmio dati (`prefers-reduced-data`), senza WebGL o se il download fallisce. È anche la favicon, visto di fronte.
 
+## Nutella
+
+Sul 404 c'è Nutella, una chihuahua a voxel disegnata come il moai. La sua immagine ferma è lì dalla prima pittura, Three.js si carica solo quando entra in vista; passare su una mossa le cambia l'umore, e un clic o un tocco su di lei la fa abbaiare. Con reduced motion resta l'immagine ferma.
+
 ## Press start
 
 Il codice Konami, cinque tocchi sul logo o il tasto «Press start» nel footer aprono un player card: classe, livello, punti esperienza e tre achievement disegnati come oggetti 16 × 16. È un modale nativo in un chunk lazy (`src/app/game/`), una ricompensa nascosta che non sta mai in mezzo.

@@ -28,3 +28,14 @@ test('under forced colours the 404 battle cursor keeps its colour', async ({ pag
   const cursor = await page.locator('.move').first().evaluate((el) => getComputedStyle(el, '::before').forcedColorAdjust);
   expect(cursor).toBe('none');
 });
+
+test('under forced colours the case study index thread and reading bar keep their colour (#643)', async ({ page, browserName, isMobile }) => {
+  test.skip(browserName === 'webkit', 'WebKit has no forced-color-adjust property to read back');
+  await page.goto('/en/work/apexflow');
+  const barAdjust = await page.locator('app-case-study .reading-progress-fill').evaluate((el) => getComputedStyle(el).forcedColorAdjust);
+  expect(barAdjust).toBe('none');
+  if (!isMobile && (page.viewportSize()?.width ?? 0) >= 1024) {
+    const threadAdjust = await page.locator('app-case-study .toc ul').evaluate((el) => getComputedStyle(el, '::after').forcedColorAdjust);
+    expect(threadAdjust).toBe('none');
+  }
+});

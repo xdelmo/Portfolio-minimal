@@ -151,7 +151,7 @@ Density is low and text-first. Sections alternate with full-bleed bands (pastel,
 Concrete greys and ink, one saturated blue, and a pastel pixel palette (blue tints, lavender, peach) that never carries text.
 
 ### Primary
-- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and non-text accent indicators (pixel thread line and nodes, pixel cursor, current inventory slot/toc/language markers, meters, timeline cells, combo cells, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
+- **Signal Blue** (`signal-blue`): the one blue of the light theme. `--accent`, `--link`, `--focus` and `--accent-line` all point at it: the primary button's fill, inline links, the focus ring and non-text accent indicators (pixel thread line and nodes on home and case study index, reading progress bars, pixel cursor, current inventory slot/toc/language markers, meters, timeline cells, combo cells, blockquote rule). 5.05:1 on concrete, 6.07:1 on paper (issue #462).
 - **Bright Signal** (`signal-blue-bright`): the primary button's fill in dark theme and the strongest pixel (`--px-1`) in both themes. Never text or a 1–4px UI indicator on night/bands.
 - **Night Link** (`night-link`): in dark theme links, the focus ring and `--accent-line`, because the fill blue fails contrast (`< 3:1`) as a thin line or meter bar on night.
 

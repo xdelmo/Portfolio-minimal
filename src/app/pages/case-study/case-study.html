@@ -89,9 +89,33 @@
         <nav class="more" i18n-aria-label="@@case.more" aria-label="More projects">
           <app-contact-prompt />
           @if (next(); as n) {
-            <a class="next" [routerLink]="['/work', n.slug]">
-              <span class="next-label" i18n="@@case.next">Next project</span>
-              <span class="next-title">{{ n.title }}</span>
+            <a class="next" data-snap-zone [class.next--tall]="n.image && n.image.height > n.image.width" [routerLink]="['/work', n.slug]">
+              <div class="next-text">
+                <span class="next-label" i18n="@@case.next">Next project</span>
+                <span class="next-title">{{ n.title }}</span>
+                <span class="next-result">{{ n.result }}</span>
+              </div>
+              <div class="next-media" aria-hidden="true">
+                @if (n.image; as image) {
+                  <img
+                    appDepixelate="dither"
+                    class="next-shot"
+                    [ngSrc]="image.src"
+                    [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
+                    [loaderParams]="{ full: image.width }"
+                    [width]="image.width"
+                    [height]="image.height"
+                    [sizes]="image.height > image.width ? '200px' : '(min-width: 768px) 320px, 100vw'"
+                    alt=""
+                  />
+                } @else if (n.sprite; as sprite) {
+                  <app-quest-sprite class="next-sprite" [name]="sprite" />
+                }
+                <span class="next-arrow" data-snap>
+                  <span class="next-arrow-label" i18n="@@work.view">View</span>
+                  <app-pixel-arrow />
+                </span>
+              </div>
             </a>
           }
           <a class="touch-line" routerLink="/" fragment="work" i18n="@@case.back">See all projects</a>

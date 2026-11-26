@@ -1,42 +1,57 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-19T00:00:00Z",
+  "generatedAt": "2026-11-26T09:50:00Z",
   "title": "Design System: edm.",
   "extensions": {
     "colorMeta": {
-      "signal-blue": { "role": "primary", "displayName": "Signal Blue", "canonical": "#0058b8", "tonalRamp": ["#0a1f3d", "#0b3a73", "#0b4f96", "#0066d4", "#2f86ea", "#7fb2ec", "#b9d5f5", "#e3effc"] },
-      "signal-blue-bright": { "role": "primary", "displayName": "Bright Signal", "canonical": "#0066d4" },
-      "night-link": { "role": "primary", "displayName": "Night Link", "canonical": "#4d9bf0" },
       "concrete": { "role": "neutral", "displayName": "Concrete", "canonical": "#dedede", "tonalRamp": ["#121212", "#1d1d1c", "#202020", "#555555", "#aaaaaa", "#d0d0d0", "#dedede", "#f2f2f2"] },
       "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f2f2f2" },
       "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1d1d1c" },
       "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#555555" },
+      "signal-blue": { "role": "primary", "displayName": "Signal Blue", "canonical": "#0058b8", "tonalRamp": ["#0a1f3d", "#0b3a73", "#0b4f96", "#0066d4", "#2f86ea", "#7fb2ec", "#b9d5f5", "#e3effc"] },
+      "signal-blue-bright": { "role": "primary", "displayName": "Bright Signal", "canonical": "#0066d4" },
+      "on-signal": { "role": "primary", "displayName": "On Signal", "canonical": "#ffffff" },
       "night": { "role": "neutral", "displayName": "Night", "canonical": "#121212" },
       "slate": { "role": "neutral", "displayName": "Slate", "canonical": "#202020" },
-      "pixel-lavender": { "role": "tertiary", "displayName": "Pixel Lavender", "canonical": "#c9b8f5" },
-      "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffb88f" },
-      "band-pastel": { "role": "secondary", "displayName": "Pastel Band", "canonical": "#b9d5f5" },
+      "night-ink": { "role": "neutral", "displayName": "Night Ink", "canonical": "#dedede" },
+      "night-muted": { "role": "neutral", "displayName": "Night Muted", "canonical": "#aaaaaa" },
+      "night-link": { "role": "primary", "displayName": "Night Link", "canonical": "#4d9bf0" },
+      "pixel-sky": { "role": "tertiary", "displayName": "Pixel Sky", "canonical": "#7fb2ec" },
+      "pixel-mist": { "role": "tertiary", "displayName": "Pixel Mist", "canonical": "#b9d5f5" },
+      "pixel-lavender": { "role": "tertiary", "displayName": "Pixel Lavender", "canonical": "#c9b8f5", "tonalRamp": ["#1a142d", "#211a38", "#4a3d6b", "#725ea3", "#9d8cf0", "#c9b8f5", "#dccff8", "#efeafc"] },
+      "pixel-lilac": { "role": "tertiary", "displayName": "Pixel Lilac", "canonical": "#dccff8" },
+      "pixel-peach": { "role": "tertiary", "displayName": "Pixel Peach", "canonical": "#ffb88f", "tonalRamp": ["#3d1e0e", "#6b381b", "#9e552c", "#d07846", "#f0a982", "#ffb88f", "#ffd5bd", "#ffefe5"] },
+      "band-pastel": { "role": "secondary", "displayName": "Pastel Band", "canonical": "#b9d5f5", "tonalRamp": ["#0e1a2b", "#14243b", "#2f4560", "#4d6d94", "#7fa2cc", "#b9d5f5", "#d4e5fa", "#e8f0fa"] },
       "band-lavender": { "role": "secondary", "displayName": "Lavender Band", "canonical": "#dccff8" },
       "band-ink": { "role": "secondary", "displayName": "Ink Band", "canonical": "#1d1d1c" },
+      "band-ink-text": { "role": "secondary", "displayName": "Ink Band Text", "canonical": "#f2f2f2" },
+      "band-link": { "role": "secondary", "displayName": "Pastel Band Link", "canonical": "#0b4f96" },
       "band-pastel-muted": { "role": "secondary", "displayName": "Pastel Band Muted", "canonical": "#2f4560" },
       "band-lavender-muted": { "role": "secondary", "displayName": "Lavender Band Muted", "canonical": "#4a3d6b" },
       "band-ink-muted": { "role": "secondary", "displayName": "Ink Band Muted", "canonical": "#b8b8b2" },
-      "band-ink-link": { "role": "secondary", "displayName": "Ink Band Link", "canonical": "#9ccaff" }
+      "band-ink-link": { "role": "secondary", "displayName": "Ink Band Link", "canonical": "#9ccaff" },
+      "scrim": { "role": "neutral", "displayName": "Scrim", "canonical": "rgb(0 0 0 / 0.6)" }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "The hero headline only, condensed (wdth 75)." },
+      "display": { "displayName": "Display", "purpose": "The hero headline only, the page's main graphic element, at normal width (wdth 100)." },
+      "poster": { "displayName": "Poster", "purpose": "The giant contact title (48 to 144px)." },
+      "statement": { "displayName": "Statement", "purpose": "The About sentence lit by the scroll (35 to 55px, wdth 75)." },
+      "curtain": { "displayName": "Curtain", "purpose": "The new language's name on the language switch panel, white on Signal Blue." },
       "headline": { "displayName": "Headline", "purpose": "Section titles (h2), wdth 85." },
-      "title": { "displayName": "Title", "purpose": "Project names, card titles, case study subsections (h3)." },
-      "body": { "displayName": "Body", "purpose": "Running text, 53ch max (about 75 characters)." },
+      "title": { "displayName": "Title", "purpose": "Project names, card titles, case study subsections (h3), wdth 85." },
+      "voice": { "displayName": "Voice", "purpose": "Instrument Serif italic 400, about 1.14x the sans size: only the curious half of a display sentence (hero headline, About statement), never a paragraph, label or button." },
+      "body": { "displayName": "Body", "purpose": "All running text, never wider than 53ch (about 75 characters a line)." },
+      "micro": { "displayName": "Micro", "purpose": "Code tags, small indicators, header name subline." },
       "label": { "displayName": "Label", "purpose": "Repository tags and small meta." },
-      "voice": { "displayName": "Voice", "purpose": "Instrument Serif italic 400, about 1.14× the sans size: only the curious half of a display sentence (hero headline, About statement), never a paragraph, label or button." }
+      "code": { "displayName": "Code", "purpose": "System monospace stack, used only inside code in blog posts." }
     },
     "shadows": [
-      { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "The primary button on hover, with translate(-4px, -4px). The only shadow in the system." }
+      { "name": "hard-lift", "value": "4px 4px 0 var(--fg)", "purpose": "Hard 4px offset in ink on primary button hover, the case study next-project card hover and the desktop blog index project preview card; the single shadow in the system." }
     ],
     "motion": [
-      { "name": "step-state", "value": "120ms steps(2)", "purpose": "Buttons and repository tags: hover lift, inversion." },
-      { "name": "step-view", "value": "0.48s steps(6, end)", "purpose": "View transitions between pages." }
+      { "name": "step-state", "value": "120ms steps(2)", "purpose": "Small feedback (hover, focus, press, notices) moves in steps(2-4) over 80-240ms." },
+      { "name": "ease-cover", "value": "cubic-bezier(0.7, 0, 0.3, 1)", "purpose": "Surfaces that cover or uncover the page: theme circle reveal (0.7s), language curtain (0.5s), whole-sheet page rise (0.5s)." },
+      { "name": "ease-arrive", "value": "cubic-bezier(0.165, 0.84, 0.44, 1)", "purpose": "Entrances landing without overshoot (GSAP power3.out)." }
     ],
     "breakpoints": [
       { "name": "md", "value": "768px" },
@@ -58,7 +73,7 @@
       "refersTo": "button-secondary",
       "description": "A second action next to the primary one: ink outline, no fill.",
       "html": "<a class=\"ds-btn-secondary\" href=\"#contact\">Contact me</a>",
-      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; } .ds-btn-secondary:active { transform: translate(2px, 2px); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; font-weight: 600; text-decoration: none; background: transparent; transition: transform 120ms steps(2); } .ds-btn-secondary:active { transform: translate(2px, 2px); } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
     },
     {
       "name": "Repository Tag",
@@ -66,14 +81,20 @@
       "refersTo": "repo-tag",
       "description": "A link to a GitHub repository: pixel mark and name in a hard-edged tag that inverts on hover.",
       "html": "<a class=\"ds-repo-tag\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" shape-rendering=\"crispEdges\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M5 1h6v1h2v2h1v6h-1v2h-2v1h-1v2H6v-2H5v-1H3v-2H2V4h1V2h2z\"/></svg>dashboard-tesi</a>",
-      "css": ".ds-repo-tag { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background-color 120ms steps(2), color 120ms steps(2); } .ds-repo-tag:hover { background: var(--fg, #1d1d1c); color: var(--bg, #dedede); } .ds-repo-tag:active { transform: translate(2px, 2px); } .ds-repo-tag:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
+      "css": ".ds-repo-tag { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--fg, #1d1d1c); color: var(--fg, #1d1d1c); font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background-color 120ms steps(2), color 120ms steps(2), transform 120ms steps(2); } .ds-repo-tag:hover { background: var(--fg, #1d1d1c); color: var(--bg, #dedede); } .ds-repo-tag:active { transform: translate(2px, 2px); } .ds-repo-tag:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
+    },
+    {
+      "name": "Header Navigation Link",
+      "kind": "nav",
+      "description": "Header link whose hover and active states share one hard 2px underline drawn in steps.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" aria-current=\"page\" href=\"#work\">Work</a><a class=\"ds-nav-link\" href=\"#experience\">Experience</a></nav>",
+      "css": ".ds-nav { display: inline-flex; gap: 16px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); font-size: 1.125rem; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; min-height: 48px; color: var(--fg, #1d1d1c); text-decoration: none; white-space: nowrap; } .ds-nav-link::after { content: ''; position: absolute; inset-inline: 0; bottom: 8px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 120ms steps(4); } .ds-nav-link:hover::after, .ds-nav-link[aria-current]::after { transform: scaleX(1); } .ds-nav-link:focus-visible { outline: 3px solid var(--focus, #0058b8); outline-offset: 3px; }"
     },
     {
       "name": "Ink Band",
       "kind": "card",
-      "refersTo": "band-ink",
       "description": "A full-bleed section band that re-points the text, link and focus colours for its content.",
-      "html": "<section class=\"ds-band-ink\"><h2>Let's talk</h2><p>Email, LinkedIn or GitHub. <a href=\"#\">Email</a></p></section>",
+      "html": "<section class=\"ds-band-ink\"><h2>Let’s talk</h2><p>Email, LinkedIn or GitHub. <a href=\"#\">Email</a></p></section>",
       "css": ".ds-band-ink { --fg: var(--band-ink-fg, #f2f2f2); --link: var(--band-ink-link, #9ccaff); --focus: var(--band-ink-link, #9ccaff); background: var(--band-ink-bg, #1d1d1c); color: var(--fg); padding: 64px 32px; font-family: var(--font-sans, 'Instrument Sans Variable', system-ui, sans-serif); } .ds-band-ink h2 { margin: 0 0 24px; font-size: 2.747rem; font-weight: 600; line-height: 1.1; font-variation-settings: 'wdth' 85; } .ds-band-ink p { margin: 0; font-size: 1.125rem; line-height: 1.55; max-width: 53ch; } .ds-band-ink a { color: var(--link); text-underline-offset: 0.2em; } .ds-band-ink a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }"
     }
   ],
@@ -88,6 +109,7 @@
       "A light and a dark theme, equal in care, both WCAG 2.2 AA."
     ],
     "rules": [
+      { "name": "The Highlighter Rule", "body": "Selected text is ink (`#1d1d1c`) on Pixel Peach (`#ffb88f`), about 10:1, in both themes and on every band (`--selection-bg`, `--selection-fg`). Peach is the one pastel no band sits on, so a selection never vanishes into its background.", "section": "colors" },
       { "name": "The No Green Rule", "body": "No green anywhere: not for success, not in syntax colours, not as a pastel. The brand is greys, the blue family, lavender and peach.", "section": "colors" },
       { "name": "The Silent Pastel Rule", "body": "The `pixel-*` colours never carry text or a control's state; text on a pastel band uses that band's own ink tokens.", "section": "colors" },
       { "name": "The Two Themes Rule", "body": "Every new colour ships with a light and a dark value, both checked for AA; a token that is light in one theme can turn black in the other.", "section": "colors" },
@@ -100,9 +122,12 @@
     "dos": [
       "Do read colours through the CSS custom properties (`--bg`, `--fg`, `--accent`, `--link`, band tokens); never hard-code a hex in a component.",
       "Do keep every space and size on the 8px scale.",
-      "Do use `steps()` for state transitions on buttons, tags and the language curtain.",
+      "Do use `steps()` for state transitions on buttons and tags.",
+      "Do let surfaces that cover or uncover the page (language curtain, theme circle, page change) glide on `--ease-cover`; on a page change the header stays put and the new page rises from the bottom edge in 0.5s as a whole sheet (`translate`, not a `clip-path` window) while the old one dims (issue #555). Only the header and the fixed pixel cursor (and its arrow) have a `view-transition-name` (issue #560): a named title would slide across the page.",
       "Do reuse `PixelDissolve`, the seams and the thread before inventing a new transition.",
       "Do put `appDepixelate` on any new photo, and show a project's pixel sprite in the 3:2 frame when it has no screenshot.",
+      "Do list things as full-width rows under a 1px rule, with body text and lists within `--measure` (including the stepped case study diagram rows in `case-diagram.scss`, issue #645).",
+      "Do give secondary actions the primary button's 48px height and type size.",
       "Do check every change at 1280px and 390px, in both themes."
     ],
     "donts": [
@@ -111,6 +136,10 @@
       "Don't set text in a `pixel-*` colour.",
       "Don't use all-caps labels, eyebrows, monospace metadata, middle-dot meta strings or arrows appended to links.",
       "Don't add another typeface or extra weights for emphasis; Instrument Serif italic stays in the voice role, never in a paragraph, label or button.",
+      "Don't lay things out as a row of three identical tiles.",
+      "Don't let an entrance overshoot (`back.out`, elastic, bounce).",
+      "Don't write aphorisms after a colon, triads, idioms, or claims CI does not enforce (see Copy voice in edm-style).",
+      "Don't type straight apostrophes or quotes in visible copy: `’` and `“…”` (issue #583).",
       "Don't add hover-only behaviour on phones, or block vertical scrolling on anything swipeable."
     ]
   }

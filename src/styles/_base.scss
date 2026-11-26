@@ -442,7 +442,11 @@ html.smooth app-site-header {
   position: fixed;
   inset: 0 0 auto;
 }
+html.smooth #smooth-wrapper {
+  display: block;
+}
 html.smooth #smooth-content {
+  min-height: 100%;
   padding-top: var(--header-h);
 }
 
@@ -451,4 +455,23 @@ html.smooth #smooth-content {
   from {
     clip-path: inset(50% 0);
   }
+}
+
+/* Pastel pixel burst on copy actions (motion/pixel-burst.ts) */
+.pixel-burst {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+@media (forced-colors: active) {
+  .pixel-burst {
+    visibility: hidden;
+  }
+}
+
+/* On inner pages the ink footer grows a 48px pixel seam into the bottom of <main>, keeping clear air below its content */
+main:has(+ app-site-footer .seam--footer) {
+  padding-bottom: var(--space-6);
 }

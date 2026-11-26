@@ -1,4 +1,11 @@
-    <footer class="site-footer container band band--ink">
+    <footer class="site-footer container band band--ink" [class.site-footer--inner]="innerPage()">
+      @if (innerPage()) {
+        @defer (when innerPage()) {
+          <app-footer-seam [route]="routePath()" />
+        } @placeholder {
+          <div class="seam seam--footer" aria-hidden="true"></div>
+        }
+      }
       <p>© {{ year() }} {{ content.person.name }} · v{{ version }}</p>
       <a class="to-top" [attr.href]="toMain()" (click)="toTop($event)"
         ><span i18n="@@footer.top">Back to top</span

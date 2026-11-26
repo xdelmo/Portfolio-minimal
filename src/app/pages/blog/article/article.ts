@@ -19,6 +19,7 @@ import { articleJsonLd } from '../../../core/seo/seo';
 import { SeoService } from '../../../core/seo/seo.service';
 import { ContactPrompt } from '../../../layout/contact-prompt';
 import { type Effect, MotionHost } from '../../../motion/motion-host';
+import { burstPixels } from '../../../motion/pixel-burst';
 import { stickyEffect } from '../../../motion/effects/sticky';
 import { CodeBlock } from '../code-block/code-block';
 
@@ -63,12 +64,9 @@ export class ArticlePage {
     const destroyRef = inject(DestroyRef);
     effect(() => {
       const a = this.article();
-      seo.setJsonLd('ld-page', a ? articleJsonLd(a, this.content.person, locale) : null);
-      seo.update(
-        a
-          ? { path: `/blog/${a.slug}`, title: `${a.title} — ${this.content.person.name}`, description: a.description, ogImage: `blog-${a.slug}` }
-          : { path: `/blog/${this.slug()}`, title: $localize`:@@notFound.pageTitle:Page not found — Emanuele Del Monte`, description: '', noindex: true },
-      );
+      if (!a) return;
+      seo.setJsonLd('ld-page', articleJsonLd(a, this.content.person, locale));
+      seo.update({ path: `/blog/${a.slug}`, title: `${a.title} — ${this.content.person.name}`, description: a.description, ogImage: `blog-${a.slug}` });
     });
 
     afterNextRender(() => {
@@ -92,13 +90,14 @@ export class ArticlePage {
     });
   }
 
-  protected async copyLink(): Promise<void> {
+  protected async copyLink(btn?: HTMLElement): Promise<void> {
     try {
       await navigator.clipboard.writeText(window.location.href);
     } catch {
       return;
     }
     this.copied.set(true);
+    if (btn) burstPixels(btn);
     clearTimeout(this.copyTimer);
     this.copyTimer = setTimeout(() => {
       this.copied.set(false);

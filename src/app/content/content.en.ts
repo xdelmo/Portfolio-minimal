@@ -27,11 +27,11 @@ export const CONTENT_EN: SiteContent = {
   aboutStatement: 'A table with thousands of rows should feel like one with ten.',
   aboutVoice: 'like one with ten.',
   about: [
-    'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and Flexie, a B2B packaging configurator. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
+    'I started building web frontends in 2022 at a web agency: CRMs, e-commerce sites and the B2B configurator for Flexie, a packaging company. In 2026 I joined IPS S.p.A. as an intern, wrote my thesis there and stayed on the product team of an intelligence platform. The thesis, ApexFlow, is a full-stack CRM dashboard in Angular and Spring Boot.',
     "Claude Code is part of my day: I use it to write and review code, draft tests, keep documentation up to date and find my way around new APIs. I also studied the Model Context Protocol and built an MCP server to try it.",
   ],
   figures: [
-    { value: '€1M', label: 'in orders placed through the Flexie configurator I built' },
+    { value: '€1M', label: 'in orders a year placed through the Flexie configurator whose frontend I built' },
     { value: '20', label: 'legacy components moved to Signals' },
     { value: '450', label: 'pages in six languages, in the in-app help I built' },
     { value: '40', label: 'countries using the IPS platform I work on' },
@@ -185,7 +185,7 @@ export const CONTENT_EN: SiteContent = {
       org: 'Web agency',
       summary: 'About two years building CRMs, single-page apps and e-commerce sites for clients.',
       highlights: [
-        'Built Flexie, a B2B configurator for flexible packaging: more than 100 combinations of materials, formats and accessories, priced in real time.',
+        'Built the frontend of the B2B configurator for Flexie, a flexible-packaging company: more than 100 combinations of materials, formats and accessories, priced in real time.',
         'Wrote custom WordPress plugins for e-commerce sites and wired third-party REST APIs into them.',
       ],
       tags: ['Angular', 'Next.js', 'WordPress', 'PHP'],

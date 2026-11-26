@@ -11,6 +11,15 @@
       color: var(--fg-muted);
       font-size: var(--step--1);
     }
+    .site-footer--inner {
+      border-top: 0;
+    }
+    .seam--footer {
+      position: absolute;
+      bottom: 100%;
+      inset-inline: calc(50% - 50vw);
+      height: var(--space-6);
+    }
     p {
       margin: 0;
     }

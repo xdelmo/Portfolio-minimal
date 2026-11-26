@@ -97,21 +97,42 @@ for (const [locale, { title, menu: label, moves, hints, prompt }] of Object.entr
   });
 }
 
-const idle = (page: Page) =>
+const hasWebGL = (page: Page) => page.evaluate(() => Boolean(document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl')));
+
+const infiniteFoeAnimations = (page: Page) =>
   page.locator('.foe').evaluate((el) =>
     el
       .getAnimations()
-      .map((a) => `${(a as CSSAnimation).animationName}:${a.playState}`)
-      .filter((a) => a.includes('idle:'))
-      // Angular prefixes keyframe names with the component's scope
-      .map((a) => a.replace(/^.*idle:/, 'idle:')),
+      .filter((a) => a.effect?.getComputedTiming().iterations === Infinity)
+      .map((a) => (a as CSSAnimation).animationName),
   );
 
-test('the wild 404 bobs while it waits, and the pause button stops it', async ({ page }) => {
+async function countNutellaDraws(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const w = window as unknown as { nutellaDraws: number };
+    w.nutellaDraws = 0;
+    const gl = WebGL2RenderingContext.prototype;
+    const clear = Object.getOwnPropertyDescriptor(gl, 'clear')?.value as (this: WebGL2RenderingContext, mask: number) => void;
+    gl.clear = function (mask: number) {
+      if (this.canvas instanceof HTMLCanvasElement && this.canvas.closest('app-nutella-scene')) w.nutellaDraws++;
+      clear.call(this, mask);
+    };
+  });
+}
+
+const nutellaDraws = (page: Page): Promise<number> => page.evaluate(() => (window as unknown as { nutellaDraws: number }).nutellaDraws);
+
+test('Nutella animates without a continuous CSS bob, and the pause button stops her', async ({ page }) => {
+  await countNutellaDraws(page);
   await page.goto('/en/404');
-  await expect.poll(() => idle(page)).toEqual(['idle:running']);
+  expect(await infiniteFoeAnimations(page)).toEqual([]);
+  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  const before = await nutellaDraws(page);
+  await expect.poll(() => nutellaDraws(page), { timeout: 15_000 }).toBeGreaterThan(before + 2);
   await press(page, 'Pause animations');
-  await expect.poll(() => idle(page)).toEqual(['idle:paused']);
+  const atPause = await nutellaDraws(page);
+  await page.waitForTimeout(400);
+  expect(await nutellaDraws(page)).toBe(atPause);
 });
 
 test.describe('with reduced motion', () => {
@@ -119,7 +140,9 @@ test.describe('with reduced motion', () => {
   test('the wild 404 stands still', async ({ page }) => {
     await page.goto('/en/404');
     await expect(page.locator('h1')).toBeVisible();
-    expect(await idle(page)).toEqual([]);
+    expect(await infiniteFoeAnimations(page)).toEqual([]);
+    await expect(page.locator('app-nutella-scene')).toHaveCount(0);
+    await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
   });
 });
 
@@ -130,6 +153,52 @@ test.describe('without JavaScript', () => {
     await page.goto('/en/');
     await expect(page.locator('h1')).toContainText('curious by nature');
     await expect(page.getByRole('link', { name: 'ApexFlow', exact: true })).toBeVisible();
+  });
+
+  test('Nutella still render is visible on the 404', async ({ page }) => {
+    await page.goto('/en/404');
+    await expect(page.locator('app-nutella-figure img.still').filter({ visible: true })).toHaveCount(1);
+  });
+});
+
+function collectErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('console', (m) => {
+    if (m.type() === 'error' || (m.type() === 'warning' && m.text().includes('Too many active WebGL contexts'))) errors.push(m.text());
+  });
+  page.on('pageerror', (e) => errors.push(e.message));
+  return errors;
+}
+
+test.describe('Nutella', () => {
+  test('renders the still images from prerender', async ({ page }) => {
+    await page.goto('/en/404');
+    await expect(page.locator('app-nutella-figure img.still')).toHaveCount(2);
+  });
+
+  test('shifts mood with the battle menu and returns to idle', async ({ page }) => {
+    await page.goto('/en/404');
+    const figure = page.locator('app-nutella-figure');
+    await expect(figure).toHaveAttribute('data-mood', 'idle');
+    await page.locator('.move', { hasText: 'Run' }).focus();
+    await expect(figure).toHaveAttribute('data-mood', 'down');
+    await page.locator('.move', { hasText: 'Contact' }).focus();
+    await expect(figure).toHaveAttribute('data-mood', 'curious');
+    await page.locator('.move', { hasText: 'Contact' }).blur();
+    await expect(figure).toHaveAttribute('data-mood', 'idle');
+  });
+
+  test('swaps to the 3D scene and barks on click', async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto('/en/404');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    const canvas = page.locator('app-nutella-scene canvas');
+    await expect(canvas).toBeVisible();
+    await expect(page.locator('app-nutella-figure img.still.covered')).toHaveCount(2);
+    await canvas.click();
+    await expect(page.locator('.says')).toHaveText('Nutella used Bark!');
+    await expect(page.locator('.says')).toHaveText('What will you do?');
+    expect(errors).toEqual([]);
   });
 });
 
@@ -225,26 +294,41 @@ test('an unknown URL shows the not-found page and keeps the URL', async ({ page 
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 });
 
-test('a case study ends with the next one, which opens at its top (#91)', async ({ page }) => {
+test('a case study ends with the next one, which opens at its top (#91, #644)', async ({ page, isMobile }) => {
   await page.goto('/it/work/apexflow');
   const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
+  await expect(next.locator('.next-result')).not.toBeEmpty();
+  await expect(next.locator('.next-media .next-shot')).toBeAttached();
   await next.scrollIntoViewIfNeeded();
+  if (!isMobile && (page.viewportSize()?.width ?? 0) >= 1024) {
+    await next.locator('.next-media').hover();
+    await expect(page.locator('app-pixel-cursor .pixel-cursor')).toHaveClass(/is-over/);
+  }
   await next.click();
   await expect(page).toHaveURL(/\/it\/work\/pokeverba$/);
   await expect(page.locator('h1')).toHaveText('PokèVerba');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
 
-test('on desktop a case study keeps an index of its sections beside the text, marking the one being read (#96)', async ({ page, isMobile }) => {
+test('on desktop a case study keeps an index of its sections beside the text, marking the one being read (#96, #643)', async ({ page, isMobile }) => {
   await page.goto('/en/work/apexflow');
   const toc = page.getByRole('navigation', { name: 'On this page' });
+  const bar = page.locator('app-case-study .reading-progress');
   if (isMobile || (page.viewportSize()?.width ?? 0) < 1024) {
     await expect(toc).toBeHidden();
+    await expect(bar).toBeVisible();
+    await page.evaluate(() => {
+      window.scrollTo(0, Math.round(document.documentElement.scrollHeight * 0.5));
+    });
+    await expect.poll(() => page.locator('app-case-study .reading-progress-fill').evaluate((el) => parseFloat(getComputedStyle(el).scale))).toBeGreaterThan(0.1);
     return;
   }
+  await expect(bar).toBeHidden();
   await toc.getByRole('link', { name: 'Key decisions' }).click();
   await expect(page).toHaveURL(/#decisions$/);
   await expect(toc.locator('[aria-current="location"]')).toHaveText('Key decisions');
+  await expect(toc.locator('a').first()).toHaveClass(/is-passed/);
+  await expect.poll(() => toc.locator('ul').evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue('--toc') || '0'))).toBeGreaterThan(0.5);
   // it stays under the header while the page scrolls past it
   const top = await toc.evaluate((el) => el.getBoundingClientRect().top);
   expect(top).toBeGreaterThan(0);

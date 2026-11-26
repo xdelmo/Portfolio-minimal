@@ -25,5 +25,12 @@
         "reason": "design system: DESIGN.md sanctions Instrument Serif italic for the voice role only (Typography, Don'ts)"
       }
     ]
+  },
+  "hook": {
+    "enabled": true,
+    "limits": {
+      "maxFindings": 5,
+      "maxChars": 8000
+    }
   }
 }

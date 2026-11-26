@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/seo/seo.service';
-import { QuestSprite } from '../../sections/side-quests/quest-sprite';
-import { NutellaScene } from '../../voxel/nutella-scene/nutella-scene';
+import { NutellaFigure } from '../../voxel/nutella-figure/nutella-figure';
+import type { NutellaMood } from '../../voxel/nutella.motion';
 
 /**
  * The 404 as a wild encounter in a Game Boy battle (issue #45): the broken link is the creature, the dialog box
@@ -10,22 +10,28 @@ import { NutellaScene } from '../../voxel/nutella-scene/nutella-scene';
  * sounds. The menu is the game's two-by-two box in the site's frame: my work, contact, the bag (the player card of
  * the Press start easter egg) and run; it moves with the arrow keys as well as Tab, like a real one. As in the game,
  * the dialog box says what the move under the cursor does, so the game words are never the only hint. The wild one is
- * Nutella, a voxel chihuahua drawn like the moai (issue #632): Three.js loads only once she is in view, and without
- * WebGL the pixel creature takes her place.
+ * Nutella, a voxel chihuahua drawn like the moai (issues #632, #639): her still render sits there from the first paint,
+ * Three.js loads once she is in view, and hovering a move shifts her mood.
  */
 @Component({
   selector: 'app-not-found',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, QuestSprite, NutellaScene],
-  host: { '(keydown)': 'move($event)', '(mouseover)': 'say($event)', '(focusin)': 'say($event)', '(mouseleave)': 'hint.set(null)', '(focusout)': 'hint.set(null)' },
+  imports: [RouterLink, NutellaFigure],
+  host: { '(keydown)': 'move($event)', '(mouseover)': 'say($event)', '(focusin)': 'say($event)', '(mouseleave)': 'leave()', '(focusout)': 'leave()' },
   templateUrl: './not-found.html',
   styleUrl: './not-found.scss',
 })
 export class NotFound {
+  private readonly barkLine = $localize`:@@notFound.bark:Nutella used Bark!`;
+  private barkTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor() {
     const seo = inject(SeoService);
     seo.update({ path: '/404', title: $localize`:@@notFound.pageTitle:Page not found — Emanuele Del Monte`, description: '', noindex: true });
     seo.setJsonLd('ld-page', null);
+    inject(DestroyRef).onDestroy(() => {
+      if (this.barkTimer !== null) clearTimeout(this.barkTimer);
+    });
   }
 
   protected readonly corners = ['tl', 'tr', 'bl', 'br'];
@@ -35,11 +41,26 @@ export class NotFound {
 
   /** What the move under the cursor does; the dialog box shows it in place of its prompt. */
   protected readonly hint = signal<string | null>(null);
-  /** Without WebGL the old pixel creature stands in for her. */
-  protected readonly dogFailed = signal(false);
+  protected readonly mood = signal<NutellaMood>('idle');
 
   protected say(event: Event): void {
-    this.hint.set((event.target as Element).closest('.move')?.getAttribute('data-hint') ?? null);
+    const target = (event.target as Element).closest('.move');
+    this.hint.set(target?.getAttribute('data-hint') ?? null);
+    this.mood.set((target?.getAttribute('data-mood') as NutellaMood | null) ?? 'idle');
+  }
+
+  protected leave(): void {
+    this.hint.set(null);
+    this.mood.set('idle');
+  }
+
+  protected bark(): void {
+    if (this.barkTimer !== null) clearTimeout(this.barkTimer);
+    this.hint.set(this.barkLine);
+    this.barkTimer = setTimeout(() => {
+      this.barkTimer = null;
+      if (this.hint() === this.barkLine) this.hint.set(null);
+    }, 1600);
   }
 
   /** The arrows move round the two-by-two menu as in the game: left and right in a row, up and down between rows. */

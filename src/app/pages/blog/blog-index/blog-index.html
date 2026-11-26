@@ -1,4 +1,4 @@
-    <div class="container blog">
+    <div class="container blog" [appMotion]="effects">
       <header class="intro">
         <!-- the blog's item from the side quests' family: notes written at a terminal (issue #533) -->
         <app-quest-sprite class="item" name="terminal" />
@@ -25,6 +25,24 @@
             <div class="post-action">
               <a class="read-link touch-line" [routerLink]="['/blog', post.slug]" i18n="@@blog.readMore">Read article</a>
             </div>
+            @if (projectFor(post.project); as p) {
+              <div class="post-preview" aria-hidden="true">
+                @if (p.image; as image) {
+                  <img
+                    class="preview-shot"
+                    [ngSrc]="image.src"
+                    [ngSrcset]="image.width / 2 + 'w, ' + image.width + 'w'"
+                    [loaderParams]="{ full: image.width }"
+                    [width]="image.width"
+                    [height]="image.height"
+                    sizes="240px"
+                    alt=""
+                  />
+                } @else if (p.sprite; as sprite) {
+                  <app-quest-sprite class="preview-sprite" [name]="sprite" />
+                }
+              </div>
+            }
           </li>
         }
       </ol>

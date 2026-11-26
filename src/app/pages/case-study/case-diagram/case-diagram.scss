@@ -1,0 +1,145 @@
+@use 'styles/breakpoints' as bp;
+
+.diagram {
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--measure);
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3);
+  border: 2px solid var(--fg);
+  background: var(--surface);
+}
+.diagram-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.diagram-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--fg);
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+}
+.diagram-btn.is-active {
+  background: var(--fg);
+  color: var(--bg);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .diagram-btn {
+    transition: background-color 120ms steps(2), color 120ms steps(2);
+  }
+}
+.diagram-btn:active {
+  transform: translate(2px, 2px);
+}
+.diagram-svg {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+}
+.svg-frame {
+  fill: var(--fg);
+}
+.svg-accent {
+  fill: var(--accent-line);
+}
+.svg-soft {
+  fill: var(--px-3);
+}
+.svg-warn {
+  fill: var(--px-6);
+}
+.svg-muted {
+  fill: var(--fg-muted);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .diagram-flow {
+    animation: diagram-step 160ms steps(3);
+  }
+}
+@keyframes diagram-step {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+.diagram-steps {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.diagram-steps li {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: start;
+  padding-block: var(--space-2);
+  border-top: 1px solid var(--rule);
+}
+.step-cell {
+  width: 8px;
+  height: 8px;
+  margin-top: 0.45em;
+  background: var(--px-6);
+}
+.step-cell.is-built {
+  background: var(--accent-line);
+}
+.step-copy {
+  display: grid;
+  gap: 2px;
+  font-size: var(--step--1);
+  line-height: 1.45;
+}
+.step-copy strong {
+  color: var(--fg);
+}
+.step-copy span {
+  color: var(--fg-muted);
+}
+.diagram-caption {
+  color: var(--fg-muted);
+  font-size: var(--step--1);
+  line-height: 1.45;
+}
+@media (forced-colors: active) {
+  .diagram {
+    border-color: CanvasText;
+  }
+  .diagram-btn {
+    border-color: CanvasText;
+  }
+  .diagram-btn.is-active {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+  }
+  .step-cell {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+  .step-cell.is-built {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+  .svg-frame,
+  .svg-warn {
+    fill: CanvasText;
+  }
+  .svg-accent {
+    fill: Highlight;
+  }
+}

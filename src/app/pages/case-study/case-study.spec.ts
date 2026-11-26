@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { testProviders } from '../../../testing/test-providers';
 import { Title } from '@angular/platform-browser';
 import { CONTENT_EN } from '../../content/content.en';
-import { CaseStudy, sectionBeingRead } from './case-study';
+import { CaseStudy, sectionBeingRead, tocProgress } from './case-study';
 
 describe('CaseStudy', () => {
   async function render(slug: string) {
@@ -35,6 +35,7 @@ describe('CaseStudy', () => {
     // ApexFlow has blog posts (issue #1): they close the case study
     expect(headings).toEqual(['Context', 'How it is built', 'Key decisions', 'Outcome', 'I wrote about it']);
     expect(el.querySelectorAll('#decisions h3')).toHaveLength(3);
+    expect(el.querySelector('#architecture app-case-diagram')).not.toBeNull();
   });
 
   it('says whose project it is before the details, and ends with a way to get in touch (#229)', async () => {
@@ -53,11 +54,25 @@ describe('CaseStudy', () => {
     expect([...el.querySelectorAll('h2')].map((h) => h.textContent.trim())).not.toContain('I wrote about it');
   });
 
-  it('ends with the next project in the work list (#91)', async () => {
+  it('ends with the next project in the work list (#91, #644)', async () => {
     const [first, second] = CONTENT_EN.projects;
     const el = await render(first.slug);
     expect(el.querySelector('.next')?.getAttribute('href')).toBe(`/work/${second.slug}`);
     expect(el.querySelector('.next-title')?.textContent).toBe(second.title);
+    expect(el.querySelector('.next-result')?.textContent).toBe(second.result);
+    expect(el.querySelector('.next-media .next-shot')).not.toBeNull();
+  });
+
+  it('shows the pixel sprite in the next-project preview when the next project has no image', async () => {
+    TestBed.configureTestingModule({
+      providers: testProviders({ ...CONTENT_EN, projects: CONTENT_EN.projects.map((p) => ({ ...p, image: undefined })) }),
+    });
+    const fixture = TestBed.createComponent(CaseStudy);
+    fixture.componentRef.setInput('slug', 'apexflow');
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.next-media .next-shot')).toBeNull();
+    expect(el.querySelector('.next-media app-quest-sprite.next-sprite')).not.toBeNull();
   });
 
   it('leads from the last project back to the first', async () => {
@@ -116,5 +131,14 @@ describe('sectionBeingRead', () => {
   });
   it('is the last section at the end of the page, even if it never reached the line', () => {
     expect(sectionBeingRead([-900, -200, 150, 500], 250, true)).toBe(3);
+  });
+});
+
+describe('tocProgress', () => {
+  it('is 0 above the first section, interpolates between stops, and is 1 at the last or end', () => {
+    expect(tocProgress([400, 800, 1200, 1600], 250, false)).toBe(0);
+    expect(tocProgress([100, 400, 700, 1000], 250, false)).toBeCloseTo(1 / 6, 5);
+    expect(tocProgress([-900, -200, 150, 500], 250, false)).toBeCloseTo((2 + 100 / 350) / 3, 5);
+    expect(tocProgress([-900, -200, 150, 500], 250, true)).toBe(1);
   });
 });

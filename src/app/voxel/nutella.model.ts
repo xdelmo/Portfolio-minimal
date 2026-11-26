@@ -47,16 +47,37 @@ export function nutellaVoxels(): NutellaVoxel[] {
   return [...half, ...half.map((v) => ({ ...v, x: WIDTH - v.x }))];
 }
 
-/** The parts that move: the head tilts round the neck, the tail wags round its base. */
+/** Room round the dog in both the 3D camera and the still render for the head's tilt and the tail's wag. */
+export const NUTELLA_FRAME = 1.25;
+
+/**
+ * The parts that move: the head tilts round the neck, the tail wags round its base, and the ears flick round their
+ * roots inside the head. Pivots are in voxel coordinates; world centres sit at x + 0.5, y + 0.5, z + 0.5.
+ */
 export const isHead = (v: NutellaVoxel): boolean => (v.z >= 10 && v.y >= 6) || v.y >= 13;
 export const isTail = (v: NutellaVoxel): boolean => v.z <= 2 && v.y >= 9;
+export const isEar = (v: NutellaVoxel): boolean => v.y >= 16 && v.z >= 10 && (v.x <= 4 || v.x >= 7);
+export const isEye = (v: NutellaVoxel): boolean => v.color === 'black' && v.z === 16;
 export const NECK = { x: WIDTH / 2, y: 9, z: 10 } as const;
+export const LEFT_EAR = { x: 2, y: 16, z: 12 } as const;
+export const RIGHT_EAR = { x: WIDTH - 2, y: 16, z: 12 } as const;
 
-/** Ground cells under the feet and one cell round them, like the moai's shadow. */
+/** Colour of the eyelid covering `eye`: the nearest non-black voxel above it in (x, z), else behind at z − 1. */
+export function lidColor(voxels: readonly NutellaVoxel[], eye: NutellaVoxel): NutellaColor {
+  const above = voxels
+    .filter((v) => v.x === eye.x && v.z === eye.z && v.y > eye.y && v.color !== 'black')
+    .sort((a, b) => a.y - b.y)
+    .at(0);
+  if (above) return above.color;
+  const behind = voxels.find((v) => v.x === eye.x && v.y === eye.y && v.z === eye.z - 1 && v.color !== 'black');
+  return behind?.color ?? 'cream';
+}
+
+/** Ground cells under the torso and feet and one cell round them, like the moai's shadow. */
 export function nutellaShadowCells(voxels: readonly NutellaVoxel[]): { x: number; z: number }[] {
   const cells = new Set<string>();
   for (const v of voxels) {
-    if (v.y > 1) continue;
+    if (v.y > 4) continue;
     for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) cells.add(`${String(v.x + dx)},${String(v.z + dz)}`);
   }
   return [...cells].map((k) => {

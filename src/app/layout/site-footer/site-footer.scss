@@ -108,15 +108,25 @@
     }
     // touch screens: 44px targets (issue #130), their content on the left edge so every item starts where the text above
     // it does, and a gap small enough to keep the Start key on the line of the links
+    // min-width alone padded only the short "Email", on its right, so its gap looked wider than the others (issue #665): every
+    // link gets the same side padding (16px between words, padding included), the list moves back by it to keep the left edge,
+    // and the Start key sits in the middle of its 44px
     @media (pointer: coarse) {
       ul {
-        column-gap: var(--space-2);
+        column-gap: var(--space-1);
+        margin-inline-start: calc(var(--space-1) / -2);
+      }
+      ul a {
+        padding-inline: calc(var(--space-1) / 2);
       }
       a,
       .to-top,
       .press-start {
         min-width: 44px;
         min-height: 44px;
+      }
+      .press-start {
+        justify-content: center;
       }
     }
     .key {

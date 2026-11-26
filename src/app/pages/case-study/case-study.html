@@ -1,4 +1,10 @@
-    <article class="container case-study" [appMotion]="effects">
+    <div class="case-shell" [appMotion]="effects">
+      @if (project()) {
+        <div class="reading-progress" data-sticky aria-hidden="true">
+          <div class="reading-progress-fill" [style.scale]="progress() / 100 + ' 1'"></div>
+        </div>
+      }
+      <article class="container case-study">
       @if (project(); as p) {
         <header class="intro">
           <h1>{{ p.title }}</h1>
@@ -30,13 +36,13 @@
           <div class="item"><app-quest-sprite [name]="sprite" /></div>
         }
 
-        <!-- desktop: the sections beside the text, the one being read lit like a node of the home's thread (issue #96) -->
+        <!-- desktop: the sections beside the text, the one being read lit like a node of the home's thread (issue #96, #643) -->
         <nav class="toc" data-sticky i18n-aria-label="@@case.toc" aria-label="On this page">
-          <ul>
-            <li><a [routerLink]="[]" fragment="context" [attr.aria-current]="current('context')" i18n="@@case.context">Context</a></li>
-            <li><a [routerLink]="[]" fragment="architecture" [attr.aria-current]="current('architecture')" i18n="@@case.architecture">How it is built</a></li>
-            <li><a [routerLink]="[]" fragment="decisions" [attr.aria-current]="current('decisions')" i18n="@@case.decisions">Key decisions</a></li>
-            <li><a [routerLink]="[]" fragment="outcome" [attr.aria-current]="current('outcome')" i18n="@@case.outcome">Outcome</a></li>
+          <ul [style.--toc]="tocFill()">
+            <li><a [routerLink]="[]" fragment="context" [class.is-passed]="passed(0)" [attr.aria-current]="current('context')" i18n="@@case.context">Context</a></li>
+            <li><a [routerLink]="[]" fragment="architecture" [class.is-passed]="passed(1)" [attr.aria-current]="current('architecture')" i18n="@@case.architecture">How it is built</a></li>
+            <li><a [routerLink]="[]" fragment="decisions" [class.is-passed]="passed(2)" [attr.aria-current]="current('decisions')" i18n="@@case.decisions">Key decisions</a></li>
+            <li><a [routerLink]="[]" fragment="outcome" [class.is-passed]="passed(3)" [attr.aria-current]="current('outcome')" i18n="@@case.outcome">Outcome</a></li>
           </ul>
         </nav>
 
@@ -94,7 +100,8 @@
         <h1 i18n="@@case.notFound">Project not found</h1>
         <p><a routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
       }
-    </article>
+      </article>
+    </div>
     <!-- the Explorer achievement (issue #133): announced on the visit that reads the last case study -->
     <p class="unlock band--ink" role="status">
       @if (unlocked()) {

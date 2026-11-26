@@ -304,16 +304,25 @@ test('a case study ends with the next one, which opens at its top (#91)', async 
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
 
-test('on desktop a case study keeps an index of its sections beside the text, marking the one being read (#96)', async ({ page, isMobile }) => {
+test('on desktop a case study keeps an index of its sections beside the text, marking the one being read (#96, #643)', async ({ page, isMobile }) => {
   await page.goto('/en/work/apexflow');
   const toc = page.getByRole('navigation', { name: 'On this page' });
+  const bar = page.locator('app-case-study .reading-progress');
   if (isMobile || (page.viewportSize()?.width ?? 0) < 1024) {
     await expect(toc).toBeHidden();
+    await expect(bar).toBeVisible();
+    await page.evaluate(() => {
+      window.scrollTo(0, Math.round(document.documentElement.scrollHeight * 0.5));
+    });
+    await expect.poll(() => page.locator('app-case-study .reading-progress-fill').evaluate((el) => parseFloat(getComputedStyle(el).scale))).toBeGreaterThan(0.1);
     return;
   }
+  await expect(bar).toBeHidden();
   await toc.getByRole('link', { name: 'Key decisions' }).click();
   await expect(page).toHaveURL(/#decisions$/);
   await expect(toc.locator('[aria-current="location"]')).toHaveText('Key decisions');
+  await expect(toc.locator('a').first()).toHaveClass(/is-passed/);
+  await expect.poll(() => toc.locator('ul').evaluate((el) => parseFloat(getComputedStyle(el).getPropertyValue('--toc') || '0'))).toBeGreaterThan(0.5);
   // it stays under the header while the page scrolls past it
   const top = await toc.evaluate((el) => el.getBoundingClientRect().top);
   expect(top).toBeGreaterThan(0);

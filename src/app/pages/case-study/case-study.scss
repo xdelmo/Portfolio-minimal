@@ -25,6 +25,36 @@
       }
     }
 
+    .case-shell {
+      display: block;
+    }
+    .reading-progress {
+      position: sticky;
+      top: var(--header-h);
+      left: 0;
+      z-index: 35;
+      width: 100%;
+      height: 2px;
+      pointer-events: none;
+    }
+    .reading-progress-fill {
+      width: 100%;
+      height: 100%;
+      scale: 0 1;
+      transform-origin: left;
+      background: var(--accent-line);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .reading-progress-fill {
+        transition: scale 100ms linear;
+      }
+    }
+    @media (forced-colors: active) {
+      .reading-progress-fill {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
     .case-study {
       display: grid;
       gap: var(--space-8);
@@ -110,7 +140,37 @@
     }
     @include bp.up(lg) {
       // the intro and the image across the page; the index in a narrow column, the sections and what follows beside it
-      .case-study {
+      .case-shell {
+      display: block;
+    }
+    .reading-progress {
+      position: sticky;
+      top: var(--header-h);
+      left: 0;
+      z-index: 35;
+      width: 100%;
+      height: 2px;
+      pointer-events: none;
+    }
+    .reading-progress-fill {
+      width: 100%;
+      height: 100%;
+      scale: 0 1;
+      transform-origin: left;
+      background: var(--accent-line);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .reading-progress-fill {
+        transition: scale 100ms linear;
+      }
+    }
+    @media (forced-colors: active) {
+      .reading-progress-fill {
+        forced-color-adjust: none;
+        background: Highlight;
+      }
+    }
+    .case-study {
         grid-template-columns: 13rem minmax(0, 1fr);
       }
       .intro,
@@ -122,6 +182,10 @@
       .more {
         grid-column: 2;
       }
+      .reading-progress {
+        display: none;
+        position: static;
+      }
       .toc {
         display: block;
         grid-column: 1;
@@ -131,11 +195,30 @@
         top: calc(var(--header-h) + var(--space-4));
       }
       .toc ul {
+        position: relative;
         display: grid;
         gap: var(--space-2);
         margin: 0;
         padding: 0;
         list-style: none;
+      }
+      .toc ul::before,
+      .toc ul::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        bottom: 10px;
+        left: 3px;
+        width: 2px;
+        pointer-events: none;
+      }
+      .toc ul::before {
+        background: repeating-linear-gradient(to bottom, var(--rule) 0 4px, transparent 4px 8px);
+      }
+      .toc ul::after {
+        background: var(--accent-line);
+        transform-origin: top;
+        scale: 1 var(--toc, 0);
       }
       .toc a {
         display: flex;
@@ -147,32 +230,51 @@
       }
       .toc a::before {
         content: '';
+        position: relative;
+        z-index: 1;
         flex: none;
         width: 8px;
         height: 8px;
+        background: var(--bg);
         box-shadow: inset 0 0 0 2px currentColor;
       }
       .toc a:hover {
         color: var(--fg);
       }
+      .toc a.is-passed,
       .toc a[aria-current] {
         color: var(--fg);
+      }
+      .toc a[aria-current] {
         font-weight: 600;
       }
+      .toc a.is-passed::before,
       .toc a[aria-current]::before {
         background: var(--accent-line);
         box-shadow: none;
       }
-    @media (forced-colors: active) {
-      .toc a::before {
-        outline: 2px solid CanvasText;
-        outline-offset: -2px;
+      @media (prefers-reduced-motion: no-preference) {
+        .toc a[aria-current]::before {
+          animation: toc-node 160ms steps(2);
+        }
       }
+    @media (forced-colors: active) {
+      .toc ul::after,
+      .toc a.is-passed::before,
       .toc a[aria-current]::before {
         forced-color-adjust: none;
         background: Highlight;
       }
+      .toc a::before {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+      }
     }
+    }
+    @keyframes toc-node {
+      from {
+        transform: scale(1.5);
+      }
     }
     .shot {
       width: 100%;

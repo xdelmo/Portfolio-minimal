@@ -212,7 +212,7 @@ Spacing comes only from the 8px scale (`space-1` … `space-16`). Home sections 
 
 ## Elevation & Depth
 
-Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the hard 4px offset (`4px 4px 0` in ink), used on the primary button hover and the desktop blog index project preview card (`blog-index.scss`), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
+Flat. Depth comes from tonal layering (page, surface, band) and from the living objects, never from shadows. The single shadow in the system is the hard 4px offset (`4px 4px 0` in ink), used on the primary button hover, the case study next-project card hover (`case-study.scss`), and the desktop blog index project preview card (`blog-index.scss`), a pixel-art lift rather than a soft one. The one overlay is the player card's `scrim`, black at 60% behind the dialog in both themes. Soft round shapes appear only as light, made with radial gradients, never `filter: blur`.
 
 **The Hard Shadow Rule.** No soft drop shadows. A shadow, where one exists, is a solid offset with no blur.
 

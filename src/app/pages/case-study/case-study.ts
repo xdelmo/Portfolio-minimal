@@ -7,12 +7,14 @@ import { toLocale } from '../../core/i18n/locale';
 import { caseStudyJsonLd, caseStudyTitle } from '../../core/seo/seo';
 import { ContactPrompt } from '../../layout/contact-prompt';
 import { GithubMark } from '../../layout/github-mark';
+import { PixelArrow } from '../../layout/pixel-arrow';
 import { QuestSprite } from '../../sections/side-quests/quest-sprite';
 import { SeoService } from '../../core/seo/seo.service';
 import { recordVisit } from '../../game/explorer';
 import { MoaiCues } from '../../voxel/moai-cues';
 import { Depixelate } from '../../depixelate/depixelate.directive';
 import { type Effect, MotionHost } from '../../motion/motion-host';
+import { caseNextEffect } from '../../motion/effects/case-next';
 import { stickyEffect } from '../../motion/effects/sticky';
 import { smoother } from '../../motion/smoother';
 
@@ -47,7 +49,7 @@ const UNLOCK_NOTICE_MS = 4000;
 @Component({
   selector: 'app-case-study',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, QuestSprite, Depixelate, MotionHost],
+  imports: [RouterLink, NgOptimizedImage, ContactPrompt, GithubMark, PixelArrow, QuestSprite, Depixelate, MotionHost],
   templateUrl: './case-study.html',
   styleUrl: './case-study.scss',
 })
@@ -75,8 +77,8 @@ export class CaseStudy {
   protected readonly progress = signal(0);
   /** The Explorer achievement was just earned: its notice shows for a few seconds. */
   protected readonly unlocked = signal(false);
-  /** Smooth scroll pins the index instead of sticky (issue #159). */
-  protected readonly effects: readonly Effect[] = [stickyEffect];
+  /** Smooth scroll pins the index instead of sticky (issue #159), and reveals the next-project card (#644). */
+  protected readonly effects: readonly Effect[] = [stickyEffect, caseNextEffect];
   protected current(id: string): 'location' | null {
     return this.reading() === id ? 'location' : null;
   }

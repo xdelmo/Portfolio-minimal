@@ -294,10 +294,16 @@ test('an unknown URL shows the not-found page and keeps the URL', async ({ page 
   await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
 });
 
-test('a case study ends with the next one, which opens at its top (#91)', async ({ page }) => {
+test('a case study ends with the next one, which opens at its top (#91, #644)', async ({ page, isMobile }) => {
   await page.goto('/it/work/apexflow');
   const next = page.getByRole('navigation', { name: 'Altri progetti' }).getByRole('link', { name: /Progetto successivo/ });
+  await expect(next.locator('.next-result')).not.toBeEmpty();
+  await expect(next.locator('.next-media .next-shot')).toBeAttached();
   await next.scrollIntoViewIfNeeded();
+  if (!isMobile && (page.viewportSize()?.width ?? 0) >= 1024) {
+    await next.locator('.next-media').hover();
+    await expect(page.locator('app-pixel-cursor .pixel-cursor')).toHaveClass(/is-over/);
+  }
   await next.click();
   await expect(page).toHaveURL(/\/it\/work\/pokeverba$/);
   await expect(page.locator('h1')).toHaveText('PokèVerba');

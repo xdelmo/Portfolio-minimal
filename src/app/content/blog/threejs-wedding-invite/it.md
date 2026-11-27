@@ -1,18 +1,18 @@
 ---
 title: Una busta di nozze 3D che smette di usare la GPU
-description: Come ho costruito una busta di pizzo procedurale in Three.js che renderizza su richiesta, libera il contesto WebGL appena si apre e genera HTML, manifest, service worker e test WCAG AA da un’unica configurazione TypeScript.
+description: Una busta di pizzo procedurale in Three.js che renderizza su richiesta, libera WebGL all’apertura e genera HTML, PWA e test WCAG AA da un solo file TypeScript.
 date: 2026-11-26
 project: wedding-3d-invite
 ---
-Due amici volevano ricostruire il loro invito di nozze di carta—raso avorio, pizzo, perle e sigillo di ceralacca bordeaux—per il telefono che gli ospiti hanno già in mano. Quando un link si apre da WhatsApp sotto rete mobile non c’è pazienza per modelli pesanti, e un loop a 60 fps acceso dietro undici slide scalderebbe il telefono per niente.
+Due amici volevano portare il loro invito di nozze di carta (raso avorio, pizzo, perle e sigillo di ceralacca bordeaux) sul telefono che gli ospiti hanno già in mano. Quando un link si apre da WhatsApp sotto rete mobile non c’è pazienza per modelli pesanti, e un loop a 60 fps acceso dietro undici slide scalderebbe il telefono per niente.
 
-Quattro scelte hanno tenuto l’invito leggero: geometria procedurale senza file 3D esterni, rendering su richiesta che libera WebGL appena la busta si apre, un’unica configurazione tipizzata che guida tutta la build e test unitari che controllano il contrasto WCAG AA su ogni palette.
+Per tenerlo leggero ho generato tutta la geometria da codice senza file 3D esterni e ho chiuso il contesto WebGL appena la busta finisce di aprirsi.
 
 ## Pizzo e ceralacca procedurali, zero file 3D
 
 La busta non carica nessun modello GLTF né immagini per le texture. Ognuno dei quattro lembi è una `ExtrudeGeometry` costruita da due curve di Bézier quadratiche con bordo smerlato, montata in un `THREE.Group` posizionato sulla cerniera esterna così da ribaltarsi dai bordi dello schermo come una busta vera.
 
-Il pizzo viene disegnato su un `<canvas>` 2D fuori schermo come mappa di altezza: rete di tulle esagonale, petali a punto tela, foglie, occhielli e bordi a festoni. Una sola funzione, `bakeSurface()`, trasforma quell’altezza in tre mappe fisiche in un unico passaggio: colore diffuso con occlusione ambientale ricavata da una sfocatura bilineare per riduzione e ingrandimento (che funziona bene anche su Safari iOS), una `normalMap` in spazio tangente e una `roughnessMap`.
+Il pizzo viene disegnato su un `<canvas>` 2D fuori schermo come mappa di altezza: rete di tulle esagonale, petali a punto tela, foglie, occhielli e bordi a festoni. Una sola funzione, `bakeSurface()`, ricava da quell’altezza colore diffuso, `normalMap` in spazio tangente e `roughnessMap` in un unico passaggio. L’occlusione ambientale usa una sfocatura bilineare per riduzione e ingrandimento, affidabile anche su Safari iOS.
 
 Le perle lungo gli smerli e sul raso usano una sola `THREE.InstancedMesh` per lembo (`MeshPhysicalMaterial` con `clearcoat`, `iridescence` e `sheen`), illuminate da `RoomEnvironment` tramite `PMREMGenerator`. Il sigillo di ceralacca è una `LatheGeometry` a 128 segmenti il cui bordo esterno è mosso da tre armoniche sinusoidali per sembrare colato a mano. Fare la media delle normali tra prima e ultima colonna elimina la riga di giunzione del tornio, e il monogramma viene ricalcolato appena `document.fonts.load('132px "Great Vibes"')` carica il font corsivo.
 
@@ -20,7 +20,7 @@ Le perle lungo gli smerli e sul raso usano una sola `THREE.InstancedMesh` per le
 
 La maggior parte degli esempi Three.js avvia un `requestAnimationFrame` al mount e non lo ferma mai. Qui, finché la busta resta chiusa, non gira nessun loop. `initRenderer()` disegna un solo fotogramma; il canvas ridisegna solo al resize, all’arrivo del font del sigillo o quando termina lo snapshot differito della cornice interna.
 
-`EnvelopeCanvas` carica `EnvelopeScene` con un `import()` dinamico. Chi torna sull’invito—o lo apre con `?opened=true`—non scarica nemmeno il chunk di Three.js. Se la rete cade durante il download del chunk, l’overlay si chiude da solo e mostra subito l’invito invece di bloccarsi sul caricamento.
+`EnvelopeCanvas` carica `EnvelopeScene` con un `import()` dinamico. Chi torna sull’invito, o lo apre con `?opened=true`, non scarica nemmeno il chunk di Three.js. Se la rete cade durante il download del chunk, l’overlay si chiude da solo e mostra subito l’invito invece di bloccarsi sul caricamento.
 
 Il tocco avvia `open()`: una sequenza di 1.800 ms ribalta prima il lembo superiore (che porta con sé il sigillo), poi l’inferiore e infine i due laterali. Quando `progress` arriva a `1`, il loop si ferma, il canvas si smonta e libera ogni risorsa GPU:
 
@@ -103,7 +103,7 @@ Un override poco leggibile blocca `vitest run` prima ancora del deploy.
 
 ## RSVP senza server e cosa cambierei
 
-Un invito per un fine settimana non giustifica un backend da mantenere. `submitRSVP()` invia il JSON a una Web App di Google Apps Script con `Content-Type: text/plain;charset=utf-8`—che evita il preflight CORS permettendo comunque di leggere la risposta JSON—protetto da un `AbortController` con timeout di 12 secondi che interrompe anche `res.json()`. Ogni dispositivo genera un `responseId` stabile, così chi modifica la risposta aggiorna la propria riga sotto `LockService.getScriptLock()` invece di crearne una doppia. Prima di scrivere, lo script imposta `setNumberFormat('@')` sulle colonne di testo libero per impedire che Google Sheets interpreti come formule stringhe che iniziano con `=`, `+`, `-` o `@`.
+Un invito per un fine settimana non giustifica un backend da mantenere. `submitRSVP()` invia il JSON a una Web App di Google Apps Script con `Content-Type: text/plain;charset=utf-8`, evitando il preflight CORS senza rinunciare alla risposta JSON. Un `AbortController` con timeout di 12 secondi copre sia la richiesta sia `res.json()`. Ogni dispositivo genera un `responseId` stabile, così chi modifica la risposta aggiorna la propria riga sotto `LockService.getScriptLock()` invece di crearne una doppia. Prima di scrivere, lo script imposta `setNumberFormat('@')` sulle colonne di testo libero per impedire che Google Sheets interpreti come formule stringhe che iniziano con `=`, `+`, `-` o `@`.
 
 Due cose che farei diversamente:
 

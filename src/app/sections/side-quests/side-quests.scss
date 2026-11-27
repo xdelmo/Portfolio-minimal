@@ -45,8 +45,12 @@
       font-size: var(--step--1);
     }
     // picking an item up: it hops in pixel steps when the pointer, the keyboard or a finger reaches its quest
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      li:hover .sprite {
+        animation: hop 480ms steps(4);
+      }
+    }
     @media (prefers-reduced-motion: no-preference) {
-      li:hover .sprite,
       li:focus-within .sprite,
       li:active .sprite {
         animation: hop 480ms steps(4);
@@ -54,7 +58,7 @@
     }
     @keyframes hop {
       40% {
-        translate: 0 -12px;
+        translate: 0 calc(-1 * var(--space-1));
       }
     }
     // phones: an inventory bar, swiped sideways and snapping each item to the middle, the next one peeking in;

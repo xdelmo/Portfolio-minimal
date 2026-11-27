@@ -7,7 +7,7 @@ const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { versio
 test.describe('contact finale', () => {
   for (const [lang, name, lede] of [
     ['en', 'Let’s talk', 'Hiring for a frontend role?'],
-    ['it', 'Parliamone', 'Cerchi chi segua il frontend?'],
+    ['it', 'Parliamone', 'Cerchi un Frontend Engineer?'],
   ] as const) {
     test(`${lang}: the giant title is the LinkedIn link (#472), under one sentence on what to write about`, async ({ page }) => {
       await page.goto(`/${lang}/`);

@@ -36,7 +36,7 @@
               </button>
               <span class="visually-hidden" role="status">
                 @if (copied()) {
-                  <span i18n="@@blog.linkCopiedStatus">Article link copied to clipboard</span>
+                  <span i18n="@@blog.linkCopiedStatus">Post link copied to clipboard</span>
                 }
               </span>
             }
@@ -52,7 +52,7 @@
           }
         </div>
         @if (prevArticle() || nextArticle()) {
-          <nav class="adjacent" aria-label="Adjacent articles" i18n-aria-label="@@blog.adjacent">
+          <nav class="adjacent" aria-label="More posts" i18n-aria-label="@@blog.adjacent">
             @if (prevArticle(); as prev) {
               <a class="adjacent-card adjacent-card--prev" [routerLink]="['/blog', prev.slug]">
                 <span class="adjacent-meta" i18n="@@blog.prevPost">Previous post</span>

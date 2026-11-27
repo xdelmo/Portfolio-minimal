@@ -14,16 +14,16 @@
                 <span class="meta-sep" aria-hidden="true">/</span>
                 <span i18n="@@blog.minutes">{{ post.minutes }} min read</span>
               </p>
-              @if (post.project) {
-                <a class="project-tag" [routerLink]="['/work', post.project]">
-                  {{ post.project }}
+              @if (projectFor(post.project); as p) {
+                <a class="project-tag" [routerLink]="['/work', p.slug]">
+                  {{ p.title }}
                 </a>
               }
             </div>
             <h2><a class="title-link touch-line" [routerLink]="['/blog', post.slug]">{{ post.title }}</a></h2>
             <p class="desc">{{ post.description }}</p>
             <div class="post-action">
-              <a class="read-link touch-line" [routerLink]="['/blog', post.slug]" i18n="@@blog.readMore">Read article</a>
+              <a class="read-link touch-line" [routerLink]="['/blog', post.slug]"><span i18n="@@blog.readMore">Read post</span><span class="visually-hidden">: {{ post.title }}</span></a>
             </div>
             @if (projectFor(post.project); as p) {
               <div class="post-preview" aria-hidden="true">
@@ -46,7 +46,7 @@
           </li>
         }
       </ol>
-      <nav class="more" i18n-aria-label="@@blog.more" aria-label="After this post">
+      <nav class="more" i18n-aria-label="@@blog.indexContact" aria-label="Contact">
         <app-contact-prompt />
       </nav>
     </div>

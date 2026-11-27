@@ -1,11 +1,11 @@
 ---
 title: Come ho architettato questo portfolio in Angular 22
-description: Prerendering statico zoneless, zero runtime server su Netlify, motion differita con GSAP e shader su canvas, con Lighthouse CI che tiene la performance mobile a 95 o più.
+description: Prerendering statico zoneless su Netlify, script dopo il primo frame, chunk lazy per GSAP e Three.js e Lighthouse CI che tiene la performance mobile a 95+.
 date: 2026-11-12
 ---
-Quando si sceglie lo stack per un portfolio personale nel 2026, la maggior parte degli sviluppatori si orienta su Astro, Next.js o semplice HTML statico. Angular viene spesso etichettato come uno strumento pensato solo per grandi applicazioni enterprise, troppo pesante per un sito vetrina.
+Per un portfolio personale quasi tutti scelgono Astro o HTML statico; Angular viene dato per scontato come troppo pesante fuori dalle dashboard enterprise.
 
-Ho costruito questo portfolio per verificare il contrario: spingere l’architettura di Angular 22 verso un modello interamente statico, reattivo con i Signals, senza Zone.js, con la performance mobile a 95 o più su Lighthouse CI, e con animazioni fluide e accessibilità WCAG 2.2 AA.
+Ho costruito questo sito in Angular 22 per mettere alla prova quell’idea: prerendering statico, niente Zone.js, performance mobile a 95 o più su Lighthouse CI e accessibilità WCAG 2.2 AA.
 
 ## Prerendering statico e architettura zoneless
 
@@ -56,7 +56,7 @@ Per massimizzare le prestazioni, ho implementato uno script di post-build (`scri
 </script>
 ```
 
-Questa separazione ha ridotto il First Contentful Paint da 1.9s a 1.2s su Lighthouse mobile. Il visitatore visualizza immediatamente la pagina tipograficamente completa e stilizzata, mentre l’idratazione e i gestori di eventi si collegano in background senza bloccare il thread principale.
+Questa separazione ha ridotto il First Contentful Paint da 1.9s a 1.2s su Lighthouse mobile. Chi apre la pagina la vede subito pronta e leggibile, mentre l’idratazione e l’event replay partono dopo il primo frame.
 
 ## Motion interattiva senza appesantire il bundle
 
@@ -65,8 +65,8 @@ Volevo un sito vivace: scorrimento fluido calibrato, effetti di parallasse, tran
 La soluzione adottata si basa su un caricamento a livelli:
 
 1. **Lazy chunk dedicati**: né GSAP né Three.js fanno parte dell’entry bundle.
-2. **MOTION_LOADER sequenziale**: il servizio carica GSAP e i suoi plugin uno alla volta in microtask separati. Suddividere l’inizializzazione evita blocchi prolungati della CPU durante la fase di avvio.
-3. **Rispetto delle preferenze utente**: se il sistema rileva `prefers-reduced-motion: reduce` o uno schermo touch (`pointer: coarse`), ScrollSmoother e gli effetti di parallasse vengono disabilitati all’origine, lasciando spazio allo scorrimento nativo del sistema operativo.
+2. **Caricamento sequenziale con `MOTION_LOADER`**: il token aspetta il primo frame, importa GSAP e i plugin uno alla volta, e `MotionHost` avvia ogni effetto in un proprio task `setTimeout` per evitare un unico blocco lungo sulla CPU.
+3. **Preferenze utente prima di tutto**: con `prefers-reduced-motion: reduce` GSAP non viene nemmeno caricato. ScrollSmoother gira solo su `(hover: hover)` e `(pointer: fine)`, mentre i pin desktop richiedono almeno `1024px` con hover, lasciando ai dispositivi touch lo scorrimento nativo.
 
 Tra le sezioni della home page, giunzioni a gradini disegnate con livelli di path SVG (`PixelDissolve`) si formano e si dissolvono in sincronia con la posizione di scroll tramite una variabile CSS `--p`:
 
@@ -78,7 +78,7 @@ Tra le sezioni della home page, giunzioni a gradini disegnate con livelli di pat
 }
 ```
 
-I blocchi visivi comunicano solidità e ritmo senza rallentare la navigazione.
+Aggiornare una sola variabile CSS muove le giunzioni senza innescare ricalcoli di layout.
 
 ## Automazione e verifica continua
 
@@ -90,8 +90,4 @@ Mantenere elevati standard prestazionali e di accessibilità richiede verifiche 
 - `npm run e2e`: test end-to-end con Playwright che includono verifiche automatiche axe per la conformità WCAG 2.2 AA sia in tema chiaro che in tema scuro.
 - `npm run e2e:webkit`: esecuzione dei test per motori WebKit all’interno di un container Linux isolato.
 
-## Conclusione
-
-Adottare Angular per un portfolio personale non è stato un ripiego o una forzatura, ma un’opportunità per dimostrare il potenziale delle funzionalità moderne del framework. 
-
-Grazie ai segnali zoneless, al prerendering statico e a una gestione disciplinata del caricamento degli asset, è possibile realizzare un’esperienza veloce, accessibile e visivamente ricca.
+Il prerendering statico e la reattività zoneless di Angular 22 reggono bene anche su un sito di contenuti, a patto di tenere la motion fuori dal bundle iniziale e far rispettare in CI le soglie di performance e accessibilità.

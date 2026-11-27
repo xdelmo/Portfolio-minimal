@@ -91,7 +91,7 @@ test('reading every case study unlocks Explorer, with a notice on the last one',
   await expect(page.getByRole('status')).toHaveText('Achievement unlocked: Explorer');
   await expect(page.getByRole('status')).toBeEmpty({ timeout: 8000 });
   await pressStart.click();
-  await expect(pause).toContainText('Explorer Read every case study');
+  await expect(pause).toContainText('Explorer Every case study read');
 });
 
 test('a wrong sequence opens nothing', async ({ page }) => {

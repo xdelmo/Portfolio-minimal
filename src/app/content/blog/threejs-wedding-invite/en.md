@@ -1,18 +1,18 @@
 ---
 title: A 3D wedding envelope that stops using the GPU
-description: How I built a procedural lace envelope in Three.js that renders on demand, frees its WebGL context once open, and drives HTML, manifest, service worker and WCAG AA tests from one TypeScript config.
+description: A procedural lace envelope in Three.js that renders on demand, frees WebGL once open, and drives HTML, PWA and WCAG AA tests from one TypeScript config.
 date: 2026-11-26
 project: wedding-3d-invite
 ---
 Two friends wanted their paper wedding invitation—ivory satin, lace, pearls, a burgundy wax seal—rebuilt for the phone their guests already hold. Opening a link in WhatsApp over mobile data leaves little patience for a heavy 3D download, and a 60 fps render loop running behind eleven slides would warm up the phone for nothing.
 
-Four choices kept the invitation light: procedural geometry with zero 3D model files, on-demand rendering that disposes WebGL once the envelope opens, one typed config driving the whole build, and unit tests checking WCAG AA contrast on every palette.
+To keep it light, I generated the geometry in code with no 3D asset files and disposed the WebGL context as soon as the envelope finishes opening.
 
 ## Procedural lace and wax, zero 3D assets
 
 The envelope ships no GLTF meshes and no texture images. Each of the four flaps is an `ExtrudeGeometry` built from two quadratic Bézier curves with a scalloped outline, mounted inside a `THREE.Group` pivot placed on its outer hinge so the flaps fold back from the screen edges.
 
-Lace is painted on an offscreen 2D `<canvas>` as a height map: hexagonal tulle net, woven cloth petals, leaves, eyelets and festoon borders. One function, `bakeSurface()`, turns that height map into three physically based maps in a single pass: diffuse colour with ambient occlusion computed from a downscale-and-upscale bilinear blur (which works reliably on iOS Safari), a tangent-space `normalMap` and a `roughnessMap`.
+Lace is painted on an offscreen 2D `<canvas>` as a height map: hexagonal tulle net, woven cloth petals, leaves, eyelets and festoon borders. One function, `bakeSurface()`, turns that height map into diffuse colour, a tangent-space `normalMap` and a `roughnessMap` in a single pass. Ambient occlusion comes from a downscale-and-upscale bilinear blur, which avoids iOS Safari filter quirks.
 
 Pearls are placed along the scallops and scattered over the satin with one `THREE.InstancedMesh` per flap (`MeshPhysicalMaterial` with `clearcoat`, `iridescence` and `sheen`), lit by `RoomEnvironment` through `PMREMGenerator`. The wax seal is a 128-segment `LatheGeometry` whose outer rim is nudged by three sine harmonics so it looks poured rather than stamped. Averaging the vertex normals along the first and last column hides the lathe join, and the monogram is rebaked as soon as `document.fonts.load('132px "Great Vibes"')` resolves.
 
@@ -103,7 +103,7 @@ A low-contrast palette fails `vitest run` before anyone deploys it.
 
 ## Serverless RSVP and what I would change
 
-An invitation for one weekend does not justify paying for a backend. `submitRSVP()` posts JSON to a Google Apps Script web app with `Content-Type: text/plain;charset=utf-8`—avoiding a CORS preflight while still reading the JSON reply—behind a 12-second `AbortController` timeout that also aborts `res.json()`. Each device generates a stable `responseId`, so a guest who changes their answer updates the existing row under `LockService.getScriptLock()` instead of creating duplicates. Before writing, the script sets `setNumberFormat('@')` on every free-text column so Google Sheets never evaluates a leading `=`, `+`, `-` or `@` as a formula.
+An invitation for one weekend does not justify paying for a backend. `submitRSVP()` posts JSON to a Google Apps Script web app with `Content-Type: text/plain;charset=utf-8`, which skips the CORS preflight while still returning a readable JSON reply. A 12-second `AbortController` timeout covers both the fetch and `res.json()`. Each device generates a stable `responseId`, so a guest who changes their answer updates the existing row under `LockService.getScriptLock()` instead of creating duplicates. Before writing, the script sets `setNumberFormat('@')` on every free-text column so Google Sheets never evaluates a leading `=`, `+`, `-` or `@` as a formula.
 
 Two things I would change if I built it again:
 

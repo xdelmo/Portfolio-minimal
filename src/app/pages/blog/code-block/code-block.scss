@@ -83,6 +83,9 @@ app-code-block .copy {
 app-code-block .copy:hover span {
   text-decoration: underline;
 }
+app-code-block .copy:active {
+  transform: translate(2px, 2px);
+}
 app-code-block .copy.is-copied {
   background: var(--accent);
   border-color: var(--accent);

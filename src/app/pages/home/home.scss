@@ -55,8 +55,8 @@
   font-variation-settings: 'wdth' 100;
   // the approved mockup's proportion (issue #304): the headline about 55% of the hero's width, so the cloud's
   // clearing stays an ellipse around it instead of a box (44px on phones, 96px on wide screens)
-  font-size: clamp(2.747rem, 5.3vw, 6rem);
-  line-height: 0.98;
+  font-size: var(--step-hero);
+  line-height: 1.02;
   letter-spacing: -0.025em;
   // the two voices stand on their own lines: the method, then the voice (issue #304)
   .method,
@@ -84,7 +84,7 @@
 .next-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
+  gap: var(--space-1);
   min-height: 48px; // touch target (WCAG 2.5.8)
   font-weight: 600;
   color: var(--link);
@@ -97,8 +97,8 @@
 }
 .next-arrow {
   flex-shrink: 0;
-  width: 0.75em;
-  height: 0.75em;
+  width: 16px;
+  height: 16px;
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .next-arrow {
@@ -238,7 +238,7 @@
   max-width: 24ch;
   color: var(--fg-muted);
   font-size: var(--step-0);
-  line-height: 1.35;
+  line-height: 1.45;
 }
 // the proof and the facts are two blocks: the facts sit a full step lower, so the two grids do not read as one
 .about-text app-at-a-glance {

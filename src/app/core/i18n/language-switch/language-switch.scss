@@ -11,6 +11,19 @@
       list-style: none;
       cursor: pointer;
     }
+    @media (hover: hover) {
+      summary:hover {
+        color: var(--link);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      summary {
+        transition: color 120ms steps(2);
+      }
+    }
+    summary:active svg {
+      translate: 0 2px;
+    }
     // the whole summary opens the menu: the icons need not catch the pointer (on phones they sit over the hidden name)
     summary svg {
       flex: none;

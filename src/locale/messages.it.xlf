@@ -87,7 +87,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="case.demo" datatype="html">
-        <source>Open the live demo</source>
+        <source>Open the demo</source>
         <target>Apri la demo</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
@@ -187,8 +187,8 @@
         <target>Zaino: la scheda giocatore</target>
       </trans-unit>
       <trans-unit id="notFound.workHint" datatype="html">
-        <source>Go and see the projects.</source>
-        <target>Vai a vedere i progetti.</target>
+        <source>See the projects.</source>
+        <target>Guarda i progetti.</target>
       </trans-unit>
       <trans-unit id="notFound.contactHint" datatype="html">
         <source>Write to me.</source>
@@ -251,7 +251,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="case.architecture" datatype="html">
-        <source>How it is built</source>
+        <source>How it’s built</source>
         <target>Com’è costruito</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/pages/case-study/case-study.ts</context>
@@ -375,7 +375,7 @@
         <target><x id="INTERPOLATION" equiv-text="{{ explored }}"/> case study letti su <x id="INTERPOLATION_1" equiv-text="{{ total }}"/></target>
       </trans-unit>
       <trans-unit id="game.explorerDone" datatype="html">
-        <source>Read every case study</source>
+        <source>Every case study read</source>
         <target>Hai letto tutti i case study</target>
       </trans-unit>
       <trans-unit id="case.explorerUnlocked" datatype="html">
@@ -408,11 +408,11 @@
       </trans-unit>
       <trans-unit id="home.contact.lede" datatype="html">
         <source>Hiring for a frontend role?</source>
-        <target>Cerchi chi segua il frontend?</target>
+        <target>Cerchi un Frontend Engineer?</target>
       </trans-unit>
       <trans-unit id="home.stack.lede" datatype="html">
-        <source>Three levels: what I use every day, what runs in production, what I try in my side projects.</source>
-        <target>Tre livelli: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.</target>
+        <source>Grouped by how often I use them, from daily work to side projects.</source>
+        <target>Divisi per quanto li uso, dal lavoro di ogni giorno ai progetti personali.</target>
       </trans-unit>
       <trans-unit id="home.experience.chapters" datatype="html">
         <source>Career chapters</source>
@@ -446,6 +446,10 @@
         <source>After this post</source>
         <target>Dopo questo articolo</target>
       </trans-unit>
+      <trans-unit id="blog.indexContact" datatype="html">
+        <source>Contact</source>
+        <target>Contatti</target>
+      </trans-unit>
       <trans-unit id="blog.project" datatype="html">
         <source>The project behind it</source>
         <target>Il progetto dietro l’articolo</target>
@@ -457,6 +461,10 @@
       <trans-unit id="blog.all" datatype="html">
         <source>All posts</source>
         <target>Tutti gli articoli</target>
+      </trans-unit>
+      <trans-unit id="blog.codeLang" datatype="html">
+        <source>code</source>
+        <target>codice</target>
       </trans-unit>
       <trans-unit id="blog.copy" datatype="html">
         <source>Copy code</source>
@@ -483,7 +491,7 @@
         <target>Appunti su Angular, Signals, RxJS e Spring Boot di <x id="name" equiv-text="person.name"/>.</target>
       </trans-unit>
       <trans-unit id="blog.readMore" datatype="html">
-        <source>Read article</source>
+        <source>Read post</source>
         <target>Leggi l’articolo</target>
       </trans-unit>
       <trans-unit id="blog.backToAll" datatype="html">
@@ -499,12 +507,12 @@
         <target>Copiato</target>
       </trans-unit>
       <trans-unit id="blog.linkCopiedStatus" datatype="html">
-        <source>Article link copied to clipboard</source>
+        <source>Post link copied to clipboard</source>
         <target>Link dell’articolo copiato negli appunti</target>
       </trans-unit>
       <trans-unit id="blog.adjacent" datatype="html">
-        <source>Adjacent articles</source>
-        <target>Articoli adiacenti</target>
+        <source>More posts</source>
+        <target>Altri articoli</target>
       </trans-unit>
       <trans-unit id="blog.prevPost" datatype="html">
         <source>Previous post</source>
@@ -520,7 +528,7 @@
       </trans-unit>
       <trans-unit id="contactPrompt.lead" datatype="html">
         <source>Hiring for a frontend role?</source>
-        <target>Cerchi chi segua il frontend?</target>
+        <target>Cerchi un Frontend Engineer?</target>
       </trans-unit>
       <trans-unit id="contactPrompt.cta" datatype="html">
         <source>Message on LinkedIn</source>

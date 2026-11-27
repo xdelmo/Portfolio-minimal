@@ -12,7 +12,7 @@
       height: var(--space-8);
     }
     .lede {
-      max-width: 56ch;
+      max-width: 42ch;
       margin: 0;
       font-size: var(--step-1);
     }
@@ -155,7 +155,9 @@
       margin-top: var(--space-1);
     }
     .read-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
       font-size: var(--step--1);
       font-weight: 600;
       color: var(--link);

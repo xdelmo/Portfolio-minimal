@@ -601,6 +601,51 @@ test('on desktop it shrinks into the bottom-right corner as the About scrolls aw
   }).toEqual([Math.round(home.top), Math.round(home.left), Math.round(home.height)]);
 });
 
+test('on desktop the About-to-corner transition steps through voxel exit, gap, and corner build cleanly', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const figure = page.locator('app-moai-figure.about-moai');
+  const body = page.locator('app-moai-figure.about-moai .body');
+  const range = await page.evaluate(() => {
+    const about = document.querySelector<HTMLElement>('#about');
+    const moai = document.querySelector<HTMLElement>('app-moai-figure.about-moai');
+    const header = document.querySelector('header');
+    if (!about || !moai) throw new Error('missing about or moai');
+    const top = (header?.offsetHeight ?? 0) + 64;
+    const aboutTop = about.getBoundingClientRect().top + window.scrollY;
+    const aboutBottom = aboutTop + about.offsetHeight;
+    const start = Math.max(aboutTop + moai.offsetTop - top, aboutBottom - top - moai.offsetHeight);
+    return { start, end: aboutBottom };
+  });
+  const at = (p: number) => range.start + (range.end - range.start) * p;
+
+  await page.evaluate((y) => { window.scrollTo(0, y); }, at(0.25));
+  await expect(figure).toHaveAttribute('data-transit', 'about');
+  await expect(figure).not.toHaveAttribute('data-corner');
+
+  await page.evaluate((y) => { window.scrollTo(0, y); }, at(0.5));
+  await expect(figure).toHaveAttribute('data-transit', 'gap');
+  await expect.poll(() => body.evaluate((el) => getComputedStyle(el).pointerEvents)).toBe('none');
+
+  await page.evaluate((y) => { window.scrollTo(0, y); }, at(0.75));
+  await expect(figure).toHaveAttribute('data-transit', 'corner');
+  await expect(figure).toHaveAttribute('data-corner', '');
+
+  await page.locator('#experience').evaluate((s) => { window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY + 400); });
+  await expect(figure).toHaveAttribute('data-corner', '');
+  await expect(figure).not.toHaveAttribute('data-transit');
+  const [w, h] = await page.evaluate(() => [document.documentElement.clientWidth, document.documentElement.clientHeight]);
+  await expect.poll(async () => {
+    const r = await rect(page);
+    return [Math.round(r.height), Math.round(w - r.right), Math.round(h - r.bottom)];
+  }).toEqual([140, 16, 16]);
+
+  await page.evaluate(() => { window.scrollTo(0, 0); });
+  await expect(figure).not.toHaveAttribute('data-corner');
+  await expect(figure).not.toHaveAttribute('data-transit');
+});
+
 // the About is a band: the bands and the side quests after it must not paint over the moai in the corner; without
 // WebGL the still image takes the clicks (only the scene did, and CI's Firefox, with no WebGL, clicked through it)
 for (const webgl of [true, false]) test(`in the corner it stays on top of every section it passes over${webgl ? '' : ', without WebGL too'}`, async ({ page, isMobile }) => {

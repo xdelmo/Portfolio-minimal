@@ -21,6 +21,12 @@
       :host([data-corner]) .body {
         pointer-events: auto;
       }
+      :host([data-transit='gap']) .body {
+        pointer-events: none;
+      }
+      :host([data-transit='gap']) .still {
+        opacity: 0;
+      }
       .body {
         translate: var(--moai-x, 0) var(--moai-y, 0);
         scale: var(--moai-s, 1);
@@ -35,6 +41,9 @@
       display: block;
       width: 100%;
       height: 100%;
+    }
+    .still {
+      clip-path: var(--moai-clip, none);
     }
     .still--dark {
       display: none;

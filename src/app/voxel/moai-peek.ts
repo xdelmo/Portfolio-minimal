@@ -69,11 +69,13 @@ const PATHS = Object.entries(FILL).map(([key, fill]) => ({
     svg {
       display: block;
       translate: 0 100%;
-      transition: translate 240ms steps(3);
     }
     @media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
       .window {
         display: block;
+      }
+      svg {
+        transition: translate 240ms steps(3);
       }
       :host(:hover) svg {
         translate: 0 25%;

@@ -29,10 +29,10 @@
     .name {
       margin: 0;
       // the same type as the hero's h1, which shows this name right after
-      font-size: clamp(2.747rem, 5.3vw, 6rem);
+      font-size: var(--step-hero);
       font-weight: 600;
       font-variation-settings: 'wdth' 100;
-      line-height: 0.98;
+      line-height: 1.02;
       letter-spacing: -0.025em;
       text-align: center;
     }
@@ -47,14 +47,14 @@
     .pixels {
       display: flex;
       justify-content: center;
-      gap: 4px;
+      gap: var(--space-1);
       margin: 0;
       // the global measure on <p> would make the row narrower than the name, off the centre (issue #234)
       max-width: none;
     }
     .px {
-      width: 12px;
-      height: 12px;
+      width: var(--space-1);
+      height: var(--space-1);
       background: currentColor;
       opacity: 0.9;
       animation: intro-px calc(0.3s / var(--k)) calc(var(--d) + (0.1s + var(--i) * 0.03s) / var(--k))

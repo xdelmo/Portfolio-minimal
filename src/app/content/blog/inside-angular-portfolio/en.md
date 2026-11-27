@@ -1,11 +1,11 @@
 ---
 title: Architecting this portfolio with Angular 22
-description: Zoneless static prerendering, zero server runtime on Netlify, deferred GSAP motion, and canvas shaders, with Lighthouse CI holding mobile performance at 95 or more.
+description: Zoneless static prerendering on Netlify, after-paint script loading, lazy GSAP and Three.js chunks, and Lighthouse CI holding mobile performance at 95+.
 date: 2026-11-12
 ---
-When choosing a tech stack for a personal developer portfolio in 2026, most engineers reach for Astro, Next.js, or plain static HTML. Angular is frequently typecast as an enterprise-only framework—powerful for complex internal dashboards, but too heavy and opinionated for a personal showcase.
+Most developer portfolios reach for Astro or plain HTML; Angular is usually written off as too heavy outside enterprise dashboards.
 
-I built this portfolio to prove the opposite: pushing Angular 22 toward a completely static, zoneless model driven by Signals, holding mobile performance at 95 or more on Lighthouse CI, and delivering rich interactive motion alongside strict WCAG 2.2 AA accessibility.
+I built this site with Angular 22 to test that assumption: static prerendering, no Zone.js, Lighthouse CI mobile performance at 95 or above, and WCAG 2.2 AA accessibility.
 
 ## Static prerendering and a zoneless architecture
 
@@ -42,7 +42,7 @@ Without Zone.js overhead, change detection only triggers when signals genuinely 
 
 On mobile devices, the most critical user experience metrics are Largest Contentful Paint (LCP) and Total Blocking Time (TBT). On this site, the LCP element is the primary hero headline—pure text.
 
-By default, Angular injects `<script type="module">` tags into the document head. Browsers download and evaluate these bundles immediately, competing with the initial layout and font rendering.
+By default, Angular injects `<script type="module">` tags into the HTML document. Browsers download and evaluate these bundles immediately, competing with the initial layout and font rendering.
 
 To optimize the critical path, a postbuild step (`scripts/after-paint.mjs`) swaps the eager module tags for an inline loader executed after the initial animation frame:
 
@@ -56,7 +56,7 @@ To optimize the critical path, a postbuild step (`scripts/after-paint.mjs`) swap
 </script>
 ```
 
-This dropped First Contentful Paint from 1.9s down to 1.2s on Lighthouse mobile. Visitors see a fully styled, typographically complete layout right away, while hydration and event handlers wire up seamlessly in the background without locking the main thread.
+This dropped First Contentful Paint from 1.9s down to 1.2s on Lighthouse mobile. Visitors see the styled page right away, while hydration and event replay attach after the first paint.
 
 ## Interactive motion without bundle weight
 
@@ -65,8 +65,8 @@ I wanted the site to feel alive: smooth scroll, subtle parallax accents, text re
 The solution relies on layered lazy loading:
 
 1. **Dedicated chunks**: Neither GSAP nor Three.js is present in the main bundle.
-2. **Sequential MOTION_LOADER**: The service imports GSAP and each required plugin one by one across separate microtasks. Spreading initialization prevents long CPU execution tasks during startup.
-3. **User preferences first**: When `prefers-reduced-motion: reduce` is enabled or a touch screen (`pointer: coarse`) is in use, ScrollSmoother and pinned parallax effects are disabled entirely, letting native browser scrolling take over.
+2. **Sequential loading via `MOTION_LOADER`**: The token waits until after the first paint, imports GSAP and each plugin one at a time, and `MotionHost` starts each effect in its own `setTimeout` task so startup never becomes one long task.
+3. **User preferences first**: With `prefers-reduced-motion: reduce`, GSAP never loads at all. ScrollSmoother runs only on `(hover: hover)` and `(pointer: fine)`, and desktop pins require at least `1024px` with hover, leaving touch devices on native scroll.
 
 Between home sections, stepped seams drawn as layered SVG paths (`PixelDissolve`) form and dissolve synchronously with scroll progress via a CSS variable (`--p`):
 
@@ -78,7 +78,7 @@ Between home sections, stepped seams drawn as layered SVG paths (`PixelDissolve`
 }
 ```
 
-The visual bands provide texture and structural rhythm without causing layout recalculations or frame drops.
+Updating a single CSS custom property moves the seams without triggering layout recalculations.
 
 ## Continuous automated verification
 
@@ -90,8 +90,4 @@ Maintaining high performance and accessibility requires ongoing discipline. To p
 - `npm run e2e`: Playwright end-to-end tests including automated axe accessibility scans for WCAG 2.2 AA in both light and dark themes.
 - `npm run e2e:webkit`: Playwright running WebKit tests inside an isolated Linux container to catch cross-browser layout quirks.
 
-## Conclusion
-
-Choosing Angular for a personal portfolio was not an arbitrary compromise—it was an opportunity to explore how modern Angular primitives perform when pushed to their limits.
-
-Through zoneless signals, static prerendering, and disciplined asset scheduling, it delivers an experience that is fast, accessible, and engaging to navigate.
+Angular 22’s static prerendering and zoneless reactivity hold up well on a content-first site, as long as third-party motion stays out of the initial bundle and CI enforces the performance and accessibility floor.

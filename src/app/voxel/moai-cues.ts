@@ -39,3 +39,5 @@ export class MoaiCues {
 
 /** Set by the language switch: the moai on the page it opens says hello once. */
 export const HELLO_KEY = 'moai-hello';
+// set the first time the moai waves hello, so it waves once per visitor (localStorage)
+export const WAVED_KEY = 'moai-waved';

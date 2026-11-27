@@ -364,7 +364,7 @@ test('the bubble ends on time even when the moai stops drawing (scrolled away mi
 });
 
 // issue #270: the moai is the site's mascot, in the About
-test('waves hello once, after the intro', async ({ page }) => {
+test('waves hello the first time it is seen, and not on a later visit', async ({ page }) => {
   await page.addInitScript(() => {
     const w = window as unknown as { waves: number };
     w.waves = 0;
@@ -374,14 +374,20 @@ test('waves hello once, after the intro', async ({ page }) => {
   });
   await page.goto('/en/');
   test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+  const waves = () => page.evaluate(() => (window as unknown as { waves: number }).waves);
   await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
   await expect(scene(page)).toBeVisible();
-  const waves = () => page.evaluate(() => (window as unknown as { waves: number }).waves);
   await expect.poll(waves).toBe(1);
   // the wave lasts under a second, then the attribute goes and no second one comes
   await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-waving');
   await page.waitForTimeout(1000);
   expect(await waves()).toBe(1);
+  // the next visit it does not wave again
+  await page.reload();
+  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+  await expect(scene(page)).toBeVisible();
+  await page.waitForTimeout(1500);
+  expect(await waves()).toBe(0);
 });
 
 test('looks down while the page scrolls, and up again once it stops', async ({ page }) => {

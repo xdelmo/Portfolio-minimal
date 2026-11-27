@@ -36,7 +36,7 @@ import { MOAI_TRANSIT, MoaiTransitState, moaiTransit } from '../moai-transit';
 import { Sample, isDizzy, isShake, isSneeze, isTickle } from '../gestures';
 import { LINE_MS, QUIET, Reaction, VoiceState, speak } from '../voice';
 import { LINES } from '../lines';
-import { HELLO_KEY, MOAI_DESKTOP, MoaiCues } from '../moai-cues';
+import { HELLO_KEY, WAVED_KEY, MOAI_DESKTOP, MoaiCues } from '../moai-cues';
 
 const ISO_TO_WORLD = Math.sqrt(2 / 3);
 const SCLERA = '--moai-eye-white';
@@ -439,6 +439,20 @@ export class MoaiScene {
     const arrive = (): void => {
       if (arrived || !this.introDone || !this.visible) return;
       arrived = true;
+      // the first time a visitor sees it, it waves hello: once ever, not at every visit
+      if (this.greet()) {
+        let waved = true;
+        try {
+          waved = localStorage.getItem(WAVED_KEY) !== null;
+          localStorage.setItem(WAVED_KEY, '1');
+        } catch {
+          // no storage: no wave, rather than one at every page
+        }
+        if (!waved) {
+          waveT = 0;
+          this.waving.set(true);
+        }
+      }
       const reaction = this.cues.take() ?? (hello ? 'hello' : null);
       if (reaction) this.say(reaction);
     };
@@ -755,9 +769,6 @@ export class MoaiScene {
     const cancelIntro = afterIntro(() => {
       this.introDone = true;
       arrive();
-      if (!this.greet()) return;
-      waveT = 0;
-      this.waving.set(true);
     });
     canvas.addEventListener('webglcontextlost', onLost);
     canvas.addEventListener('pointerdown', onDown);

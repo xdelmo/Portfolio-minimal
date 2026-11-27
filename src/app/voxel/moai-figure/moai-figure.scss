@@ -31,6 +31,8 @@
         translate: var(--moai-x, 0) var(--moai-y, 0);
         scale: var(--moai-s, 1);
         transform-origin: 100% 100%;
+        // cut at the About's foot while it unbuilds (effects/moai.ts, issue #672)
+        clip-path: var(--moai-seam, none);
       }
     }
     .body,

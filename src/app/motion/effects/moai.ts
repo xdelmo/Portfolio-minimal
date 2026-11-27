@@ -60,6 +60,11 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
       delete moai.dataset['transitProgress'];
       moai.style.removeProperty('--moai-clip');
     }
+    // the About's foot rises past the pinned moai while it unbuilds: cut what is left at that seam, the scene and the
+    // still alike, so it never paints over the Experience (issue #672)
+    const below = state.phase === 'about' && progress > 0 ? moai.getBoundingClientRect().bottom - about.getBoundingClientRect().bottom : 0;
+    if (below > 0) moai.style.setProperty('--moai-seam', `inset(0px 0px ${String(Math.ceil(below))}px 0px)`);
+    else moai.style.removeProperty('--moai-seam');
     moai.dispatchEvent(new CustomEvent(MOAI_TRANSIT, { detail: progress }));
   };
   const transit = ScrollTrigger.create({
@@ -86,6 +91,7 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
     moai.style.removeProperty('--moai-x');
     moai.style.removeProperty('--moai-y');
     moai.style.removeProperty('--moai-clip');
+    moai.style.removeProperty('--moai-seam');
     moai.dispatchEvent(new CustomEvent(MOAI_TRANSIT, { detail: 0 }));
   };
 };

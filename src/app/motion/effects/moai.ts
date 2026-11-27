@@ -35,7 +35,7 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
     start: () => `top ${String(top())}px`,
     end: 'max',
   });
-  const apply = (progress: number): void => {
+  const apply = ({ progress, start, end }: { progress: number; start: number; end: number }): void => {
     const state = moaiTransit(progress);
     if (state.corner) {
       moai.style.setProperty('--moai-s', String(CORNER_PX / moai.offsetHeight));
@@ -61,8 +61,10 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
       moai.style.removeProperty('--moai-clip');
     }
     // the About's foot rises past the pinned moai while it unbuilds: cut what is left at that seam, the scene and the
-    // still alike, so it never paints over the Experience (issue #672)
-    const below = state.phase === 'about' && progress > 0 ? moai.getBoundingClientRect().bottom - about.getBoundingClientRect().bottom : 0;
+    // still alike, so it never paints over the Experience (issue #672). From the scroll the trigger is at, never the
+    // boxes: under the smoother they hold the previous frame and the cut lagged past the seam (issue #674)
+    const scroll = start + progress * (end - start);
+    const below = state.phase === 'about' && progress > 0 ? scroll - (bottom(about) - top() - moai.offsetHeight) : 0;
     if (below > 0) moai.style.setProperty('--moai-seam', `inset(0px 0px ${String(Math.ceil(below))}px 0px)`);
     else moai.style.removeProperty('--moai-seam');
     moai.dispatchEvent(new CustomEvent(MOAI_TRANSIT, { detail: progress }));
@@ -75,14 +77,10 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
     end: () => bottom(about),
     scrub: true,
     invalidateOnRefresh: true,
-    onUpdate: ({ progress }) => {
-      apply(progress);
-    },
-    onRefresh: ({ progress }) => {
-      apply(progress);
-    },
+    onUpdate: apply,
+    onRefresh: apply,
   });
-  apply(transit.progress);
+  apply(transit);
   return () => {
     moai.removeAttribute('data-corner');
     moai.removeAttribute('data-transit');

@@ -36,6 +36,10 @@
       color: var(--fg);
       text-decoration: none;
     }
+    // only the brow reaches the drawing's right column, the head sits 2px in: pull it back so the rule looks centred (issue #667)
+    .mark {
+      margin-right: -2px;
+    }
     // the full name on two lines, beside the moai mark: signs the bar on every width (issue #483)
     .name {
       display: grid;
@@ -124,6 +128,10 @@
       // room to breathe once the header is wide
       .logo {
         gap: var(--space-2);
+      }
+      // at 16px a side the 2px no longer shows
+      .mark {
+        margin-right: 0;
       }
       .site-header {
         gap: var(--space-2);

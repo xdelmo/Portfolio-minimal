@@ -245,7 +245,7 @@ export const CONTENT_IT: SiteContent = {
         heading: 'Cosa tiene il sito nel tuo browser',
         paragraphs: [
           'Il cookie nf_lang ricorda la lingua che hai scelto con il selettore, così la home si apre in quella lingua la volta successiva. Dura un anno e arriva al server solo per scegliere la lingua.',
-          "Due voci nel local storage: theme ricorda se hai scelto il tema chiaro o quello scuro, explored quali case study hai letto, per un traguardo nel gioco nascosto del sito.",
+          "Tre voci nel local storage: theme ricorda se hai scelto il tema chiaro o quello scuro, explored quali case study hai letto, per un traguardo nel gioco nascosto del sito, moai-waved che il moai ti ha già salutato.",
           "Quattro voci nel session storage durano finché non chiudi la scheda: intro ricorda se l’intro iniziale è già stata mostrata, motion-paused se hai messo in pausa le animazioni, lang-swap verso quale lingua stai passando, moai-hello che il moai deve salutarti nella pagina aperta dal selettore di lingua.",
           'Sono preferenze tecniche: non identificano nessuno, non vengono condivise e non richiedono consenso. Puoi cancellarle quando vuoi dalle impostazioni del browser.',
         ],

@@ -71,7 +71,7 @@ export const CONTENT_EN: SiteContent = {
           'PrimeNG for data-heavy components: tables, forms, dialogs and toasts.',
           'Role-based access with route guards (admin-only settings, profile pages limited to the owner or an admin).',
           'HTTP interceptors that attach the bearer token and turn API errors into toast notifications in one place.',
-          'Spring Boot 3 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; frontend on Vercel, backend on Render.',
+          'Spring Boot 4 REST API on Java 21 with Spring Data JPA, PostgreSQL and Docker; frontend on Vercel, backend on Render.',
         ],
         decisions: [
           {

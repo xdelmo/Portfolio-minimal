@@ -23,7 +23,7 @@
                 <a class="button" [class.button--primary]="first" [href]="repo.url" target="_blank" aria-describedby="new-tab" rel="noopener"><app-github-mark />{{ repo.label }}</a>
               }
               @if (p.demoUrl) {
-                <a class="button" [class.button--primary]="!p.repos.length" [href]="p.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@case.demo">Open the live demo</a>
+                <a class="button" [class.button--primary]="!p.repos.length" [href]="p.demoUrl" target="_blank" aria-describedby="new-tab" rel="noopener" i18n="@@case.demo">Open the demo</a>
               }
             </p>
           }
@@ -40,7 +40,7 @@
         <nav class="toc" data-sticky i18n-aria-label="@@case.toc" aria-label="On this page">
           <ul [style.--toc]="tocFill()">
             <li><a [routerLink]="[]" fragment="context" [class.is-passed]="passed(0)" [attr.aria-current]="current('context')" i18n="@@case.context">Context</a></li>
-            <li><a [routerLink]="[]" fragment="architecture" [class.is-passed]="passed(1)" [attr.aria-current]="current('architecture')" i18n="@@case.architecture">How it is built</a></li>
+            <li><a [routerLink]="[]" fragment="architecture" [class.is-passed]="passed(1)" [attr.aria-current]="current('architecture')" i18n="@@case.architecture">How it’s built</a></li>
             <li><a [routerLink]="[]" fragment="decisions" [class.is-passed]="passed(2)" [attr.aria-current]="current('decisions')" i18n="@@case.decisions">Key decisions</a></li>
             <li><a [routerLink]="[]" fragment="outcome" [class.is-passed]="passed(3)" [attr.aria-current]="current('outcome')" i18n="@@case.outcome">Outcome</a></li>
           </ul>
@@ -52,7 +52,7 @@
         </section>
 
         <section id="architecture" aria-labelledby="architecture-title">
-          <h2 id="architecture-title" i18n="@@case.architecture">How it is built</h2>
+          <h2 id="architecture-title" i18n="@@case.architecture">How it’s built</h2>
           <ul class="bullets">
             @for (item of p.caseStudy.architecture; track item) {
               <li>{{ item }}</li>
@@ -82,7 +82,7 @@
             <h2 id="posts-title" i18n="@@case.posts">I wrote about it</h2>
             <ul class="bullets">
               @for (post of posts(); track post.slug) {
-                <li><a [routerLink]="['/blog', post.slug]">{{ post.title }}</a></li>
+                <li><a class="touch-line" [routerLink]="['/blog', post.slug]">{{ post.title }}</a></li>
               }
             </ul>
           </section>
@@ -125,7 +125,7 @@
         </nav>
       } @else {
         <h1 i18n="@@case.notFound">Project not found</h1>
-        <p><a routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
+        <p class="not-found-home"><a class="touch-line" routerLink="/" i18n="@@notFound.home">Go to the home page</a></p>
       }
       </article>
     </div>

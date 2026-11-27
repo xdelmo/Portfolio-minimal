@@ -15,8 +15,8 @@ test.describe('tools by level', () => {
   });
 
   for (const [lang, lede] of [
-    ['en', 'Three levels: what I use every day, what runs in production, what I try in my side projects.'],
-    ['it', 'Tre livelli: quello che uso ogni giorno, quello che è in produzione, quello che provo nei progetti personali.'],
+    ['en', 'Grouped by how often I use them, from daily work to side projects.'],
+    ['it', 'Divisi per quanto li uso, dal lavoro di ogni giorno ai progetti personali.'],
   ] as const) {
     test(`${lang}: the lede is true on every screen`, async ({ page }) => {
       await page.goto(`/${lang}/`);

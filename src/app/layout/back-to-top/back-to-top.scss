@@ -22,6 +22,9 @@
         display: none;
       }
     }
+    .back-to-top:active {
+      transform: translate(2px, 2px);
+    }
     // in and out in pixel steps (issue #197, #460): it rises into the corner as it is revealed, and sinks away as it is wiped
     // out; Angular keeps it on the page until the way out has played. Reduced motion: it simply appears and goes.
     @media (prefers-reduced-motion: no-preference) {

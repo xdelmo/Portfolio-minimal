@@ -7,6 +7,19 @@
       list-style: none;
       cursor: pointer;
     }
+    @media (hover: hover) {
+      summary:hover {
+        color: var(--link);
+      }
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      summary {
+        transition: color 120ms steps(2);
+      }
+    }
+    summary:active svg {
+      translate: 0 2px;
+    }
     summary::-webkit-details-marker {
       display: none;
     }

@@ -52,17 +52,17 @@ const DIAGRAMS: Record<Locale, Record<string, CaseDiagramData>> = {
           steps: [
             { node: '1. Full puzzle payload', detail: 'The daily word list travels to the browser with the grid.' },
             { node: '2. Client check', detail: 'Letter-by-letter verification can be inspected or guessed locally.' },
-            { node: '3. Static clues', detail: 'Clues risk repeating official descriptions or naming the Pokémon.' },
+            { node: '3. Unfiltered clues', detail: 'Clues risk repeating official descriptions or naming the Pokémon.' },
           ],
         },
         {
           built: true,
           label: 'Lengths only, server check',
-          caption: 'The React grid knows only each word’s length; the server judges whole words once per day.',
+          caption: 'The React grid knows only each word’s length; the API validates only whole words.',
           steps: [
             { node: '1. Date-seeded grid', detail: 'WordPress lays out 10 to 15 words up to 15 × 15 without 30-day repeats.' },
             { node: '2. Whole-word REST check', detail: 'The API validates complete words only, never revealing single letters.' },
-            { node: '3. Cached until midnight', detail: 'Today’s puzzle stays cached until midnight in Rome, when the next generates.' },
+            { node: '3. Cached until midnight', detail: 'Today’s puzzle stays cached until midnight in Rome.' },
           ],
         },
       ],
@@ -110,7 +110,7 @@ const DIAGRAMS: Record<Locale, Record<string, CaseDiagramData>> = {
           label: 'Lato server con Signals',
           caption: 'Ogni tabella di ApexFlow riusa TablePaginationState: condividere l’URL condivide la vista esatta.',
           steps: [
-            { node: '1. URL e Signals', detail: 'TablePaginationState tiene pagina, ordine e filtri nell’URL e nei signal.' },
+            { node: '1. URL e Signals', detail: 'TablePaginationState tiene pagina, ordine e filtri nell’URL e nei Signals.' },
             { node: '2. Richiesta con debounce', detail: 'RxJS attende la scrittura del filtro e annulla le richieste ormai superate.' },
             { node: '3. Una pagina SQL', detail: 'Spring Boot estrae e restituisce solo la fetta visibile con una sola chiamata.' },
           ],
@@ -122,20 +122,20 @@ const DIAGRAMS: Record<Locale, Record<string, CaseDiagramData>> = {
       modes: [
         {
           label: 'Risposte nel browser',
-          caption: 'Inviare le soluzioni al client espone il cruciverba negli strumenti di sviluppo.',
+          caption: 'Inviare le soluzioni al client espone il cruciverba nei DevTools e permette di ricavare singole lettere.',
           steps: [
             { node: '1. Parole nel payload', detail: 'L’elenco delle risposte arriva nel browser insieme allo schema.' },
             { node: '2. Controllo locale', detail: 'La verifica può essere ispezionata o usata lettera per lettera.' },
-            { node: '3. Indizi non filtrati', detail: 'Senza regole sul testo gli indizi rischierebbero di copiare fonti ufficiali.' },
+            { node: '3. Indizi non filtrati', detail: 'Senza regole sul testo gli indizi rischiano di copiare descrizioni ufficiali o nominare il Pokémon.' },
           ],
         },
         {
           built: true,
           label: 'Solo lunghezze, verifica sul server',
-          caption: 'La griglia React conosce solo la lunghezza di ogni parola; la API giudica solo parole intere.',
+          caption: 'La griglia React conosce solo la lunghezza di ogni parola; l’API giudica solo parole intere.',
           steps: [
-            { node: '1. Griglia dal server', detail: 'WordPress dispone da 10 a 15 parole fino a 15 × 15 senza ripetizioni in 30 giorni.' },
-            { node: '2. Verifica REST a parola', detail: 'La API controlla solo parole complete e non svela singole lettere.' },
+            { node: '1. Griglia legata alla data', detail: 'WordPress dispone da 10 a 15 parole fino a 15 × 15 senza ripetizioni in 30 giorni.' },
+            { node: '2. Verifica REST a parola', detail: 'L’API controlla solo parole complete e non svela singole lettere.' },
             { node: '3. Cache fino a mezzanotte', detail: 'Lo schema del giorno resta in cache fino alla mezzanotte di Roma.' },
           ],
         },

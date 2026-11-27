@@ -210,6 +210,9 @@
     .move:hover {
       color: var(--link);
     }
+    .move:active {
+      transform: translate(2px, 2px);
+    }
     @media (prefers-reduced-motion: no-preference) {
       .foe {
         animation: appear 480ms steps(6) both;

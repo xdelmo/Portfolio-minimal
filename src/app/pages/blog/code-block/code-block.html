@@ -2,7 +2,7 @@
       @if (lang(); as l) {
         <span class="lang-tag">{{ l }}</span>
       } @else {
-        <span class="lang-tag">code</span>
+        <span class="lang-tag" i18n="@@blog.codeLang">code</span>
       }
       @if (canCopy()) {
         <button #copyBtn type="button" class="copy" [class.is-copied]="copied()" (click)="copy(copyBtn)">

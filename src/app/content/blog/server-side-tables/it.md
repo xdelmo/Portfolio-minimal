@@ -5,11 +5,11 @@ date: 2026-03-02
 linkedin: https://www.linkedin.com/feed/update/urn:li:activity:7434229982136168448/
 project: apexflow
 ---
-Nelle prime settimane del mio percorso in IPS ho affrontato una delle sfide classiche del frontend enterprise: la gestione di tabelle dati su larga scala con paginazione, ordinamento e filtri delegati al server. Con dieci record puoi permetterti di caricare l’intero dataset e filtrarlo in memoria nel browser. Con diecimila record questo approccio fallisce: il server deve occuparsi di affettare e ordinare i dati, mentre il client deve richiedere in modo deterministico e reattivo solo i record visibili.
+Nelle prime settimane del mio percorso in IPS ho affrontato una delle sfide classiche del frontend enterprise: la gestione di tabelle dati su larga scala con paginazione, ordinamento e filtri delegati al server. Con dieci record puoi permetterti di caricare l’intero dataset e filtrarlo in memoria nel browser. Con diecimila record questo approccio fallisce: il server deve occuparsi di affettare e ordinare i dati, mentre il client deve chiedere solo la fetta di record visibile in quel momento.
 
-Ho portato questa lezione direttamente nel cuore di ApexFlow. Le schermate di clienti, ordini e prodotti sono tabelle PrimeNG in modalità lazy-loading, e il mio obiettivo era superare l’antipattern in cui ogni interazione utente invoca manualmente un metodo imperativo `loadData()`.
+Ho applicato questo approccio in ApexFlow. Le schermate di clienti, ordini e prodotti sono tabelle PrimeNG in modalità lazy-loading, e il mio obiettivo era superare l’antipattern in cui ogni interazione utente invoca manualmente un metodo imperativo `loadData()`.
 
-## L’anatomia dello stato di una tabella enterprise
+## Lo stato che una tabella lato server deve tenere
 
 Una tabella lato server gestisce una matrice di parametri più articolata di quanto appaia:
 - La pagina corrente (`currentPage`) e la dimensione del blocco (`pageSize`).
@@ -69,8 +69,8 @@ export class CustomerListComponent {
 L’architettura risolve tre problemi critici in poche righe:
 1. **Eliminazione delle race condition:** `switchMap` cancella automaticamente qualsiasi richiesta HTTP ancora in volo se l’utente cambia pagina o digita un nuovo filtro. Una risposta ritardata della pagina 2 non potrà mai sovrascrivere i dati della pagina 3.
 2. **Ciclo di vita pulito:** `toSignal` gestisce la sottoscrizione in modo automatico e la distrugge quando il componente viene smontato, eliminando qualsiasi `subscribe()` o `unsubscribe()` manuale.
-3. **Disaccoppiamento totale dal backend:** I parametri HTTP rappresentano l’unico contratto tra client e server. Durante lo sviluppo del backend Spring Boot, il frontend ha operato contro un JSON Server con middleware personalizzato: il passaggio alle API definitive in Java ha richiesto modifiche solo agli endpoint di servizio, senza toccare la logica delle tabelle.
+3. **Disaccoppiamento totale dal backend:** I parametri HTTP rappresentano l’unico contratto tra client e server. Durante lo sviluppo del backend Spring Boot, il frontend ha operato contro un JSON Server con middleware personalizzato: il passaggio all’API definitiva in Java è passato solo dalla configurazione dell’ambiente Angular (`npm run start:springboot`), senza toccare le tabelle.
 
 ## Risultato
 
-Ogni tabella dell’applicazione riutilizza la medesima classe `TablePaginationState`. Il codice dei componenti rimane dichiarativo: dichiara quali dati mostrare e come consumarli, lasciando al sistema reattivo la sincronizzazione infallibile tra interfaccia e server.
+Ogni tabella dell’applicazione riutilizza la medesima classe `TablePaginationState`. Il codice dei componenti resta dichiarativo: indica quali dati mostrare e come mapparli, mentre la sincronizzazione tra interfaccia e server passa dal flusso reattivo.

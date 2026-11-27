@@ -9,7 +9,7 @@ During my early weeks at IPS, I tackled a classic enterprise frontend challenge:
 
 I brought this architectural lesson directly into ApexFlow. Customer, order, and product lists are all PrimeNG tables in lazy-loading mode, and my priority was to eliminate the antipattern where every user interaction triggers an imperative `loadData()` method.
 
-## The state matrix of an enterprise table
+## What a server-side table has to track
 
 A server-side table coordinates more interconnected state than it might appear:
 - Active page index (`currentPage`) and batch size (`pageSize`).
@@ -68,8 +68,8 @@ export class CustomerListComponent {
 
 This architecture solves three critical concerns cleanly:
 1. **Zero race conditions:** `switchMap` automatically cancels any in-flight HTTP request if the user navigates to another page or updates a filter. A delayed response from page 2 can never overwrite page 3.
-2. **Clean subscription lifecycle:** `toSignal` handles subscription management behind the scenes and tears it down when the component unmounts, removing manual `subscribe()` and `unsubscribe()` boilerplate.
-3. **Backend decoupling:** The HTTP parameters represent the only contract between client and server. During initial development, the frontend worked against a mock JSON Server with custom middleware; transitioning to production Spring Boot APIs required changes only in the service layer, leaving table components completely untouched.
+2. **Clean subscription lifecycle:** `toSignal` handles subscription management automatically and tears it down when the component unmounts, removing manual `subscribe()` and `unsubscribe()` boilerplate.
+3. **Backend decoupling:** The HTTP parameters represent the only contract between client and server. During initial development, the frontend worked against a mock JSON Server with custom middleware; switching to the Spring Boot API only meant changing the Angular environment configuration (`npm run start:springboot`), leaving the tables untouched.
 
 ## The result
 

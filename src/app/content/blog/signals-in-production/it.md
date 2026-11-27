@@ -9,7 +9,7 @@ Quando ho impostato l’architettura di ApexFlow, costruirla su Angular 19 e sui
 
 Il banco di prova più netto è stato il modulo di autenticazione: lo stato critico da cui dipende ogni rotta, sidebar e dato utente dell’applicazione.
 
-## Il problema: uno stato condiviso senza corse critiche
+## Il problema: uno stato condiviso senza race condition
 
 Un servizio di autenticazione risponde costantemente a tre domande fondamentali: c’è un utente autenticato? Chi è? Quali permessi possiede? L’header, la sidebar, le route guard e la maggior parte delle schermate hanno bisogno di queste risposte all’istante.
 
@@ -32,7 +32,7 @@ export class AuthService {
 }
 ```
 
-Da quel momento, consumare lo stato diventa una lettura diretta. Nel template, `auth.currentUser()?.name` registra automaticamente la dipendenza di rendering per quel solo frammento di vista. Nelle guard di routing, la decisione è puramente sincrona: nessun observable da attendere, nessun ritardo di emissione e nessun rischio di memory leak:
+Da quel momento, consumare lo stato diventa una lettura diretta. Nel template, `auth.currentUser()?.name` registra automaticamente la dipendenza di rendering per quel solo frammento di vista. Nelle guard di routing la verifica diventa una lettura sincrona, senza observable da attendere o da chiudere:
 
 ```ts
 export const authGuard: CanActivateFn = () => {
@@ -56,6 +56,6 @@ I Signals non sostituiscono RxJS; ne chiariscono i confini. La regola che ho ado
 
 La chiamata HTTP di login rimane un `Observable`, così come le ricerche con debounce e le richieste che devono annullare quelle precedenti. I due mondi comunicano in modo pulito tramite le primitive di interop `toSignal` e `toObservable`, fondamentali per la gestione delle tabelle lato server.
 
-## La conclusione architetturale
+## Dove resta ognuno dei due
 
-Iniziare direttamente con i Signals permette al codice di descrivere *cosa l’applicazione è in un determinato momento*, anziché una catena di istruzioni imperativo-reattive per mantenerla coerente. RxJS torna al suo ruolo ideale: orchestrare il tempo e la concorrenza asincrona.
+I Signals tengono lo stato dell’app in questo istante; RxJS gestisce gli eventi nel tempo e le richieste in volo.

@@ -652,6 +652,34 @@ test('on desktop the About-to-corner transition steps through voxel exit, gap, a
   await expect(figure).not.toHaveAttribute('data-transit');
 });
 
+// while it unbuilds in the About, the About's foot rises past the pinned moai: what is left of it is cut at that seam,
+// the scene and the still alike, and never paints over the Experience (issue #672)
+test('on desktop the unbuilding moai never shows below the About', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop only');
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/en/');
+  const range = await page.evaluate(() => {
+    const about = document.querySelector<HTMLElement>('#about');
+    const moai = document.querySelector<HTMLElement>('app-moai-figure.about-moai');
+    if (!about || !moai) throw new Error('missing about or moai');
+    const top = (document.querySelector('header')?.offsetHeight ?? 0) + 64;
+    const aboutTop = about.getBoundingClientRect().top + window.scrollY;
+    const aboutBottom = aboutTop + about.offsetHeight;
+    return { start: Math.max(aboutTop + moai.offsetTop - top, aboutBottom - top - moai.offsetHeight), end: aboutBottom };
+  });
+  for (const p of [0.05, 0.15, 0.25, 0.35]) {
+    await page.evaluate((y) => { window.scrollTo(0, y); }, range.start + (range.end - range.start) * p);
+    await expect.poll(() => page.evaluate(() => {
+      const about = document.querySelector<HTMLElement>('#about')?.getBoundingClientRect();
+      const body = document.querySelector<HTMLElement>('app-moai-figure.about-moai .body');
+      if (!about || !body) return Infinity;
+      // computed as the shortest form, `inset(0px 0px 29px)`: the third value is the bottom
+      const cut = /inset\(([^)]*)\)/.exec(getComputedStyle(body).clipPath)?.[1].split(' ')[2];
+      return Math.round(body.getBoundingClientRect().bottom - (cut ? parseFloat(cut) : 0) - about.bottom);
+    }), `at ${String(p)}`).toBeLessThanOrEqual(1);
+  }
+});
+
 // the About is a band: the bands and the side quests after it must not paint over the moai in the corner; without
 // WebGL the still image takes the clicks (only the scene did, and CI's Firefox, with no WebGL, clicked through it)
 for (const webgl of [true, false]) test(`in the corner it stays on top of every section it passes over${webgl ? '' : ', without WebGL too'}`, async ({ page, isMobile }) => {

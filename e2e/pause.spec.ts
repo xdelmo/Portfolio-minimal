@@ -7,7 +7,25 @@ const snapshot = (page: Page) => field(page).evaluate((c) => (c as HTMLCanvasEle
 // the canvas has its real size and first frame once the field has started (slower in WebKit)
 const painted = (page: Page) => expect.poll(() => field(page).evaluate((c) => (c as HTMLCanvasElement).width !== 300)).toBe(true);
 
-test('one header button pauses all automatic motion, from the keyboard too', async ({ page, isMobile }) => {
+// issue #678: the prerendered button showed the pause icon until hydration, then swapped to play
+test.describe('before hydration', () => {
+  // the app never boots here, so no motion effect will start
+  test.use({ motionReady: false });
+
+  test('after a reload while paused the button shows play before the app boots', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
+    await page.addInitScript(() => {
+      sessionStorage.setItem('motion-paused', '1');
+    });
+    await page.route('**/*.js', (route) => route.abort());
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    const button = page.locator('.pause-toggle').first();
+    await expect(button.locator('.play')).toBeVisible();
+    await expect(button.locator('.pause')).toBeHidden();
+  });
+});
+
+test('one header button pauses all automatic motion, from the keyboard too',async ({ page, isMobile }) => {
   test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await countFieldDraws(page);
   await page.goto('/en/');

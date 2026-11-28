@@ -13,6 +13,8 @@
       document.documentElement.setAttribute('data-theme', t);
       // the browser bar takes the page's --bg (_tokens.scss) before the styles load; ThemeService follows it after (issue #134)
       document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#121212' : '#dedede');
+      // the pause button's icon follows data-motion-paused before MotionPause boots (issue #678)
+      try { if (sessionStorage.getItem('motion-paused') === '1') document.documentElement.setAttribute('data-motion-paused', ''); } catch (e) {}
       // the intro plays once per session, on every screen (issue #381), never with reduced motion (SiteIntro + motion/effects/intro.ts);
       // endIntro() marks it seen only once it has really played (issue #404), so a reload or a late motion script never eats it
       try {

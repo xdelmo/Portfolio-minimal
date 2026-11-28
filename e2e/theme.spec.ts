@@ -7,7 +7,23 @@ test('follows the system theme on first visit, before the app boots', async ({ p
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('the toggle switches theme and the choice survives a reload', async ({ page, isMobile }) => {
+// issue #678: the prerendered toggle showed the moon until hydration, then swapped to the sun
+test.describe('before hydration', () => {
+  // the app never boots here, so no motion effect will start
+  test.use({ motionReady: false });
+
+  test('in the dark theme the toggle shows the sun before the app boots', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.route('**/*.js', (route) => route.abort());
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+    const toggle = page.locator('.theme-toggle').first();
+    await expect(toggle.locator('.sun')).toBeVisible();
+    await expect(toggle.locator('.moon')).toBeHidden();
+  });
+});
+
+test('the toggle switches theme and the choice survives a reload',async ({ page, isMobile }) => {
   test.skip(isMobile, 'on phones the controls are in the menu panel (menu.spec)');
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/en/');

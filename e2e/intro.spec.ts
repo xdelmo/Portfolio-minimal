@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { CLOUD_CELL } from '../src/app/pixel-field/field';
 
 test.describe('intro', () => {
   test.use({ intro: true });
@@ -23,6 +24,15 @@ test.describe('intro', () => {
       return (px[0].left + px[px.length - 1].right) / 2 - innerWidth / 2;
     });
     expect(Math.abs(offset)).toBeLessThan(1);
+  });
+
+  test('draws its squares at the hero cloud cell size', async ({ page }) => {
+    await page.goto('/en/');
+    // they were 8px while the cloud and the seams are 16px cells, so the intro looked smaller than the site (issue #677)
+    const sizes = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>('.site-intro .px')].map((el) => [el.offsetWidth, el.offsetHeight]),
+    );
+    expect(sizes.flat().every((size) => size === CLOUD_CELL)).toBe(true);
   });
 
   for (const colorScheme of ['light', 'dark'] as const) {

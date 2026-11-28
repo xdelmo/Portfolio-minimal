@@ -363,31 +363,45 @@ test('the bubble ends on time even when the moai stops drawing (scrolled away mi
   await expect(host).not.toHaveAttribute('data-gum');
 });
 
-// issue #270: the moai is the site's mascot, in the About
-test('waves hello the first time it is seen, and not on a later visit', async ({ page }) => {
-  await page.addInitScript(() => {
-    const w = window as unknown as { waves: number };
-    w.waves = 0;
-    new MutationObserver((records) => {
-      for (const r of records) if ((r.target as Element).hasAttribute('data-waving')) w.waves++;
-    }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-waving'] });
+// issue #270: the moai is the site's mascot, in the About; issue #682: it greets once half of it is on screen, and says hello
+test.describe('first greeting', () => {
+  test.use({ moaiWaved: false });
+  test('waves and says hello the first time it is seen, and not on a later visit', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      const w = window as unknown as { waves: number };
+      w.waves = 0;
+      new MutationObserver((records) => {
+        for (const r of records) if ((r.target as Element).hasAttribute('data-waving')) w.waves++;
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-waving'] });
+    });
+    await page.goto('/en/');
+    test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
+    const waves = () => page.evaluate(() => (window as unknown as { waves: number }).waves);
+    const line = page.locator('app-moai-scene .moai-line');
+    // only its top edge in view: not yet
+    await page.locator('app-moai-figure').evaluate((el) => {
+      window.scrollBy(0, el.getBoundingClientRect().top - window.innerHeight + 24);
+    });
+    await page.waitForTimeout(1000);
+    expect(await waves()).toBe(0);
+    await expect(line).toHaveCount(0);
+    await page.locator('app-moai-figure').evaluate((el) => { el.scrollIntoView({ block: 'center' }); });
+    await expect(scene(page)).toBeVisible();
+    await expect.poll(waves).toBe(1);
+    // the bubble speaks on desktop only
+    if (!isMobile) await expect(line).toHaveText('Hello!');
+    // the wave lasts under a second, then the attribute goes and no second one comes
+    await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-waving');
+    await page.waitForTimeout(1000);
+    expect(await waves()).toBe(1);
+    // the next visit it does not wave nor say hello again
+    await page.reload();
+    await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
+    await expect(scene(page)).toBeVisible();
+    await page.waitForTimeout(1500);
+    expect(await waves()).toBe(0);
+    await expect(line).toHaveCount(0);
   });
-  await page.goto('/en/');
-  test.skip(!(await hasWebGL(page)), 'no WebGL in this browser');
-  const waves = () => page.evaluate(() => (window as unknown as { waves: number }).waves);
-  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
-  await expect(scene(page)).toBeVisible();
-  await expect.poll(waves).toBe(1);
-  // the wave lasts under a second, then the attribute goes and no second one comes
-  await expect(page.locator('app-moai-scene')).not.toHaveAttribute('data-waving');
-  await page.waitForTimeout(1000);
-  expect(await waves()).toBe(1);
-  // the next visit it does not wave again
-  await page.reload();
-  await page.locator('app-moai-figure').scrollIntoViewIfNeeded();
-  await expect(scene(page)).toBeVisible();
-  await page.waitForTimeout(1500);
-  expect(await waves()).toBe(0);
 });
 
 test('looks down while the page scrolls, and up again once it stops', async ({ page }) => {

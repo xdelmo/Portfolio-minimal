@@ -36,11 +36,18 @@ export async function retryWebkitInternalError<T>(navigate: () => Promise<T>, on
 // glide takes about six, so a test waiting for smooth-scrolled content to rest allows 15 s
 export const REST_MS = 15_000;
 
-export const test = base.extend<{ intro: boolean; motionReady: boolean; smoothScroll: boolean }>({
+export const test = base.extend<{ intro: boolean; moaiWaved: boolean; motionReady: boolean; smoothScroll: boolean }>({
   intro: [false, { option: true }],
+  // the moai waves and says hello once per visitor (issue #682): tests start as a visitor it has already greeted
+  moaiWaved: [true, { option: true }],
   smoothScroll: [false, { option: true }],
   motionReady: [true, { option: true }],
-  page: async ({ page, intro, motionReady, smoothScroll, javaScriptEnabled }, use, testInfo) => {
+  page: async ({ page, intro, moaiWaved, motionReady, smoothScroll, javaScriptEnabled }, use, testInfo) => {
+    if (moaiWaved) {
+      await page.addInitScript(() => {
+        localStorage.setItem('moai-waved', '1');
+      });
+    }
     if (!smoothScroll) {
       await page.addInitScript(() => {
         sessionStorage.setItem('smooth-scroll', 'off');

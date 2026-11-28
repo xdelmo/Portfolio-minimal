@@ -436,9 +436,12 @@ export class MoaiScene {
     }
     let firstView = true;
     let arrived = false;
+    // it arrives once at least half of it is on screen, not at its first pixel (issue #682)
+    let seen = false;
     const arrive = (): void => {
-      if (arrived || !this.introDone || !this.visible) return;
+      if (arrived || !this.introDone || !this.visible || !seen) return;
       arrived = true;
+      let greeted = false;
       // the first time a visitor sees it, it waves hello: once ever, not at every visit
       if (this.greet()) {
         let waved = true;
@@ -451,19 +454,22 @@ export class MoaiScene {
         if (!waved) {
           waveT = 0;
           this.waving.set(true);
+          greeted = true;
         }
       }
-      const reaction = this.cues.take() ?? (hello ? 'hello' : null);
+      // the wave comes with its hello bubble
+      const reaction = this.cues.take() ?? (hello || greeted ? 'hello' : null);
       if (reaction) this.say(reaction);
     };
     const views = new IntersectionObserver(([entry]) => {
       this.visible = entry.isIntersecting;
+      seen = entry.intersectionRatio >= 0.5;
       if (firstView && !this.visible) hello = false;
       firstView = false;
       if (this.visible && this.asleep()) sleptInView = true;
       this.sync();
       arrive();
-    });
+    }, { threshold: [0, 0.5] });
     views.observe(canvas);
     const themes = new MutationObserver(paint);
     themes.observe(root, { attributes: true, attributeFilter: ['data-theme'] });

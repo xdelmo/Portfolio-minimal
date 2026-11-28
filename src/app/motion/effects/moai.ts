@@ -45,9 +45,14 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
       moai.style.setProperty('--moai-y', `${String(view.clientHeight - CORNER_GAP - top() - moai.offsetHeight)}px`);
       moai.setAttribute('data-corner', '');
     } else {
+      // once the About's foot reaches the pinned moai's feet it stops in the About and rides up with it while it
+      // unbuilds (issue #676). From the scroll the trigger is at, never the boxes: under the smoother they hold the
+      // previous frame and the moai lagged past the About's foot (issue #674)
+      const scroll = start + progress * (end - start);
+      const below = progress > 0 ? Math.max(0, scroll - (bottom(about) - top() - moai.offsetHeight)) : 0;
       moai.style.setProperty('--moai-s', '1');
       moai.style.setProperty('--moai-x', '0px');
-      moai.style.setProperty('--moai-y', '0px');
+      moai.style.setProperty('--moai-y', `${String(-below)}px`);
       moai.removeAttribute('data-corner');
     }
     if (progress > 0 && progress < 1) {
@@ -60,13 +65,6 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
       delete moai.dataset['transitProgress'];
       moai.style.removeProperty('--moai-clip');
     }
-    // the About's foot rises past the pinned moai while it unbuilds: cut what is left at that seam, the scene and the
-    // still alike, so it never paints over the Experience (issue #672). From the scroll the trigger is at, never the
-    // boxes: under the smoother they hold the previous frame and the cut lagged past the seam (issue #674)
-    const scroll = start + progress * (end - start);
-    const below = state.phase === 'about' && progress > 0 ? scroll - (bottom(about) - top() - moai.offsetHeight) : 0;
-    if (below > 0) moai.style.setProperty('--moai-seam', `inset(0px 0px ${String(Math.ceil(below))}px 0px)`);
-    else moai.style.removeProperty('--moai-seam');
     moai.dispatchEvent(new CustomEvent(MOAI_TRANSIT, { detail: progress }));
   };
   const transit = ScrollTrigger.create({
@@ -89,7 +87,6 @@ export const moaiEffect: Effect = (root, { ScrollTrigger, desktop }) => {
     moai.style.removeProperty('--moai-x');
     moai.style.removeProperty('--moai-y');
     moai.style.removeProperty('--moai-clip');
-    moai.style.removeProperty('--moai-seam');
     moai.dispatchEvent(new CustomEvent(MOAI_TRANSIT, { detail: 0 }));
   };
 };

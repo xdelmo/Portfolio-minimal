@@ -212,6 +212,14 @@ describe('moaiTransit', () => {
     expect(prevY).toBeLessThanOrEqual(2);
   });
 
+  // the shadow goes with the last row, not before it, on the way out and on the way in (issue #676)
+  it('keeps the whole shadow while any row shows', () => {
+    for (let p = 0.01; p < 1; p += 0.01) {
+      const s = moaiTransit(p);
+      expect(s.shadow, `at ${p.toFixed(2)}`).toBe(s.phase === 'gap' ? 0 : 1);
+    }
+  });
+
   it('clears the scene during the seam gap and flips corner placement at 0.5', () => {
     const [exitEnd, enterStart] = MOAI_TRANSIT_GAP;
     const beforeMid = moaiTransit(exitEnd);

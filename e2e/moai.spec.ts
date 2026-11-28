@@ -652,12 +652,11 @@ test('on desktop the About-to-corner transition steps through voxel exit, gap, a
   await expect(figure).not.toHaveAttribute('data-transit');
 });
 
-// while it unbuilds in the About, the About's foot rises past the pinned moai: what is left of it is cut at that seam,
-// the scene and the still alike, and never paints over the Experience (issue #672); under the smoother too, where a cut
-// measured from the boxes lagged a frame behind and left the moai a few pixels past the seam at rest (issue #674)
+// while it unbuilds, the moai stops inside the About: its feet stay on the About's foot as it rises, uncut (issue
+// #676); under the smoother too, where a position measured from the boxes lagged a frame behind (issue #674)
 for (const smoothScroll of [false, true]) test.describe(smoothScroll ? 'with smooth scroll' : 'native scroll', () => {
   test.use({ smoothScroll });
-  test('on desktop the unbuilding moai never shows below the About', async ({ page, isMobile }) => {
+  test('on desktop the unbuilding moai rides up with the About', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop only');
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/en/');
@@ -675,10 +674,8 @@ for (const smoothScroll of [false, true]) test.describe(smoothScroll ? 'with smo
       await expect.poll(() => page.evaluate(() => {
         const about = document.querySelector<HTMLElement>('#about')?.getBoundingClientRect();
         const body = document.querySelector<HTMLElement>('app-moai-figure.about-moai .body');
-        if (!about || !body) return Infinity;
-        // computed as the shortest form, `inset(0px 0px 29px)`: the third value is the bottom
-        const cut = /inset\(([^)]*)\)/.exec(getComputedStyle(body).clipPath)?.[1].split(' ')[2];
-        return Math.round(body.getBoundingClientRect().bottom - (cut ? parseFloat(cut) : 0) - about.bottom);
+        if (!about || !body || getComputedStyle(body).clipPath !== 'none') return Infinity;
+        return Math.abs(Math.round(body.getBoundingClientRect().bottom - about.bottom));
       }), `at ${String(p)}`).toBeLessThanOrEqual(1);
     }
   });

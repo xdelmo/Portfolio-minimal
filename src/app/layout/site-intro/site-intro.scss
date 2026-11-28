@@ -52,9 +52,10 @@
       // the global measure on <p> would make the row narrower than the name, off the centre (issue #234)
       max-width: none;
     }
+    // the cell of the hero cloud and the seams (CLOUD_CELL): at 8px the intro looked smaller than the site (issue #677)
     .px {
-      width: var(--space-1);
-      height: var(--space-1);
+      width: var(--space-2);
+      height: var(--space-2);
       background: currentColor;
       opacity: 0.9;
       animation: intro-px calc(0.3s / var(--k)) calc(var(--d) + (0.1s + var(--i) * 0.03s) / var(--k))

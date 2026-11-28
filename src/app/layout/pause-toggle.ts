@@ -14,12 +14,12 @@ import { MotionPause } from '../motion/pause';
       i18n-aria-label="@@motion.pause"
       aria-label="Pause animations"
     >
-      <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-        @if (motion.paused()) {
-          <path fill="currentColor" d="M2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4zM5 3.5h1v1H5z" />
-        } @else {
-          <path fill="currentColor" d="M1 1h2v6H1zM5 1h2v6H5z" />
-        }
+      <!-- both icons ship in the prerendered page; CSS picks one from data-motion-paused, set before first paint (issue #678) -->
+      <svg class="play" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+        <path fill="currentColor" d="M2 1h1v6H2zM3 2h1v4H3zM4 3h1v2H4zM5 3.5h1v1H5z" />
+      </svg>
+      <svg class="pause" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+        <path fill="currentColor" d="M1 1h2v6H1zM5 1h2v6H5z" />
       </svg>
     </button>
   `,
@@ -34,6 +34,13 @@ import { MotionPause } from '../motion/pause';
       background: transparent;
       color: var(--fg);
       cursor: pointer;
+    }
+    .play,
+    :host-context([data-motion-paused]) .pause {
+      display: none;
+    }
+    :host-context([data-motion-paused]) .play {
+      display: block;
     }
     @media (hover: hover) {
       .pause-toggle:hover {

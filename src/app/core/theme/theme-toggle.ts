@@ -7,12 +7,12 @@ import { MoaiCues } from '../../voxel/moai-cues';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button type="button" class="theme-toggle" (click)="switchTheme($event)" [attr.aria-label]="label()">
-      <svg [class]="themes.theme() === 'dark' ? 'sun' : 'moon'" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
-        @if (themes.theme() === 'dark') {
-          <path fill="currentColor" d="M3 0h2v1H3zM3 7h2v1H3zM0 3h1v2H0zM7 3h1v2H7zM1 1h1v1H1zM6 1h1v1H6zM1 6h1v1H1zM6 6h1v1H6zM2 2h4v4H2z" />
-        } @else {
-          <path fill="currentColor" d="M2 0h4v1H2zM1 1h2v1H1zM0 2h2v4H0zM1 6h2v1H1zM6 6h2v1H6zM2 7h5v1H2z" />
-        }
+      <!-- both icons ship in the prerendered page; CSS shows the one for the data-theme the inline script set before first paint (issue #678) -->
+      <svg class="sun" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+        <path fill="currentColor" d="M3 0h2v1H3zM3 7h2v1H3zM0 3h1v2H0zM7 3h1v2H7zM1 1h1v1H1zM6 1h1v1H6zM1 6h1v1H1zM6 6h1v1H6zM2 2h4v4H2z" />
+      </svg>
+      <svg class="moon" viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+        <path fill="currentColor" d="M2 0h4v1H2zM1 1h2v1H1zM0 2h2v4H0zM1 6h2v1H1zM6 6h2v1H6zM2 7h5v1H2z" />
       </svg>
     </button>
   `,
@@ -27,6 +27,13 @@ import { MoaiCues } from '../../voxel/moai-cues';
       background: transparent;
       color: var(--fg);
       cursor: pointer;
+    }
+    .sun,
+    :host-context([data-theme='dark']) .moon {
+      display: none;
+    }
+    :host-context([data-theme='dark']) .sun {
+      display: block;
     }
     /* on hover the sun turns its rays, the moon rocks: in steps, like the site's other controls (issue #229) */
     @media (hover: hover) and (prefers-reduced-motion: no-preference) {

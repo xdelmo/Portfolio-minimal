@@ -39,23 +39,22 @@ export function moaiTransit(progress: number): MoaiTransitState {
   if (p < EXIT_END) {
     const t = p / EXIT_END;
     const cutY = Math.max(0, Math.min(fullY - 1, Math.floor((1 - t) * fullY)));
-    const shadow = cutY < 1 ? 0 : cutY < 3 ? 0.35 : cutY < 7 ? 0.65 : 1;
-    return { phase: 'about', corner: false, cutY, frontier: true, pukaoVisible: cutY >= 22, pukaoLift: 0, shadow, tilt: t * 0.14, sy: 1 };
+    // the whole shadow while any row shows: scaled down it hid under the base before the last rows went (issue #676)
+    return { phase: 'about', corner: false, cutY, frontier: true, pukaoVisible: cutY >= 22, pukaoLift: 0, shadow: 1, tilt: t * 0.14, sy: 1 };
   }
   if (p <= ENTER_START) {
     return { phase: 'gap', corner: p >= 0.5, cutY: -1, frontier: false, pukaoVisible: false, pukaoLift: 0, shadow: 0, tilt: 0, sy: 1 };
   }
   const t = (p - ENTER_START) / (1 - ENTER_START);
-  const shadow = t < 0.06 ? 0.5 : 1;
   if (t < 0.8) {
     const u = Math.max(0, (t - 0.05) / 0.75);
     const cutY = Math.min(21, Math.floor(u * 22));
-    return { phase: 'corner', corner: true, cutY, frontier: true, pukaoVisible: false, pukaoLift: 0, shadow, tilt: (1 - t) * 0.1, sy: 1 };
+    return { phase: 'corner', corner: true, cutY, frontier: true, pukaoVisible: false, pukaoLift: 0, shadow: 1, tilt: (1 - t) * 0.1, sy: 1 };
   }
   if (t < 0.94) {
     const step = Math.min(PUKAO_DROP_STEPS.length - 1, Math.floor(((t - 0.8) / 0.14) * PUKAO_DROP_STEPS.length));
-    return { phase: 'corner', corner: true, cutY: 22, frontier: false, pukaoVisible: true, pukaoLift: PUKAO_DROP_STEPS[step], shadow, tilt: (1 - t) * 0.1, sy: 1 };
+    return { phase: 'corner', corner: true, cutY: 22, frontier: false, pukaoVisible: true, pukaoLift: PUKAO_DROP_STEPS[step], shadow: 1, tilt: (1 - t) * 0.1, sy: 1 };
   }
   const sy = t < 0.97 ? 0.94 : t < 0.99 ? 1.02 : 1;
-  return { phase: 'corner', corner: true, cutY: fullY, frontier: false, pukaoVisible: true, pukaoLift: 0, shadow, tilt: 0, sy };
+  return { phase: 'corner', corner: true, cutY: fullY, frontier: false, pukaoVisible: true, pukaoLift: 0, shadow: 1, tilt: 0, sy };
 }

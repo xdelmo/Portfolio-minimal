@@ -15,7 +15,7 @@ const SHUT = 'inset(0 0 100% 0)';
 const SHOWN = 'inset(0 0 0% 0)';
 
 /**
- * The sections, behind a button, on phones (issue #128): below 768px the header has no room for its links, and the
+ * The sections, behind a button, on phones (issue #128): below 1024px the header has no room for its links, and the
  * home page is about 11,000px tall. A <details>, like the language menu: it opens before the app boots too. Escape,
  * a tap outside or a link close it. GSAP opens and closes it in pixel steps and turns the bars into the cross and back
  * (issue #183); before GSAP is in, or with reduced motion, it simply appears and disappears. On phones the header's

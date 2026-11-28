@@ -1,6 +1,6 @@
     @use 'styles/breakpoints' as bp;
 
-    // the ink band's colours, a hard square like the rest of the site; phones only (the header's links are there on
+    // the ink band's colours, a hard square like the rest of the site; phones and tablets (the header's links are there on
     // wider screens)
     .back-to-top {
       position: fixed;
@@ -18,7 +18,7 @@
       clip-path: inset(0 0 0 0);
       translate: 0 0;
       opacity: 1;
-      @include bp.up(md) {
+      @include bp.up(lg) {
         display: none;
       }
     }

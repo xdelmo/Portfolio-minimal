@@ -204,9 +204,9 @@ for (const width of [1280, 1024, 768, 390, 320]) {
   });
 }
 
-// issue #305, #468: the primary button is in the bar from 768px, and in the menu on phones, in both languages
+// issue #305, #468, #683: the primary button is in the bar from 1024px, and in the menu on phones and tablets, in both languages
 for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const) {
-  for (const width of [1280, 1024, 768]) {
+  for (const width of [1280, 1024]) {
     test(`the header carries the call to action and still fits, /${lang}/ at ${String(width)}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 640 });
       await page.goto(`/${lang}/`);
@@ -220,8 +220,8 @@ for (const [lang, label] of [['en', 'Contact me'], ['it', 'Scrivimi']] as const)
       expect(await headerRight(page)).toBeLessThanOrEqual(width);
     });
   }
-  for (const width of [390, 320]) {
-    test(`on phones the call to action is in the menu panel, /${lang}/ at ${String(width)}px`, async ({ page }) => {
+  for (const width of [820, 768, 390, 320]) {
+    test(`on phones and tablets the call to action is in the menu panel, /${lang}/ at ${String(width)}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 640 });
       await page.goto(`/${lang}/`);
       await expect(page.locator('app-site-header .site-header > .cta')).toBeHidden();

@@ -101,7 +101,7 @@
       display: none;
       align-items: center;
     }
-    // phones: the call to action lives in the menu panel (issue #468); shown in the bar from md
+    // phones: the call to action lives in the menu panel (issue #468); shown in the bar from lg
     .cta {
       display: none;
       flex: none;
@@ -111,14 +111,16 @@
     .menu {
       margin-right: calc(-1 * var(--space-2));
     }
-    @include bp.up(md) {
+    // the bar holds the links, the controls and the call to action from lg: at 768-1023px (a 10" tablet held upright)
+    // they were all squeezed in, so tablets keep the phone bar and its menu (issue #683)
+    @include bp.up(lg) {
       nav,
       .controls {
         display: flex;
       }
       // the settings, set apart from the links by a hairline: one quiet group, so the links and the call to action lead
       .controls {
-        padding-left: var(--space-1);
+        padding-left: var(--space-2);
         border-left: 1px solid var(--rule);
       }
       // the links and the controls are in the header itself from here
@@ -133,8 +135,9 @@
       .mark {
         margin-right: 0;
       }
+      nav,
       .site-header {
-        gap: var(--space-2);
+        gap: var(--space-3);
       }
       .name {
         padding-left: var(--space-2);
@@ -143,27 +146,7 @@
       .cta {
         display: inline-flex;
         min-height: 48px;
-        padding-inline: var(--space-2);
-        font-size: inherit;
-      }
-    }
-    // About joins the links only where the bar has room for it (at md it ran into the name, issue #532)
-    nav a.nav-about {
-      display: none;
-    }
-    @include bp.up(lg) {
-      nav a.nav-about {
-        display: inline-flex;
-      }
-      nav,
-      .site-header {
-        gap: var(--space-3);
-      }
-      .controls {
-        padding-left: var(--space-2);
-      }
-      // the full button of the design system once the bar has room for it
-      .cta {
         padding-inline: var(--space-3);
+        font-size: inherit;
       }
     }

@@ -16,6 +16,17 @@ test('on phones a back-to-top button shows after a screen and a half and goes ba
   await expect(button).toHaveCount(0);
 });
 
+// issue #683: a 10" tablet held upright has the phone header, so it gets the corner button too
+test('on a tablet held upright the back-to-top button shows in the corner', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'desktop projects set the size');
+  await page.setViewportSize({ width: 820, height: 1180 });
+  await page.goto('/en/');
+  await page.evaluate(() => {
+    window.scrollTo(0, innerHeight * 3);
+  });
+  await expect(page.getByRole('button', { name: 'Back to top' })).toBeVisible();
+});
+
 test('on desktop there is no back-to-top button in the corner', async ({ page, isMobile }) => {
   test.skip(isMobile, 'desktop');
   await page.goto('/en/');

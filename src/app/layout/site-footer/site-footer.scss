@@ -45,9 +45,9 @@
         translate: 0 -4px;
       }
     }
-    // tablets: the year and the way back up share a line, the links take the next one whole (in a third of the width the
-    // Start key wrapped alone under them)
-    @include bp.up(md) {
+    // from lg the year and the way back up share a line, the links take the next one whole (in a third of the width the
+    // Start key wrapped alone under them); tablets stack them like phones, under the corner button (issue #683)
+    @include bp.up(lg) {
       .site-footer {
         grid-template-columns: 1fr auto;
       }
